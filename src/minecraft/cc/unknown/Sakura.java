@@ -1,0 +1,119 @@
+package cc.unknown;
+
+import org.lwjgl.opengl.Display;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import cc.unknown.bindable.BindableManager;
+import cc.unknown.bots.BotManager;
+import cc.unknown.command.CommandManager;
+import cc.unknown.component.ComponentManager;
+import cc.unknown.event.Event;
+import cc.unknown.event.bus.impl.EventBus;
+import cc.unknown.module.api.manager.ModuleManager;
+import cc.unknown.script.ScriptManager;
+import cc.unknown.ui.clickgui.ClickGui;
+import cc.unknown.ui.theme.ThemeManager;
+import cc.unknown.util.client.ClientInfo;
+import cc.unknown.util.client.UserInfo;
+import cc.unknown.util.creative.SakuraTab;
+import cc.unknown.util.file.FileManager;
+import cc.unknown.util.file.alt.AltManager;
+import cc.unknown.util.file.config.ConfigManager;
+import cc.unknown.util.file.enemy.EnemyManager;
+import cc.unknown.util.file.friend.FriendManager;
+import de.florianmichael.viamcp.ViaMCP;
+import lombok.Getter;
+import net.minecraft.client.Minecraft;
+
+@Getter
+public enum Sakura {
+    instance;
+
+    public static final String NAME = "Sakura";
+    public static final String VERSION_FULL = "5.1";
+    private final ClientInfo clientInfo = new ClientInfo(NAME, VERSION_FULL, ClientInfo.VersionType.PRIVATE);
+    private final UserInfo userInfo = new UserInfo(UserInfo.UserType.CUSTOMER);
+
+    private EventBus<Event> eventBus;
+    private ModuleManager moduleManager;
+    private ComponentManager componentManager;
+    private CommandManager commandManager;
+    private BotManager botManager;
+    private ThemeManager themeManager;
+
+    private FileManager fileManager;
+    
+    private FriendManager friendManager;
+    private EnemyManager enemyManager;
+
+    private ConfigManager configManager;
+    private AltManager altManager;
+    private BindableManager bindableManager;
+    private ScriptManager scriptManager;
+
+    private ClickGui clickGui;
+    private SakuraTab creativeTab;
+    
+    public int moduleCounter;
+    public int settingCounter;
+    public boolean firstStart;
+
+    private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
+    public void init() {
+        moduleManager = new ModuleManager();
+        componentManager = new ComponentManager();
+        commandManager = new CommandManager();
+        fileManager = new FileManager();
+        configManager = new ConfigManager();
+        friendManager = new FriendManager();
+        enemyManager = new EnemyManager();
+        altManager = new AltManager();
+        botManager = new BotManager();
+        themeManager = new ThemeManager();
+        eventBus = new EventBus<>();
+        bindableManager = new BindableManager();
+        scriptManager = new ScriptManager();
+
+        fileManager.init();
+
+        moduleManager.init();
+        scriptManager.init();
+        botManager.init();
+        componentManager.init();
+        commandManager.init();
+        altManager.init();
+        friendManager.init();
+        enemyManager.init();
+
+        clickGui = new ClickGui();
+        clickGui.initGui();
+        
+        creativeTab = new SakuraTab();
+        
+        new Thread(() -> {
+            ViaMCP.create();
+            ViaMCP.INSTANCE.initAsyncSlider();
+
+            ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);
+        }).start();
+
+        configManager.init();
+        bindableManager.init();
+
+        Display.setTitle(NAME + " " + VERSION_FULL);
+        
+        // ddlc start song
+        this.firstStart = true;
+    }
+
+    public void terminate() {
+        if (getConfigManager().get("latest") != null) {
+        	getConfigManager().get("latest").write();
+        }
+        
+        System.gc();
+    }
+}

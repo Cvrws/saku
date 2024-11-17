@@ -1,0 +1,176 @@
+package cc.unknown.module.impl.ghost;
+
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Random;
+
+import cc.unknown.Sakura;
+import cc.unknown.event.Listener;
+import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.module.Module;
+import cc.unknown.module.api.Category;
+import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.rotation.RotationUtil;
+import cc.unknown.util.vector.Vector2f;
+import cc.unknown.value.impl.BooleanValue;
+import cc.unknown.value.impl.ModeValue;
+import cc.unknown.value.impl.NumberValue;
+import cc.unknown.value.impl.SubMode;
+import io.netty.util.internal.ThreadLocalRandom;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.util.Vec3;
+
+@ModuleInfo(aliases = "Aim Assist", description = "Assists you in aiming", category = Category.GHOST)
+public final class AimAssist extends Module {
+	
+	private final ModeValue mode = new ModeValue("Mode", this)
+			.add(new SubMode("Advanced"))
+			.setDefault("Advanced");
+	
+	private final NumberValue horizontalAimSpeed = new NumberValue("Horizontal Speed", this, 45.0, 5.0, 100.0, 1.0);
+	private final NumberValue horizontalComplement = new NumberValue("Horizontal Complement", this, 15.0, 2.0, 97.0, 1.0);
+	
+	private final ModeValue randomMode = new ModeValue("Speed Randomization", this)
+			.add(new SubMode("Thread Local Random"))
+			.add(new SubMode("Random Secure"))
+			.add(new SubMode("Gaussian"))
+			.setDefault("Thread Local Random");
+	
+	private final NumberValue maxAngle = new NumberValue("Max Angle", this, 180, 15, 360, 5);
+	private final NumberValue distance = new NumberValue("Distance", this, 4, 1, 8, 0.1);
+	private final BooleanValue clickAim = new BooleanValue("Aim on Click", this, true);
+	private final BooleanValue ignoreFriendlyEntities = new BooleanValue("Ignore Friends", this, false);
+	private final BooleanValue ignoreTeammates = new BooleanValue("Ignore Teams", this, false);
+	private final BooleanValue scoreboardCheckTeam = new BooleanValue("Scoreboard Check Team", this, false, () -> !ignoreTeammates.getValue());
+	private final BooleanValue checkArmorColor = new BooleanValue("Check Armor Color", this, false, () -> !ignoreTeammates.getValue());
+	private final BooleanValue ignoreBots = new BooleanValue("Ignore Bots", this, false);
+	private final BooleanValue aimAtInvisibleEnemies = new BooleanValue("Aim at Invisible Targets", this, false);
+	private final BooleanValue lineOfSightCheck = new BooleanValue("Line of Sight Check", this, true);
+	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !lineOfSightCheck.getValue());
+	private final BooleanValue disableAimWhileBreakingBlock = new BooleanValue("Disable While Breaking Blocks", this, false);
+	private final BooleanValue weaponOnly = new BooleanValue("Only Aim While Holding at Weapon", this, false);
+	public EntityPlayer target;
+	private final Random random = new Random();
+
+	@EventLink
+	public final Listener<PreMotionEvent> onPreMotionEvent = event -> {
+		if (noAim()) {
+			return;
+		}
+
+		target = getEnemy();
+		if (target == null) return;
+
+        double advancedSpeed = horizontalAimSpeed.getValue().doubleValue();
+        double advancedCSpeed = horizontalComplement.getValue().doubleValue();
+        double randomOffset = ThreadLocalRandom.current().nextDouble(advancedCSpeed - 1.47328, advancedCSpeed + 2.48293) / 100;
+
+        Vector2f targetRotations = RotationUtil.calculate(target);
+        double yawFov = PlayerUtil.fovFromEntity(target);
+        float resultHorizontal = getSpeedRandomize(randomMode.getValue().getName(), yawFov, randomOffset, advancedSpeed, advancedCSpeed);
+        
+        if (onTarget(target)) {
+            if (isYawFov(yawFov)) {
+                mc.player.rotationYaw += resultHorizontal;
+            }
+        } else {
+        	if (isYawFov(yawFov)) {
+                mc.player.rotationYaw += resultHorizontal;
+            }
+        }
+	};
+
+	@Override
+	public void onDisable() {
+		target = null;
+	}
+
+	public EntityPlayer getEnemy() {
+		final int fov = maxAngle.getValue().intValue();
+		final List<EntityPlayer> players = mc.world.playerEntities;
+		final Vec3 playerPos = new Vec3(mc.player);
+
+		target = null;
+		double targetFov = Double.MAX_VALUE;
+		for (final EntityPlayer entityPlayer : players) {
+			if (entityPlayer != mc.player && entityPlayer.deathTime == 0) {
+				double dist = playerPos.distanceTo(entityPlayer);
+				if (Sakura.instance.getEnemyManager().isEnemy(entityPlayer)) continue;
+				if (Sakura.instance.getFriendManager().isFriend(entityPlayer) && ignoreFriendlyEntities.getValue()) continue;
+				if (Sakura.instance.getBotManager().contains(entityPlayer) && ignoreBots.getValue()) continue;
+				if (ignoreTeammates.getValue() && PlayerUtil.isTeam(entityPlayer, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
+				if (dist > distance.getValue().doubleValue()) continue;
+				if (fov != 360 && !PlayerUtil.inFov(fov, entityPlayer)) continue;
+				if (lineOfSightCheck.getValue() && !mc.player.canEntityBeSeen(entityPlayer)) continue;
+				double curFov = Math.abs(PlayerUtil.getFov(entityPlayer.posX, entityPlayer.posZ));
+				if (curFov < targetFov) {
+					target = entityPlayer;
+					targetFov = curFov;
+				}
+			}
+		}
+		return target;
+	}
+
+	private boolean noAim() {
+	    if (mc.currentScreen != null || !mc.inGameHasFocus) return true;
+	    if (weaponOnly.getValue() && !PlayerUtil.isHoldingWeapon()) return true;
+	    if (clickAim.getValue() && !PlayerUtil.isClicking()) return true;
+	    if (mouseOverEntity.getValue() && (mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY)) return true;
+	    if (disableAimWhileBreakingBlock.getValue() && mc.objectMouseOver != null) {
+	        BlockPos p = mc.objectMouseOver.getBlockPos();
+	        if (p != null) {
+	            Block bl = mc.world.getBlockState(p).getBlock();
+	            if (bl != Blocks.air && !(bl instanceof BlockLiquid) && bl instanceof Block) {
+	                return false;
+	            }
+	        }
+	    }
+	    return false;
+	}
+
+	private boolean onTarget(EntityPlayer target) {
+		return mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectType.ENTITY 
+				&& mc.objectMouseOver.typeOfHit != MovingObjectType.BLOCK
+				&& mc.objectMouseOver.entityHit == target;
+	}
+
+	public float getSpeedRandomize(String mode, double fov, double offset, double speed, double complement) {
+		switch (mode) {
+        case "Thread Local Random":
+            double randomComplement = ThreadLocalRandom.current().nextDouble(complement - 1.47328, complement + 2.48293) / 100;
+            float result = (float) (-(fov * offset  + fov / (101.0D - ThreadLocalRandom.current().nextDouble(speed - 4.723847, speed))));
+            return (float) (randomComplement + result);
+
+        case "Random Secure":
+            SecureRandom secureRandom = new SecureRandom();
+            double secureRandomComplement = secureRandom.nextDouble() * (complement + 2.48293 - (complement - 1.47328)) + (complement - 1.47328);
+            secureRandomComplement /= 100;
+            float secureResult = (float) (-(fov * offset  + fov / (101.0D - secureRandom.nextDouble() * (speed - 4.723847))));
+            return (float) (secureRandomComplement + secureResult);
+            
+        case "Gaussian":
+            Random gaussianRandom = new Random();
+            double gaussianComplement = complement + gaussianRandom.nextGaussian() * 0.5;
+            gaussianComplement /= 100;
+            float gaussianResult = (float) (-(fov * offset 
+                        + fov / (101.0D - (speed + gaussianRandom.nextGaussian() * 0.3))));
+            return (float) (gaussianComplement + gaussianResult);
+            
+        default:
+            throw new IllegalArgumentException("Unknown mode: " + mode);
+		}
+	}
+
+	private boolean isYawFov(double fov) {
+		return fov > 1.0D || fov < -1.0D;
+	}
+}
