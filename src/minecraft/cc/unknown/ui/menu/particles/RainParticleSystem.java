@@ -48,7 +48,7 @@ public class RainParticleSystem {
         GL11.glPopMatrix();
     }
 
-    public static class Particle {
+    public class Particle {
         private float x, y, speedX, speedY;
         private int size;
 

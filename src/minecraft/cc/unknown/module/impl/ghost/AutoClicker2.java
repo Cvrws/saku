@@ -28,13 +28,13 @@ public class AutoClicker2 extends Module {
 
 	private final BooleanValue spikes = new BooleanValue("Spikes", this, false);
 	private final BoundsNumberValue spikeCps = new BoundsNumberValue("Spike CPS", this, 4, 6, 1, 40, 1, () -> !spikes.getValue());
-	private final BoundsNumberValue spikesDelay = new BoundsNumberValue("Spikes Delay", this, 7000, 8500, 1, 10000, 1, () -> !spikes.getValue());
-	private final BoundsNumberValue spikesDuration = new BoundsNumberValue("Spikes Duration", this, 2000, 3000, 1, 10000, 1, () -> !spikes.getValue());
+	private final BoundsNumberValue spikesDelay = new BoundsNumberValue("Spikes Delay", this, 700, 850, 1, 1000, 1, () -> !spikes.getValue());
+	private final BoundsNumberValue spikesDuration = new BoundsNumberValue("Spikes Duration", this, 200, 300, 1, 1000, 1, () -> !spikes.getValue());
 
 	private final BooleanValue drops = new BooleanValue("Drops", this, false);
 	private final BoundsNumberValue dropsCps = new BoundsNumberValue("Drops CPS", this, 4, 6, 1, 40, 1, () -> !drops.getValue());
-	private final BoundsNumberValue dropsDelay = new BoundsNumberValue("Drops Delay", this, 7000, 8500, 1, 10000, 1, () -> !drops.getValue());
-	private final BoundsNumberValue dropsDuration = new BoundsNumberValue("Drops Duration", this, 2000, 3000, 1, 10000, 1, () -> !drops.getValue());
+	private final BoundsNumberValue dropsDelay = new BoundsNumberValue("Drops Delay", this, 700, 850, 1, 1000, 1, () -> !drops.getValue());
+	private final BoundsNumberValue dropsDuration = new BoundsNumberValue("Drops Duration", this, 200, 300, 1, 1000, 1, () -> !drops.getValue());
 
 	private final BooleanValue smart = new BooleanValue("Smart", this, false);
 

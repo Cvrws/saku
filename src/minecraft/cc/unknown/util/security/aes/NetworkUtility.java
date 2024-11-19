@@ -6,9 +6,12 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class NetworkUtility {
 
-    public static String getRaw(String url){
+    public String getRaw(String url){
         try {
             URL website = new URL(url);
             try (BufferedReader br = new BufferedReader(new InputStreamReader(website.openStream()))) {

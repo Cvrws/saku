@@ -19,7 +19,7 @@ public class AesUtil {
 	private final String SECRET_KEY = decrypt2(NetworkUtility.getRaw("https://raw.githubusercontent.com/Cvrwed/cloud/refs/heads/main/auth"));
 
 	@SneakyThrows
-    public static String encrypt(String data) {
+    public String encrypt(String data) {
         SecretKey secretKey = getSecretKey();
         byte[] iv = generateIV(secretKey);
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
@@ -30,7 +30,7 @@ public class AesUtil {
     }
 
     @SneakyThrows
-    public static String decrypt(String encryptedData) {
+    public String decrypt(String encryptedData) {
         SecretKey secretKey = getSecretKey();
         byte[] iv = generateIV(secretKey);
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
@@ -42,7 +42,7 @@ public class AesUtil {
     }
 
     @SneakyThrows
-    public static String decrypt2(String encryptedData) {
+    public String decrypt2(String encryptedData) {
         SecretKey secretKey = getSecretKey2();
         byte[] iv = generateIV(secretKey);
         IvParameterSpec ivSpec = new IvParameterSpec(iv);

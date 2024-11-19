@@ -24,7 +24,7 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class AuthUtil implements Accessor {
-	private static String remoteContent = NetworkUtility.getRaw("https://raw.githubusercontent.com/Cvrwed/cloud/refs/heads/main/changelog");
+	private String remoteContent = NetworkUtility.getRaw("https://raw.githubusercontent.com/Cvrwed/cloud/refs/heads/main/changelog");
 
 	@SneakyThrows
 	public void notify(String content) {
