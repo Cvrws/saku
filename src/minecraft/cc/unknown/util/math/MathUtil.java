@@ -2,6 +2,7 @@ package cc.unknown.util.math;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.SecureRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 import lombok.experimental.UtilityClass;
@@ -53,4 +54,34 @@ public class MathUtil {
     public double wrappedDifference(double number1, double number2) {
         return Math.min(Math.abs(number1 - number2), Math.min(Math.abs(number1 - 360) - Math.abs(number2 - 0), Math.abs(number2 - 360) - Math.abs(number1 - 0)));
     }
+    
+    public double nextSecureInt(int origin, int bound) {
+		if (origin == bound) {
+			return (double)origin;
+		} else {
+			SecureRandom secureRandom = new SecureRandom();
+			int difference = bound - origin;
+			return (double)(origin + secureRandom.nextInt(difference));
+		}
+	}
+
+    public double nextSecureDouble(double origin, double bound) {
+		if (origin == bound) {
+			return origin;
+		} else {
+			SecureRandom secureRandom = new SecureRandom();
+			double difference = bound - origin;
+			return origin + secureRandom.nextDouble() * difference;
+		}
+	}
+
+    public float nextSecureFloat(double origin, double bound) {
+		if (origin == bound) {
+			return (float)origin;
+		} else {
+			SecureRandom secureRandom = new SecureRandom();
+			float difference = (float)(bound - origin);
+			return (float)(origin + (double)(secureRandom.nextFloat() * difference));
+		}
+	}
 }

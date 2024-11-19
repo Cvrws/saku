@@ -61,8 +61,10 @@ import cc.unknown.component.impl.player.Slot;
 import cc.unknown.event.impl.input.ClickEvent;
 import cc.unknown.event.impl.input.KeyboardInputEvent;
 import cc.unknown.event.impl.input.MouseEvent;
+import cc.unknown.event.impl.input.NaturalPressEvent;
 import cc.unknown.event.impl.input.RightClickEvent;
 import cc.unknown.event.impl.other.GameEvent;
+import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.module.impl.combat.TickRange;
@@ -1419,7 +1421,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 		}
 	}
 
-	private void sendClickBlockToController(final boolean leftClick) {
+	public void sendClickBlockToController(final boolean leftClick) {
 		if (!leftClick) {
 			this.leftClickCounter = 0;
 		}
@@ -1970,32 +1972,52 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 				}
 			}
 
-			if (this.player.isUsingItem()) {
-				if (!this.gameSettings.keyBindUseItem.isKeyDown()) {
-					this.playerController.onStoppedUsingItem(this.player);
+			NaturalPressEvent eventClick = new NaturalPressEvent(this.player.inventory.currentItem);
+			int oldSlot = this.player.inventory.currentItem;
+			eventClick.setShouldRightClick(true);
+			Sakura.instance.getEventBus().handle(eventClick);
+			this.player.inventory.currentItem = eventClick.getSlot();
+			if (!eventClick.isCancelled()) {
+				if (this.player.isUsingItem()) {
+					if (!this.gameSettings.keyBindUseItem.isKeyDown()) {
+						this.playerController.onStoppedUsingItem(this.player);
+					}
+
+					while(this.gameSettings.keyBindAttack.isPressed()) {
+					}
+
+					while(this.gameSettings.keyBindUseItem.isPressed()) {
+					}
+
+					while(this.gameSettings.keyBindPickBlock.isPressed()) {
+					}
+				} else {
+					while(this.gameSettings.keyBindAttack.isPressed()) {
+						this.clickMouse();
+					}
+					
+					if (eventClick.isShouldRightClick()) {
+						while(this.gameSettings.keyBindUseItem.isPressed()) {
+							this.rightClickMouse();
+						}
+					}
+
+					while(this.gameSettings.keyBindPickBlock.isPressed()) {
+						this.middleClickMouse();
+					}
 				}
 
-			} else {
-				while (this.gameSettings.keyBindAttack.isPressed()) {
-					this.clickMouse();
-				}
+	            if (eventClick.isShouldRightClick()
+	               && this.gameSettings.keyBindUseItem.isKeyDown()
+	               && this.rightClickDelayTimer == 0
+	               && !this.player.isUsingItem()) {
+	               this.rightClickMouse();
+	            }
 
-				while (this.gameSettings.keyBindUseItem.isPressed()) {
-					this.rightClickMouse();
-				}
-
-				while (this.gameSettings.keyBindPickBlock.isPressed()) {
-					this.middleClickMouse();
-				}
+	            this.sendClickBlockToController(this.currentScreen == null && this.gameSettings.keyBindAttack.isKeyDown() && this.inGameHasFocus);
 			}
-
-			if (this.gameSettings.keyBindUseItem.isKeyDown() && this.rightClickDelayTimer == 0
-					&& !this.player.isUsingItem()) {
-				this.rightClickMouse();
-			}
-
-			this.sendClickBlockToController(
-					this.currentScreen == null && this.gameSettings.keyBindAttack.isKeyDown() && this.inGameHasFocus);
+			
+			this.player.inventory.currentItem = oldSlot;
 		}
 
 		TickRange furro = Sakura.instance.getModuleManager().get(TickRange.class);
@@ -2004,7 +2026,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 		if (this.world != null) {
 			if (this.player != null) {
 				++this.joinPlayerCounter;
-
+				Sakura.instance.getEventBus().handle(new PlayerTickEvent());
 				if (this.joinPlayerCounter == 30) {
 					this.joinPlayerCounter = 0;
 					this.world.joinEntityInSurroundings(this.player);

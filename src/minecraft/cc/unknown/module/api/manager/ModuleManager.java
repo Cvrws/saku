@@ -38,6 +38,7 @@ public final class ModuleManager {
         this.put(AutoBlock.class, new AutoBlock());
         this.put(AimAssist.class, new AimAssist());
         this.put(HitSelect.class, new HitSelect());
+        this.put(AutoClicker2.class, new AutoClicker2());
         this.put(AutoClicker.class, new AutoClicker());
         this.put(Reach.class, new Reach());
         this.put(KeepSprint.class, new KeepSprint());

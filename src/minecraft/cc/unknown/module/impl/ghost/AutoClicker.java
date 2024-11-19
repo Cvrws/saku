@@ -79,14 +79,14 @@ public class AutoClicker extends Module {
                 }
             	break;
             case "Drag":
-                double baseSpeed = 15;
+                double base = 15;
                 double fluctuation = Math.random() * 10 - 5;
                 boolean pause = Math.random() < 0.05;
 
                 if (pause) {
-                    this.nextSwing = (long) (baseSpeed + 50 + fluctuation);
+                    this.nextSwing = (long) (base + 50 + fluctuation);
                 } else {
-                    this.nextSwing = (long) (baseSpeed + fluctuation);
+                    this.nextSwing = (long) (base + fluctuation);
                 }
             }
             
