@@ -41,8 +41,6 @@ public final class Streamer extends Module {
 			.add(new SubMode("Adm"))
 			.setDefault("Jup");
 	
-	private final BooleanValue fixOwn = new BooleanValue("Fix Own Rank", this, true, () -> !mode.is("Universocraft"));
-
     public final StringValue replacement = new StringValue("Spoof Name: ", this, "You");
     private final BooleanValue checkFriends = new BooleanValue("Check Friends", this, false);
     private final StringValue protectFriends = new StringValue("New Name: ", this, "Friend", () -> !checkFriends.getValue());
@@ -67,24 +65,22 @@ public final class Streamer extends Module {
         assert mc.player != null;
         String text = event.getString();
         String playerName = mc.player.getName();
-        String mode = spoofRank.getValue().getName();
+        String spoofMode = spoofRank.getValue().getName();
         String newName = replacement.getValue();
-        ChatFormatting color = ranks.get(mode);
+        ChatFormatting color = ranks.get(spoofMode);
         
         if (text.startsWith("/") || text.startsWith(Sakura.instance.getCommandManager().getPrefix())) {
             return;
         }
 
         if (text.contains(playerName)) {
-        	if (fixOwn.getValue()) {
-        		
-        	} else {
-        		text = text.replaceAll(usu, "");
-        	}
+        	text = text.replaceAll(usu, "");
             
-            if (color != null) {
-            	newName = getPrefix(mode, color) + newName;
-            }
+        	if (mode.is("Universocraft")) {
+	            if (color != null) {
+	            	newName = getPrefix(spoofMode, color) + newName;
+	            }
+        	}
 
             text = text.replace(playerName, newName);
             event.setString(text);
@@ -95,7 +91,7 @@ public final class Streamer extends Module {
                 text = text.replaceAll(jup, "");
                 
                 if (color != null) {
-                	newName = getPrefix(mode, color) + friend; 
+                	newName = getPrefix(spoofMode, color) + friend; 
                 } else {
                 	newName = friend;
                 }

@@ -49,6 +49,10 @@ public class C17PacketCustomPayload implements Packet<INetHandlerPlayServer> {
      */
     public void processPacket(final INetHandlerPlayServer handler) {
         handler.processVanilla250Packet(this);
+        
+        if (this.data != null) {
+            this.data.release();
+        }
     }
 
     public String getChannelName() {

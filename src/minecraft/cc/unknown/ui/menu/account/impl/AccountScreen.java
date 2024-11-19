@@ -21,9 +21,9 @@ import net.minecraft.util.ResourceLocation;
 
 public class AccountScreen extends GuiScreen implements Accessor {
     private static final Font FONT_RENDERER = Fonts.MINECRAFT.get(36, Weight.LIGHT);
-    private static final ResourceLocation CRACKED_RESOURCE = new ResourceLocation("sakura/images/minecraft.png");
-    private static final ResourceLocation COOKIE_RESOURCE = new ResourceLocation("sakura/images/cookie.png");
-    private static final ResourceLocation BACK_RESOURCE = new ResourceLocation("sakura/images/back.png");
+    private static final ResourceLocation CRACKED_RESOURCE = new ResourceLocation("sakura/images/alt/minecraft.png");
+    private static final ResourceLocation COOKIE_RESOURCE = new ResourceLocation("sakura/images/alt/cookie.png");
+    private static final ResourceLocation BACK_RESOURCE = new ResourceLocation("sakura/images/alt/back.png");
 
     private static GuiScreen reference;
 

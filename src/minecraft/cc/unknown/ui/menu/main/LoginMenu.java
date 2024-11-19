@@ -21,6 +21,7 @@ import cc.unknown.util.security.blacklist.BlackListUtil;
 import cc.unknown.util.security.hook.AuthUtil;
 import cc.unknown.util.security.user.UserUtil;
 import cc.unknown.util.vector.Vector2d;
+import lombok.SneakyThrows;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -72,14 +73,16 @@ public final class LoginMenu extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    @SneakyThrows
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
     	super.mouseClicked(mouseX, mouseY, mouseButton);
     	usernameBox.mouseClicked(mouseX, mouseY, mouseButton);
     	keyBox.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    @SneakyThrows
+    protected void keyTyped(char typedChar, int keyCode) {
         usernameBox.textboxKeyTyped(typedChar, keyCode);
         keyBox.textboxKeyTyped(typedChar, keyCode);
         if (typedChar == '\r') {

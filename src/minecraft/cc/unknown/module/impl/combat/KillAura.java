@@ -299,16 +299,15 @@ public final class KillAura extends Module {
 		 * Calculating rotations to target
 		 */
 		final float rotationSpeed = this.rotationSpeed.getRandomBetween().floatValue();
-		Vector2f targetRotations = RotationUtil.calculate(target, true, range.getValue().doubleValue());
-		if (rotationSpeed != 0)
-			RotationComponent.setRotations(targetRotations, rotationSpeed,
-					movementCorrection.getValue() == MovementFix.OFF ? MovementFix.OFF : movementCorrection.getValue(),
-					rotations -> {
-						MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(rotations,
-								range.getValue().floatValue(), -0.5f);
-						return movingObjectPosition != null
-								&& movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY;
-					});
+        Vector2f targetRotations = RotationUtil.calculate(target, true, range.getValue().doubleValue());
+
+        if (rotationSpeed != 0) RotationComponent.setRotations(targetRotations, rotationSpeed,
+                movementCorrection.getValue() == MovementFix.OFF ? MovementFix.OFF : movementCorrection.getValue(),
+                rotations -> {
+                    MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(rotations, range.getValue().floatValue(), -0.1f);
+
+                    return movingObjectPosition != null && movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY;
+                });
 	};
 
 	// We attack on an event after all others, because other modules may have
