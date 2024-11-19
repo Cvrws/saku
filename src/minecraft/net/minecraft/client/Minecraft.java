@@ -535,8 +535,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 	 * Starts the game: initializes the canvas, the title, the settings, etcetera.
 	 */
 	private void startGame() throws LWJGLException {
-		// Kys
-//        this.toggleFullscreen();
 		this.gameSettings = new GameSettings(this, this.mcDataDir);
 		this.defaultResourcePacks.add(this.mcDefaultResourcePack);
 		this.startTimerHackThread();
@@ -649,8 +647,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 			this.toggleFullscreen();
 		}
 
-		Sakura.instance.init();
-
 		try {
 			Display.setVSyncEnabled(this.gameSettings.enableVsync);
 		} catch (final OpenGLException var2) {
@@ -659,19 +655,15 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 		}
 
 		this.renderGlobal.makeEntityOutlineShader();
+		Sakura.instance.init();
 	}
 
 	private void registerMetadataSerializers() {
-		this.metadataSerializer_.registerMetadataSectionType(new TextureMetadataSectionSerializer(),
-				TextureMetadataSection.class);
-		this.metadataSerializer_.registerMetadataSectionType(new FontMetadataSectionSerializer(),
-				FontMetadataSection.class);
-		this.metadataSerializer_.registerMetadataSectionType(new AnimationMetadataSectionSerializer(),
-				AnimationMetadataSection.class);
-		this.metadataSerializer_.registerMetadataSectionType(new PackMetadataSectionSerializer(),
-				PackMetadataSection.class);
-		this.metadataSerializer_.registerMetadataSectionType(new LanguageMetadataSectionSerializer(),
-				LanguageMetadataSection.class);
+		this.metadataSerializer_.registerMetadataSectionType(new TextureMetadataSectionSerializer(), TextureMetadataSection.class);
+		this.metadataSerializer_.registerMetadataSectionType(new FontMetadataSectionSerializer(), FontMetadataSection.class);
+		this.metadataSerializer_.registerMetadataSectionType(new AnimationMetadataSectionSerializer(), AnimationMetadataSection.class);
+		this.metadataSerializer_.registerMetadataSectionType(new PackMetadataSectionSerializer(), PackMetadataSection.class);
+		this.metadataSerializer_.registerMetadataSectionType(new LanguageMetadataSectionSerializer(), LanguageMetadataSection.class);
 	}
 
 	private void createDisplay() throws LWJGLException {
@@ -1091,12 +1083,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 		this.framebufferMc.bindFramebuffer(true);
 		this.mcProfiler.startSection("display");
 		GlStateManager.enableTexture2D();
-
-		/*
-		 * if (false) { threadPool.execute(() -> { if (this.thePlayer != null &&
-		 * this.thePlayer.isEntityInsideOpaqueBlock()) {
-		 * this.gameSettings.thirdPersonView = 0; } }); }
-		 */
+		if (this.player != null && this.player.isEntityInsideOpaqueBlock()) {
+			this.gameSettings.thirdPersonView = 0;
+		}
 
 		this.mcProfiler.endSection();
 
@@ -1120,7 +1109,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 			this.prevFrameTime = System.nanoTime();
 		}
 
-//        this.guiAchievement.updateAchievementWindow();
 		this.framebufferMc.unbindFramebuffer();
 		GlStateManager.popMatrix();
 		GlStateManager.pushMatrix();

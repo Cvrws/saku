@@ -46,7 +46,7 @@ public class LegitBlink extends Module {
 	}
 
     @EventLink
-    public final Listener<GameEvent> onTickEvent = event -> {
+    public final Listener<GameEvent> onGame = event -> {
     	if (mc.player == null) return;
         ticks++;
         if (ticks > 17) this.toggle();
