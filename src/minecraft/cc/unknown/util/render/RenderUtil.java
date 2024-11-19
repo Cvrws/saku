@@ -4,6 +4,8 @@ import java.awt.Color;
 
 import javax.vecmath.Vector4d;
 
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.Sakura;
@@ -11,7 +13,9 @@ import cc.unknown.component.impl.render.ProjectionComponent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.shader.RiseShaders;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;

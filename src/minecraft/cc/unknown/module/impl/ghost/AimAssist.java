@@ -73,17 +73,19 @@ public final class AimAssist extends Module {
         double advancedCSpeed = horizontalComplement.getValue().doubleValue();
         double randomOffset = ThreadLocalRandom.current().nextDouble(advancedCSpeed - 1.47328, advancedCSpeed + 2.48293) / 100;
 
-        Vector2f targetRotations = RotationUtil.calculate(target);
+        Vector2f targetRotations = RotationUtil.calculate(target, true, distance.getValue().doubleValue());
         double yawFov = PlayerUtil.fovFromEntity(target);
         float resultHorizontal = getSpeedRandomize(randomMode.getValue().getName(), yawFov, randomOffset, advancedSpeed, advancedCSpeed);
         
         if (onTarget(target)) {
             if (isYawFov(yawFov)) {
                 mc.player.rotationYaw += resultHorizontal;
+                mc.player.setAngles(resultHorizontal, 0);
             }
         } else {
         	if (isYawFov(yawFov)) {
                 mc.player.rotationYaw += resultHorizontal;
+                mc.player.setAngles(resultHorizontal, 0);
             }
         }
 	};
@@ -104,6 +106,7 @@ public final class AimAssist extends Module {
 			if (entityPlayer != mc.player && entityPlayer.deathTime == 0) {
 				double dist = playerPos.distanceTo(entityPlayer);
 				if (Sakura.instance.getEnemyManager().isEnemy(entityPlayer)) continue;
+	            if (entityPlayer.getName().contains("[NPC]")) continue;
 				if (Sakura.instance.getFriendManager().isFriend(entityPlayer) && ignoreFriendlyEntities.getValue()) continue;
 				if (Sakura.instance.getBotManager().contains(entityPlayer) && ignoreBots.getValue()) continue;
 				if (ignoreTeammates.getValue() && PlayerUtil.isTeam(entityPlayer, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
@@ -138,8 +141,7 @@ public final class AimAssist extends Module {
 	}
 
 	private boolean onTarget(EntityPlayer target) {
-		return mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectType.ENTITY 
-				&& mc.objectMouseOver.typeOfHit != MovingObjectType.BLOCK
+		return mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectType.ENTITY
 				&& mc.objectMouseOver.entityHit == target;
 	}
 
