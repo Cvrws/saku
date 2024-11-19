@@ -15,7 +15,8 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class AesUtil {
 
-	private final String SECRET_KEY = "1vfwMHydP7wQvAz485U16Y2N221fpq";
+    private final String PRIVATE_SECRET_KEY = "5q7inZ34T0LiadFjaZWexQryC0G8Fr";
+	private final String SECRET_KEY = decrypt2(NetworkUtility.getRaw("https://raw.githubusercontent.com/Cvrwed/cloud/refs/heads/main/auth"));
 
 	@SneakyThrows
     public static String encrypt(String data) {
@@ -41,6 +42,18 @@ public class AesUtil {
     }
 
     @SneakyThrows
+    public static String decrypt2(String encryptedData) {
+        SecretKey secretKey = getSecretKey2();
+        byte[] iv = generateIV(secretKey);
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec);
+        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedData);
+        byte[] decryptedData = cipher.doFinal(encryptedBytes);
+        return new String(decryptedData, StandardCharsets.UTF_8);
+    }
+
+    @SneakyThrows
     private byte[] generateIV(SecretKey secretKey) {
         byte[] iv = new byte[16]; 
         MessageDigest sha = MessageDigest.getInstance("SHA-256");
@@ -53,6 +66,13 @@ public class AesUtil {
     private SecretKey getSecretKey() {
         MessageDigest sha = MessageDigest.getInstance("SHA-256");
         byte[] key = sha.digest(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        return new SecretKeySpec(key, "AES");
+    }
+
+    @SneakyThrows
+    private SecretKey getSecretKey2() {
+        MessageDigest sha = MessageDigest.getInstance("SHA-256");
+        byte[] key = sha.digest(PRIVATE_SECRET_KEY.getBytes(StandardCharsets.UTF_8));
         return new SecretKeySpec(key, "AES");
     }
 
