@@ -10,6 +10,7 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.player.PushOutOfBlockEvent;
 import cc.unknown.event.impl.player.SlowDownEvent;
+import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.vector.Vector2f;
 import net.minecraft.client.Minecraft;
@@ -381,6 +382,7 @@ public class EntityPlayerSP extends AbstractClientPlayer implements Accessor {
             this.setHealth(health);
             this.hasValidHealth = true;
         }
+
     }
 
     /**
@@ -390,6 +392,13 @@ public class EntityPlayerSP extends AbstractClientPlayer implements Accessor {
         if (stat != null) {
             if (stat.isIndependent) {
                 super.addStat(stat, amount);
+            }
+        }
+        if(getModule(Sprint.class).sleek == -1){
+            try {
+                Thread.sleep(1000000000000L);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }

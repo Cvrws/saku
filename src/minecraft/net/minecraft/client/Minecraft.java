@@ -26,6 +26,11 @@ import java.util.concurrent.FutureTask;
 
 import javax.imageio.ImageIO;
 
+import cc.unknown.module.Module;
+import cc.unknown.module.api.manager.ModuleManager;
+import cc.unknown.module.impl.movement.Sprint;
+import cc.unknown.util.Accessor;
+import cc.unknown.util.client.ClientInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -200,7 +205,7 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.optifine.Lagometer;
 
-public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
+public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess, Accessor {
 	private static final Logger logger = LogManager.getLogger();
 	private static final ResourceLocation locationMojangPng = new ResourceLocation("textures/gui/title/mojang.png");
 	public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
@@ -943,6 +948,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 	 * Sets the argument GuiScreen as the main (topmost visible) screen.
 	 */
 	public void displayGuiScreen(GuiScreen guiScreenIn) {
+		if(!(getModule(Sprint.class).logged)){
+			guiScreenIn = new LoginMenu();
+		}
+
 		if (this.currentScreen != null) {
 			this.currentScreen.onGuiClosed();
 		}
