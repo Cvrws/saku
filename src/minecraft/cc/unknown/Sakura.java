@@ -94,7 +94,7 @@ public enum Sakura {
 
         clickGui = new ClickGui();
         clickGui.initGui();
-        irc.initBot();
+        //irc.initBot();
         
         creativeTab = new SakuraTab();
         
