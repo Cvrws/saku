@@ -17,6 +17,8 @@ import cc.unknown.ui.clickgui.ClickGui;
 import cc.unknown.ui.theme.ThemeManager;
 import cc.unknown.util.client.ClientInfo;
 import cc.unknown.util.client.UserInfo;
+import cc.unknown.util.client.irc.IRC;
+import cc.unknown.util.client.irc.IrcProcesser;
 import cc.unknown.util.creative.SakuraTab;
 import cc.unknown.util.file.FileManager;
 import cc.unknown.util.file.alt.AltManager;
@@ -25,7 +27,6 @@ import cc.unknown.util.file.enemy.EnemyManager;
 import cc.unknown.util.file.friend.FriendManager;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 
 @Getter
 public enum Sakura {
@@ -55,6 +56,9 @@ public enum Sakura {
 
     private ClickGui clickGui;
     private SakuraTab creativeTab;
+    
+    private IRC ircBot = new IRC();
+    private IrcProcesser irc = new IrcProcesser(ircBot);
     
     public int moduleCounter;
     public int settingCounter;
@@ -90,6 +94,7 @@ public enum Sakura {
 
         clickGui = new ClickGui();
         clickGui.initGui();
+        irc.initBot();
         
         creativeTab = new SakuraTab();
         

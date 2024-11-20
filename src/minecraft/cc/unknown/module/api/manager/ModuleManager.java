@@ -122,6 +122,7 @@ public final class ModuleManager {
         // Render
         this.put(Ambience.class, new Ambience());
         this.put(Animations.class, new Animations());
+        this.put(Chat.class, new Chat());
         this.put(BPSCounter.class, new BPSCounter());
         this.put(ChestESP.class, new ChestESP());
         this.put(ClickGUI.class, new ClickGUI());
