@@ -115,7 +115,7 @@ public enum Sakura {
     }
 
     public void terminate() {
-        if (getConfigManager().get("latest") != null) {
+    	if (getConfigManager().get("latest") != null) {
         	getConfigManager().get("latest").write();
         }
         

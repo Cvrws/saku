@@ -123,7 +123,7 @@ public final class LoginMenu extends GuiScreen {
 
                         if (decryptedUuid.equals(systemUuid) && username.equalsIgnoreCase(decryptedUsername)) {
                             UserUtil.setUser(decryptedUsername);
-                            Sakura.instance.getModuleManager().logged = true;
+                            getModule(Sprint.class).logged = true;
                             mc.displayGuiScreen(new MainMenu());
                             AuthUtil.notify("`Login Success - User: " + UserUtil.getUser() + "`");
                         } else {

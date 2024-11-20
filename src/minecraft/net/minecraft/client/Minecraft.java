@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
@@ -73,9 +72,11 @@ import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.ui.menu.main.LoginMenu;
 import cc.unknown.ui.menu.main.MainMenu;
+import cc.unknown.util.Accessor;
 import cc.unknown.util.font.impl.minecraft.FontRenderer;
 import cc.unknown.util.interfaces.ThreadAccess;
 import cc.unknown.util.render.RenderUtil;
+import cc.unknown.util.security.user.UserUtil;
 import cc.unknown.util.time.StopWatch;
 import de.florianmichael.viamcp.fixes.AttackOrder;
 import net.minecraft.block.Block;
@@ -213,7 +214,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 	public boolean keybindsReverse = false;
 	public static byte[] memoryReserve = new byte[10485760];
 	private static final List<DisplayMode> macDisplayModes = Lists.newArrayList(new DisplayMode(2560, 1600),
-			new DisplayMode(2880, 1800));
+new DisplayMode(2880, 1800));
 	private final File fileResourcepacks;
 	private final PropertyMap twitchDetails;
 	private final PropertyMap field_181038_N;
@@ -636,9 +637,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 		this.ingameGUI = new GuiIngame(this);
 
 		if (this.serverName != null) {
-			this.displayGuiScreen(new GuiConnecting(new LoginMenu(), this, this.serverName, this.serverPort));
+			this.displayGuiScreen(new GuiConnecting(new MainMenu(), this, this.serverName, this.serverPort));
 		} else {
-			this.displayGuiScreen(new LoginMenu());
+			this.displayGuiScreen(new MainMenu());
 		}
 
 		this.renderEngine.deleteTexture(this.mojangLogo);
@@ -945,10 +946,14 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 	 * Sets the argument GuiScreen as the main (topmost visible) screen.
 	 */
 	public void displayGuiScreen(GuiScreen guiScreenIn) {
-		if (Sakura.instance != null && Sakura.instance.getModuleManager() != null && !Sakura.instance.getModuleManager().logged) {
-			guiScreenIn = new LoginMenu();
-		}
+		if (Sakura.instance != null && Sakura.instance.getModuleManager() != null) {
+		    Sprint sprint = Sakura.instance.getModuleManager().get(Sprint.class);
 
+		    if (sprint != null && !sprint.logged) {
+		        guiScreenIn = new LoginMenu();
+		    }
+		}
+		
 		if (this.currentScreen != null) {
 			this.currentScreen.onGuiClosed();
 		}

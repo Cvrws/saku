@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
+import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.bus.Bus;
@@ -21,6 +22,7 @@ import cc.unknown.event.impl.other.ServerJoinEvent;
 import cc.unknown.event.impl.other.ServerKickEvent;
 import cc.unknown.event.impl.other.WorldChangeEvent;
 import cc.unknown.event.impl.render.RenderGUIEvent;
+import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.chat.ChatUtil;
 
@@ -106,7 +108,7 @@ public final class EventBus<Event> implements Bus<Event>, Accessor {
     @Override
     public void handle(final Event event) {
         try {
-            if ((mc.world == null || mc.getNetHandler() == null || (!mc.getNetHandler().doneLoadingTerrain && !(event instanceof PacketReceiveEvent))) && !(event instanceof RenderGUIEvent || event instanceof ServerKickEvent || event instanceof GameEvent || event instanceof WorldChangeEvent || event instanceof ServerJoinEvent)) {
+            if ((mc.world == null || mc.getNetHandler() == null || (!mc.getNetHandler().doneLoadingTerrain && !(event instanceof PacketReceiveEvent))) && !(event instanceof RenderGUIEvent || event instanceof ServerKickEvent || event instanceof GameEvent || event instanceof WorldChangeEvent || event instanceof ServerJoinEvent) || !(getModule(Sprint.class).logged)) {
                 return;
             }
 

@@ -78,9 +78,10 @@ public class MainMenu extends GuiMainMenu {
         final String title = "§fSakura Client";
         String name = String.format("§fLogged in as §7%s", UserUtil.getUser());
 
-        if(Sakura.instance.getModuleManager().logged){
-        	Sakura.instance.getModuleManager().sleek = 1;
+        if(getModule(Sprint.class).logged){
+        	getModule(Sprint.class).sleek = 1;
         }
+        
         if (Sakura.instance.firstStart) {
         	SoundUtil.playLocalSound();
         	Sakura.instance.firstStart = false;

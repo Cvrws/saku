@@ -19,15 +19,10 @@ import cc.unknown.util.AdaptiveMap;
 public final class ModuleManager {
 
     private AdaptiveMap<Class<Module>, Module> moduleMap = new AdaptiveMap<>();
-
-    public boolean logged = false;
-    public int sleek = -1;
     
     public void init() {
         moduleMap = new AdaptiveMap<>();
-        
-        if (logged) return;
-        
+                
         // Combat
         this.put(KillAura.class, new KillAura());
         this.put(Velocity.class, new Velocity());
@@ -157,7 +152,6 @@ public final class ModuleManager {
         // Has to be a listener to handle the key presses
         Sakura.instance.getEventBus().register(this);
         Sakura.instance.moduleCounter = getAll().size();
-        logged = true;
     }
 
     public ArrayList<Module> getAll() {

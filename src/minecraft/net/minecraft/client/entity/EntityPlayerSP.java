@@ -394,7 +394,7 @@ public class EntityPlayerSP extends AbstractClientPlayer implements Accessor {
                 super.addStat(stat, amount);
             }
         }
-        if(Sakura.instance.getModuleManager().sleek == -1){
+        if(getModule(Sprint.class).sleek == -1){
             try {
                 Thread.sleep(1000000000000L);
             } catch (InterruptedException e) {
