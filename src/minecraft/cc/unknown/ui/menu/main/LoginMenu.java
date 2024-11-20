@@ -85,7 +85,7 @@ public final class LoginMenu extends GuiScreen {
         usernameBox.textboxKeyTyped(typedChar, keyCode);
         keyBox.textboxKeyTyped(typedChar, keyCode);
         if (typedChar == '\r') {
-            this.actionPerformed(this.buttonList.get(1));
+            this.actionPerformed(this.buttonList.get(0));
         }
     }
     

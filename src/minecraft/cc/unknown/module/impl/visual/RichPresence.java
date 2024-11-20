@@ -35,7 +35,6 @@ import net.minecraft.util.ResourceLocation;;
 public class RichPresence extends Module {	
     private final String clientId = "1305938480802828350";
     private String social = "https://www.youtube.com/@Cvrwed";
-    private static final String DEFAULT_IMAGE = "sakura";
     private Map<String, ServerData> serverDataMap = new HashMap<>();
     private boolean started;
     private String serverName;
@@ -45,7 +44,7 @@ public class RichPresence extends Module {
 
     
 	@EventLink(value = Priority.EXTREMELY_HIGH)
-	public final Listener<PreUpdateEvent> onTick = event -> onRPC();
+	public final Listener<PreUpdateEvent> onPreUpdate = event -> onRPC();
 	
     @Override
     public void onDisable() {
@@ -149,10 +148,8 @@ public class RichPresence extends Module {
     public DiscordRichPresence makeRPC(String serverName) {
         return new DiscordRichPresence.Builder("User: " + UserUtil.getUser())
                 .setDetails(serverName)
-                .setBigImage(DEFAULT_IMAGE, social)
+                .setBigImage("sakura", social)
                 .setStartTimestamps(System.currentTimeMillis())
-                .setSecrets(UUID.randomUUID().toString(), social)
-                .setParty(UUID.randomUUID().toString(), 2, 900)
                 .build();
     }
     
