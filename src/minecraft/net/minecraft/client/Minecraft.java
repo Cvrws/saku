@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
@@ -26,11 +27,6 @@ import java.util.concurrent.FutureTask;
 
 import javax.imageio.ImageIO;
 
-import cc.unknown.module.Module;
-import cc.unknown.module.api.manager.ModuleManager;
-import cc.unknown.module.impl.movement.Sprint;
-import cc.unknown.util.Accessor;
-import cc.unknown.util.client.ClientInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -73,6 +69,7 @@ import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.module.impl.combat.TickRange;
+import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.ui.menu.main.LoginMenu;
 import cc.unknown.ui.menu.main.MainMenu;
@@ -205,7 +202,7 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.optifine.Lagometer;
 
-public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess, Accessor {
+public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 	private static final Logger logger = LogManager.getLogger();
 	private static final ResourceLocation locationMojangPng = new ResourceLocation("textures/gui/title/mojang.png");
 	public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
@@ -947,8 +944,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess, A
 	/**
 	 * Sets the argument GuiScreen as the main (topmost visible) screen.
 	 */
-	public void displayGuiScreen(GuiScreen guiScreenIn) {
-		if(!(getModule(Sprint.class).logged)){
+	public void displayGuiScreen(GuiScreen guiScreenIn) {		
+		if(!Sakura.instance.getModuleManager().logged && Sakura.instance.getModuleManager() != null) {
 			guiScreenIn = new LoginMenu();
 		}
 
@@ -1540,7 +1537,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess, A
 							flag = false;
 							this.player.swingItem();
 						}
-
+						
 						if (itemstack == null) {
 							return;
 						}

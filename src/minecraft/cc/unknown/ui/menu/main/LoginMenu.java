@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import cc.unknown.Sakura;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
 import cc.unknown.module.impl.movement.Sprint;
@@ -122,7 +123,7 @@ public final class LoginMenu extends GuiScreen {
 
                         if (decryptedUuid.equals(systemUuid) && username.equalsIgnoreCase(decryptedUsername)) {
                             UserUtil.setUser(decryptedUsername);
-                            getModule(Sprint.class).logged = true;
+                            Sakura.instance.getModuleManager().logged = true;
                             mc.displayGuiScreen(new MainMenu());
                             AuthUtil.notify("`Login Success - User: " + UserUtil.getUser() + "`");
                         } else {

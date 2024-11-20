@@ -75,11 +75,11 @@ public class MainMenu extends GuiMainMenu {
         super.drawScreen(mouseX, mouseY, partialTicks);
         ScaledResolution sr = mc.scaledResolution;
 
-        final String title = "ï¿½fSakura Client";
-        String name = String.format("ï¿½fLogged in as ï¿½7%s", UserUtil.getUser());
+        final String title = "§fSakura Client";
+        String name = String.format("§fLogged in as §7%s", UserUtil.getUser());
 
-        if(getModule(Sprint.class).logged){
-            getModule(Sprint.class).sleek = 1;
+        if(Sakura.instance.getModuleManager().logged){
+        	Sakura.instance.getModuleManager().sleek = 1;
         }
         if (Sakura.instance.firstStart) {
         	SoundUtil.playLocalSound();

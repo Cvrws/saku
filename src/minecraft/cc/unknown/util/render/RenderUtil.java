@@ -35,7 +35,6 @@ import net.minecraft.util.ResourceLocation;
 public final class RenderUtil implements Accessor {
 
     private final Frustum FRUSTUM = new Frustum();
-    private final RenderManager RENDER_MANAGER = mc.getRenderManager();
     public final int GENERIC_SCALE = 22;
     
     /**
