@@ -15,7 +15,7 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.irc.IRC;
-import cc.unknown.util.client.irc.IrcProcesser;
+import cc.unknown.util.client.irc.Processor;
 import cc.unknown.value.impl.StringValue;
 
 @ModuleInfo(aliases = {"Internet Relay Chat", "irc"}, description = "Talk with other sakura users [BETA]", category = Category.OTHER)
@@ -26,14 +26,12 @@ public final class InternetRelayChat extends Module {
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private IRC ircBot = new IRC();
-    private IrcProcesser irc = new IrcProcesser(ircBot);
+    private Processor irc = new Processor(ircBot);
     
     private final StringValue prefix = new StringValue("Prefix", this, "#");
     
     @Override
     public void onEnable() {
-    	NotificationComponent.post("Internet Relay Chat", "Solo es posible ver los mensajes del discord hacia el cliente", 6000);
-        
     	irc.initBot();
     }
     

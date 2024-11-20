@@ -23,6 +23,7 @@ public class IRC extends ListenerAdapter implements Accessor {
 
 	@Getter
 	private JDA jda;
+    private UserUtil userUtil;
 
 	@SneakyThrows
 	public void init() {		
@@ -44,12 +45,13 @@ public class IRC extends ListenerAdapter implements Accessor {
 	    }
 
 	    String username = format(event.getAuthor().getName());
-	    sendToMinecraft(username, messageContent);
+	    discordToClient(username, messageContent);
+	    
 	}
 	
-	private void sendToMinecraft(String username, String content) {
+	private void discordToClient(String username, String content) {
 	    String message = ChatFormatting.BLUE + "[Discord] " + ChatFormatting.RED + username + ": " + ChatFormatting.WHITE + content;
-	    ChatUtil.display(message);   
+	    ChatUtil.display(message);
 	}
 	
 	public void sendMessage(String message, String clientBrand) {

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import cc.unknown.Sakura;
 import lombok.Getter;
 
-public class IrcProcesser {
+public class Processor {
 	
 	@Getter
 	public IRC sender;
@@ -13,7 +13,7 @@ public class IrcProcesser {
 	public ArrayList<String> logs = new ArrayList<String>();
 	public String latestMessage = "", lastMessageSentByMe = "";
 	
-	public IrcProcesser(IRC bot) {
+	public Processor(IRC bot) {
 		this.sender = bot;
 	}
 	
