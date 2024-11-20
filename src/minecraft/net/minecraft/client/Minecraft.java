@@ -636,9 +636,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 		this.ingameGUI = new GuiIngame(this);
 
 		if (this.serverName != null) {
-			this.displayGuiScreen(new GuiConnecting(new MainMenu(), this, this.serverName, this.serverPort));
+			this.displayGuiScreen(new GuiConnecting(new LoginMenu(), this, this.serverName, this.serverPort));
 		} else {
-			this.displayGuiScreen(new MainMenu());
+			this.displayGuiScreen(new LoginMenu());
 		}
 
 		this.renderEngine.deleteTexture(this.mojangLogo);
@@ -944,8 +944,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 	/**
 	 * Sets the argument GuiScreen as the main (topmost visible) screen.
 	 */
-	public void displayGuiScreen(GuiScreen guiScreenIn) {		
-		if(!Sakura.instance.getModuleManager().logged && Sakura.instance.getModuleManager() != null) {
+	public void displayGuiScreen(GuiScreen guiScreenIn) {
+		if (Sakura.instance != null && Sakura.instance.getModuleManager() != null && !Sakura.instance.getModuleManager().logged) {
 			guiScreenIn = new LoginMenu();
 		}
 
