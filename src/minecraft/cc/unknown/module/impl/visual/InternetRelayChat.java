@@ -16,6 +16,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.irc.IRC;
 import cc.unknown.util.client.irc.IrcProcesser;
+import cc.unknown.value.impl.StringValue;
 
 @ModuleInfo(aliases = {"Internet Relay Chat", "irc"}, description = "Talk with other sakura users [BETA]", category = Category.OTHER)
 public final class InternetRelayChat extends Module {
@@ -26,6 +27,8 @@ public final class InternetRelayChat extends Module {
 
     private IRC ircBot = new IRC();
     private IrcProcesser irc = new IrcProcesser(ircBot);
+    
+    private final StringValue prefix = new StringValue("Prefix", this, "#");
     
     @Override
     public void onEnable() {
@@ -43,7 +46,7 @@ public final class InternetRelayChat extends Module {
     public final Listener<ChatInputEvent> onChat = event -> {
         String message = event.getMessage();
 
-        if (message.startsWith("#") && message.length() > 1) {
+        if (message.startsWith(prefix.getValue()) && message.length() > 1) {
             event.setCancelled();
             message = message.substring(1);
             message = StringUtils.normalizeSpace(message);
@@ -55,22 +58,6 @@ public final class InternetRelayChat extends Module {
             irc.sendMessage(" ``" + message + "``");
         }
     };
-
-	/*@EventLink
-	public final Listener<PacketSendEvent> onPacketSend = event -> {
-	    Packet<?> packet = event.getPacket();
-	    if (packet instanceof C01PacketChatMessage) {
-	        C01PacketChatMessage chatPacket = (C01PacketChatMessage) packet;
-	        String sentMessage = chatPacket.getMessage();
-
-	        if (isBlocked(sentMessage)) {
-	            return;
-	        }
-
-	       irc.sendMessage(" ``" + sentMessage + "``");
-
-	    }
-	};*/
 
     private boolean isBlocked(String message) {
         for (String prefix : BLOCKED_PREFIXES) {
