@@ -34,7 +34,6 @@ import net.minecraft.util.ResourceLocation;;
 @ModuleInfo(aliases = {"Rich Presence", "discord status"}, category = Category.VISUALS, description = "Discord Status")
 public class RichPresence extends Module {	
     private final String clientId = "1305938480802828350";
-    private String social = "https://www.youtube.com/@Cvrwed";
     private static final String DEFAULT_IMAGE = "sakura";
     private Map<String, ServerData> serverDataMap = new HashMap<>();
     private boolean started;
@@ -149,10 +148,8 @@ public class RichPresence extends Module {
     public DiscordRichPresence makeRPC(String serverName) {
         return new DiscordRichPresence.Builder("User: " + UserUtil.getUser())
                 .setDetails(serverName)
-                .setBigImage(DEFAULT_IMAGE, social)
+                .setBigImage(DEFAULT_IMAGE, Sakura.NAME + Sakura.VERSION_FULL)
                 .setStartTimestamps(System.currentTimeMillis())
-                .setSecrets(UUID.randomUUID().toString(), social)
-                .setParty(UUID.randomUUID().toString(), 2, 900)
                 .build();
     }
     

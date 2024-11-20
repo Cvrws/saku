@@ -2,6 +2,7 @@ package cc.unknown.util.client.irc;
 
 import cc.unknown.util.Accessor;
 import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.security.user.UserUtil;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
@@ -9,9 +10,8 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.minecraft.util.ChatComponentText;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.minecraft.util.ChatFormatting;
-import net.minecraft.util.ChatStyle;
 
 @Getter
 @Setter
@@ -22,33 +22,27 @@ public class IRC extends ListenerAdapter implements Accessor {
 
 	private static JDA jda;
 
-	public void init() {
-		try {
-			JDABuilder builder = JDABuilder.createDefault(token);
-			builder.addEventListeners(new IRC());
-			jda = builder.build();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void init() {		
+        if (jda == null || jda.getStatus() == JDA.Status.SHUTDOWN || jda.getStatus() == JDA.Status.FAILED_TO_LOGIN){
+            jda = JDABuilder.createDefault(token).enableIntents(GatewayIntent.MESSAGE_CONTENT).addEventListeners(new IRC()).build();
+        }
 	}
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-	    if (event.getAuthor().isBot()) {
+	    if (event.getAuthor().isBot() || !event.getChannel().getId().equals(channelId)) {
 	        return;
 	    }
 
-	    String content = event.getMessage().getContentRaw();
-	    String username = event.getAuthor().getName();
+	    String messageContent = event.getMessage().getContentDisplay();
+	    String username = format(event.getAuthor().getName());
 
-	    sendToMinecraftChat(username, content);
+	    sendToMinecraftChat(username, messageContent);
 	}
 	
 	private void sendToMinecraftChat(String username, String content) {
 	    String message = ChatFormatting.BLUE + "[Discord] " + ChatFormatting.RED + username + ": " + ChatFormatting.WHITE + content;
-	    
-	    ChatUtil.display(message);
-	    
+	    ChatUtil.display(message);   
 	}
 	
 	public void sendMessage(String message, String clientBrand) {
@@ -57,8 +51,15 @@ public class IRC extends ListenerAdapter implements Accessor {
 			channel.sendMessage(getHeaders(clientBrand) + message).queue();
 		}
 	}
+	
+	private String format(String input) {
+	    if (input == null || input.isEmpty()) {
+	        return input;
+	    }
+	    return input.substring(0, 1).toUpperCase() + input.substring(1);
+	}
 
 	public String getHeaders(String clientBrand) {
-	    return "-# [IRC] " + mc.getSession().getUsername() + ": ";
+	    return "-# [IRC] " + UserUtil.getUser() + ": ";
 	}
 }
