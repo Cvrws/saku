@@ -120,6 +120,7 @@ public final class ModuleManager {
         this.put(Animations.class, new Animations());
         this.put(BPSCounter.class, new BPSCounter());
         this.put(ChestESP.class, new ChestESP());
+        this.put(RichPresence.class, new RichPresence());
         this.put(ClickGUI.class, new ClickGUI());
         this.put(CPSCounter.class, new CPSCounter());
         this.put(FPSCounter.class, new FPSCounter());

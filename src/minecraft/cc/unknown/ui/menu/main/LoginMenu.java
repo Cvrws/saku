@@ -11,7 +11,6 @@ import cc.unknown.ui.menu.main.impl.Button;
 import cc.unknown.ui.menu.main.impl.TextField;
 import cc.unknown.util.animation.Animation;
 import cc.unknown.util.animation.Easing;
-import cc.unknown.util.client.DiscordStatus;
 import cc.unknown.util.font.Font;
 import cc.unknown.util.render.BackgroundUtil;
 import cc.unknown.util.render.RenderUtil;

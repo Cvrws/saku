@@ -5,7 +5,7 @@ import java.awt.Color;
 import cc.unknown.Sakura;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.util.client.DiscordStatus;
+import cc.unknown.module.impl.visual.RichPresence;
 import cc.unknown.util.font.Font;
 import cc.unknown.util.render.BackgroundUtil;
 import cc.unknown.util.render.RenderUtil;
@@ -79,6 +79,6 @@ public class MenuInfo extends GuiScreen {
     }
     
     private boolean isRPC() {
-    	return DiscordStatus.started;
+    	return getModule(RichPresence.class).isEnabled();
     }
 }

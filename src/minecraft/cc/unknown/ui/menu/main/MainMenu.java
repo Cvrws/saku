@@ -11,7 +11,6 @@ import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.ui.menu.account.AccountManagerScreen;
 import cc.unknown.ui.menu.main.impl.Button;
 import cc.unknown.ui.menu.particles.RainParticleSystem;
-import cc.unknown.util.client.DiscordStatus;
 import cc.unknown.util.font.Font;
 import cc.unknown.util.security.user.UserUtil;
 import cc.unknown.util.sound.SoundUtil;
