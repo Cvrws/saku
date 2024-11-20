@@ -7,16 +7,19 @@ import java.util.concurrent.Executors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import cc.unknown.component.impl.render.NotificationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.ChatInputEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.chat.ChatUtil;
 import cc.unknown.util.client.irc.IRC;
 import cc.unknown.util.client.irc.Processor;
+import cc.unknown.util.security.user.UserUtil;
 import cc.unknown.value.impl.StringValue;
+import net.dv8tion.jda.api.entities.Message;
+import net.minecraft.util.ChatFormatting;
 
 @ModuleInfo(aliases = {"Internet Relay Chat", "irc"}, description = "Talk with other sakura users [BETA]", category = Category.OTHER)
 public final class InternetRelayChat extends Module {
@@ -47,16 +50,13 @@ public final class InternetRelayChat extends Module {
         if (message.startsWith(prefix.getValue()) && message.length() > 1) {
             event.setCancelled();
             message = message.substring(1);
-            message = StringUtils.normalizeSpace(message);
-            
-	        if (isBlocked(message)) {
-	            return;
-	        }
-            
-            irc.sendMessage(" ``" + message + "``");
+            message = StringUtils.normalizeSpace(message);            
+            if (!isBlocked(message)) {
+            	irc.sendMessage(" ``" + message + "``");
+            }
         }
     };
-
+    
     private boolean isBlocked(String message) {
         for (String prefix : BLOCKED_PREFIXES) {
             if (message.startsWith(prefix)) {
