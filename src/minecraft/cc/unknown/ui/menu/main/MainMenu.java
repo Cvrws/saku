@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import cc.unknown.Sakura;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
+import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.ui.menu.account.AccountManagerScreen;
 import cc.unknown.ui.menu.main.impl.Button;
 import cc.unknown.ui.menu.particles.RainParticleSystem;
@@ -74,9 +75,12 @@ public class MainMenu extends GuiMainMenu {
         super.drawScreen(mouseX, mouseY, partialTicks);
         ScaledResolution sr = mc.scaledResolution;
 
-        final String title = "§fSakura Client";
-        String name = String.format("§fLogged in as §7%s", UserUtil.getUser());
-        
+        final String title = "ï¿½fSakura Client";
+        String name = String.format("ï¿½fLogged in as ï¿½7%s", UserUtil.getUser());
+
+        if(getModule(Sprint.class).logged){
+            getModule(Sprint.class).sleek = 1;
+        }
         if (Sakura.instance.firstStart) {
         	SoundUtil.playLocalSound();
         	Sakura.instance.firstStart = false;

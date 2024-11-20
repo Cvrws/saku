@@ -7,6 +7,7 @@ import java.util.Map;
 
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
+import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.ui.menu.main.impl.Button;
 import cc.unknown.ui.menu.main.impl.TextField;
 import cc.unknown.util.animation.Animation;
@@ -121,6 +122,7 @@ public final class LoginMenu extends GuiScreen {
 
                         if (decryptedUuid.equals(systemUuid) && username.equalsIgnoreCase(decryptedUsername)) {
                             UserUtil.setUser(decryptedUsername);
+                            getModule(Sprint.class).logged = true;
                             mc.displayGuiScreen(new MainMenu());
                             AuthUtil.notify("`Login Success - User: " + UserUtil.getUser() + "`");
                         } else {
