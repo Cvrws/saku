@@ -3,9 +3,11 @@ package cc.unknown.util.client.irc;
 import java.util.ArrayList;
 
 import cc.unknown.Sakura;
+import lombok.Getter;
 
 public class IrcProcesser {
 	
+	@Getter
 	public IRC sender;
 	
 	public ArrayList<String> logs = new ArrayList<String>();
@@ -29,5 +31,8 @@ public class IrcProcesser {
 	public void initBot() {
 		sender.init();
 	}
-
+	
+	public void stopBot() {
+		sender.getJda().shutdown();
+	}
 }

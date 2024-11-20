@@ -16,6 +16,7 @@ import cc.unknown.script.ScriptManager;
 import cc.unknown.ui.clickgui.ClickGui;
 import cc.unknown.ui.theme.ThemeManager;
 import cc.unknown.util.client.ClientInfo;
+import cc.unknown.util.client.DiscordStatus;
 import cc.unknown.util.client.UserInfo;
 import cc.unknown.util.client.irc.IRC;
 import cc.unknown.util.client.irc.IrcProcesser;
@@ -57,9 +58,6 @@ public enum Sakura {
     private ClickGui clickGui;
     private SakuraTab creativeTab;
     
-    private IRC ircBot = new IRC();
-    private IrcProcesser irc = new IrcProcesser(ircBot);
-    
     public int moduleCounter;
     public int settingCounter;
     public boolean firstStart;
@@ -67,6 +65,7 @@ public enum Sakura {
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public void init() {
+    	DiscordStatus.init();
         moduleManager = new ModuleManager();
         componentManager = new ComponentManager();
         commandManager = new CommandManager();
@@ -94,7 +93,6 @@ public enum Sakura {
 
         clickGui = new ClickGui();
         clickGui.initGui();
-        irc.initBot();
         
         creativeTab = new SakuraTab();
         
@@ -118,7 +116,8 @@ public enum Sakura {
     	if (getConfigManager().get("latest") != null) {
         	getConfigManager().get("latest").write();
         }
-        
+    	
+    	DiscordStatus.stop();
         System.gc();
     }
 }

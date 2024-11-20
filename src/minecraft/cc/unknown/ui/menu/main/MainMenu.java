@@ -11,6 +11,7 @@ import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.ui.menu.account.AccountManagerScreen;
 import cc.unknown.ui.menu.main.impl.Button;
 import cc.unknown.ui.menu.particles.RainParticleSystem;
+import cc.unknown.util.client.DiscordStatus;
 import cc.unknown.util.font.Font;
 import cc.unknown.util.security.user.UserUtil;
 import cc.unknown.util.sound.SoundUtil;
@@ -67,7 +68,7 @@ public class MainMenu extends GuiMainMenu {
     }
 
     @Override
-    public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {        
+    public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
         GlStateManager.pushMatrix();
         this.buttonList.forEach(button -> button.drawButton(mc, mouseX, mouseY));
         GlStateManager.popMatrix();
@@ -89,7 +90,7 @@ public class MainMenu extends GuiMainMenu {
 
         fontRenderer.drawWithShadow(title, 2.0f, height - 10, -1);
         fontRenderer.drawWithShadow(name, width - fontRenderer.width(name) - 2, height - 10, -1);
-
+        
         rainParticleSystem.update();
         rainParticleSystem.render();
     }

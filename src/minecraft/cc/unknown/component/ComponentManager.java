@@ -46,6 +46,7 @@ public final class ComponentManager {
         // render
         this.add(new NotificationComponent());
         this.add(new ProjectionComponent());
+        this.add(new StatusComponent());
 
         // universocraft
         this.add(new GameComponent());

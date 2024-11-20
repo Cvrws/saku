@@ -1,11 +1,9 @@
 package cc.unknown.ui.menu.main;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import cc.unknown.Sakura;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
 import cc.unknown.module.impl.movement.Sprint;
@@ -13,6 +11,7 @@ import cc.unknown.ui.menu.main.impl.Button;
 import cc.unknown.ui.menu.main.impl.TextField;
 import cc.unknown.util.animation.Animation;
 import cc.unknown.util.animation.Easing;
+import cc.unknown.util.client.DiscordStatus;
 import cc.unknown.util.font.Font;
 import cc.unknown.util.render.BackgroundUtil;
 import cc.unknown.util.render.RenderUtil;

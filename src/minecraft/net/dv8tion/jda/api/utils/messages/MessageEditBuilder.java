@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
  *
  * @see MessageCreateBuilder
  */
-@SuppressWarnings("ResultOfMethodCallIgnored")
 public class MessageEditBuilder extends AbstractMessageBuilder<MessageEditData, MessageEditBuilder> implements MessageEditRequest<MessageEditBuilder>
 {
     protected static final int CONTENT       = 1;

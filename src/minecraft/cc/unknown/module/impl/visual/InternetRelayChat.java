@@ -1,0 +1,83 @@
+package cc.unknown.module.impl.visual;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.apache.commons.lang3.StringUtils;
+
+import cc.unknown.component.impl.render.NotificationComponent;
+import cc.unknown.event.Listener;
+import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.input.ChatInputEvent;
+import cc.unknown.module.Module;
+import cc.unknown.module.api.Category;
+import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.irc.IRC;
+import cc.unknown.util.client.irc.IrcProcesser;
+
+@ModuleInfo(aliases = {"Internet Relay Chat", "irc"}, description = "Talk with other sakura users [BETA]", category = Category.OTHER)
+public final class InternetRelayChat extends Module {
+
+    private final List<String> BLOCKED_PREFIXES = Arrays.asList("/", ".", "@here", "@everyone");
+    
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    private IRC ircBot = new IRC();
+    private IrcProcesser irc = new IrcProcesser(ircBot);
+    
+    @Override
+    public void onEnable() {
+    	NotificationComponent.post("Internet Relay Chat", "Solo es posible ver los mensajes del discord hacia el cliente", 6000);
+        
+    	irc.initBot();
+    }
+    
+    @Override
+    public void onDisable() {
+    	irc.stopBot();
+    }
+    
+    @EventLink
+    public final Listener<ChatInputEvent> onChat = event -> {
+        String message = event.getMessage();
+
+        if (message.startsWith("#") && message.length() > 1) {
+            event.setCancelled();
+            message = message.substring(1);
+            message = StringUtils.normalizeSpace(message);
+            
+	        if (isBlocked(message)) {
+	            return;
+	        }
+            
+            irc.sendMessage(" ``" + message + "``");
+        }
+    };
+
+	/*@EventLink
+	public final Listener<PacketSendEvent> onPacketSend = event -> {
+	    Packet<?> packet = event.getPacket();
+	    if (packet instanceof C01PacketChatMessage) {
+	        C01PacketChatMessage chatPacket = (C01PacketChatMessage) packet;
+	        String sentMessage = chatPacket.getMessage();
+
+	        if (isBlocked(sentMessage)) {
+	            return;
+	        }
+
+	       irc.sendMessage(" ``" + sentMessage + "``");
+
+	    }
+	};*/
+
+    private boolean isBlocked(String message) {
+        for (String prefix : BLOCKED_PREFIXES) {
+            if (message.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

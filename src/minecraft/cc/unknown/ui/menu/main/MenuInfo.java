@@ -2,12 +2,10 @@ package cc.unknown.ui.menu.main;
 
 import java.awt.Color;
 
-import org.lwjgl.input.Mouse;
-
 import cc.unknown.Sakura;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.module.impl.visual.RichPresence;
+import cc.unknown.util.client.DiscordStatus;
 import cc.unknown.util.font.Font;
 import cc.unknown.util.render.BackgroundUtil;
 import cc.unknown.util.render.RenderUtil;
@@ -81,6 +79,6 @@ public class MenuInfo extends GuiScreen {
     }
     
     private boolean isRPC() {
-    	return getModule(RichPresence.class).isEnabled();
+    	return DiscordStatus.started;
     }
 }
