@@ -69,14 +69,13 @@ import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.module.impl.combat.TickRange;
 import cc.unknown.module.impl.movement.Sprint;
+import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.ui.menu.main.LoginMenu;
 import cc.unknown.ui.menu.main.MainMenu;
-import cc.unknown.util.Accessor;
 import cc.unknown.util.font.impl.minecraft.FontRenderer;
 import cc.unknown.util.interfaces.ThreadAccess;
 import cc.unknown.util.render.RenderUtil;
-import cc.unknown.util.security.user.UserUtil;
 import cc.unknown.util.time.StopWatch;
 import de.florianmichael.viamcp.fixes.AttackOrder;
 import net.minecraft.block.Block;
@@ -97,7 +96,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.achievement.GuiAchievement;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.main.GameConfiguration;
-import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -506,7 +504,6 @@ new DisplayMode(2880, 1800));
 							System.gc();
 						}
 					} else {
-						this.sendCrashLog(this.crashReporter.getCompleteReport());
 						this.displayCrashReport(this.crashReporter);
 					}
 				}
@@ -540,7 +537,7 @@ new DisplayMode(2880, 1800));
 	private void startGame() throws LWJGLException {
 		this.gameSettings = new GameSettings(this, this.mcDataDir);
 		this.defaultResourcePacks.add(this.mcDefaultResourcePack);
-		this.startTimerHackThread();
+		//this.startTimerHackThread();
 
 		if (this.gameSettings.overrideHeight > 0 && this.gameSettings.overrideWidth > 0) {
 			this.displayWidth = this.gameSettings.overrideWidth;
@@ -636,12 +633,6 @@ new DisplayMode(2880, 1800));
 
 		this.ingameGUI = new GuiIngame(this);
 
-		if (this.serverName != null) {
-			this.displayGuiScreen(new GuiConnecting(new MainMenu(), this, this.serverName, this.serverPort));
-		} else {
-			this.displayGuiScreen(new MainMenu());
-		}
-
 		this.renderEngine.deleteTexture(this.mojangLogo);
 		this.mojangLogo = null;
 		this.loadingScreen = new LoadingScreenRenderer(this);
@@ -657,8 +648,18 @@ new DisplayMode(2880, 1800));
 			this.gameSettings.saveOptions();
 		}
 
-		this.renderGlobal.makeEntityOutlineShader();
 		Sakura.instance.init();
+		
+		if (Sakura.instance != null && Sakura.instance.getModuleManager() != null) {
+		    Sprint sprint = Sakura.instance.getModuleManager().get(Sprint.class);
+
+		    if (sprint != null && !sprint.logged) {
+		    	this.displayGuiScreen(new LoginMenu());
+		    }
+		}
+		
+		this.renderGlobal.makeEntityOutlineShader();
+
 	}
 
 	private void registerMetadataSerializers() {
@@ -750,7 +751,7 @@ new DisplayMode(2880, 1800));
 		return this.launchedVersion;
 	}
 
-	private void startTimerHackThread() {
+	/*private void startTimerHackThread() {
 		final Thread thread = new Thread("Timer hack thread") {
 			public void run() {
 				while (Minecraft.this.running) {
@@ -764,7 +765,7 @@ new DisplayMode(2880, 1800));
 		};
 		thread.setDaemon(true);
 		thread.start();
-	}
+	}*/
 
 	public void crashed(final CrashReport crash) {
 		this.hasCrashed = true;
@@ -946,14 +947,6 @@ new DisplayMode(2880, 1800));
 	 * Sets the argument GuiScreen as the main (topmost visible) screen.
 	 */
 	public void displayGuiScreen(GuiScreen guiScreenIn) {
-		if (Sakura.instance != null && Sakura.instance.getModuleManager() != null) {
-		    Sprint sprint = Sakura.instance.getModuleManager().get(Sprint.class);
-
-		    if (sprint != null && !sprint.logged) {
-		        guiScreenIn = new LoginMenu();
-		    }
-		}
-		
 		if (this.currentScreen != null) {
 			this.currentScreen.onGuiClosed();
 		}
@@ -1119,6 +1112,9 @@ new DisplayMode(2880, 1800));
 			this.mcProfiler.profilingEnabled = false;
 			this.prevFrameTime = System.nanoTime();
 		}
+		
+        if (Sakura.instance.getModuleManager().get(FPSBoost.class).isEnabled())
+            this.mcProfiler.profilingEnabled = false;
 
 		this.framebufferMc.unbindFramebuffer();
 		GlStateManager.popMatrix();
@@ -1631,9 +1627,6 @@ new DisplayMode(2880, 1800));
 		if (this.entityRenderer != null) {
 			this.entityRenderer.updateShaderGroupSize(this.displayWidth, this.displayHeight);
 		}
-
-		// Sakura.instance.getEventBus().handle(new
-		// FramebufferUpdateEvent(this.displayWidth, this.displayHeight));
 	}
 
 	public MusicTicker func_181535_r() {
