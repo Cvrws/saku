@@ -7,13 +7,6 @@ import java.util.function.Function;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 
-/**
- * This is the easing class which is used to manage the different easing functions.
- * Each function is supposed to return a value between 0 and 1.
- * More easing functions can be found here: <a href="https://easings.net/">...</a>
- *
- * @author Patrick
- */
 public enum Easing {
     LINEAR(x -> x),
     EASE_IN_QUAD(x -> x * x),

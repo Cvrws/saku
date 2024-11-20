@@ -36,8 +36,6 @@ public class AutoClicker2 extends Module {
 	private final BoundsNumberValue dropsDelay = new BoundsNumberValue("Drops Delay", this, 700, 850, 1, 1000, 1, () -> !drops.getValue());
 	private final BoundsNumberValue dropsDuration = new BoundsNumberValue("Drops Duration", this, 200, 300, 1, 1000, 1, () -> !drops.getValue());
 
-	private final BooleanValue smart = new BooleanValue("Smart", this, false);
-
 	private final StopWatch timeHelper = new StopWatch();
 	private final StopWatch spikesDelayTimeHelper = new StopWatch();
 	private final StopWatch spikesDurationTimeHelper = new StopWatch();
@@ -47,7 +45,7 @@ public class AutoClicker2 extends Module {
 	private long randomDelay = 100L;
 	private long nextSpikeDelay = 0, spikeDuration = 0;
 	private long nextDropDelay = 0, dropDuration = 0;
-	private boolean spikeCPS = false, dropCPS = false;
+	private boolean spike = false, drop = false;
 
 	@Override
 	public void onEnable() {
@@ -61,15 +59,13 @@ public class AutoClicker2 extends Module {
 
 		if (Mouse.isButtonDown(0) && mc.currentScreen == null) {
 			if (!mc.player.isUsingItem()) {
-				if (attack()) {
-					mc.clickMouse();
-					timeHelper.reset();
-					setRandomDelay();
-				}
-
-				while (mc.gameSettings.keyBindUseItem.isPressed()) {
+				mc.clickMouse();
+				timeHelper.reset();
+				setRandomDelay();
+				
+				/*while (mc.gameSettings.keyBindUseItem.isPressed()) {
 					mc.rightClickMouse();
-				}
+				}*/
 			} else {
 				if (!mc.gameSettings.keyBindUseItem.isKeyDown()) {
 					mc.playerController.onStoppedUsingItem(mc.player);
@@ -97,22 +93,11 @@ public class AutoClicker2 extends Module {
 		}
 	};
 
-	private boolean attack() {
-		if (smart.getValue() && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY && mc.objectMouseOver.entityHit instanceof EntityLivingBase) {
-			EntityLivingBase entity = (EntityLivingBase) mc.objectMouseOver.entityHit;
-			if (entity.hurtTime == 0 || entity.hurtTime == 1) {
-				return true;
-			}
-		}
-
-		return timeHelper.reached(randomDelay);
-	}
-
 	private void setRandomDelay() {
 		randomDelay = (long) MathUtil.nextSecureInt((int) cps.getValue().intValue(), (int) cps.getSecondValue().intValue());
 
 		if (spikes.getValue()) {
-			if (spikesDelayTimeHelper.reached(nextSpikeDelay) || !spikesDurationTimeHelper.reached(spikeDuration) && !dropCPS) {
+			if (spikesDelayTimeHelper.reached(nextSpikeDelay) || !spikesDurationTimeHelper.reached(spikeDuration) && !drop) {
 				long spikeCPS = 0;
 				if (spikeCps.getValue().intValue() < spikeCps.getSecondValue().intValue()) {
 					spikeCPS = (long) MathUtil.nextSecureDouble((long) (spikeCps.getValue().intValue()),
@@ -123,7 +108,7 @@ public class AutoClicker2 extends Module {
 				double expectedCPS = (int) (1000.0 / randomDelay) + spikeCPS;
 				long processedDelay = (long) (1000.0 / expectedCPS);
 				randomDelay = (long) (1000.0 / expectedCPS);
-				this.spikeCPS = true;
+				spike = true;
 
 				if (spikesDurationTimeHelper.reached(spikeDuration)) {
 					if (spikesDelay.getValue().intValue() < spikesDelay.getSecondValue().intValue()) {
@@ -138,7 +123,7 @@ public class AutoClicker2 extends Module {
 					} else {
 						spikeDuration = (long) spikesDuration.getValue().intValue();
 					}
-					this.spikeCPS = false;
+					spike = false;
 					spikesDurationTimeHelper.reset();
 					spikesDelayTimeHelper.reset();
 				}
@@ -147,7 +132,7 @@ public class AutoClicker2 extends Module {
 		
 		if (drops.getValue()) {
 			if (dropsDelayTimeHelper.reached(nextDropDelay)
-					|| !dropsDurationTimeHelper.reached(dropDuration) && !spikeCPS) {
+					|| !dropsDurationTimeHelper.reached(dropDuration) && !spike) {
 				long dropCPS = 0;
 				if (spikeCps.getValue().intValue() < spikeCps.getSecondValue().intValue()) {
 					dropCPS = (long) MathUtil.nextSecureDouble((long) (spikeCps.getValue().intValue()),
@@ -158,7 +143,7 @@ public class AutoClicker2 extends Module {
 				double expectedCPS = (int) (1000.0 / randomDelay) - dropCPS;
 				long processedDelay = (long) (1000.0 / expectedCPS);
 				randomDelay = (long) (1000.0 / expectedCPS);
-				this.dropCPS = true;
+				drop = true;
 
 				if (dropsDurationTimeHelper.reached(dropDuration)) {
 					if (dropsDelay.getValue().intValue() < dropsDelay.getSecondValue().intValue()) {
@@ -173,7 +158,7 @@ public class AutoClicker2 extends Module {
 					} else {
 						dropDuration = (long) dropsDuration.getValue().intValue();
 					}
-					this.dropCPS = false;
+					drop = false;
 					dropsDurationTimeHelper.reset();
 					dropsDelayTimeHelper.reset();
 				}

@@ -1,5 +1,10 @@
 package cc.unknown.util.animation;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Animation {
 
     private Easing easing;
@@ -11,70 +16,6 @@ public class Animation {
     private double destinationValue;
     private double value;
     private boolean finished;
-
-    public Easing getEasing() {
-		return easing;
-	}
-
-	public long getDuration() {
-		return duration;
-	}
-
-	public long getMillis() {
-		return millis;
-	}
-
-	public long getStartTime() {
-		return startTime;
-	}
-
-	public double getStartValue() {
-		return startValue;
-	}
-
-	public double getDestinationValue() {
-		return destinationValue;
-	}
-
-	public double getValue() {
-		return value;
-	}
-
-	public boolean isFinished() {
-		return finished;
-	}
-
-	public void setEasing(Easing easing) {
-		this.easing = easing;
-	}
-
-	public void setDuration(long duration) {
-		this.duration = duration;
-	}
-
-	public void setMillis(long millis) {
-		this.millis = millis;
-	}
-
-	public void setStartTime(long startTime) {
-		this.startTime = startTime;
-	}
-
-	public void setStartValue(double startValue) {
-		this.startValue = startValue;
-	}
-
-	public void setDestinationValue(double destinationValue) {
-		this.destinationValue = destinationValue;
-	}
-
-	public void setValue(double value) {
-		this.value = value;
-	}
-
-	public void setFinished(boolean finished) {
-		this.finished = finished;
-	}
 
 	public Animation(final Easing easing, final long duration) {
         this.easing = easing;

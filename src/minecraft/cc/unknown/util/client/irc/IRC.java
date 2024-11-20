@@ -10,5 +10,6 @@ public class IRC {
 	/* Talk with other sakura users */
 	
 	private String user;
+	private String channelId = "";
 	private String token = "";
 }

@@ -32,7 +32,7 @@ public enum Sakura {
     instance;
 
     public static final String NAME = "Sakura";
-    public static final String VERSION_FULL = "5.1";
+    public static final String VERSION_FULL = "5.2";
     private final ClientInfo clientInfo = new ClientInfo(NAME, VERSION_FULL, ClientInfo.VersionType.PRIVATE);
     private final UserInfo userInfo = new UserInfo(UserInfo.UserType.CUSTOMER);
 
