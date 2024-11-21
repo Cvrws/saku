@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.visual;
+package cc.unknown.module.impl.other;
 
 import java.util.Arrays;
 import java.util.List;
