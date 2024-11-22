@@ -16,10 +16,10 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.irc.IRC;
 import cc.unknown.value.impl.StringValue;
 
-@ModuleInfo(aliases = {"Internet Relay Chat", "irc"}, description = "Habla con otros Sakura users [BETA]", category = Category.OTHER)
+@ModuleInfo(aliases = {"Internet Relay Chat", "irc"}, description = "Habla con otros Sakura users", category = Category.OTHER)
 public final class InternetRelayChat extends Module {
 
-    private final List<String> BLOCKED_PREFIXES = Arrays.asList("/", ".", "@here", "@everyone");
+    private final List<String> blockWords = Arrays.asList("/", ".", "@here", "@everyone");
     
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -52,8 +52,8 @@ public final class InternetRelayChat extends Module {
     };
     
     private boolean isBlocked(String message) {
-        for (String prefix : BLOCKED_PREFIXES) {
-            if (message.startsWith(prefix)) {
+        for (String words : blockWords) {
+            if (message.startsWith(words)) {
                 return true;
             }
         }

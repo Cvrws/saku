@@ -39,8 +39,7 @@ public class LegitBlink extends Module {
 	@Override
 	public void onDisable() {
 		for (Packet packet : packets) {
-			mc.getNetHandler().getNetworkManager().outboundPacketsQueue
-					.add(new InboundHandlerTuplePacketListener(packet, (GenericFutureListener) null));
+			mc.getNetHandler().getNetworkManager().outboundPacketsQueue.add(new InboundHandlerTuplePacketListener(packet, (GenericFutureListener) null));
 		}
 		packets.clear();
 	}

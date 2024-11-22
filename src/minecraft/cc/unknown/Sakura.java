@@ -57,7 +57,7 @@ public enum Sakura {
     
     public int moduleCounter;
     public int settingCounter;
-    public boolean firstStart;
+    public boolean welcomeSound;
 
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -93,8 +93,8 @@ public enum Sakura {
         creativeTab = new SakuraTab();
         
         new Thread(() -> {
-            ViaMCP.create();
-            ViaMCP.INSTANCE.initAsyncSlider();
+        	ViaMCP.create();
+        	ViaMCP.INSTANCE.initAsyncSlider();
 
             ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);
         }).start();
@@ -104,8 +104,8 @@ public enum Sakura {
 
         Display.setTitle(NAME + " " + VERSION_FULL);
         
-        // ddlc start song
-        this.firstStart = true;
+        // ddlc song
+        this.welcomeSound = true;
     }
 
     public void terminate() {

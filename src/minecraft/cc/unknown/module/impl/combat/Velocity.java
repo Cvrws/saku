@@ -73,7 +73,7 @@ public final class Velocity extends Module {
 			event.setJump(true);
 		}
 		
-		if (reduced && mode.is("Legit")) {
+		if (reduced && mode.is("Matrix")) {
 			event.setJump(true);
 		}
 	};
@@ -110,7 +110,6 @@ public final class Velocity extends Module {
 				case "Matrix":
 					if (reduced) {
 						mc.player.jump();
-						ChatUtil.display("jump");
 					}
 					break;
 				case "Legit":

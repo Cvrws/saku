@@ -24,7 +24,7 @@ import net.minecraft.util.MovingObjectPosition;
 public class AutoClicker2 extends Module {
 
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 10, 14, 1, 20, 1);
-	private final NumberValue cpsCap = new NumberValue("cpsCap", this, 18.0, 0.0, 40.0, 1);
+	private final NumberValue cpsCap = new NumberValue("CPS Cap", this, 18.0, 0.0, 40.0, 1);
 	private final BoundsNumberValue cpsCapR = new BoundsNumberValue("CPS Cap ReTick", this, 18, 18, 0, 40, 1);
 
 	private final BooleanValue spikes = new BooleanValue("Spikes", this, false);

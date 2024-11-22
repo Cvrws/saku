@@ -87,9 +87,9 @@ public class MainMenu extends GuiMainMenu {
         	getModule(Sprint.class).sleek = 1;
         }
         
-        if (Sakura.instance.firstStart) {
+        if (Sakura.instance.welcomeSound) {
         	SoundUtil.playLocalSound();
-        	Sakura.instance.firstStart = false;
+        	Sakura.instance.welcomeSound = false;
         }
 
         fontRenderer.drawWithShadow(title, 2.0f, height - 10, -1);
