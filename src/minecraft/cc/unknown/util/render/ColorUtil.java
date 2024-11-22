@@ -68,4 +68,15 @@ public final class ColorUtil {
         int num = width * height;
         return new Color(color[0] / num, color[1] / num, color[2] / num);
     }
+    
+	public Color blend(Color color, Color color1, double d0) {
+		float f = (float) d0;
+		float f1 = 1.0F - f;
+		float[] afloat = new float[3];
+		float[] afloat1 = new float[3];
+		color.getColorComponents(afloat);
+		color1.getColorComponents(afloat1);
+		return new Color(afloat[0] * f + afloat1[0] * f1, afloat[1] * f + afloat1[1] * f1,
+				afloat[2] * f + afloat1[2] * f1);
+	}
 }

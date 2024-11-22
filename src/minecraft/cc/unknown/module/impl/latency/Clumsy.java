@@ -45,11 +45,6 @@ public final class Clumsy extends Module {
 	};
 	
 	@EventLink
-	public final Listener<WorldChangeEvent> onWorldChange = event -> {		
-		this.releasePackets();
-	};
-	
-	@EventLink
 	public final Listener<PacketReceiveEvent> onPacket = event -> {		
 		Packet<?> p = event.getPacket();
 		if (p instanceof S14PacketEntity) {

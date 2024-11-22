@@ -94,7 +94,7 @@ public class IRC extends ListenerAdapter {
 	    return message;
 	}
 	
-	public void sendMessage(String message) {
+	public synchronized void sendMessage(String message) {
 		TextChannel channel = jda.getTextChannelById(channelId);
 		if (channel != null) {
 			AuthUtil.ircMessage(message);

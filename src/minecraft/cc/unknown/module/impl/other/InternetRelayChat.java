@@ -44,9 +44,10 @@ public final class InternetRelayChat extends Module {
         if (message.startsWith(prefix.getValue()) && message.length() > 1) {
             event.setCancelled();
             message = message.substring(1);
-            message = StringUtils.normalizeSpace(message);            
+            message = StringUtils.normalizeSpace(message);   
             if (!isBlocked(message)) {
-            	irc.sendMessage(" ``" + message + "``");
+                String finalMessage = message;
+            	executor.execute(() -> irc.sendMessage(" ``" + finalMessage + "``"));
             }
         }
     };

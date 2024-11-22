@@ -10,6 +10,8 @@ import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.Lists;
 
+import cc.unknown.Sakura;
+import cc.unknown.event.impl.render.RenderLabelEvent;
 import cc.unknown.util.font.impl.minecraft.FontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -687,9 +689,11 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 	}
 
 	public void renderName(T entity, double x, double y, double z) {
-		if (!Reflector.RenderLivingEvent_Specials_Pre_Constructor.exists()
-				|| !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Pre_Constructor,
-						new Object[] { entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z) })) {
+		RenderLabelEvent event = new RenderLabelEvent(entity, x, y, z);
+		Sakura.instance.getEventBus().handle(event);
+		if (event.isCancelled()) return;
+		
+		if (!Reflector.RenderLivingEvent_Specials_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Pre_Constructor, new Object[] { entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z) })) {
 			if (this.canRenderName(entity)) {
 				double d0 = entity.getDistanceSqToEntity(this.renderManager.livingPlayer);
 				float f = entity.isSneaking() ? NAME_TAG_RANGE_SNEAK : NAME_TAG_RANGE;
@@ -702,9 +706,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 					if (entity.isSneaking()) {
 						FontRenderer fontrenderer = this.getFontRendererFromRenderManager();
 						GlStateManager.pushMatrix();
-						GlStateManager.translate((float) x,
-								(float) y + entity.height + 0.5F - (entity.isChild() ? entity.height / 2.0F : 0.0F),
-								(float) z);
+						GlStateManager.translate((float) x, (float) y + entity.height + 0.5F - (entity.isChild() ? entity.height / 2.0F : 0.0F), (float) z);
 						GL11.glNormal3f(0.0F, 1.0F, 0.0F);
 						GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
 						GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
@@ -732,15 +734,13 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 						GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 						GlStateManager.popMatrix();
 					} else {
-						this.renderOffsetLivingLabel(entity, x,
-								y - (entity.isChild() ? (double) (entity.height / 2.0F) : 0.0D), z, s, 0.02666667F, d0);
+						this.renderOffsetLivingLabel(entity, x, y - (entity.isChild() ? (double) (entity.height / 2.0F) : 0.0D), z, s, 0.02666667F, d0);
 					}
 				}
 			}
 
 			if (Reflector.RenderLivingEvent_Specials_Post_Constructor.exists()) {
-				Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Post_Constructor,
-						new Object[] { entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z) });
+				Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Post_Constructor, new Object[] { entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z) });
 			}
 		}
 	}
