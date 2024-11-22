@@ -8,7 +8,7 @@ import net.minecraft.client.gui.GuiScreen;
 public final class Name extends Command {
 
     public Name() {
-        super("Copies and displays your username", "name", "ign", "username", "nick", "nickname");
+        super("Copia y muestra tu nick", "name", "ign", "username", "nick", "nickname");
     }
 
     @Override

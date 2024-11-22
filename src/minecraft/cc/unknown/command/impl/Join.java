@@ -13,7 +13,7 @@ public class Join extends Command {
 	final HashMap<String, Item> hashMap;
 
 	public Join() {
-		super("Joiner for universocraft", "game", "j", "join");
+		super("Ingresa automaticamente a una modalidad", "game", "j", "join");
 		this.hashMap = new HashMap<>();
 	}
 

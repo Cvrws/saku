@@ -16,7 +16,7 @@ import net.minecraft.util.ChatComponentText;
 public final class Config extends Command {
 
     public Config() {
-        super("Allows you to save/load configuration files", "cfg");
+        super("Te permite guardar o cargar configs", "cfg");
     }
 
     @Override

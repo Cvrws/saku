@@ -19,7 +19,7 @@ public final class Transaction extends Command {
 	private AtomicBoolean toggle = new AtomicBoolean(false);
     
     public Transaction() {
-        super("Display Transactions", "transaction");
+        super("Muestra las transacciones del servidor", "transaction");
         Sakura.instance.getEventBus().register(this);
     }
     

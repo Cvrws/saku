@@ -6,7 +6,7 @@ import cc.unknown.util.chat.ChatUtil;
 public final class Clip extends Command {
 
     public Clip() {
-        super("Clips you the given amount of blocks in the given direction", "clip");
+        super("Permite moverte a cualquier dirección", "clip");
     }
 
     @Override

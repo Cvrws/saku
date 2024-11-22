@@ -16,7 +16,7 @@ import cc.unknown.util.chat.ChatUtil;
 public final class Help extends Command {
 
     public Help() {
-        super("Gives you a list of all commands", "help");
+        super("Obtienes la lista de comandos", "help");
     }
     
     @Override

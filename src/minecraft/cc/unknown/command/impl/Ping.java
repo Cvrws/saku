@@ -20,7 +20,7 @@ public final class Ping extends Command {
 	private AtomicBoolean toggle = new AtomicBoolean(false);
     
     public Ping() {
-        super("Analiza tu latencia", "ping");
+        super("Muestra tu latencia", "ping");
         Sakura.instance.getEventBus().register(this);
     }
     
