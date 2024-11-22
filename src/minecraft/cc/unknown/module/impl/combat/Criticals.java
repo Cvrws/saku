@@ -15,7 +15,7 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.util.Vec3;
 
-@ModuleInfo(aliases = "Criticals", description = "Makes you get a critical hit every time you attack", category = Category.COMBAT)
+@ModuleInfo(aliases = "Criticals", description = "Consigue un golpe crítico cada vez que atacas", category = Category.COMBAT)
 public final class Criticals extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", this)

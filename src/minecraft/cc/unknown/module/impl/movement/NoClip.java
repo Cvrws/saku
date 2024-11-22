@@ -29,7 +29,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 
-@ModuleInfo(aliases = "No Clip", description = "Allows you to pass through normally solid blocks", category = Category.MOVEMENT)
+@ModuleInfo(aliases = "No Clip", description = "Permite atravesar bloques normalmente sólidos", category = Category.MOVEMENT)
 public class NoClip extends Module {
 	
 	@Override

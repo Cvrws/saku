@@ -20,7 +20,7 @@ import net.minecraft.block.BlockAir;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;
 
-@ModuleInfo(aliases = "STap", description = "Keeps you just within range of the target, reduces the potential for incoming attacks.", category = Category.GHOST)
+@ModuleInfo(aliases = "STap", description = "Te mantiene al alcance del objetivo para reducir la posibilidad de ataques entrantes.", category = Category.GHOST)
 public final class STap extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", this)

@@ -15,7 +15,7 @@ import cc.unknown.value.impl.BoundsNumberValue;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S00PacketKeepAlive;
 
-@ModuleInfo(aliases = "Ping Spoof", description = "Simulates higher latency to the server", category = Category.LATENCY)
+@ModuleInfo(aliases = "Ping Spoof", description = "Simula un estado de conexión muy alto", category = Category.LATENCY)
 public class PingSpoof extends Module {
     private final LinkedHashMap<Packet<?>, Long> packetQueue = new LinkedHashMap<>();
 

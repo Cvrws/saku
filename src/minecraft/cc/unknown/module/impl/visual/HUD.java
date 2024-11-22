@@ -40,7 +40,7 @@ import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 
-@ModuleInfo(aliases = "HUD", description = "The clients interface with all information", category = Category.VISUALS, autoEnabled = true)
+@ModuleInfo(aliases = "HUD", description = "Muestra la información del cliente.", category = Category.VISUALS, autoEnabled = true)
 public final class HUD extends Module {
 
     private final ModeValue colorMode = new ModeValue("ArrayList Color Mode", this)

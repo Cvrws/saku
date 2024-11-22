@@ -10,7 +10,7 @@ import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.EntityLivingBase;
 
-@ModuleInfo(aliases = "No Click Delay", description = "Removes the 1.8 click delay when missing an attack", category = Category.PLAYER)
+@ModuleInfo(aliases = "No Click Delay", description = "Elimina el delay de la 1.8 al clickear", category = Category.PLAYER)
 public class NoClickDelay extends Module {
 
 	@EventLink

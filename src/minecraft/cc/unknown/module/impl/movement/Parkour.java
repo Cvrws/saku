@@ -11,7 +11,7 @@ import cc.unknown.module.api.ModuleInfo;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
-@ModuleInfo(aliases = "Parkour", description = "Automatically jumps at the edge of blocks", category = Category.MOVEMENT)
+@ModuleInfo(aliases = "Parkour", description = "Te ayuda en el parkour", category = Category.MOVEMENT)
 public class Parkour extends Module {
 
 	@EventLink

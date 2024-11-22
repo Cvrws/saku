@@ -17,7 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityEnderChest;
 
-@ModuleInfo(aliases = "Chest ESP", description = "Renders all chests", category = Category.VISUALS)
+@ModuleInfo(aliases = "Chest ESP", description = "Renderiza todos tipo de cofre", category = Category.VISUALS)
 public final class ChestESP extends Module {
 
 	@EventLink

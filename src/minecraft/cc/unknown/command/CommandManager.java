@@ -27,6 +27,7 @@ public final class CommandManager {
         this.add(new Help());
         this.add(new Name());
         this.add(new Join());
+        this.add(new Ping());
         this.add(new Script());
         this.add(new Toggle());
         this.add(new Target());

@@ -30,7 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatFormatting;
 import net.minecraft.util.MathHelper;
 
-@ModuleInfo(aliases = "Murder Mystery", description = "Murder Mystery utilities", category = Category.OTHER)
+@ModuleInfo(aliases = "Murder Mystery", description = "Caja de herramientas para Murder Mystery", category = Category.OTHER)
 public final class MurderMystery extends Module {
 
 	private final BooleanValue checkBow = new BooleanValue("Check bow", this, false);

@@ -14,7 +14,7 @@ import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.StringValue;
 import cc.unknown.value.impl.SubMode;
 
-@ModuleInfo(aliases = "Music Player", description = "Shows notification on your currently playing track", category = Category.OTHER)
+@ModuleInfo(aliases = "Music Player", description = "Reproductor de música :v", category = Category.OTHER)
 public class MusicPlayer extends Module {
 
     private final ModeValue mode = new ModeValue("Type", this)

@@ -24,7 +24,7 @@ import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.player.EntityPlayer;
 
-@ModuleInfo(aliases = "Extra Sensory Perception", description = "Renders all players into a shader and displays it", category = Category.VISUALS)
+@ModuleInfo(aliases = "Extra Sensory Perception", description = "Renderiza a los jugadores", category = Category.VISUALS)
 public final class ExtraSensoryPerception extends Module {
 	
 	private final ModeValue mode = new ModeValue("Projection", this)

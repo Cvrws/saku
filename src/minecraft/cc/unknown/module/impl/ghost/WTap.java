@@ -17,7 +17,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
-@ModuleInfo(aliases = "WTap", description = "Briefly releases W after attacking to increase knockback given", category = Category.GHOST)
+@ModuleInfo(aliases = "WTap", description = "Suelta brevemente la W después de atacar para aumentar el knockback dado", category = Category.GHOST)
 public class WTap extends Module {
 	
 	private final BoundsNumberValue hurtResist = new BoundsNumberValue("Hurt Resistant Time", this, 10, 10, 0, 10, 1);

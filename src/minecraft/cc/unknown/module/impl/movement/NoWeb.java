@@ -7,7 +7,7 @@ import cc.unknown.module.impl.movement.noweb.IgnoreNoWeb;
 import cc.unknown.module.impl.movement.noweb.VulcanNoWeb;
 import cc.unknown.value.impl.ModeValue;
 
-@ModuleInfo(aliases = "No Web", description = "Prevents you from getting slowed down in webs.", category = Category.MOVEMENT)
+@ModuleInfo(aliases = "No Web", description = "Evita que te frenes en las telarañas.", category = Category.MOVEMENT)
 public class NoWeb extends Module {
     private final ModeValue mode = new ModeValue("Mode", this)
     		.add(new VulcanNoWeb("Vulcan", this))

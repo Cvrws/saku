@@ -40,7 +40,7 @@ import net.minecraft.client.renderer.entity.RenderSkeleton;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
-@ModuleInfo(aliases = "Target Info", description = "Displays information about the entity you're fighting", category = Category.VISUALS)
+@ModuleInfo(aliases = "Target Info", description = "Muestra información de la entidad al entrar en combate", category = Category.VISUALS)
 public final class TargetInfo extends Module {
 
 	public final DragValue positionValue = new DragValue("Position", this, new Vector2d(200, 200));

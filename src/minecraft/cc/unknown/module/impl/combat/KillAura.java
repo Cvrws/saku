@@ -53,7 +53,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.Vec3;
 
-@ModuleInfo(aliases = { "Kill Aura", "aura" }, description = "Automatically attacks nearby entities", category = Category.COMBAT)
+@ModuleInfo(aliases = { "Kill Aura", "aura" }, description = "Ataca automáticamente a las entidades.", category = Category.COMBAT)
 public final class KillAura extends Module {
 	private final ModeValue attackMode = new ModeValue("Attack Mode", this)
 			.add(new SubMode("Single"))

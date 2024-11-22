@@ -12,7 +12,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.player.SlotUtil;
 import net.minecraft.util.BlockPos;
 
-@ModuleInfo(aliases = {"Auto Tool"}, description = "Switches to the most efficient tool when breaking a block", category = Category.PLAYER)
+@ModuleInfo(aliases = {"Auto Tool"}, description = "Cambia a la mejor herramienta cada que rompes un bloque", category = Category.PLAYER)
 public class AutoTool extends Module {
 
     private int slot, lastSlot = -1;

@@ -15,7 +15,7 @@ import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 import net.minecraft.client.Minecraft;
 
-@ModuleInfo(aliases = "FPS Boost", description = "Increase your fps", category = Category.OTHER)
+@ModuleInfo(aliases = "FPS Boost", description = "Incrementa tus FPS", category = Category.OTHER)
 public final class FPSBoost extends Module {
 	
 	public BooleanValue noSkins = new BooleanValue("Save memory by not loading minecraft skins", this, true);

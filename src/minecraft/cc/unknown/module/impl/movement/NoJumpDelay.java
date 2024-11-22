@@ -7,7 +7,7 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 
-@ModuleInfo(aliases = "No Jump Delay", description = "Remove jump delay", category = Category.MOVEMENT)
+@ModuleInfo(aliases = "No Jump Delay", description = "Remueve el delay al saltar", category = Category.MOVEMENT)
 public class NoJumpDelay extends Module {
 
 	@EventLink

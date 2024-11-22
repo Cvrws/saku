@@ -21,7 +21,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.biome.BiomeGenBase;
 
 @Getter
-@ModuleInfo(aliases = "Ambience", description = "Allows you to change the time and weather", category = Category.VISUALS)
+@ModuleInfo(aliases = "Ambience", description = "Permite cambiar la hora y el tiempo del juego", category = Category.VISUALS)
 public final class Ambience extends Module {
 
 	private final NumberValue time = new NumberValue("Time", this, 0, 0, 22999, 1);

@@ -11,7 +11,7 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
-@ModuleInfo(aliases = {"Full Bright"}, description = "Prevents world darkness", category = Category.VISUALS)
+@ModuleInfo(aliases = {"Full Bright"}, description = "Ya no más oscuridad", category = Category.VISUALS)
 public final class FullBright extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", this)

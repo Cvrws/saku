@@ -18,7 +18,7 @@ import cc.unknown.util.vector.Vector2d;
 import cc.unknown.util.vector.Vector2f;
 import cc.unknown.value.impl.DragValue;
 
-@ModuleInfo(aliases = { "CPS Counter" }, description = "Displays your clicks per second", category = Category.VISUALS)
+@ModuleInfo(aliases = { "CPS Counter" }, description = "Muestra tus clicks por segundo", category = Category.VISUALS)
 public final class CPSCounter extends Module {
 
 	private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));

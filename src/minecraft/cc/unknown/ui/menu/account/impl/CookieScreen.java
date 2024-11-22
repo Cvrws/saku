@@ -51,10 +51,10 @@ public class CookieScreen extends GuiScreen implements Accessor {
 
         Vector2d position = new Vector2d(this.width / 2 - boxWidth / 2, this.height / 2 - 24);
         usernameBox = new TextField(0, this.fontRendererObj, (int) position.x, (int) position.y, (int) boxWidth, (int) boxHeight);
-    	this.buttonList.add(new Button(1, (int) position.x, (int) position.y + boxHeight + padding, (int) boxWidth, (int) boxHeight, "Login & Add"));
-    	this.buttonList.add(new Button(2, (int) position.x, (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Select File"));
-    	this.buttonList.add(new Button(3, (int) ((int) position.x + buttonWidth + padding), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Microsoft"));
-    	this.buttonList.add(new Button(4, (int) ((int) position.x + (buttonWidth + padding) * 2), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Back"));
+    	this.buttonList.add(new Button(1, (int) position.x, (int) position.y + boxHeight + padding, (int) boxWidth, (int) boxHeight, "Login"));
+    	this.buttonList.add(new Button(2, (int) position.x, (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Select file"));
+    	this.buttonList.add(new Button(3, (int) ((int) position.x + buttonWidth + padding), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Microsoft Login"));
+    	this.buttonList.add(new Button(4, (int) ((int) position.x + (buttonWidth + padding) * 2), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Atrás"));
     }
 
     @Override
@@ -144,7 +144,7 @@ public class CookieScreen extends GuiScreen implements Accessor {
                                 MicrosoftLogin.McResponse.class);
 
                         if (mcRes == null) {
-                            text_to_render = "Invalid Account";
+                            text_to_render = "Cuenta inválida";
                             return;
                         }
 
@@ -153,7 +153,7 @@ public class CookieScreen extends GuiScreen implements Accessor {
                                 MicrosoftLogin.ProfileResponse.class);
 
                         if (profileRes == null) {
-                            text_to_render = "Invalid Account";
+                            text_to_render = "Cuenta inválida";
                             return;
                         }
                         
@@ -163,14 +163,14 @@ public class CookieScreen extends GuiScreen implements Accessor {
                         mc.displayGuiScreen(new AccountScreen());
                     }
                 } catch (Exception e) {
-                    text_to_render = "Invalid Account";
+                    text_to_render = "Cuenta inválida";
                 }
 
             }, "Login To Cookie").start();
         	break;
         case 2:
             new Thread(() -> {
-                FileDialog dialog = new FileDialog((Frame) null, "Select Cookie File");
+                FileDialog dialog = new FileDialog((Frame) null, "seleccione el archivo de la cookie");
                 dialog.setMode(FileDialog.LOAD);
                 dialog.setVisible(true);
 
@@ -187,17 +187,17 @@ public class CookieScreen extends GuiScreen implements Accessor {
                         }
                         SwingUtilities.invokeLater(() -> {
                             usernameBox.setText(fileName);
-                            text_to_render = "Selected file!";
+                            text_to_render = "Archivo seleccionado!";
                             cookie_string = content.toString().split("\n");
                         });
                     } catch (IOException e) {
                         SwingUtilities.invokeLater(() -> {
-                            text_to_render = "Error (read)";
+                            text_to_render = "Hubo un error al intentar leer el archivo.";
                         });
                     }
                 } else {
                     SwingUtilities.invokeLater(() -> {
-                        text_to_render = "No file selected.";
+                        text_to_render = "Ningún archivo seleccionado.";
                     });
                 }
             }, "Select Cookie File").start();

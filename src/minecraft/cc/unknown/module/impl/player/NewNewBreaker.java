@@ -43,7 +43,7 @@ import cc.unknown.value.impl.SubMode;
 import java.awt.*;
 import java.util.ArrayList;
 
-@ModuleInfo(aliases = {"Breaker"}, description = "Automatically breaks beds around you", category = Category.PLAYER)
+@ModuleInfo(aliases = {"Breaker"}, description = "Rompe automáticamente las camas a tu alrededor", category = Category.PLAYER)
 public class NewNewBreaker extends Module {
     public final ModeValue mode = new ModeValue("Mode", this)
             .add(new SubMode("Through Walls"))

@@ -26,7 +26,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 
 @ModuleInfo(aliases = { "Spider",
-		"wallclimb" }, description = "Allows you to climb up walls like a spider", category = Category.MOVEMENT)
+		"wallclimb" }, description = "Permite trepar por las paredes como una araña.", category = Category.MOVEMENT)
 public class Spider extends Module {
 
 	private float direction = 0.0F;

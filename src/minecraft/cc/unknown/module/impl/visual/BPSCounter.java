@@ -20,7 +20,7 @@ import cc.unknown.util.vector.Vector3d;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.DragValue;
 
-@ModuleInfo(aliases = {"BPS Counter"}, description = "Displays your current speed", category = Category.VISUALS)
+@ModuleInfo(aliases = {"BPS Counter"}, description = "Muestra tu velocidad actual", category = Category.VISUALS)
 public final class BPSCounter extends Module {
 
     private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));

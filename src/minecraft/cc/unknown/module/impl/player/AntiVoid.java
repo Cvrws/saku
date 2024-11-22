@@ -6,7 +6,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.player.antivoid.*;
 import cc.unknown.value.impl.ModeValue;
 
-@ModuleInfo(aliases = "Anti Void", description = "Prevents you from falling into the void", category = Category.PLAYER)
+@ModuleInfo(aliases = "Anti Void", description = "Previene que te caigas al vacio.", category = Category.PLAYER)
 public class AntiVoid extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", this)

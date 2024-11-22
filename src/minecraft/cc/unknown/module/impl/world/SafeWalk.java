@@ -10,7 +10,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.item.ItemBlock;
 
-@ModuleInfo(aliases = "Safe Walk", description = "Stops you from falling off the edge", category = Category.WORLD)
+@ModuleInfo(aliases = "Safe Walk", description = "Evita que te caigas del borde", category = Category.WORLD)
 public class SafeWalk extends Module {
 
     private final BooleanValue blocksOnly = new BooleanValue("Blocks Only", this, false);

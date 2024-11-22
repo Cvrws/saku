@@ -11,7 +11,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.util.MathHelper;
 
-@ModuleInfo(aliases = "Hurt Camera", description = "Modifies the hurt camera animation", category = Category.VISUALS)
+@ModuleInfo(aliases = "Hurt Camera", description = "Modifica la animación de la cámara al recibir daño", category = Category.VISUALS)
 public final class HurtCamera extends Module {
 
     public final NumberValue intensity = new NumberValue("Intensity", this, 1, 0, 1, 0.1);

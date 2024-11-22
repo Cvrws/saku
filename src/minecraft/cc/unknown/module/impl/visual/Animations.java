@@ -19,7 +19,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemMap;
 import net.minecraft.util.MathHelper;
 
-@ModuleInfo(aliases = {"Animations"}, description = "Adjusts animations within Minecraft", category = Category.VISUALS)
+@ModuleInfo(aliases = {"Animations"}, description = "Ajusta las animaciones de los items", category = Category.VISUALS)
 public final class
 Animations extends Module {
 

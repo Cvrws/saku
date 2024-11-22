@@ -21,7 +21,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 
-@ModuleInfo(aliases = "Clipper", description = "Clips you down when you sneak", category = Category.MOVEMENT)
+@ModuleInfo(aliases = "Clipper", description = "Traspasas los bloques hacia abajo al presionar shift.", category = Category.MOVEMENT)
 public class Clipper extends Module {
 
     private boolean triggered, available, clipping;
@@ -81,17 +81,6 @@ public class Clipper extends Module {
                 clipping = false;
             else
                 event.setCancelled(true);
-        }
-	};
-	
-	@EventLink
-	public final Listener<Render2DEvent> onRender2D = event -> {
-        final ScaledResolution scaledResolution = mc.scaledResolution;
-
-        if (available && mc.player.onGround) {
-            final String name = "Clipper usage available, sneak to activate.";
-            Fonts.MAIN.get(18, Weight.LIGHT).drawCentered(name, scaledResolution.getScaledWidth() / 2F, scaledResolution.getScaledHeight() - 89.5F, new Color(0, 0, 0, 200).hashCode());
-            Fonts.MAIN.get(18, Weight.LIGHT).drawCentered(name, scaledResolution.getScaledWidth() / 2F, scaledResolution.getScaledHeight() - 90, getTheme().getAccentColor().getRGB());
         }
 	};
 }

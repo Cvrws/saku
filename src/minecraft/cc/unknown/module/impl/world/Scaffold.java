@@ -64,7 +64,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
 
 @ModuleInfo(aliases = { "Scaffold",
-		"scaff", "auto bridge" }, description = "Builds a bridge under you as you walk", category = Category.WORLD)
+		"scaff", "auto bridge" }, description = "Construye mientras caminas", category = Category.WORLD)
 public class Scaffold extends Module {
 
 	public final ModeValue mode = new ModeValue("Rotation Mode", this)

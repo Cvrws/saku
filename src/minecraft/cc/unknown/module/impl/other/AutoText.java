@@ -15,7 +15,7 @@ import cc.unknown.util.chat.ChatUtil;
 import cc.unknown.value.impl.DescValue;
 import cc.unknown.value.impl.StringValue;
 
-@ModuleInfo(aliases = "Auto Text", description = "Send any message when pressing a key", category = Category.OTHER)
+@ModuleInfo(aliases = "Auto Text", description = "Envia cualquier mensaje al presionar una tecla", category = Category.OTHER)
 public final class AutoText extends Module {
 	
     private final List<MessagePair> messagePair = Arrays.asList(

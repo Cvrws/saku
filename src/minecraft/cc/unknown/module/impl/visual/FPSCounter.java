@@ -18,7 +18,7 @@ import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.DragValue;
 import net.minecraft.client.Minecraft;
 
-@ModuleInfo(aliases = "FPS Counter", description = "Displays your frames per second", category = Category.VISUALS)
+@ModuleInfo(aliases = "FPS Counter", description = "Muestra tus frames por segundo", category = Category.VISUALS)
 public final class FPSCounter extends Module {
 
     private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));

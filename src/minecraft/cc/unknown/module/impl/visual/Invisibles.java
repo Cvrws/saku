@@ -9,7 +9,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.potion.Potion;
 
-@ModuleInfo(aliases = "Invisibles", description = "Shows invisible objects or entities", category = Category.VISUALS)
+@ModuleInfo(aliases = "Invisibles", description = "Muestra objectos o jugadores invisibles", category = Category.VISUALS)
 public final class Invisibles extends Module {
     
 	private final BooleanValue players = new BooleanValue("Show players", this, false);

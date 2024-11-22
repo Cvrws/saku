@@ -46,7 +46,7 @@ public class AccountScreen extends GuiScreen implements Accessor {
 
         menuButtons[0] = new MenuAccountTypeButton(0, 0, 0, 0, () -> mc.displayGuiScreen(new CrackedScreen()), "Cracked", CRACKED_RESOURCE);
         menuButtons[1] = new MenuAccountTypeButton(0, 0, 0, 0, () -> mc.displayGuiScreen(new CookieScreen()), "Cookie", COOKIE_RESOURCE);
-        menuButtons[2] = new MenuAccountTypeButton(0, 0, 0, 0, () -> mc.displayGuiScreen(new AccountManagerScreen(reference)), "Back", BACK_RESOURCE);
+        menuButtons[2] = new MenuAccountTypeButton(0, 0, 0, 0, () -> mc.displayGuiScreen(new AccountManagerScreen(reference)), "Atrás", BACK_RESOURCE);
 
         for (MenuButton button : menuButtons) {
             button.setX(buttonX);

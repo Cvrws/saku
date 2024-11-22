@@ -68,7 +68,6 @@ public class MicrosoftScreen extends GuiScreen implements Accessor {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        // Renders the background.
         if (accountViewModel.getAccount().isValid()) {
             animation.run(36);
         } else {
@@ -86,9 +85,9 @@ public class MicrosoftScreen extends GuiScreen implements Accessor {
 
         RenderUtil.drawRoundedRect2(boxX, boxY, boxX + backgroundWidth, boxY + boxHeightTotal, 6.0, new Color(0, 0, 0, 150).getRGB());
 
-        FONT_RENDERER.drawCentered("Log in to your microsoft account", width / 2, boxY + 10, Color.WHITE.getRGB());
-        INFO_FONT_RENDERER.drawCentered("A link has been copied to your clipboard.", width / 2, boxY + 40, Color.WHITE.darker().getRGB());
-        INFO_FONT_RENDERER.drawCentered("To login to your own account, just fill out the form.", width / 2, boxY + 70, Color.WHITE.darker().getRGB());
+        FONT_RENDERER.drawCentered("Inicie sesión en su cuenta de Microsoft", width / 2, boxY + 10, Color.WHITE.getRGB());
+        INFO_FONT_RENDERER.drawCentered("Se ha copiado un enlace en el portapapeles.", width / 2, boxY + 40, Color.WHITE.darker().getRGB());
+        INFO_FONT_RENDERER.drawCentered("Pega el enlace en tu navegador favorito.", width / 2, boxY + 70, Color.WHITE.darker().getRGB());
 
         int circleX = width / 2;
         int circleY = height / 2 + 4;

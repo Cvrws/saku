@@ -50,8 +50,8 @@ public class AccountManagerScreen extends GuiScreen implements Accessor {
 	            (buttonWidth + buttonPadding) * (int) (2 / 2) - buttonPadding / 2 :
 	            (buttonWidth + buttonPadding) * (int) (2 / 2) + buttonWidth / 2);
 	
-	    this.buttonList.add(new Button(0, buttonX, height - buttonHeight - buttonPadding * 2, buttonWidth, buttonHeight, "Add Account"));	
-	    this.buttonList.add(new Button(1, buttonX += buttonWidth + buttonPadding, height - buttonHeight - buttonPadding * 2, buttonWidth, buttonHeight, "Back"));
+	    this.buttonList.add(new Button(0, buttonX, height - buttonHeight - buttonPadding * 2, buttonWidth, buttonHeight, "Añadir Cuenta"));	
+	    this.buttonList.add(new Button(1, buttonX += buttonWidth + buttonPadding, height - buttonHeight - buttonPadding * 2, buttonWidth, buttonHeight, "Atrás"));
 	
         if (prevScreen instanceof AccountManagerScreen) {
             reorderViewModels();

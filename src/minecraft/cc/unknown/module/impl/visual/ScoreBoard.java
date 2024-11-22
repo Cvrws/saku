@@ -29,7 +29,7 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ChatFormatting;
 
-@ModuleInfo(aliases = {"Scoreboard"}, description = "Allows you to customize the Minecraft scoreboard", category = Category.VISUALS, autoEnabled = true)
+@ModuleInfo(aliases = {"Scoreboard"}, description = "Cambia el diseño de la scoreboard", category = Category.VISUALS, autoEnabled = true)
 public final class ScoreBoard extends Module {
 
     private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));

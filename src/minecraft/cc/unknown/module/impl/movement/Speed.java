@@ -11,7 +11,7 @@ import cc.unknown.util.player.MoveUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 
-@ModuleInfo(aliases = "Speed", description = "Increases your movement speed", category = Category.MOVEMENT)
+@ModuleInfo(aliases = "Speed", description = "Aumenta tu velocidad de movimiento.", category = Category.MOVEMENT)
 public class Speed extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", this)

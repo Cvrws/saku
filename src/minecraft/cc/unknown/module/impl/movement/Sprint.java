@@ -18,7 +18,7 @@ import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.vector.Vector2f;
 import cc.unknown.value.impl.BooleanValue;
 
-@ModuleInfo(aliases = "Sprint", description = "Makes you sprint", category = Category.MOVEMENT)
+@ModuleInfo(aliases = "Sprint", description = "Corre automáticamente", category = Category.MOVEMENT)
 public class Sprint extends Module {
 
 	private final BooleanValue legit = new BooleanValue("Legit", this, true);

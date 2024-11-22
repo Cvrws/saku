@@ -30,7 +30,7 @@ import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.network.play.client.C16PacketClientStatus;
 
 @ModuleInfo(aliases = { "Inventory Move",
-		"Inv Move" }, description = "Allows you to move whilst in GUIs", category = Category.MOVEMENT)
+		"Inv Move" }, description = "Te permite moverte con el inventario abierto", category = Category.MOVEMENT)
 public class InventoryMove extends Module {
 
 	private final ModeValue mode = new ModeValue("Bypass Mode", this).add(new SubMode("Normal"))

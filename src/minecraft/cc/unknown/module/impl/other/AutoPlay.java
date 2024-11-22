@@ -15,7 +15,7 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S02PacketChat;
 
-@ModuleInfo(aliases = "Auto Play", description = "Joins a new game after a win", category = Category.OTHER)
+@ModuleInfo(aliases = "Auto Play", description = "Entra a una nueva partida despues de ganar o perder.", category = Category.OTHER)
 public final class AutoPlay extends Module {
 
 	private final ModeValue mode = new ModeValue("Select what server", this)

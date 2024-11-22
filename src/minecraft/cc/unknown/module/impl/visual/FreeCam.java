@@ -21,7 +21,7 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 
-@ModuleInfo(aliases = "Free Cam", description = "Allows you to leave your player", category = Category.VISUALS)
+@ModuleInfo(aliases = "Free Cam", description = "Te convierte en un espiritu chocarrero", category = Category.VISUALS)
 public final class FreeCam extends Module {
 
 	private final NumberValue speed = new NumberValue("Speed", this, 1, 0.1, 9.5, 0.1);

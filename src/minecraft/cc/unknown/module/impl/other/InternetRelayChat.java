@@ -21,7 +21,7 @@ import cc.unknown.value.impl.StringValue;
 import net.dv8tion.jda.api.entities.Message;
 import net.minecraft.util.ChatFormatting;
 
-@ModuleInfo(aliases = {"Internet Relay Chat", "irc"}, description = "Talk with other sakura users [BETA]", category = Category.OTHER)
+@ModuleInfo(aliases = {"Internet Relay Chat", "irc"}, description = "Habla con otros Sakura users [BETA]", category = Category.OTHER)
 public final class InternetRelayChat extends Module {
 
     private final List<String> BLOCKED_PREFIXES = Arrays.asList("/", ".", "@here", "@everyone");

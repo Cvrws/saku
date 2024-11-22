@@ -16,7 +16,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 
-@ModuleInfo(aliases = "Fast Break", description = "Breaks blocks faster", category = Category.WORLD)
+@ModuleInfo(aliases = "Fast Break", description = "Te permite romper los bloques más rapido", category = Category.WORLD)
 public final class FastBreak extends Module {
     private final ModeValue mode = new ModeValue("Mode", this)
             .add(new SubMode("Percentage"))

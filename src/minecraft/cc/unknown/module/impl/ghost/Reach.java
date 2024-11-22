@@ -23,7 +23,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 
-@ModuleInfo(aliases = "Reach", description = "Allows you to hit entities from further away", category = Category.GHOST)
+@ModuleInfo(aliases = "Reach", description = "Permite golpear desde más lejos", category = Category.GHOST)
 public class Reach extends Module {
 
 	public final BoundsNumberValue range = new BoundsNumberValue("Range", this, 3.0, 4.0, 3.0, 6.0, 0.01);

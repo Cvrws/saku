@@ -143,8 +143,6 @@ public final class ModuleManager {
         this.put(TargetInfo.class, new TargetInfo());
         this.put(Tracers.class, new Tracers());
         this.put(UnlimitedChat.class, new UnlimitedChat());
-        this.put(SessionStats.class, new SessionStats());
-        this.put(JumpCirclesModule.class, new JumpCirclesModule());
 
         // Automatic initializations
         this.getAll().stream().filter(module -> module.getModuleInfo().autoEnabled()).forEach(module -> module.setEnabled(true));

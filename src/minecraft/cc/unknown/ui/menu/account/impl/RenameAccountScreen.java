@@ -40,8 +40,8 @@ public class RenameAccountScreen extends GuiScreen implements Accessor {
         position = new Vector2d(width / 2 - boxWidth / 2, height / 2 + 32);
         usernameBox = new TextField(0, this.fontRendererObj, (int) position.x, (int) position.y, (int) boxWidth, (int) boxHeight);
         usernameBox.setText(accountViewModel.getAccount().getName());
-    	this.buttonList.add(new Button(1, (int) position.x, (int) position.y + boxHeight + padding, (int) buttonWidth, (int) boxHeight, "Update"));
-    	this.buttonList.add(new Button(2, (int) ((int) position.x + buttonWidth + padding), (int) position.y + boxHeight + padding, (int) buttonWidth, (int) boxHeight, "Back"));    	
+    	this.buttonList.add(new Button(1, (int) position.x, (int) position.y + boxHeight + padding, (int) buttonWidth, (int) boxHeight, "Actualizar Nombre"));
+    	this.buttonList.add(new Button(2, (int) ((int) position.x + buttonWidth + padding), (int) position.y + boxHeight + padding, (int) buttonWidth, (int) boxHeight, "Atrás"));    	
     }
 
     @Override

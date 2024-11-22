@@ -7,6 +7,7 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.event.impl.netty.PacketSendEvent;
+import cc.unknown.event.impl.other.WorldChangeEvent;
 import cc.unknown.event.impl.player.PostMotionEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
@@ -17,12 +18,11 @@ import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.util.time.StopWatch;
 import cc.unknown.value.impl.BoundsNumberValue;
 import io.netty.util.concurrent.GenericFutureListener;
-import net.minecraft.network.NetworkManager;
 import net.minecraft.network.NetworkManager.InboundHandlerTuplePacketListener;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S14PacketEntity;
 
-@ModuleInfo(aliases = "Clumsy", description = "Significantly worsens the state of your network", category = Category.LATENCY)
+@ModuleInfo(aliases = "Clumsy", description = "Empeora significativamente tu latencia.", category = Category.LATENCY)
 public final class Clumsy extends Module {
 	private final BoundsNumberValue client = new BoundsNumberValue("ClientSide Delay", this, 100, 200, 0, 500, 1);
 	private final BoundsNumberValue server = new BoundsNumberValue("ServerSide Delay", this, 20, 30, 0, 500, 1);
@@ -32,17 +32,8 @@ public final class Clumsy extends Module {
 	private StopWatch stopWatch2 = new StopWatch();
 
 	@Override
-	public void onEnable() {
-		packets.clear();
-	}
-
-	@Override
 	public void onDisable() {
-		for (Packet packet : packets) {
-			mc.getNetHandler().getNetworkManager().outboundPacketsQueue
-					.add(new InboundHandlerTuplePacketListener(packet, (GenericFutureListener) null));
-		}
-		packets.clear();
+		this.releasePackets();
 	}
 
 	@EventLink
@@ -51,6 +42,11 @@ public final class Clumsy extends Module {
 			packets.add(event.getPacket());
 			event.setCancelled(true);
 		}
+	};
+	
+	@EventLink
+	public final Listener<WorldChangeEvent> onWorldChange = event -> {		
+		this.releasePackets();
 	};
 	
 	@EventLink
@@ -90,6 +86,14 @@ public final class Clumsy extends Module {
         		stopWatch2.reset();
         	}
         }
+	}
+	
+	public void releasePackets() {
+		for (Packet packet : packets) {
+			mc.getNetHandler().getNetworkManager().outboundPacketsQueue
+					.add(new InboundHandlerTuplePacketListener(packet, (GenericFutureListener) null));
+		}
+		packets.clear();
 	}
 	
 	private boolean prevent() {

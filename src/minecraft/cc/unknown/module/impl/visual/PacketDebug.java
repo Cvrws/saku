@@ -18,7 +18,7 @@ import cc.unknown.util.chat.ChatUtil;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 
-@ModuleInfo(aliases = "Packet Debug", description = "Display packets client/server side", category = Category.VISUALS)
+@ModuleInfo(aliases = "Packet Debug", description = "Muestra los datos del cliente o servidor", category = Category.VISUALS)
 public class PacketDebug extends Module {
 	
     ArrayList<Group<Class<?>, String, Long>> list = new ArrayList<>();

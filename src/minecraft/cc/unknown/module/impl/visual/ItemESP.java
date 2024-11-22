@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 
-@ModuleInfo(aliases = "Item ESP", description = "Renders all items", category = Category.VISUALS)
+@ModuleInfo(aliases = "Item ESP", description = "Renderiza todos los items", category = Category.VISUALS)
 public final class ItemESP extends Module {
 
 	@EventLink

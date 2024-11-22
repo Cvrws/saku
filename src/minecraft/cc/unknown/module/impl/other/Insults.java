@@ -22,7 +22,7 @@ import cc.unknown.value.impl.StringValue;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
-@ModuleInfo(aliases = "Insults", description = "Insults players after you kill them", category = Category.OTHER)
+@ModuleInfo(aliases = "Insults", description = "Insulta a los jugadores despues de matarlos.", category = Category.OTHER)
 public final class Insults extends Module {
 
 	public final Map<String, List<String>> map = new HashMap<>();

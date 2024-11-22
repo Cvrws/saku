@@ -14,7 +14,7 @@ import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.Entity;
 
-@ModuleInfo(aliases = "Hit Select", description = "Chooses the best time to hit.", category = Category.GHOST)
+@ModuleInfo(aliases = "Hit Select", description = "Escoge el mejor momento para atacar.", category = Category.GHOST)
 public class HitSelect extends Module {
 	
 	private final ModeValue mode = new ModeValue("Mode", this)

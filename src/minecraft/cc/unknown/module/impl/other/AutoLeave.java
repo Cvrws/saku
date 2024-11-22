@@ -13,7 +13,7 @@ import cc.unknown.value.impl.StringValue;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S02PacketChat;
 
-@ModuleInfo(aliases = "Auto Leave", description = "Get out of the game", category = Category.OTHER)
+@ModuleInfo(aliases = "Auto Leave", description = "Sal del juego automaticámente", category = Category.OTHER)
 public final class AutoLeave extends Module {
 	
 	private final StringValue text = new StringValue("Command", this, "/leave");

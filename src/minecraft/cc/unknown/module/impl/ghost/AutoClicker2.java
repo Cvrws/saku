@@ -7,6 +7,7 @@ import org.lwjgl.input.Mouse;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.NaturalPressEvent;
+import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
@@ -19,7 +20,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MovingObjectPosition;
 
-@ModuleInfo(aliases = "Auto Clicker V2", description = "Clicks automatically [BETA]", category = Category.GHOST)
+@ModuleInfo(aliases = "Auto Clicker V2", description = "Clickea automáticamente [BETA]", category = Category.GHOST)
 public class AutoClicker2 extends Module {
 
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 10, 14, 1, 20, 1);
@@ -62,10 +63,6 @@ public class AutoClicker2 extends Module {
 				mc.clickMouse();
 				timeHelper.reset();
 				setRandomDelay();
-				
-				/*while (mc.gameSettings.keyBindUseItem.isPressed()) {
-					mc.rightClickMouse();
-				}*/
 			} else {
 				if (!mc.gameSettings.keyBindUseItem.isKeyDown()) {
 					mc.playerController.onStoppedUsingItem(mc.player);
@@ -92,6 +89,11 @@ public class AutoClicker2 extends Module {
 			event.setCancelled();
 		}
 	};
+	
+    @EventLink
+    public final Listener<Render3DEvent> onRender3D = event -> {
+        mc.leftClickCounter = 0;
+    };
 
 	private void setRandomDelay() {
 		randomDelay = (long) MathUtil.nextSecureInt((int) cps.getValue().intValue(), (int) cps.getSecondValue().intValue());

@@ -17,7 +17,7 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MovingObjectPosition;
 
-@ModuleInfo(aliases = "Anti Bot", description = "Removes bots used by servers", category = Category.WORLD)
+@ModuleInfo(aliases = "Anti Bot", description = "Remueve los bots usados en algunos servidores", category = Category.WORLD)
 public final class AntiBot extends Module {
 
 	private final BooleanValue funcraftAntiBot = new BooleanValue("Funcraft Check", this, false);

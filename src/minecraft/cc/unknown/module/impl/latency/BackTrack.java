@@ -40,7 +40,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
-@ModuleInfo(aliases = "Back Track", description = "Uses latency to give you a reach advantage", category = Category.LATENCY)
+@ModuleInfo(aliases = "Back Track", description = "Utiliza la latencia para atacar desde más lejos", category = Category.LATENCY)
 public final class BackTrack extends Module {
 
     private final ArrayList<Packet> packets = new ArrayList<>();

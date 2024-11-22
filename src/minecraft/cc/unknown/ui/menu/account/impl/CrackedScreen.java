@@ -44,10 +44,10 @@ public class CrackedScreen extends GuiScreen implements Accessor {
 
         Vector2d position = new Vector2d(this.width / 2 - boxWidth / 2, this.height / 2 - 24);
         usernameBox = new TextField(0, this.fontRendererObj, (int) position.x, (int) position.y, (int) boxWidth, (int) boxHeight);
-    	this.buttonList.add(new Button(1, (int) position.x, (int) position.y + boxHeight + padding, (int) boxWidth, (int) boxHeight, "Generate random"));
-    	this.buttonList.add(new Button(2, (int) position.x, (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Add"));
+    	this.buttonList.add(new Button(1, (int) position.x, (int) position.y + boxHeight + padding, (int) boxWidth, (int) boxHeight, "Generar un nick random"));
+    	this.buttonList.add(new Button(2, (int) position.x, (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Añadir"));
     	this.buttonList.add(new Button(3, (int) ((int) position.x + buttonWidth + padding), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Login"));
-    	this.buttonList.add(new Button(4, (int) ((int) position.x + (buttonWidth + padding) * 2), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Back"));
+    	this.buttonList.add(new Button(4, (int) ((int) position.x + (buttonWidth + padding) * 2), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Atrás"));
         animation = new Animation(Easing.EASE_OUT_QUINT, 600);
         animation.setStartValue(-200);
     }
@@ -96,7 +96,7 @@ public class CrackedScreen extends GuiScreen implements Accessor {
         	if (name != null && UsernameGenerator.validate(name)) {
         		usernameBox.setText(name);
         	}
-        	userDisplay = "Like the name " + name + "?";
+        	userDisplay = "Te gusta este nombre " + name + "?";
         	break;
         case 2:
             if (UsernameGenerator.validate(username)) {

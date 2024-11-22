@@ -25,7 +25,7 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.MovingObjectPosition;
 
-@ModuleInfo(aliases = "Auto Clicker", description = "Clicks automatically", category = Category.GHOST)
+@ModuleInfo(aliases = "Auto Clicker", description = "Clickea automáticamente", category = Category.GHOST)
 public class AutoClicker extends Module {
 
 	private final ModeValue clickMode = new ModeValue("Randomization", this) {{

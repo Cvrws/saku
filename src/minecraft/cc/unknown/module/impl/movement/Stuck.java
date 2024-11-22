@@ -12,7 +12,7 @@ import cc.unknown.util.vector.Vector3d;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C03PacketPlayer;
 
-@ModuleInfo(aliases = {"Stuck", "Freeze"}, description = "Makes you get stuck", category = Category.MOVEMENT)
+@ModuleInfo(aliases = {"Stuck", "Freeze"}, description = "Steve I'm stuck", category = Category.MOVEMENT)
 public class Stuck extends Module {
     private Vector3d motion;
 

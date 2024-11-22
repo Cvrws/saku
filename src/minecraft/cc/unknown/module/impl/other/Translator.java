@@ -30,7 +30,7 @@ import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.StringUtils;
 
-@ModuleInfo(aliases = "Translator", description = "Translates your chat, might not work with some VPNs", category = Category.OTHER)
+@ModuleInfo(aliases = "Translator", description = "Traduce el chat, esto no funciona con algunas VPNs", category = Category.OTHER)
 public final class Translator extends Module {
 
     private Executor translatorThread = Executors.newFixedThreadPool(1);

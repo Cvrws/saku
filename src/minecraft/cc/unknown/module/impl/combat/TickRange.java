@@ -11,7 +11,7 @@ import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.rotation.RotationUtil;
 import cc.unknown.value.impl.NumberValue;
 
-@ModuleInfo(aliases = "Tick Range", description = "Freezes minecraft instance to get closer to your target", category = Category.COMBAT)
+@ModuleInfo(aliases = "Tick Range", description = "Congela el juego para acercarte a tu objetivo", category = Category.COMBAT)
 public class TickRange extends Module {
 
 	private final NumberValue coolDown = new NumberValue("Delay after dash to be able again to dash", this, 1, 1, 8, 0.5);

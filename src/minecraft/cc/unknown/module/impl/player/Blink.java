@@ -14,7 +14,7 @@ import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 
-@ModuleInfo(aliases = "Blink", description = "Temporarily chokes data being sent to the server", category = Category.PLAYER)
+@ModuleInfo(aliases = "Blink", description = "Bloquea temporalmente los datos que se envían al servidor.", category = Category.PLAYER)
 public class Blink extends Module {
 
     private final BooleanValue outbound = new BooleanValue("Outbound", this, true);

@@ -11,7 +11,7 @@ import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 
-@ModuleInfo(aliases = "Flight", description = "Grants you the ability to fly", category = Category.MOVEMENT)
+@ModuleInfo(aliases = "Flight", description = "Te concede la capacidad de volar.", category = Category.MOVEMENT)
 public class Flight extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", this)

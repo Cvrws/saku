@@ -20,7 +20,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.network.NetworkManager.InboundHandlerTuplePacketListener;
 import net.minecraft.network.Packet;
 
-@ModuleInfo(aliases = "Fake Lag", description = "Withholds packets from the server, creating clientside lag (BETA)", category = Category.LATENCY)
+@ModuleInfo(aliases = "Fake Lag", description = "Retiene los datos del servidor ocasionando lag (BETA)", category = Category.LATENCY)
 public class FakeLag extends Module {
 	
 	private ModeValue mode = new ModeValue("Withhold Mode", this)

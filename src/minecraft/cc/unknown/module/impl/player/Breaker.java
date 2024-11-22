@@ -41,7 +41,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 
-@ModuleInfo(aliases = {"Breaker"}, description = "Automatically breaks beds around you", category = Category.PLAYER)
+@ModuleInfo(aliases = {"Breaker"}, description = "Rompe automáticamente las camas a tu alrededor", category = Category.PLAYER)
 public class Breaker extends Module {
     public final ModeValue mode = new ModeValue("Mode", this)
             .add(new SubMode("Normal"))

@@ -28,7 +28,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 
-@ModuleInfo(aliases = "Aim Assist", description = "Assists you in aiming", category = Category.GHOST)
+@ModuleInfo(aliases = "Aim Assist", description = "Te ayuda a apuntar", category = Category.GHOST)
 public final class AimAssist extends Module {
 	
 	private final ModeValue mode = new ModeValue("Mode", this)

@@ -10,7 +10,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.math.MathUtil;
 import cc.unknown.value.impl.BoundsNumberValue;
 
-@ModuleInfo(aliases = "Timer", description = "Changes the speed that Minecraft runs at", category = Category.PLAYER)
+@ModuleInfo(aliases = "Timer", description = "Cambia la velocidad a la que se ejecuta Minecraft", category = Category.PLAYER)
 public final class Timer extends Module {
 
 	private final BoundsNumberValue timer = new BoundsNumberValue("Timer", this, 1, 2, 0.1, 10, 0.05);

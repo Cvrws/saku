@@ -67,7 +67,7 @@ public class AccountViewModel<T extends Account> implements Accessor, MenuColors
         RenderUtil.roundedRectangle(x, y, width, height, 5, BACKGROUND_COLOR);
         renderInvalidHead(x + 4, y + 4, 32);
 
-        FONT_RENDERER.draw("Waiting...", x + 40, y + 6, FONT_COLOR.getRGB());
+        FONT_RENDERER.draw("Esperando...", x + 40, y + 6, FONT_COLOR.getRGB());
         INFO_FONT_RENDERER.draw("Last login: -", x + 40, y + 19, INFO_COLOR.getRGB());
         INFO_FONT_RENDERER.draw("Actions: -", x + 40, y + 29, INFO_COLOR.getRGB());
     };
@@ -85,13 +85,13 @@ public class AccountViewModel<T extends Account> implements Accessor, MenuColors
 
         if (account instanceof MicrosoftAccount) {
             this.labelButtons = new MenuLabelButton[]{
-                    new MenuLabelButton(x + 76, y + height - 12, 24, 8, () -> removable = true, "Delete", Color.RED)
+                    new MenuLabelButton(x + 76, y + height - 12, 24, 8, () -> removable = true, "Remove", Color.RED)
             };
         } else {
             int labelPadding = 2;
             this.labelButtons = new MenuLabelButton[]{
                     new MenuLabelButton(x + 76, y + height - 12, 28, 8, () -> mc.displayGuiScreen(new RenameAccountScreen(this)), "Rename", Color.YELLOW),
-                    new MenuLabelButton(x + 76 + 28 + labelPadding, y + height - 12, 24, 8, () -> removable = true, "Delete", Color.RED)
+                    new MenuLabelButton(x + 76 + 28 + labelPadding, y + height - 12, 24, 8, () -> removable = true, "Remove", Color.RED)
             };
         }
     }

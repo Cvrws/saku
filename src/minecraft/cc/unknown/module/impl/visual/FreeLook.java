@@ -13,7 +13,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.value.impl.BooleanValue;
 
-@ModuleInfo(aliases = {"Free Look"}, description = "Allows you to look around you without changing your direction", category = Category.VISUALS)
+@ModuleInfo(aliases = {"Free Look"}, description = "Le permite mirar a su alrededor sin cambiar de dirección", category = Category.VISUALS)
 public final class FreeLook extends Module {
 
     private int previousPerspective;

@@ -16,7 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 
-@ModuleInfo(aliases = "Auto Refill", description = "refill ur pots", category = Category.OTHER)
+@ModuleInfo(aliases = "Auto Refill", description = "Te rebastece de más pociones [BETA]", category = Category.OTHER)
 public class AutoRefill extends Module {
     private NumberValue delay = new NumberValue("Delay", this, 0, 100, 1000, 1);
     private BooleanValue invOpen = new BooleanValue("Inventory Open", this, true);

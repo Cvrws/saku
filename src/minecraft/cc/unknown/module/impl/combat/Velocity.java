@@ -10,6 +10,7 @@ import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.chat.ChatUtil;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
@@ -27,8 +28,6 @@ public final class Velocity extends Module {
 			.add(new SubMode("Simple"))
 			.add(new SubMode("Legit"))
 			.add(new SubMode("Polar"))
-			.add(new SubMode("Legit Motion"))
-			.add(new SubMode("AAC4"))
 			.add(new SubMode("Matrix"))
 			.add(new SubMode("Watchdog Simple"))
 			.setDefault("Simple");
@@ -42,12 +41,10 @@ public final class Velocity extends Module {
 	public final BooleanValue legitTiming = new BooleanValue("Legit Timing", this, true, () -> !mode.is("Legit"));
 
 	private boolean reduced;
-	private int ticks;
 
 	@Override
 	public void onEnable() {
 		reduced = false;
-		ticks = 0;
 	}
 
 	@EventLink
@@ -60,18 +57,9 @@ public final class Velocity extends Module {
 	    if (!shouldPerformAction(chanceValue, randomFactor)) return;
 
 		switch (mode.getValue().getName()) {
-		case "Legit Motion":
-			if (mc.player.motionY > 0 && mc.player.hurtTime >= 5 && mc.player.onGround) {
-				mc.player.motionY = 0.42;
-				float yaw = mc.player.rotationYaw * 0.017453292F;
-				mc.player.motionX -= MathHelper.sin(yaw) * 0.2f;
-				mc.player.motionZ += MathHelper.cos(yaw) * 0.2f;
-			}
-			break;
 		case "Matrix":
-			if (mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null && mc.player.motionY > 0 && mc.player.hurtTime == 9 && !mc.player.isBurning()) {
+			if (mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null && mc.player.hurtTime == 9 && !mc.player.isBurning()) {
 				reduced = true;
-				ticks++;
 			} else
 				reduced = false;
 			break;
@@ -81,16 +69,12 @@ public final class Velocity extends Module {
 
 	@EventLink
 	public final Listener<MoveInputEvent> onMove = event -> {
-		if (mode.is("Legit")) {
-			if (reduced && MoveUtil.isMoving()) {
-				event.setJump(true);
-			}
+		if (mode.is("Legit") && reduced && MoveUtil.isMoving()) {
+			event.setJump(true);
 		}
 		
-		if (mode.is("Matrix")) {
-			if (reduced) {
-				event.setJump(true);
-			}
+		if (reduced && mode.is("Legit")) {
+			event.setJump(true);
 		}
 	};
 	
@@ -123,18 +107,11 @@ public final class Velocity extends Module {
 
 					event.setPacket(wrapper);
 					break;
-	            case "AAC4":
-	            	event.setCancelled(true);
-	            	Entity entity = mc.world.getEntityByID(wrapper.getEntityID());
-	            	if (entity != null)
-	            		entity.setVelocity((double) wrapper.getMotionX() / 8000.0D, (double) wrapper.getMotionY() / 8000.0D, (double) wrapper.getMotionZ() / 8000.0D);
-	            	if (entity == mc.player) {
-	            		mc.player.motionX *= 0.6;
-	            		mc.player.motionZ *= 0.6;
-	                }
-	                break;
 				case "Matrix":
-					ticks = 0;
+					if (reduced) {
+						mc.player.jump();
+						ChatUtil.display("jump");
+					}
 					break;
 				case "Legit":
 					if (mc.player.onGround && mc.player.motionY > 0) {

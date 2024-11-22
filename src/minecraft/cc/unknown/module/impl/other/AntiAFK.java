@@ -13,7 +13,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.tuples.Doble;
 import net.minecraft.client.settings.GameSettings;
 
-@ModuleInfo(aliases = "Anti AFK", description = "Prevents you from getting AFK kicked by servers", category = Category.OTHER)
+@ModuleInfo(aliases = "Anti AFK", description = "Previene kickeos al quedarte AFK", category = Category.OTHER)
 public final class AntiAFK extends Module {
 
 	private int lastInput;

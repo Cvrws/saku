@@ -15,7 +15,7 @@ import net.minecraft.item.ItemEgg;
 import net.minecraft.item.ItemSnowball;
 import net.minecraft.item.ItemStack;
 
-@ModuleInfo(aliases = "Fast Place", description = "Makes the place delay shorter", category = Category.WORLD)
+@ModuleInfo(aliases = "Fast Place", description = "Te permite colocar bloques más rapido", category = Category.WORLD)
 public class FastPlace extends Module {
 
 	private final BooleanValue blocks = new BooleanValue("Blocks", this, true);

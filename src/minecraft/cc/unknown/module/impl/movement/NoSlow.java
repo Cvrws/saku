@@ -28,7 +28,7 @@ import net.minecraft.network.play.client.C0CPacketInput;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
-@ModuleInfo(aliases = "No Slow", description = "Allows you to move at full speed whilst using items", category = Category.MOVEMENT)
+@ModuleInfo(aliases = "No Slow", description = "Remueve la lentitud al utilizar algunos objetos.", category = Category.MOVEMENT)
 public class NoSlow extends Module {
 	private final BooleanValue sword = new BooleanValue("Sword", this, false);
 	private final BooleanValue swordSlowdown = shortBoolean("Slowdown", sword);

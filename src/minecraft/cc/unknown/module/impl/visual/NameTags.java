@@ -27,7 +27,7 @@ import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 
-@ModuleInfo(aliases = "Name Tags", description = "Renders a custom name tag above entities", category = Category.VISUALS)
+@ModuleInfo(aliases = "Name Tags", description = "Renderiza el nombre de los jugadores", category = Category.VISUALS)
 public final class NameTags extends Module {
     
     private final BooleanValue health = new BooleanValue("Show Health", this, true);

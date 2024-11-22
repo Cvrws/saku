@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S2EPacketCloseWindow;
 
-@ModuleInfo(aliases = "No Gui Close", category = Category.OTHER, description = "Prevents servers from closing opened GUIs")
+@ModuleInfo(aliases = "No Gui Close", category = Category.OTHER, description = "Previene que el servidor cierre tu inventario")
 public final class NoGuiClose extends Module {
     private final BooleanValue chatonly = new BooleanValue("Chat Only", this, false);
 

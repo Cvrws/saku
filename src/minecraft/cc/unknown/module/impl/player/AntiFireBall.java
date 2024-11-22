@@ -19,7 +19,7 @@ import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C0APacketAnimation;
 
-@ModuleInfo(aliases = {"Anti Fire Ball"}, description = "Prevents you from getting hit by fireballs", category = Category.PLAYER)
+@ModuleInfo(aliases = {"Anti Fire Ball"}, description = "Golpea automaticámente las fireballs", category = Category.PLAYER)
 public class AntiFireBall extends Module {
 
 	private final NumberValue range = new NumberValue("Range", this, 6.0, 4.0, 6.0, 0.1);
@@ -33,8 +33,7 @@ public class AntiFireBall extends Module {
                 if (this.rotate.getValue()) {
                     RotationComponent.setRotations(RotationUtil.calculate(entity), rotationSpeed.getValue().intValue(), MovementFix.SILENT);
                 }
-                PacketUtil.sendNoEvent(new C02PacketUseEntity(entity, C02PacketUseEntity.Action.ATTACK));
-                PacketUtil.sendNoEvent(new C0APacketAnimation());
+                mc.clickMouse();
                 break;
             }
         }

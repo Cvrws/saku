@@ -13,7 +13,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.packet.PacketUtil;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 
-@ModuleInfo(aliases = "Sneak", description = "Makes you always sneak, sometimes without slowing down", category = Category.MOVEMENT)
+@ModuleInfo(aliases = "Sneak", description = "Te hace shiftear siempre o a veces sin frenar [BETA]", category = Category.MOVEMENT)
 public class Sneak extends Module {
 	
     @Override
