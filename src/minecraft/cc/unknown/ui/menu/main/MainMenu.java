@@ -35,8 +35,7 @@ public class MainMenu extends GuiMainMenu {
         buttonActions.put(0, button -> mc.displayGuiScreen(new GuiSelectWorld(this)));
         buttonActions.put(1, button -> mc.displayGuiScreen(new GuiMultiplayer(this)));
         buttonActions.put(2, button -> mc.displayGuiScreen(new AccountManagerScreen(this)));
-        buttonActions.put(3, button -> mc.displayGuiScreen(new MenuInfo()));
-        buttonActions.put(4, button -> mc.displayGuiScreen(new GuiOptions(this, mc.gameSettings)));
+        buttonActions.put(3, button -> mc.displayGuiScreen(new GuiOptions(this, mc.gameSettings)));
     }
 
     @Override
@@ -49,7 +48,7 @@ public class MainMenu extends GuiMainMenu {
         
         this.buttonList.clear();
 
-        final String[] keys = {"SinglePlayer", "MultiPlayer", "Alt Manager", "Client Info", "Settings"};
+        final String[] keys = {"SinglePlayer", "MultiPlayer", "Alt Manager", "Settings"};
         final int initHeight = height / 4 + 36;
         final int objHeight = 20;
         final int objWidth = 100;
