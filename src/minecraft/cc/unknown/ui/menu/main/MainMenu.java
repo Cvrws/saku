@@ -42,6 +42,11 @@ public class MainMenu extends GuiMainMenu {
     @Override
     public void initGui() {
         super.initGui();
+        
+        if (UserUtil.getUser().isEmpty()) {
+        	mc.displayGuiScreen(new LoginMenu());
+        }
+        
         this.buttonList.clear();
 
         final String[] keys = {"SinglePlayer", "MultiPlayer", "Alt Manager", "Client Info", "Settings"};

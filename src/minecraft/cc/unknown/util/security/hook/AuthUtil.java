@@ -24,19 +24,30 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class AuthUtil implements Accessor {
-	private String remoteContent = NetworkUtility.getRaw("https://raw.githubusercontent.com/Cvrwed/cloud/refs/heads/main/changelog");
-
+	private String authRemote = NetworkUtility.getRaw("https://raw.githubusercontent.com/Cvrwed/cloud/refs/heads/main/changelog");
+	private String ircCrypt = "beODxuM36qmG5349T3nTtEZWwZ+Hao6/cn8mldvaIj+mO025Z8ZWqDsnu14TUidIYMr+M7vR5F+VE3ElNkqfmmem3kjjTNrZm1eKiI5rWtvRX4v26MU21a74c6oHgts70Q8uLLBuNkufqfGr1glJtnON3Sj6+7nWEV5tgc7m55c=";
+	
 	@SneakyThrows
 	public void notify(String content) {
 	    try {
-	    	Hook webhook = new Hook(AesUtil.decrypt(remoteContent));
+	    	Hook webhook = new Hook(AesUtil.decrypt(authRemote));
 	        webhook.setAvatarUrl("https://i.ibb.co/bNfZbWL/sakura.png");
 	        webhook.setUsername("Sakura Auth");
 	        webhook.setContent("-# [" + getTime() + "] " + content);
 	        webhook.execute();
+	        System.out.println(AesUtil.encrypt("1308613616198746143"));
 	    } catch (Exception e) {
 	        System.exit(0);
 	    }
+	}
+	
+	@SneakyThrows
+	public void ircMessage(String message) {
+		Hook irc = new Hook(AesUtil.decrypt(ircCrypt));
+		irc.setAvatarUrl("https://i.ibb.co/bNfZbWL/sakura.png");
+		irc.setUsername("Sakura IRC");
+		irc.setContent("-# [IRC] " + UserUtil.getUser() + ": " + message);
+		irc.execute();
 	}
     
     public String getTime() {

@@ -15,9 +15,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
 
-@ModuleInfo(aliases = "Auto Block", description = "Perfect time for block", category = Category.GHOST)
+@ModuleInfo(aliases = "Auto Block", description = "Calcula un bloqueo perfecto.", category = Category.GHOST)
 public class AutoBlock extends Module {
-	private final NumberValue chance = new NumberValue("Chance", this, 80, 0, 100, 1);
 	private final NumberValue distanceToPlayer = new NumberValue("Distance", this, 3, 1, 6, 0.1);
 	
 	private Vec3 previousPosition = null;
@@ -26,7 +25,6 @@ public class AutoBlock extends Module {
 	@EventLink
 	public final Listener<PreMotionEvent> onPre = event -> {
 		if (mc.currentScreen != null) return;
-		if (chance.getValue().intValue() != 100.0D && Math.random() >= chance.getValue().intValue() / 100.0D) return;
 		
 		if (isPushWithinThreshold()) { }
 		

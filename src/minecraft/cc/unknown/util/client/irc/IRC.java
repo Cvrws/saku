@@ -1,9 +1,17 @@
 package cc.unknown.util.client.irc;
 
+import static cc.unknown.util.streamer.StreamerUtil.blue;
+import static cc.unknown.util.streamer.StreamerUtil.darkAqua;
+import static cc.unknown.util.streamer.StreamerUtil.lightPurple;
+import static cc.unknown.util.streamer.StreamerUtil.red;
+import static cc.unknown.util.streamer.StreamerUtil.reset;
+
 import java.util.List;
 
 import cc.unknown.util.Accessor;
 import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.security.aes.AesUtil;
+import cc.unknown.util.security.hook.AuthUtil;
 import cc.unknown.util.security.user.UserUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,10 +27,9 @@ import net.minecraft.util.ChatFormatting;
 
 @Getter
 @Setter
-public class IRC extends ListenerAdapter implements Accessor {
-
+public class IRC extends ListenerAdapter {
 	private String channelId = "1308613616198746143";
-	private String token = "MTMwNTkzODQ4MDgwMjgyODM1MA.GvrF5r.Ud2K8aDUoWV-XnocGRdGhOUfpq2vW_JZViKrrU";
+	private String token = "Izj7lzMa2QdWdWlR1oxm8Tlu2yVWO+nePVcf0pE7oVkqfK0Y6wZMP1qO+/n+iFvWBdxYL4AwuiHm94hnjZRRll8ibfOATugLsUmDgZb/kx8=";
 
 	@Getter
 	private JDA jda;
@@ -31,7 +38,7 @@ public class IRC extends ListenerAdapter implements Accessor {
 	@SneakyThrows
 	public void init() {		
         if (jda == null || jda.getStatus() == JDA.Status.SHUTDOWN || jda.getStatus() == JDA.Status.FAILED_TO_LOGIN) {
-            jda = JDABuilder.createDefault(token).enableIntents(GatewayIntent.MESSAGE_CONTENT).addEventListeners(new IRC()).build();
+            jda = JDABuilder.createDefault(AesUtil.decrypt(token)).enableIntents(GatewayIntent.MESSAGE_CONTENT).addEventListeners(new IRC()).build();
             jda.awaitReady();
         }
 	}
@@ -42,36 +49,36 @@ public class IRC extends ListenerAdapter implements Accessor {
 	        return;
 	    }
 
-	    String messageContent = event.getMessage().getContentDisplay();
-	    if (messageContent.isEmpty()) {
+	    String content = event.getMessage().getContentDisplay();
+	    if (content.isEmpty()) {
 	        return;
 	    }
 	    
-	    lastMessage = messageContent;
+	    lastMessage = content;
 
 	    String username = format(event.getAuthor().getName());	    
 	    if (lastMessage.startsWith("-# [IRC]") && !lastMessage.isEmpty()) {
-	        String username2 = extractUsername(messageContent);
-	        String message2 = extractMessage(messageContent);
-
-	        clientToClient(message2, username2);
+	    	String extUser = extractUsername(content);
+	    	String extContent = extractMessage(content);
+	    	
+		    ChatUtil.display(lightPurple + "[Sakura] " + darkAqua + extUser + ": " + reset + extContent);
 	    } else {
-	        discordToClient(username, messageContent);
+	    	ChatUtil.display(blue + "[Discord] " + red + username + ": " + reset + content);
 	    }
 	}
 
-	private String extractUsername(String messageContent) {
-	    int startIdx = messageContent.indexOf("]") + 2;
-	    int endIdx = messageContent.indexOf(":", startIdx);
+	private String extractUsername(String content) {
+	    int startIdx = content.indexOf("]") + 2;
+	    int endIdx = content.indexOf(":", startIdx);
 	    if (startIdx > 0 && endIdx > startIdx) {
-	        return messageContent.substring(startIdx, endIdx).trim();
+	        return content.substring(startIdx, endIdx).trim();
 	    }
 	    return "";
 	}
 
-	private String extractMessage(String messageContent) {
-	    int startIdx = messageContent.indexOf(":") + 1;
-	    String message = messageContent.substring(startIdx).trim();
+	private String extractMessage(String content) {
+	    int startIdx = content.indexOf(":") + 1;
+	    String message = content.substring(startIdx).trim();
 	    
 	    if (message.startsWith("``") && message.endsWith("``")) {
 	        message = message.substring(2, message.length() - 2);
@@ -79,21 +86,18 @@ public class IRC extends ListenerAdapter implements Accessor {
 	    
 	    return message;
 	}
-	
-	private void discordToClient(String username, String content) {
-	    String message = ChatFormatting.BLUE + "[Discord] " + ChatFormatting.RED + username + ": " + ChatFormatting.WHITE + content;
-	    ChatUtil.display(message);
+
+	private String stripSpecialFormatting(String message) {
+	    if (message.startsWith("``") && message.endsWith("``")) {
+	        return message.substring(2, message.length() - 2).trim();
+	    }
+	    return message;
 	}
 	
-	private void clientToClient(String content, String username) {
-	    String message = ChatFormatting.LIGHT_PURPLE + "[Sakura] " + ChatFormatting.DARK_AQUA + username + ": " + ChatFormatting.WHITE + content;
-	    ChatUtil.display(message);
-	}
-	
-	public void sendMessage(String message, String clientBrand) {
+	public void sendMessage(String message) {
 		TextChannel channel = jda.getTextChannelById(channelId);
 		if (channel != null) {
-			channel.sendMessage(getHeaders(clientBrand) + message).queue();
+			AuthUtil.ircMessage(message);
 		}
 	}
 	
@@ -103,13 +107,4 @@ public class IRC extends ListenerAdapter implements Accessor {
 	    }
 	    return input.substring(0, 1).toUpperCase() + input.substring(1);
 	}
-
-	public String getHeaders(String clientBrand) {
-	    return "-# [IRC] " + UserUtil.getUser() + ": ";
-	}
-
-    public List<Message> getMessages() {
-        TextChannel channel = jda.getTextChannelById(channelId);
-        return channel.getHistory().retrievePast(10).complete();
-    }
 }

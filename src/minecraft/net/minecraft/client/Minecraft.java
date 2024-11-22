@@ -211,8 +211,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
 	 */
 	public boolean keybindsReverse = false;
 	public static byte[] memoryReserve = new byte[10485760];
-	private static final List<DisplayMode> macDisplayModes = Lists.newArrayList(new DisplayMode(2560, 1600),
-new DisplayMode(2880, 1800));
+	private static final List<DisplayMode> macDisplayModes = Lists.newArrayList(new DisplayMode(2560, 1600), new DisplayMode(2880, 1800));
 	private final File fileResourcepacks;
 	private final PropertyMap twitchDetails;
 	private final PropertyMap field_181038_N;

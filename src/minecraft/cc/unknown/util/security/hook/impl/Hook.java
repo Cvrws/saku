@@ -1,7 +1,6 @@
 package cc.unknown.util.security.hook.impl;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
@@ -14,6 +13,13 @@ import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
+
+@Getter
+@Setter
 public class Hook {
     private final String url;
     private String content;
@@ -25,28 +31,9 @@ public class Hook {
     public Hook(String url) {
         this.url = url;
     }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
-    public void setTts(boolean tts) {
-        this.tts = tts;
-    }
-
-    public void addEmbed(EmbedObject embed) {
-        this.embeds.add(embed);
-    }
-
-    public void execute() throws IOException {
+    
+    @SneakyThrows
+    public void execute() {
         if (this.content == null && this.embeds.isEmpty()) {
             throw new IllegalArgumentException("Set content or add at least one EmbedObject");
         }
@@ -148,6 +135,7 @@ public class Hook {
         connection.disconnect();
     }
 
+    @Getter
     public static class EmbedObject {
         private String title;
         private String description;
@@ -159,42 +147,6 @@ public class Hook {
         private Image image;
         private Author author;
         private List<Field> fields = new ArrayList<>();
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public Color getColor() {
-            return color;
-        }
-
-        public Footer getFooter() {
-            return footer;
-        }
-
-        public Thumbnail getThumbnail() {
-            return thumbnail;
-        }
-
-        public Image getImage() {
-            return image;
-        }
-
-        public Author getAuthor() {
-            return author;
-        }
-
-        public List<Field> getFields() {
-            return fields;
-        }
 
         public EmbedObject setTitle(String title) {
             this.title = title;
@@ -241,94 +193,39 @@ public class Hook {
             return this;
         }
 
+        @Getter
+        @AllArgsConstructor
         private class Footer {
             private String text;
             private String iconUrl;
-
-            private Footer(String text, String iconUrl) {
-                this.text = text;
-                this.iconUrl = iconUrl;
-            }
-
-            private String getText() {
-                return text;
-            }
-
-            private String getIconUrl() {
-                return iconUrl;
-            }
         }
 
+        @Getter
+        @AllArgsConstructor
         private class Thumbnail {
             private String url;
-
-            private Thumbnail(String url) {
-                this.url = url;
-            }
-
-            private String getUrl() {
-                return url;
-            }
         }
 
+        @Getter
+        @AllArgsConstructor
         private class Image {
             private String url;
-
-            private Image(String url) {
-                this.url = url;
-            }
-
-            private String getUrl() {
-                return url;
-            }
         }
 
+        @Getter
+        @AllArgsConstructor
         private class Author {
             private String name;
             private String url;
             private String iconUrl;
-
-            private Author(String name, String url, String iconUrl) {
-                this.name = name;
-                this.url = url;
-                this.iconUrl = iconUrl;
-            }
-
-            private String getName() {
-                return name;
-            }
-
-            private String getUrl() {
-                return url;
-            }
-
-            private String getIconUrl() {
-                return iconUrl;
-            }
         }
 
+        @Getter
+        @AllArgsConstructor
         private class Field {
             private String name;
             private String value;
             private boolean inline;
-
-            private Field(String name, String value, boolean inline) {
-                this.name = name;
-                this.value = value;
-                this.inline = inline;
-            }
-
-            private String getName() {
-                return name;
-            }
-
-            private String getValue() {
-                return value;
-            }
-
-            private boolean isInline() {
-                return inline;
-            }
         }
     }
 

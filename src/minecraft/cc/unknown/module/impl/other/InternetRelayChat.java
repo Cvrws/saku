@@ -13,13 +13,8 @@ import cc.unknown.event.impl.input.ChatInputEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.chat.ChatUtil;
 import cc.unknown.util.client.irc.IRC;
-import cc.unknown.util.client.irc.Processor;
-import cc.unknown.util.security.user.UserUtil;
 import cc.unknown.value.impl.StringValue;
-import net.dv8tion.jda.api.entities.Message;
-import net.minecraft.util.ChatFormatting;
 
 @ModuleInfo(aliases = {"Internet Relay Chat", "irc"}, description = "Habla con otros Sakura users [BETA]", category = Category.OTHER)
 public final class InternetRelayChat extends Module {
@@ -28,19 +23,18 @@ public final class InternetRelayChat extends Module {
     
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private IRC ircBot = new IRC();
-    private Processor irc = new Processor(ircBot);
+    private IRC irc = new IRC();
     
     private final StringValue prefix = new StringValue("Prefix", this, "#");
     
     @Override
     public void onEnable() {
-    	irc.initBot();
+    	irc.init();
     }
     
     @Override
     public void onDisable() {
-    	irc.stopBot();
+    	irc.getJda().shutdown();
     }
     
     @EventLink
