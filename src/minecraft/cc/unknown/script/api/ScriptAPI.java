@@ -9,6 +9,7 @@ import javax.script.ScriptException;
 
 import cc.unknown.Sakura;
 import cc.unknown.command.Command;
+import cc.unknown.component.impl.player.BotComponent;
 import cc.unknown.component.impl.player.RotationComponent;
 import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.component.impl.render.NotificationComponent;
@@ -166,7 +167,7 @@ public class ScriptAPI {
     }
 
     public boolean isBot(int entityID){
-        return Sakura.instance.getBotManager().contains(Minecraft.getMinecraft().world.getEntityByID(entityID));
+        return Sakura.instance.getComponentManager().get(BotComponent.class).contains(Minecraft.getMinecraft().world.getEntityByID(entityID));
     }
 
     public boolean isFriend(String name){

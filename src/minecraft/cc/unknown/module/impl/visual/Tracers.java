@@ -3,6 +3,7 @@ package cc.unknown.module.impl.visual;
 import java.awt.Color;
 
 import cc.unknown.Sakura;
+import cc.unknown.component.impl.player.BotComponent;
 import cc.unknown.component.impl.player.TargetComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -23,7 +24,7 @@ public final class Tracers extends Module {
     @EventLink
     public final Listener<Render3DEvent> onRender3D = event -> {
         for (final Entity player : mc.world.playerEntities) {
-            if (player == mc.player || player.isDead || Sakura.instance.getBotManager().contains(player)) {
+            if (player == mc.player || player.isDead || Sakura.instance.getComponentManager().get(BotComponent.class).contains(player)) {
                 continue;
             }
             

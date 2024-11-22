@@ -33,7 +33,6 @@ public abstract class Value<T> {
         this.defaultValue = defaultValue;
         this.setValue(defaultValue);
         parent.getValues().add(this);
-        Sakura.instance.settingCounter++;
     }
 
     public Value(final String name, final Mode<?> parent, final T defaultValue) {
@@ -43,7 +42,6 @@ public abstract class Value<T> {
         this.parent = parent;
         this.setValue(defaultValue);
         parent.getValues().add(this);
-        Sakura.instance.settingCounter++;
     }
 
     public Value(final String name, final Module parent, final T defaultValue, final BooleanSupplier hideIf) {
@@ -53,7 +51,6 @@ public abstract class Value<T> {
         this.defaultValue = defaultValue;
         this.setValue(defaultValue);
         parent.getValues().add(this);
-        Sakura.instance.settingCounter++;
     }
 
     public Value(final String name, final Mode<?> parent, final T defaultValue, final BooleanSupplier hideIf) {
@@ -62,7 +59,6 @@ public abstract class Value<T> {
         this.defaultValue = defaultValue;
         this.setValue(defaultValue);
         parent.getValues().add(this);
-        Sakura.instance.settingCounter++;
     }
 
     public void setValueAsObject(final Object value) {

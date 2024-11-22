@@ -1,22 +1,22 @@
-package cc.unknown.bots;
-
-import net.minecraft.entity.Entity;
+package cc.unknown.component.impl.player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
-import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.TargetComponent;
+import cc.unknown.component.impl.Component;
+import cc.unknown.component.impl.render.NotificationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.WorldChangeEvent;
+import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.util.player.PingerCallable;
+import cc.unknown.util.time.StopWatch;
+import net.minecraft.entity.Entity;
 
-public class BotManager {
-    private final HashMap<Object, ArrayList<Integer>> bots = new HashMap<>();
-
-    public void init() {
-        Sakura.instance.getEventBus().register(this);
-    }
+public final class BotComponent extends Component {
+    public final HashMap<Object, ArrayList<Integer>> bots = new HashMap<>();
 
     @EventLink
     public final Listener<WorldChangeEvent> onWorldChange = event -> clear();

@@ -1,15 +1,14 @@
 package cc.unknown.module.impl.visual;
 
-import static cc.unknown.util.render.RenderUtil.horizontalGradient;
 import static cc.unknown.util.render.RenderUtil.isInViewFrustrum;
 import static cc.unknown.util.render.RenderUtil.rectangle;
-import static cc.unknown.util.render.RenderUtil.verticalGradient;
 
 import java.awt.Color;
 
 import javax.vecmath.Vector4d;
 
 import cc.unknown.Sakura;
+import cc.unknown.component.impl.player.BotComponent;
 import cc.unknown.component.impl.render.ProjectionComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -50,7 +49,7 @@ public final class ExtraSensoryPerception extends Module {
     @EventLink
     public final Listener<Render2DEvent> onRender2D = event -> {		
         for (EntityPlayer player : mc.world.playerEntities) {
-            if (mc.getRenderManager() == null || !isInViewFrustrum(player) || player.isDead || Sakura.instance.getBotManager().contains(player) || player == mc.player) {
+            if (mc.getRenderManager() == null || !isInViewFrustrum(player) || player.isDead || Sakura.instance.getComponentManager().get(BotComponent.class).contains(player) || player == mc.player) {
                 continue;
             }
 

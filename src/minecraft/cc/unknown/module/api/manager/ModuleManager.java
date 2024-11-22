@@ -149,7 +149,6 @@ public final class ModuleManager {
 
         // Has to be a listener to handle the key presses
         Sakura.instance.getEventBus().register(this);
-        Sakura.instance.moduleCounter = getAll().size();
     }
 
     public ArrayList<Module> getAll() {

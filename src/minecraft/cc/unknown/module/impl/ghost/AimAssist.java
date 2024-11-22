@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import cc.unknown.Sakura;
+import cc.unknown.component.impl.player.BotComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
@@ -108,7 +109,7 @@ public final class AimAssist extends Module {
 				if (Sakura.instance.getEnemyManager().isEnemy(entityPlayer)) continue;
 	            if (entityPlayer.getName().contains("[NPC]")) continue;
 				if (Sakura.instance.getFriendManager().isFriend(entityPlayer) && ignoreFriendlyEntities.getValue()) continue;
-				if (Sakura.instance.getBotManager().contains(entityPlayer) && ignoreBots.getValue()) continue;
+				if (Sakura.instance.getComponentManager().get(BotComponent.class).contains(entityPlayer) && ignoreBots.getValue()) continue;
 				if (ignoreTeammates.getValue() && PlayerUtil.isTeam(entityPlayer, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
 				if (dist > distance.getValue().doubleValue()) continue;
 				if (fov != 360 && !PlayerUtil.inFov(fov, entityPlayer)) continue;

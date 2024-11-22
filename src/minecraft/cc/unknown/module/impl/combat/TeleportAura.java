@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.Sakura;
+import cc.unknown.component.impl.player.BotComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
@@ -193,7 +194,7 @@ public class TeleportAura extends Module {
 
 		if ((mc.player.isEntityAlive()) && !(entity instanceof EntityPlayerSP)) {
 			if (mc.player.getDistanceToEntity(entity) <= range) {
-				if (Sakura.instance.getBotManager().contains(entity)) {
+				if (Sakura.instance.getComponentManager().get(BotComponent.class).contains(entity)) {
 					return false;
 				}
 				if (entity.isPlayerSleeping()) {

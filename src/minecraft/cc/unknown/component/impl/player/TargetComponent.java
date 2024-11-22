@@ -10,8 +10,6 @@ import cc.unknown.component.impl.Component;
 import cc.unknown.module.impl.combat.KillAura;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.time.StopWatch;
-import lombok.experimental.UtilityClass;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityMob;
@@ -62,7 +60,7 @@ public class TargetComponent extends Component implements Accessor {
         .filter(entity -> entity instanceof EntityLivingBase)
         .filter(entity -> entity != mc.getRenderViewEntity())
         .filter(entity -> !Sakura.instance.getFriendManager().isFriend(entity.getName()))
-        .filter(entity -> !Sakura.instance.getBotManager().contains(entity))
+        .filter(entity -> !Sakura.instance.getComponentManager().get(BotComponent.class).contains(entity))
         .filter(entity -> !(entity instanceof EntityArmorStand))
         .filter(entity -> !(entity instanceof EntityVillager))
         .filter(entity -> !entity.getName().contains("[NPC]"))

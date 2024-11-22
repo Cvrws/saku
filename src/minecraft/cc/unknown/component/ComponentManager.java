@@ -40,6 +40,7 @@ public final class ComponentManager {
         this.add(new SelectorDetectionComponent());
         this.add(new Slot());
         this.add(new SecurityComponent());
+        this.add(new BotComponent());
         this.add(new FallDistanceComponent());
         this.add(new TargetComponent());
         

@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import cc.unknown.bindable.BindableManager;
-import cc.unknown.bots.BotManager;
 import cc.unknown.command.CommandManager;
 import cc.unknown.component.ComponentManager;
 import cc.unknown.event.Event;
@@ -39,7 +38,6 @@ public enum Sakura {
     private ModuleManager moduleManager;
     private ComponentManager componentManager;
     private CommandManager commandManager;
-    private BotManager botManager;
     private ThemeManager themeManager;
 
     private FileManager fileManager;
@@ -54,9 +52,7 @@ public enum Sakura {
 
     private ClickGui clickGui;
     private SakuraTab creativeTab;
-    
-    public int moduleCounter;
-    public int settingCounter;
+
     public boolean welcomeSound;
 
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -70,7 +66,6 @@ public enum Sakura {
         friendManager = new FriendManager();
         enemyManager = new EnemyManager();
         altManager = new AltManager();
-        botManager = new BotManager();
         themeManager = new ThemeManager();
         eventBus = new EventBus<>();
         bindableManager = new BindableManager();
@@ -80,7 +75,6 @@ public enum Sakura {
 
         moduleManager.init();
         scriptManager.init();
-        botManager.init();
         componentManager.init();
         commandManager.init();
         altManager.init();

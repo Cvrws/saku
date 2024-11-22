@@ -4,7 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import cc.unknown.Sakura;
-import cc.unknown.bots.BotManager;
+import cc.unknown.component.impl.player.BotComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
@@ -37,7 +37,7 @@ public final class AntiBot extends Module {
 			mc.world.playerEntities.forEach(player -> {
 				if (mc.world.playerEntities.stream()
 						.anyMatch(player2 -> player2.getEntityId() == player.getEntityId() && player2 != player)) {
-					Sakura.instance.getBotManager().add(this, player);
+					Sakura.instance.getComponentManager().get(BotComponent.class).add(this, player);
 				}
 			});
 		}
@@ -48,7 +48,7 @@ public final class AntiBot extends Module {
 
 				if (mc.world.playerEntities.stream()
 						.anyMatch(player2 -> name.equals(player2.getDisplayName().getUnformattedText()))) {
-					Sakura.instance.getBotManager().add(this, player);
+					Sakura.instance.getComponentManager().get(BotComponent.class).add(this, player);
 				}
 			});
 		}
@@ -58,7 +58,7 @@ public final class AntiBot extends Module {
 				final NetworkPlayerInfo info = mc.getNetHandler().getPlayerInfo(player.getUniqueID());
 
 				if (info != null && info.getResponseTime() < 0) {
-					Sakura.instance.getBotManager().add(this, player);
+					Sakura.instance.getComponentManager().get(BotComponent.class).add(this, player);
 				}
 			});
 		}
@@ -66,9 +66,9 @@ public final class AntiBot extends Module {
 		if (ticksVisible.getValue()) {
 			mc.world.playerEntities.forEach(player -> {
 				if (player.ticksVisible < 160) {
-					Sakura.instance.getBotManager().add(this, player);
+					Sakura.instance.getComponentManager().get(BotComponent.class).add(this, player);
 				} else if (player.ticksExisted == 160) {
-					Sakura.instance.getBotManager().remove(this, player);
+					Sakura.instance.getComponentManager().get(BotComponent.class).remove(this, player);
 				}
 			});
 		}
@@ -81,13 +81,12 @@ public final class AntiBot extends Module {
 				down = true;
 
 				if (mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
-					BotManager botManager = Sakura.instance.getBotManager();
 					Entity entity = mc.objectMouseOver.entityHit;
 
-					if (botManager.contains(this, entity)) {
-						Sakura.instance.getBotManager().remove(this, entity);
+					if (Sakura.instance.getComponentManager().get(BotComponent.class).contains(this, entity)) {
+						Sakura.instance.getComponentManager().get(BotComponent.class).remove(this, entity);
 					} else {
-						Sakura.instance.getBotManager().add(this, entity);
+						Sakura.instance.getComponentManager().get(BotComponent.class).add(this, entity);
 						ChatUtil.display(entity.getName());
 						;
 					}
@@ -99,7 +98,7 @@ public final class AntiBot extends Module {
 		if (negativeIDCheck.getValue()) {
 			mc.world.playerEntities.forEach(player -> {
 				if (player.getEntityId() < 0) {
-					Sakura.instance.getBotManager().add(this, player);
+					Sakura.instance.getComponentManager().get(BotComponent.class).add(this, player);
 				}
 			});
 		}
@@ -107,9 +106,9 @@ public final class AntiBot extends Module {
 		if (ncps.getValue()) {
 			mc.world.playerEntities.forEach(player -> {
 				if (player.moved) {
-					Sakura.instance.getBotManager().remove(this, player);
+					Sakura.instance.getComponentManager().get(BotComponent.class).remove(this, player);
 				} else {
-					Sakura.instance.getBotManager().add(this, player);
+					Sakura.instance.getComponentManager().get(BotComponent.class).add(this, player);
 				}
 			});
 		}
@@ -117,11 +116,11 @@ public final class AntiBot extends Module {
 		if (funcraftAntiBot.getValue()) {
 			mc.world.playerEntities.forEach(player -> {
 				if (player.getDisplayName().getUnformattedText().contains("§")) {
-					Sakura.instance.getBotManager().remove(this, player);
+					Sakura.instance.getComponentManager().get(BotComponent.class).remove(this, player);
 					return;
 				}
 
-				Sakura.instance.getBotManager().add(this, player);
+				Sakura.instance.getComponentManager().get(BotComponent.class).add(this, player);
 			});
 		}
 
@@ -129,6 +128,6 @@ public final class AntiBot extends Module {
 
 	@Override
 	public void onDisable() {
-		Sakura.instance.getBotManager().clear();
+		Sakura.instance.getComponentManager().get(BotComponent.class).clear();
 	}
 }
