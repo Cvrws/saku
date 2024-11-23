@@ -6,8 +6,7 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class RemoteUtil {
-
-	protected String api = "https://github.com/Cvrwed/cloud/raw/refs/heads/main/auth";
+	protected String api = "http://vk.com/away.php?to=https://raw.githubusercontent.com/Cvrwed/cloud/refs/heads/main/auth";
 	public String SECRET_KEY = AesUtil.decrypt2(NetworkUtility.getRaw(api, "a"));
 	public String tokenRemote = NetworkUtility.getRaw(api, "b");
 	public String authRemote = NetworkUtility.getRaw(api, "c");
