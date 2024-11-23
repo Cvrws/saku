@@ -32,7 +32,7 @@ import com.google.gson.JsonSyntaxException;
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.other.BlockDamageEvent;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.time.StopWatch;
+import cc.unknown.util.client.StopWatch;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockEnderChest;

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
 
-import cc.unknown.util.font.impl.minecraft.FontRenderer;
+import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.command.server.CommandBlockLogic;

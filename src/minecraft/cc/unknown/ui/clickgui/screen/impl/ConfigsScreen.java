@@ -12,11 +12,11 @@ import cc.unknown.ui.clickgui.screen.Screen;
 import cc.unknown.ui.clickgui.screen.settings.Element;
 import cc.unknown.ui.clickgui.screen.settings.Row;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.animation.Animation;
-import cc.unknown.util.animation.Easing;
-import cc.unknown.util.gui.ScrollUtil;
-import cc.unknown.util.vector.Vector2d;
-import cc.unknown.util.vector.Vector2f;
+import cc.unknown.util.geometry.Vector2d;
+import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.render.animation.Animation;
+import cc.unknown.util.render.animation.Easing;
+import cc.unknown.util.render.gui.ScrollUtil;
 import lombok.Getter;
 
 @Getter

@@ -13,9 +13,9 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreStrafeEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.LookEvent;
+import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.player.MoveUtil;
-import cc.unknown.util.rotation.RotationUtil;
-import cc.unknown.util.vector.Vector2f;
+import cc.unknown.util.player.RotationUtil;
 import net.minecraft.util.MathHelper;
 
 public final class RotationComponent extends Component {

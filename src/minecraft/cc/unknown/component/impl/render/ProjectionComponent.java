@@ -15,15 +15,14 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.render.Render2DEvent;
-import cc.unknown.util.interfaces.ThreadAccess;
-import cc.unknown.util.vector.Vector3d;
+import cc.unknown.util.geometry.Vector3d;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 
-public class ProjectionComponent extends Component implements ThreadAccess {
+public class ProjectionComponent extends Component {
     private static final HashMap<Entity, Projection> nextProjections = new HashMap<>();
     private static HashMap<Entity, Projection> currentProjections = new HashMap<>();
 

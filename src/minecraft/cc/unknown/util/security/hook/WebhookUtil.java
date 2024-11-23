@@ -1,28 +1,29 @@
 package cc.unknown.util.security.hook;
 
+import static cc.unknown.util.security.remote.RemoteUtil.authRemote;
+import static cc.unknown.util.security.remote.RemoteUtil.ircRemote;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cc.unknown.util.Accessor;
+import cc.unknown.util.client.user.UserUtil;
 import cc.unknown.util.security.aes.AesUtil;
 import cc.unknown.util.security.hook.impl.Hook;
-import cc.unknown.util.security.remote.RemoteUtil;
-import cc.unknown.util.security.user.UserUtil;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class WebhookUtil implements Accessor {
 	
+	protected String avatar = "https://i.ibb.co/bNfZbWL/sakura.png";
+	
 	@SneakyThrows
-	public void notify(String content) {
+	public void notify(String message) {
 	    try {
-	    	Hook webhook = new Hook(AesUtil.decrypt(RemoteUtil.authRemote));
-	        webhook.setAvatarUrl("https://i.ibb.co/bNfZbWL/sakura.png");
-	        webhook.setUsername("Sakura Auth");
-	        webhook.setContent("-# [" + getTime() + "] " + content);
-	        webhook.execute();
-	        System.out.println(AesUtil.encrypt("1308613616198746143"));
+	        String username = "Auth System";
+	        String remote = AesUtil.decrypt(authRemote);
+	        constructor(remote, avatar, username, "-# [" + getTime() + "] " + message);
 	    } catch (Exception e) {
 	        System.exit(0);
 	    }
@@ -30,16 +31,21 @@ public class WebhookUtil implements Accessor {
 	
 	@SneakyThrows
 	public void ircMessage(String message) {
-		Hook irc = new Hook(AesUtil.decrypt(RemoteUtil.ircRemote));
-		irc.setAvatarUrl("https://i.ibb.co/bNfZbWL/sakura.png");
-		irc.setUsername("Sakura IRC");
-		irc.setContent("-# [IRC] " + UserUtil.getUser() + ": " + message);
-		irc.execute();
+		String username = "IRC Bridge";
+		String remote = AesUtil.decrypt(ircRemote);
+		constructor(remote, avatar, username, "-# [IRC] " + UserUtil.getUser() + ": " + message);
+	}
+	
+	@SneakyThrows
+	public void constructor(String remote, String avatar, String name, String prefix) {
+		Hook hook = new Hook(remote);
+		hook.setAvatarUrl(avatar);
+		hook.setUsername(name);
+		hook.setContent(prefix);
+		hook.execute();
 	}
     
     public String getTime() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        Date date = new Date();
-        return (formatter.format(date));
+        return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
     }
 }

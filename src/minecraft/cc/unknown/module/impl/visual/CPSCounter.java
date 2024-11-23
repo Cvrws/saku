@@ -12,10 +12,10 @@ import cc.unknown.font.Weight;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.EvictingList;
+import cc.unknown.util.geometry.Vector2d;
+import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.render.RenderUtil;
-import cc.unknown.util.vector.Vector2d;
-import cc.unknown.util.vector.Vector2f;
+import cc.unknown.util.structure.EvictingList;
 import cc.unknown.value.impl.DragValue;
 
 @ModuleInfo(aliases = { "CPS Counter" }, description = "Muestra tus clicks por segundo", category = Category.VISUALS)

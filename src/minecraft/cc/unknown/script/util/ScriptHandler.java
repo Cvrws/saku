@@ -3,10 +3,9 @@ package cc.unknown.script.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import cc.unknown.util.player.PlayerUtil;
 import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.internal.runtime.ECMAException;
-
-import cc.unknown.util.chat.ChatUtil;
 
 /**
  * Provides methods to handle calling functions in the scripts from java
@@ -33,10 +32,10 @@ public class ScriptHandler {
         try {
             function.call(this, parameters);
         } catch (final ECMAException ex) {
-            ChatUtil.display(ex.toString());
+            PlayerUtil.display(ex.toString());
         } catch (final Exception ex) {
             ex.printStackTrace();
-            ChatUtil.display("A script threw an exception, stacktrace printed.");
+            PlayerUtil.display("A script threw an exception, stacktrace printed.");
         }
     }
 }

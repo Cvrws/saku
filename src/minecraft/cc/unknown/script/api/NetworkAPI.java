@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import javax.script.ScriptException;
 
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 import lombok.SneakyThrows;
 import net.minecraft.network.EnumPacketDirection;
 import net.minecraft.network.Packet;
@@ -219,7 +219,7 @@ public class NetworkAPI extends API {
                 packet = (Packet<?>) Arrays.stream(serverbound[id].getConstructors()).filter(x -> x.getParameterCount() == params.length).findFirst().get().newInstance(params);
             }
         } catch (Exception ex) {
-            ChatUtil.display("Failed to instantiate packet!");
+        	PlayerUtil.display("Failed to instantiate packet!");
             throw new ScriptException(ex);
         }
         return packet;

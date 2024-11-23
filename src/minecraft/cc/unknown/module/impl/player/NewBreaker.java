@@ -17,15 +17,14 @@ import cc.unknown.event.impl.render.MouseOverEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.RayCastUtil;
-import cc.unknown.util.animation.Animation;
-import cc.unknown.util.animation.Easing;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.geometry.Vector3d;
 import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.rotation.RotationUtil;
-import cc.unknown.util.vector.Vector2f;
-import cc.unknown.util.vector.Vector3d;
+import cc.unknown.util.player.RayCastUtil;
+import cc.unknown.util.player.RotationUtil;
+import cc.unknown.util.render.animation.Animation;
+import cc.unknown.util.render.animation.Easing;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ListValue;
 import cc.unknown.value.impl.ModeValue;
@@ -113,9 +112,9 @@ public class NewBreaker extends Module {
     @EventLink(value = Priority.VERY_HIGH)
     public final Listener<BlockDamageEvent> onBlockDamage = event -> {
         damage = mc.playerController.curBlockDamageMP;
-        ChatUtil.display("Updated Damage");
-        ChatUtil.display(event.getBlockPos());
-        ChatUtil.display(this.block.getX() + ", " + this.block.getY() + ", " + this.block.getZ());
+        PlayerUtil.display("Updated Damage");
+        PlayerUtil.display(event.getBlockPos());
+        PlayerUtil.display(this.block.getX() + ", " + this.block.getY() + ", " + this.block.getZ());
     };
 
     @EventLink(value = Priority.VERY_HIGH)
@@ -318,7 +317,7 @@ public class NewBreaker extends Module {
         MovingObjectPosition movingObjectPosition = rayCast();
 
         if (!isTarget(movingObjectPosition)) {
-            ChatUtil.display("Not Target");
+        	PlayerUtil.display("Not Target");
             return;
         }
 

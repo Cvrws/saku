@@ -14,18 +14,16 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.visual.ClickGUI;
 import cc.unknown.module.impl.visual.HUD;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.interfaces.ThreadAccess;
-import cc.unknown.util.interfaces.Toggleable;
+import cc.unknown.util.client.toggle.Toggleable;
 import cc.unknown.value.Value;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
-import cc.unknown.value.impl.SubMode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class Module implements Accessor, ThreadAccess, Toggleable, Bindable {
+public abstract class Module implements Accessor, Toggleable, Bindable {
 
     private String[] aliases;
     private String[] displayName;

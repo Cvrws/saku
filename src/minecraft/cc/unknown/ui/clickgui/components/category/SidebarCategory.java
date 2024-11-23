@@ -14,11 +14,11 @@ import cc.unknown.module.api.Category;
 import cc.unknown.ui.clickgui.ClickGui;
 import cc.unknown.ui.clickgui.screen.Colors;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.animation.Animation;
-import cc.unknown.util.animation.Easing;
-import cc.unknown.util.gui.GUIUtil;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
+import cc.unknown.util.render.animation.Animation;
+import cc.unknown.util.render.animation.Easing;
+import cc.unknown.util.render.gui.GUIUtil;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,12 +1,12 @@
 package cc.unknown.command.impl;
 
-import static cc.unknown.util.streamer.StreamerUtil.green;
-import static cc.unknown.util.streamer.StreamerUtil.red;
+import static cc.unknown.util.client.StreamerUtil.green;
+import static cc.unknown.util.client.StreamerUtil.red;
 
 import cc.unknown.Sakura;
 import cc.unknown.command.Command;
 import cc.unknown.module.Module;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 
 public final class Toggle extends Command {
 
@@ -26,7 +26,7 @@ public final class Toggle extends Command {
             return;
         }
         module.toggle();
-        ChatUtil.display("Toggled %s",
+        PlayerUtil.display("Toggled %s",
                 module.getAliases()[0] + " " + (module.isEnabled() ? green + "on" : red + "off")
         );
     }

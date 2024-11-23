@@ -1,7 +1,7 @@
 package cc.unknown.ui.clickgui.components.value.impl;
 
 import cc.unknown.ui.clickgui.components.value.ValueComponent;
-import cc.unknown.util.vector.Vector2d;
+import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.value.Value;
 import net.minecraft.util.ResourceLocation;
 

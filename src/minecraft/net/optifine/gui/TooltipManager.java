@@ -4,7 +4,7 @@ import java.awt.Rectangle;
 import java.util.Arrays;
 import java.util.List;
 
-import cc.unknown.util.font.impl.minecraft.FontRenderer;
+import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;

@@ -14,11 +14,9 @@ import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.chat.ChatUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
-import cc.unknown.value.impl.NumberValue;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -180,7 +178,7 @@ public final class MurderMystery extends Module {
 		if (notification.getValue()) {
 			NotificationComponent.post("Murder Mystery", message, 1000);
 		} else {
-			ChatUtil.display(ChatFormatting.YELLOW + "[" + color + symbol + ChatFormatting.YELLOW + "] " + color
+			PlayerUtil.display(ChatFormatting.YELLOW + "[" + color + symbol + ChatFormatting.YELLOW + "] " + color
 					+ message + ChatFormatting.RESET);
 		}
 	}

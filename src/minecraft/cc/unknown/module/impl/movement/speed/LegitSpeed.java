@@ -8,8 +8,8 @@ import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreStrafeEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.impl.movement.Speed;
+import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.player.MoveUtil;
-import cc.unknown.util.vector.Vector2f;
 import cc.unknown.value.Mode;
 
 public class LegitSpeed extends Mode<Speed> {

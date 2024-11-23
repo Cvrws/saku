@@ -2,7 +2,7 @@ package net.minecraft.util;
 
 import java.util.regex.Pattern;
 
-import cc.unknown.util.font.Font;
+import cc.unknown.util.render.font.Font;
 
 public class StringUtils {
     private static final Pattern patternControlCode = Pattern.compile("(?i)\\u00A7[0-9A-FK-OR]");

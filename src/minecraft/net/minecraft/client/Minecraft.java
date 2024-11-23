@@ -73,10 +73,9 @@ import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.ui.menu.main.LoginMenu;
 import cc.unknown.ui.menu.main.MainMenu;
-import cc.unknown.util.font.impl.minecraft.FontRenderer;
-import cc.unknown.util.interfaces.ThreadAccess;
+import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.render.RenderUtil;
-import cc.unknown.util.time.StopWatch;
+import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import de.florianmichael.viamcp.fixes.AttackOrder;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -201,7 +200,7 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.optifine.Lagometer;
 
-public class Minecraft implements IThreadListener, IPlayerUsage, ThreadAccess {
+public class Minecraft implements IThreadListener, IPlayerUsage {
 	private static final Logger logger = LogManager.getLogger();
 	private static final ResourceLocation locationMojangPng = new ResourceLocation("textures/gui/title/mojang.png");
 	public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;

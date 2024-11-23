@@ -7,7 +7,7 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.math.MathUtil;
+import cc.unknown.util.client.MathUtil;
 import cc.unknown.value.impl.BoundsNumberValue;
 
 @ModuleInfo(aliases = "Timer", description = "Cambia la velocidad a la que se ejecuta Minecraft", category = Category.PLAYER)

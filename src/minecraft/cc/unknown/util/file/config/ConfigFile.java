@@ -19,7 +19,7 @@ import cc.unknown.module.Module;
 import cc.unknown.module.impl.visual.ClickGUI;
 import cc.unknown.ui.theme.Themes;
 import cc.unknown.util.file.FileType;
-import cc.unknown.util.vector.Vector2d;
+import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.value.Value;
 import cc.unknown.value.impl.*;
 

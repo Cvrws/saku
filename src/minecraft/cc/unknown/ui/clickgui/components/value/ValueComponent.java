@@ -1,7 +1,7 @@
 package cc.unknown.ui.clickgui.components.value;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.vector.Vector2d;
+import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.value.Value;
 import lombok.Getter;
 import lombok.Setter;

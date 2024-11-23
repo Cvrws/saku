@@ -5,9 +5,9 @@ import java.awt.Color;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
 import cc.unknown.ui.menu.component.button.MenuButton;
-import cc.unknown.util.font.Font;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
+import cc.unknown.util.render.font.Font;
 
 public class MenuLabelButton extends MenuButton {
     private static final Font FONT_RENDERER = Fonts.MAIN.get(14, Weight.LIGHT);

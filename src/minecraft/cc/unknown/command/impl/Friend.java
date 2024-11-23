@@ -1,7 +1,7 @@
 package cc.unknown.command.impl;
 
 import cc.unknown.command.Command;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 
 public final class Friend extends Command {
 
@@ -15,7 +15,7 @@ public final class Friend extends Command {
 	        String action = args[1].toLowerCase();
 	        switch (action) {
 	            case "list":
-	                ChatUtil.display(getFriendList());
+	            	PlayerUtil.display(getFriendList());
 	                break;
 	            case "clear":
 	            	getInstance().getFriendManager().removeFriends();
@@ -31,12 +31,12 @@ public final class Friend extends Command {
 	        switch (action) {
 	            case "add":
 	                getInstance().getFriendManager().addFriend(target);
-	                ChatUtil.display(String.format("Added %s to friends list", target));
+	                PlayerUtil.display(String.format("Added %s to friends list", target));
 	                break;
 
 	            case "remove":
 	                getInstance().getFriendManager().removeFriend(target);
-	                ChatUtil.display(String.format("Removed %s from friends list", target));
+	                PlayerUtil.display(String.format("Removed %s from friends list", target));
 	                break;
 	        }
 	    } else {

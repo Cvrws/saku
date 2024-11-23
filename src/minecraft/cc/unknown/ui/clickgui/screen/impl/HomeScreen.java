@@ -12,12 +12,12 @@ import cc.unknown.ui.clickgui.components.ModuleComponent;
 import cc.unknown.ui.clickgui.screen.Colors;
 import cc.unknown.ui.clickgui.screen.Screen;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.gui.ScrollUtil;
-import cc.unknown.util.gui.textbox.TextAlign;
-import cc.unknown.util.gui.textbox.TextBox;
+import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.ColorUtil;
-import cc.unknown.util.time.StopWatch;
-import cc.unknown.util.vector.Vector2d;
+import cc.unknown.util.render.gui.ScrollUtil;
+import cc.unknown.util.render.gui.box.TextAlign;
+import cc.unknown.util.render.gui.box.TextBox;
 import lombok.Getter;
 
 @Getter

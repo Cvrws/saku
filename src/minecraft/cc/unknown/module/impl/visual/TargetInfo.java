@@ -1,9 +1,9 @@
 package cc.unknown.module.impl.visual;
 
-import static cc.unknown.util.animation.Easing.EASE_IN_BACK;
-import static cc.unknown.util.animation.Easing.EASE_OUT_ELASTIC;
-import static cc.unknown.util.animation.Easing.EASE_OUT_QUINT;
-import static cc.unknown.util.animation.Easing.EASE_OUT_SINE;
+import static cc.unknown.util.render.animation.Easing.EASE_IN_BACK;
+import static cc.unknown.util.render.animation.Easing.EASE_OUT_ELASTIC;
+import static cc.unknown.util.render.animation.Easing.EASE_OUT_QUINT;
+import static cc.unknown.util.render.animation.Easing.EASE_OUT_SINE;
 
 import java.awt.Color;
 
@@ -22,14 +22,14 @@ import cc.unknown.font.Weight;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.animation.Animation;
-import cc.unknown.util.font.Font;
-import cc.unknown.util.math.MathUtil;
+import cc.unknown.util.client.MathUtil;
+import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.StencilUtil;
-import cc.unknown.util.time.StopWatch;
-import cc.unknown.util.vector.Vector2d;
+import cc.unknown.util.render.animation.Animation;
+import cc.unknown.util.render.font.Font;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.DragValue;
 import net.minecraft.client.entity.AbstractClientPlayer;

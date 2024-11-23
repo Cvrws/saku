@@ -1,9 +1,9 @@
 package cc.unknown.ui.menu.component.button;
 
 import cc.unknown.ui.menu.component.MenuComponent;
-import cc.unknown.util.MouseUtil;
-import cc.unknown.util.animation.Animation;
-import cc.unknown.util.animation.Easing;
+import cc.unknown.util.client.MouseUtil;
+import cc.unknown.util.render.animation.Animation;
+import cc.unknown.util.render.animation.Easing;
 import lombok.Getter;
 
 @Getter

@@ -1,6 +1,6 @@
 package net.minecraft.util;
 
-import cc.unknown.util.time.StopWatch;
+import cc.unknown.util.client.StopWatch;
 import net.minecraft.client.Minecraft;
 
 public class Timer {

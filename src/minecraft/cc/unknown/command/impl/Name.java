@@ -1,7 +1,6 @@
 package cc.unknown.command.impl;
 
 import cc.unknown.command.Command;
-import cc.unknown.util.chat.ChatUtil;
 import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -16,6 +15,6 @@ public final class Name extends Command {
         final String name = mc.player.getName();
 
         GuiScreen.setClipboardString(name);
-        ChatUtil.display("Copied your username to clipboard. (%s)", name);
+        PlayerUtil.display("Copied your username to clipboard. (%s)", name);
     }
 }

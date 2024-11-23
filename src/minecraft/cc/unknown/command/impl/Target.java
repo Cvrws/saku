@@ -1,8 +1,7 @@
 package cc.unknown.command.impl;
 
 import cc.unknown.command.Command;
-import cc.unknown.util.chat.ChatUtil;
-import cc.unknown.util.file.enemy.EnemyFile;
+import cc.unknown.util.player.PlayerUtil;
 
 public final class Target extends Command {
 
@@ -16,7 +15,7 @@ public final class Target extends Command {
 	        String action = args[1].toLowerCase();
 	        switch (action) {
 	            case "list":
-	                ChatUtil.display(getTargetList());
+	            	PlayerUtil.display(getTargetList());
 	                break;
 	            case "clear":
 	            	getInstance().getEnemyManager().removeEnemy();
@@ -32,12 +31,12 @@ public final class Target extends Command {
 	        switch (action) {
 	            case "add":
 	                getInstance().getEnemyManager().addEnemy(target);
-	                ChatUtil.display(String.format("Added %s to target list", target));
+	                PlayerUtil.display(String.format("Added %s to target list", target));
 	                break;
 
 	            case "remove":
 	                getInstance().getEnemyManager().removeEnemy(target);
-	                ChatUtil.display(String.format("Removed %s from target list", target));
+	                PlayerUtil.display(String.format("Removed %s from target list", target));
 	                break;
 	        }
 	    } else {

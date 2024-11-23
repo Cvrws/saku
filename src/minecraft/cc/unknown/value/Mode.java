@@ -5,12 +5,11 @@ import java.util.List;
 
 import cc.unknown.Sakura;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.interfaces.ThreadAccess;
-import cc.unknown.util.interfaces.Toggleable;
+import cc.unknown.util.client.toggle.Toggleable;
 import lombok.Getter;
 
 @Getter
-public abstract class Mode<T> implements Accessor, Toggleable, ThreadAccess {
+public abstract class Mode<T> implements Accessor, Toggleable {
     private final String name;
     private final T parent;
     private final List<Value<?>> values = new ArrayList<>();

@@ -14,7 +14,7 @@ import cc.unknown.module.impl.other.*;
 import cc.unknown.module.impl.player.*;
 import cc.unknown.module.impl.visual.*;
 import cc.unknown.module.impl.world.*;
-import cc.unknown.util.AdaptiveMap;
+import cc.unknown.util.structure.AdaptiveMap;
 
 public final class ModuleManager {
 

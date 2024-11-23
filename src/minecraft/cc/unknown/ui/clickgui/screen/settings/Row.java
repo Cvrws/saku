@@ -12,10 +12,10 @@ import cc.unknown.font.Weight;
 import cc.unknown.ui.clickgui.ClickGui;
 import cc.unknown.ui.clickgui.screen.impl.ConfigsScreen;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.dragging.Mouse;
-import cc.unknown.util.gui.GUIUtil;
-import cc.unknown.util.gui.ScrollUtil;
-import cc.unknown.util.vector.Vector2f;
+import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.render.dragging.Mouse;
+import cc.unknown.util.render.gui.GUIUtil;
+import cc.unknown.util.render.gui.ScrollUtil;
 import lombok.Getter;
 
 @Getter

@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-import cc.unknown.util.font.impl.minecraft.FontRenderer;
+import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;

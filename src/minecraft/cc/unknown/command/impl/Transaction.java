@@ -1,7 +1,7 @@
 package cc.unknown.command.impl;
 
-import static cc.unknown.util.streamer.StreamerUtil.red;
-import static cc.unknown.util.streamer.StreamerUtil.reset;
+import static cc.unknown.util.client.StreamerUtil.red;
+import static cc.unknown.util.client.StreamerUtil.reset;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -10,7 +10,7 @@ import cc.unknown.command.Command;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S32PacketConfirmTransaction;
 
@@ -35,7 +35,7 @@ public final class Transaction extends Command {
         
         if (packet instanceof S32PacketConfirmTransaction) {
             final S32PacketConfirmTransaction wrapper = (S32PacketConfirmTransaction) packet;
-            ChatUtil.display(red + " Transaction " + reset + 
+            PlayerUtil.display(red + " Transaction " + reset + 
                 " (ID: %s) (WindowID: %s)", wrapper.actionNumber, wrapper.windowId);
         }
     };

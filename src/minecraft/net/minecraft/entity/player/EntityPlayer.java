@@ -13,7 +13,7 @@ import cc.unknown.component.impl.player.Slot;
 import cc.unknown.event.impl.player.HitSlowDownEvent;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.time.StopWatch;
+import cc.unknown.util.client.StopWatch;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDirectional;

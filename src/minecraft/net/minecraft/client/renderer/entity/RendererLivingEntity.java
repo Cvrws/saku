@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.render.RenderLabelEvent;
-import cc.unknown.util.font.impl.minecraft.FontRenderer;
+import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBase;

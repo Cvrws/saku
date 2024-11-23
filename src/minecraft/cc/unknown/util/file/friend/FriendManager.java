@@ -3,6 +3,10 @@ package cc.unknown.util.file.friend;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.FriendComponent;
@@ -51,14 +55,38 @@ public class FriendManager {
         return new File(FRIEND_DIRECTORY, "friends.json");
     }
 
-    public synchronized List<String> getFriends() {
+    public List<String> getFriends() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        
+        Future<List<String>> future = executor.submit(() -> {
+            FriendFile friendFile = Sakura.instance.getFriendManager().getFriendFile();
+            
+            if (friendFile.read()) {
+                return friendComponent.getFriends();
+            }
+            
+            return new ArrayList<String>();
+        });
+        
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        } finally {
+            executor.shutdown();
+        }
+        
+        return new ArrayList<>();
+    }
+    
+    /*public List<String> getFriends() {
         FriendFile friendFile = Sakura.instance.getFriendManager().getFriendFile();        
         if (friendFile.read()) {
             return friendComponent.getFriends();
         }
         
         return new ArrayList<>();
-    }
+    }*/
     
     public void removeFriends() {
         friendComponent.removeFriends();

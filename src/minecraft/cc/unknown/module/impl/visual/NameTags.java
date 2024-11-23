@@ -1,8 +1,8 @@
 package cc.unknown.module.impl.visual;
 
-import static cc.unknown.util.streamer.StreamerUtil.gray;
-import static cc.unknown.util.streamer.StreamerUtil.green;
-import static cc.unknown.util.streamer.StreamerUtil.reset;
+import static cc.unknown.util.client.StreamerUtil.gray;
+import static cc.unknown.util.client.StreamerUtil.green;
+import static cc.unknown.util.client.StreamerUtil.reset;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -21,8 +21,8 @@ import cc.unknown.font.Weight;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.font.Font;
 import cc.unknown.util.render.RenderUtil;
+import cc.unknown.util.render.font.Font;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;

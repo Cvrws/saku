@@ -9,7 +9,6 @@ import cc.unknown.event.impl.other.KillEvent;
 import cc.unknown.event.impl.other.WorldChangeEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
-import cc.unknown.util.interfaces.ThreadAccess;
 import net.minecraft.entity.Entity;
 
 public class EntityKillEventComponent extends Component {

@@ -2,7 +2,7 @@ package net.minecraft.client.gui;
 
 import org.lwjgl.input.Mouse;
 
-import cc.unknown.util.gui.ScrollUtil;
+import cc.unknown.util.render.gui.ScrollUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;

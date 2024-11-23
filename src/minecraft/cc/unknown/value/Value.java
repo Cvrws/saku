@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import cc.unknown.Sakura;
 import cc.unknown.module.Module;
 import cc.unknown.ui.clickgui.components.value.ValueComponent;
-import cc.unknown.util.interfaces.Toggleable;
+import cc.unknown.util.client.toggle.Toggleable;
 import lombok.Getter;
 import lombok.Setter;
 

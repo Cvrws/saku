@@ -14,9 +14,6 @@ import cc.unknown.module.api.manager.ModuleManager;
 import cc.unknown.script.ScriptManager;
 import cc.unknown.ui.clickgui.ClickGui;
 import cc.unknown.ui.theme.ThemeManager;
-import cc.unknown.util.client.ClientInfo;
-import cc.unknown.util.client.UserInfo;
-import cc.unknown.util.creative.SakuraTab;
 import cc.unknown.util.file.FileManager;
 import cc.unknown.util.file.alt.AltManager;
 import cc.unknown.util.file.config.ConfigManager;
@@ -31,8 +28,6 @@ public enum Sakura {
 
     public static final String NAME = "Sakura";
     public static final String VERSION_FULL = "5.2";
-    private final ClientInfo clientInfo = new ClientInfo(NAME, VERSION_FULL, ClientInfo.VersionType.PRIVATE);
-    private final UserInfo userInfo = new UserInfo(UserInfo.UserType.CUSTOMER);
 
     private EventBus<Event> eventBus;
     private ModuleManager moduleManager;
@@ -51,8 +46,7 @@ public enum Sakura {
     private ScriptManager scriptManager;
 
     private ClickGui clickGui;
-    private SakuraTab creativeTab;
-
+    
     public boolean welcomeSound;
 
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -83,9 +77,7 @@ public enum Sakura {
 
         clickGui = new ClickGui();
         clickGui.initGui();
-        
-        creativeTab = new SakuraTab();
-        
+                
         new Thread(() -> {
         	ViaMCP.create();
         	ViaMCP.INSTANCE.initAsyncSlider();

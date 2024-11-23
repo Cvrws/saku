@@ -9,7 +9,7 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.time.StopWatch;
+import cc.unknown.util.client.StopWatch;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.NumberValue;
 import io.netty.util.internal.ThreadLocalRandom;

@@ -6,10 +6,10 @@ import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
 import cc.unknown.ui.clickgui.components.value.ValueComponent;
 import cc.unknown.ui.clickgui.screen.Colors;
-import cc.unknown.util.gui.textbox.TextAlign;
-import cc.unknown.util.gui.textbox.TextBox;
+import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.ColorUtil;
-import cc.unknown.util.vector.Vector2d;
+import cc.unknown.util.render.gui.box.TextAlign;
+import cc.unknown.util.render.gui.box.TextBox;
 import cc.unknown.value.Value;
 import cc.unknown.value.impl.StringValue;
 

@@ -1,12 +1,8 @@
 package cc.unknown.util.render;
 
 import java.awt.Color;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.interfaces.ThreadAccess;
-import cc.unknown.util.time.StopWatch;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;

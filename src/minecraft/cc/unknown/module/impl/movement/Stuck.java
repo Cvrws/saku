@@ -7,8 +7,8 @@ import cc.unknown.event.impl.player.PostStrafeEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.geometry.Vector3d;
 import cc.unknown.util.player.MoveUtil;
-import cc.unknown.util.vector.Vector3d;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C03PacketPlayer;
 

@@ -5,7 +5,7 @@ import java.awt.Color;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-import cc.unknown.util.font.impl.minecraft.FontRenderer;
+import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;

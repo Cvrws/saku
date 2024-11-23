@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 import org.lwjgl.opengl.GL11;
 
-import cc.unknown.util.math.MathUtil;
+import cc.unknown.util.client.MathUtil;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;

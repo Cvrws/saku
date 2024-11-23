@@ -1,7 +1,7 @@
 package cc.unknown.script.api.wrapper.impl;
 
 import cc.unknown.script.api.RenderAPI;
-import cc.unknown.util.font.impl.rise.FontRenderer;
+import cc.unknown.util.render.font.impl.sakura.FontRenderer;
 
 public class ScriptSakuraFontRenderer extends ScriptFontRenderer<FontRenderer> {
     public ScriptSakuraFontRenderer(FontRenderer wrapped) {

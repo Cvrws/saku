@@ -11,8 +11,8 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.WorldChangeEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.PingerCallable;
-import cc.unknown.util.time.StopWatch;
 import net.minecraft.entity.Entity;
 
 public final class BotComponent extends Component {

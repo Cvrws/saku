@@ -1,6 +1,6 @@
 package cc.unknown.util.packet;
 
-import cc.unknown.util.time.StopWatch;
+import cc.unknown.util.client.StopWatch;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.network.Packet;

@@ -14,8 +14,8 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.combat.KillAura;
 import cc.unknown.module.impl.ghost.AimAssist;
 import cc.unknown.module.impl.world.Scaffold;
+import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.player.MoveUtil;
-import cc.unknown.util.vector.Vector2f;
 import cc.unknown.value.impl.BooleanValue;
 
 @ModuleInfo(aliases = "Sprint", description = "Corre automáticamente", category = Category.MOVEMENT)

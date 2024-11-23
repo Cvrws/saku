@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 import cc.unknown.command.Command;
-import cc.unknown.util.chat.ChatUtil;
 import cc.unknown.util.file.config.ConfigFile;
 import cc.unknown.util.file.config.ConfigManager;
+import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
@@ -37,7 +37,7 @@ public final class Config extends Command {
                         if (config != null) {
                             CompletableFuture.runAsync(() -> {
                                 if (config.read()) {
-                                    ChatUtil.display("Loaded %s config file!", name);
+                                	PlayerUtil.display("Loaded %s config file!", name);
                                 }
                             });
                         }
@@ -61,9 +61,9 @@ public final class Config extends Command {
                             ConfigFile configToRemove = configManager.get(name);
                             if (configToRemove != null && configToRemove.getFile().delete()) {
                                 configManager.update();
-                                ChatUtil.display("Removed config file: %s", name);
+                                PlayerUtil.display("Removed config file: %s", name);
                             } else {
-                                ChatUtil.display("Failed to remove config file: %s", name);
+                            	PlayerUtil.display("Failed to remove config file: %s", name);
                             }
                         });
                         break;
@@ -103,7 +103,7 @@ public final class Config extends Command {
                             desktop.open(dirToOpen);
                             success("Opened config folder");
                         } catch (IllegalArgumentException | IOException iae) {
-                            ChatUtil.display("Config file not found!");
+                        	PlayerUtil.display("Config file not found!");
                         }
                         break;
                 }

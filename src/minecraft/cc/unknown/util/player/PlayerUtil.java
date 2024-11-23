@@ -14,9 +14,9 @@ import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.RotationComponent;
 import cc.unknown.module.impl.ghost.AutoClicker;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.math.MathUtil;
-import cc.unknown.util.rotation.RotationUtil;
-import cc.unknown.util.vector.Vector2f;
+import cc.unknown.util.client.MathUtil;
+import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.packet.PacketUtil;
 import lombok.experimental.UtilityClass;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -37,8 +37,10 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -105,7 +107,7 @@ public class PlayerUtil implements Accessor {
 		return onEdgeX || onEdgeZ;
 	}
 
-	public Block block(final cc.unknown.util.vector.Vector3d pos) {
+	public Block block(final cc.unknown.util.geometry.Vector3d pos) {
 		return block(pos.getX(), pos.getY(), pos.getZ());
 	}
 
@@ -668,4 +670,17 @@ public class PlayerUtil implements Accessor {
 		} else
 			return Mouse.isButtonDown(0) && clicker != null && !clicker.isEnabled();
 	}
+	
+    public void display(final Object message, final Object... objects) {
+        if (mc.player != null) {
+            final String format = String.format(message.toString(), objects);
+            mc.player.addChatMessage(new ChatComponentText(format));
+        }
+    }
+
+    public void send(final Object message) {
+        if (mc.player != null) {
+            PacketUtil.send(new C01PacketChatMessage(message.toString()));
+        }
+    }
 }

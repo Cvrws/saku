@@ -3,14 +3,13 @@ package cc.unknown.command.impl;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import cc.unknown.Sakura;
 import cc.unknown.command.Command;
 import cc.unknown.script.ScriptManager;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 
 public final class Script extends Command {
 
@@ -22,13 +21,13 @@ public final class Script extends Command {
     public void execute(final String[] args) {
         final String action = args[1].toLowerCase(Locale.getDefault());
 
-        final ScriptManager scriptManager = Sakura.instance.getScriptManager();
+        final ScriptManager scriptManager = getInstance().getScriptManager();
 
         final cc.unknown.script.Script script;
         if (args.length > 3) {
             script = scriptManager.getScript(args[2]);
             if (script == null) {
-                ChatUtil.display("File not found", args[2]);
+            	PlayerUtil.display("File not found", args[2]);
                 return;
             }
         } else script = null;
@@ -41,8 +40,8 @@ public final class Script extends Command {
                     break;
 
                 case "reload":
-                    Sakura.instance.getScriptManager().reloadScripts();
-                    Sakura.instance.getClickGui().moduleList = new ConcurrentLinkedQueue<>();
+                    getInstance().getScriptManager().reloadScripts();
+                    getInstance().getClickGui().moduleList = new ConcurrentLinkedQueue<>();
                     break;
 
                 case "unload":
@@ -56,19 +55,19 @@ public final class Script extends Command {
                         File dirToOpen = new File(String.valueOf(ScriptManager.SCRIPT_DIRECTORY));
                         desktop.open(dirToOpen);
                     } catch (IllegalArgumentException | IOException exception) {
-                        ChatUtil.display("Script directory not found");
+                    	PlayerUtil.display("Script directory not found");
                     }
                     return;
             }
 
-            ChatUtil.display(
+            PlayerUtil.display(
                     "Successfully " + action + "ed "
                             + (script == null ? "all scripts" : "\"" + script.getName() + "\"")
                             + "."
             );
         } catch (final Exception ex) {
             ex.printStackTrace();
-            ChatUtil.display("Failed to " + action + " a script. Stacktrace printed.");
+            PlayerUtil.display("Failed to " + action + " a script. Stacktrace printed.");
         }
     }
 }

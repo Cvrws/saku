@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import java.util.List;
 
 public abstract class CreativeTabs {
-    public static final CreativeTabs[] creativeTabArray = new CreativeTabs[13];
+    public static final CreativeTabs[] creativeTabArray = new CreativeTabs[12];
     public static final CreativeTabs tabBlock = new CreativeTabs(0, "buildingBlocks") {
         public Item getTabIconItem() {
             return Item.getItemFromBlock(Blocks.brick_block);

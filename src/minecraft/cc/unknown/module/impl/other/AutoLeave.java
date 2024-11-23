@@ -8,7 +8,7 @@ import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.StringValue;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S02PacketChat;
@@ -29,7 +29,7 @@ public final class AutoLeave extends Module {
 	            String command = text.getValue();
 	            
 	            if (!command.isEmpty()) {
-	                ChatUtil.send(command);
+	                PlayerUtil.send(command);
 	            }
 	        }
 	    }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.font.impl.minecraft.FontRenderer;
+import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiResourcePackAvailable;

@@ -5,11 +5,11 @@ import java.awt.Color;
 import cc.unknown.ui.theme.Themes;
 import cc.unknown.ui.theme.Themes.KeyColors;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.animation.Animation;
-import cc.unknown.util.animation.Easing;
+import cc.unknown.util.geometry.Vector3d;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
-import cc.unknown.util.vector.Vector3d;
+import cc.unknown.util.render.animation.Animation;
+import cc.unknown.util.render.animation.Easing;
 
 public class ThemeKeyColorComponent implements Accessor {
     private final Themes.KeyColors color;

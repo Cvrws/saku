@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
-import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.bus.Bus;
@@ -24,7 +23,7 @@ import cc.unknown.event.impl.other.WorldChangeEvent;
 import cc.unknown.event.impl.render.RenderGUIEvent;
 import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 
 public final class EventBus<Event> implements Bus<Event>, Accessor {
     private final Map<Type, List<CallSite<Event>>> callSiteMap;
@@ -67,8 +66,7 @@ public final class EventBus<Event> implements Bus<Event>, Accessor {
                             this.callSiteMap.put(eventType, callSites);
                         }
                     } catch (Throwable exception) {
-                        //if (!Client.DEVELOPMENT_SWITCH) return;
-                        ChatUtil.display("Exception in console");
+                    	PlayerUtil.display("Exception in console");
                         exception.printStackTrace();
                     }
                 }
@@ -126,10 +124,8 @@ public final class EventBus<Event> implements Bus<Event>, Accessor {
             }
 
         } catch (Exception exception) {
-            //if (Client.DEVELOPMENT_SWITCH) {
-                exception.printStackTrace();
-                ChatUtil.display("Exception in console");
-            //}
+        	exception.printStackTrace();
+        	PlayerUtil.display("Exception in console");
         }
     }
 
@@ -156,7 +152,6 @@ public final class EventBus<Event> implements Bus<Event>, Accessor {
 
                     System.out.println("Name: " + eventType.getTypeName());
                     System.out.println("Event: " + event.getClass().getSimpleName());
-//                    listener.call(event);
                 }
             }
         } catch (Throwable exception) {

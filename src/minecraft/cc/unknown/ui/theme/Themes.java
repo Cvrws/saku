@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.ColorUtil;
-import cc.unknown.util.vector.Vector2d;
 
 import static net.minecraft.util.ChatFormatting.*;
 

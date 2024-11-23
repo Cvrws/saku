@@ -8,7 +8,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.ghost.AimAssist;
 import cc.unknown.module.impl.world.Scaffold;
-import cc.unknown.util.rotation.RotationUtil;
+import cc.unknown.util.player.RotationUtil;
 import cc.unknown.value.impl.NumberValue;
 
 @ModuleInfo(aliases = "Tick Range", description = "Congela el juego para acercarte a tu objetivo", category = Category.COMBAT)

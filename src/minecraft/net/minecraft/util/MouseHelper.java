@@ -3,7 +3,7 @@ package net.minecraft.util;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
-import cc.unknown.util.time.StopWatch;
+import cc.unknown.util.client.StopWatch;
 
 public class MouseHelper {
     /**

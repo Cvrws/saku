@@ -1,11 +1,13 @@
 package cc.unknown.command;
 
-import static cc.unknown.util.streamer.StreamerUtil.*;
+import static cc.unknown.util.client.StreamerUtil.green;
+import static cc.unknown.util.client.StreamerUtil.red;
+import static cc.unknown.util.client.StreamerUtil.reset;
+import static cc.unknown.util.client.StreamerUtil.yellow;
+
 import cc.unknown.util.Accessor;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import net.minecraft.util.ChatFormatting;
 
 @Getter
 public abstract class Command implements Accessor {
@@ -21,14 +23,14 @@ public abstract class Command implements Accessor {
     public abstract void execute(String[] args);
 	
 	public void error(String error) {
-		ChatUtil.display(yellow + "[" + red + "%" + yellow + "] " + reset + error); 
+		PlayerUtil.display(yellow + "[" + red + "%" + yellow + "] " + reset + error); 
 	}
 	
 	public void warning(String warn) {
-		ChatUtil.display(yellow + "[" + red + "!" + yellow + "] " + reset + warn);
+		PlayerUtil.display(yellow + "[" + red + "!" + yellow + "] " + reset + warn);
 	}
 	
 	public void success(String success) {
-		ChatUtil.display(yellow + "[" + green + "*" + yellow + "] " + reset + success);
+		PlayerUtil.display(yellow + "[" + green + "*" + yellow + "] " + reset + success);
 	}
 }

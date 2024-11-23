@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.render.LookEvent;
-import cc.unknown.util.vector.Vector2f;
+import cc.unknown.util.geometry.Vector2f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.ImageBufferDownload;

@@ -12,11 +12,11 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.ui.clickgui.ClickGui;
-import cc.unknown.util.math.MathUtil;
+import cc.unknown.util.client.MathUtil;
+import cc.unknown.util.geometry.Vector2d;
+import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.geometry.Vector3d;
 import cc.unknown.util.render.RenderUtil;
-import cc.unknown.util.vector.Vector2d;
-import cc.unknown.util.vector.Vector2f;
-import cc.unknown.util.vector.Vector3d;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.DragValue;
 

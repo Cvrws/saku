@@ -4,7 +4,7 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 
-import static cc.unknown.util.animation.Easing.LINEAR;
+import static cc.unknown.util.render.animation.Easing.LINEAR;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,13 +21,13 @@ import cc.unknown.event.impl.input.GuiClickEvent;
 import cc.unknown.event.impl.input.GuiMouseReleaseEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.module.Module;
-import cc.unknown.util.MouseUtil;
-import cc.unknown.util.animation.Animation;
-import cc.unknown.util.gui.GUIUtil;
+import cc.unknown.util.client.MouseUtil;
+import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
-import cc.unknown.util.time.StopWatch;
-import cc.unknown.util.vector.Vector2d;
+import cc.unknown.util.render.animation.Animation;
+import cc.unknown.util.render.gui.GUIUtil;
 import cc.unknown.value.Value;
 import cc.unknown.value.impl.DragValue;
 

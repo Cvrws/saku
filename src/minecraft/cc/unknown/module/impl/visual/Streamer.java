@@ -1,6 +1,6 @@
 package cc.unknown.module.impl.visual;
 
-import static cc.unknown.util.streamer.StreamerUtil.*;
+import static cc.unknown.util.client.StreamerUtil.*;
 
 import java.util.HashMap;
 import java.util.Map;

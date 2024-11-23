@@ -8,8 +8,8 @@ import cc.unknown.component.impl.render.NotificationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.PingerCallable;
-import cc.unknown.util.time.StopWatch;
 
 public final class PingComponent extends Component {
     private static long ping = 250;

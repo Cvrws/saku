@@ -14,7 +14,7 @@ import cc.unknown.font.Weight;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 
@@ -76,7 +76,7 @@ public class PacketDebug extends Module {
                     validFieldsCount++;
                 }
             } catch (IllegalAccessException e) {
-                ChatUtil.display("Error accessing field: " + field.getName() + " - " + e.getMessage());
+            	PlayerUtil.display("Error accessing field: " + field.getName() + " - " + e.getMessage());
             }
         }
 

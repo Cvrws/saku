@@ -34,7 +34,7 @@ import cc.unknown.module.impl.visual.HurtCamera;
 import cc.unknown.module.impl.visual.NoCameraClip;
 import cc.unknown.ui.menu.main.MainMenu;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.time.StopWatch;
+import cc.unknown.util.client.StopWatch;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;

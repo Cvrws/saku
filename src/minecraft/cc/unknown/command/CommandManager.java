@@ -6,11 +6,22 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cc.unknown.Sakura;
-import cc.unknown.command.impl.*;
+import cc.unknown.command.impl.Bind;
+import cc.unknown.command.impl.Clip;
+import cc.unknown.command.impl.Config;
+import cc.unknown.command.impl.Friend;
+import cc.unknown.command.impl.Help;
+import cc.unknown.command.impl.Join;
+import cc.unknown.command.impl.Name;
+import cc.unknown.command.impl.Ping;
+import cc.unknown.command.impl.Script;
+import cc.unknown.command.impl.Target;
+import cc.unknown.command.impl.Toggle;
+import cc.unknown.command.impl.Transaction;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.ChatInputEvent;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 import lombok.Getter;
 
 @Getter
@@ -72,7 +83,7 @@ public final class CommandManager {
         }
 
         if (!commandFound.get()) {
-            ChatUtil.display("Unknown command! Try .help if you're lost");
+        	PlayerUtil.display("Unknown command! Try .help if you're lost");
         }
 
         event.setCancelled();

@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import cc.unknown.command.Command;
 import cc.unknown.component.impl.universocraft.GameComponent;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.ChatFormatting;
@@ -20,7 +20,7 @@ public class Join extends Command {
 	@Override
 	public void execute(String[] args) {
 	    if (args.length == 2 && args[0].equalsIgnoreCase("game") && args[1].equalsIgnoreCase("list")) {
-	        ChatUtil.display(getList());
+	    	PlayerUtil.display(getList());
 	        return;
 	    }
 

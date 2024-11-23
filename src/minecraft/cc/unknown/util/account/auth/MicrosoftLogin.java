@@ -23,7 +23,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import cc.unknown.util.web.Browser;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

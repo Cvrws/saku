@@ -12,10 +12,10 @@ import cc.unknown.ui.clickgui.components.theme.ThemeKeyColorComponent;
 import cc.unknown.ui.clickgui.screen.Screen;
 import cc.unknown.ui.theme.Themes;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.gui.GUIUtil;
-import cc.unknown.util.gui.ScrollUtil;
-import cc.unknown.util.vector.Vector2d;
-import cc.unknown.util.vector.Vector2f;
+import cc.unknown.util.geometry.Vector2d;
+import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.render.gui.GUIUtil;
+import cc.unknown.util.render.gui.ScrollUtil;
 import lombok.Getter;
 
 @Getter

@@ -3,7 +3,7 @@ package cc.unknown.module.api;
 import cc.unknown.font.Fonts;
 import cc.unknown.ui.clickgui.screen.Screen;
 import cc.unknown.ui.clickgui.screen.impl.*;
-import cc.unknown.util.font.Font;
+import cc.unknown.util.render.font.Font;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

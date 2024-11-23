@@ -11,13 +11,12 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.impl.player.NoFall;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.geometry.Triple;
+import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.RotationUtil;
 import cc.unknown.util.player.SlotUtil;
-import cc.unknown.util.rotation.RotationUtil;
-import cc.unknown.util.tuples.Triple;
-import cc.unknown.util.vector.Vector2f;
 import cc.unknown.value.Mode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -73,7 +72,7 @@ public class LegitNofall extends Mode<NoFall> {
             if (mc.objectMouseOver.getBlockPos().equals(new BlockPos(blocks.get(0).getThird()))) {
                 mc.rightClickMouse();
                 position = blocks.get(0).getThird();
-                ChatUtil.display("Right Clicked");
+                PlayerUtil.display("Right Clicked");
             }
         }
     };

@@ -1,7 +1,7 @@
 package cc.unknown.command.impl;
 
 import cc.unknown.command.Command;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 
 public final class Clip extends Command {
 
@@ -21,7 +21,7 @@ public final class Clip extends Command {
                 final double amount = Double.parseDouble(args[1]);
 
                 mc.player.setPosition(mc.player.posX, mc.player.posY + amount, mc.player.posZ);
-                ChatUtil.display("Clipped you " + (amount > 0 ? "up" : "down") + " " + Math.abs(amount) + " blocks.");
+                PlayerUtil.display("Clipped you " + (amount > 0 ? "up" : "down") + " " + Math.abs(amount) + " blocks.");
                 break;
             }
 

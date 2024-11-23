@@ -16,8 +16,6 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import org.apache.commons.io.FileUtils;
-import jdk.nashorn.api.scripting.ClassFilter;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.render.NotificationComponent;
@@ -34,8 +32,10 @@ import cc.unknown.script.api.ScriptAPI;
 import cc.unknown.script.api.WorldAPI;
 import cc.unknown.script.util.ScriptClassFilter;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.chat.ChatUtil;
 import cc.unknown.util.file.FileManager;
+import cc.unknown.util.player.PlayerUtil;
+import jdk.nashorn.api.scripting.ClassFilter;
+import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import lombok.Getter;
 
 @Getter
@@ -72,7 +72,7 @@ public final class ScriptManager implements Accessor {
             ex.printStackTrace();
         }
 
-        Sakura.instance.getEventBus().register(this);
+        getInstance().getEventBus().register(this);
     }
 
     public Script getScript(final String name) {
@@ -91,9 +91,9 @@ public final class ScriptManager implements Accessor {
             } catch (final ScriptException ex) {
                 ex.printStackTrace();
 
-                ChatUtil.display("Syntax error!");
+                PlayerUtil.display("Syntax error!");
 
-                ChatUtil.display(ex.getMessage());
+                PlayerUtil.display(ex.getMessage());
                 return true;
             }
         });
@@ -129,9 +129,9 @@ public final class ScriptManager implements Accessor {
                 return false;
             } catch (final ScriptException ex) {
                 ex.printStackTrace();
-                ChatUtil.display("Syntax error!");
+                PlayerUtil.display("Syntax error!");
 
-                ChatUtil.display(ex.getMessage());
+                PlayerUtil.display(ex.getMessage());
                 return true;
             }
         });

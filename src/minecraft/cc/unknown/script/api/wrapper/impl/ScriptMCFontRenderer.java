@@ -1,7 +1,7 @@
 package cc.unknown.script.api.wrapper.impl;
 
 import cc.unknown.script.api.RenderAPI;
-import cc.unknown.util.font.impl.minecraft.FontRenderer;
+import cc.unknown.util.render.font.impl.mc.FontRenderer;
 
 public class ScriptMCFontRenderer extends ScriptFontRenderer<FontRenderer> {
     public ScriptMCFontRenderer(FontRenderer wrapped) {

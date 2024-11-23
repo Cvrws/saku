@@ -20,11 +20,10 @@ import cc.unknown.script.api.wrapper.impl.ScriptModule;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector2f;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector3d;
 import cc.unknown.script.util.ScriptModuleInfo;
-import cc.unknown.util.chat.ChatUtil;
-import cc.unknown.util.interfaces.ThreadAccess;
-import cc.unknown.util.rotation.RotationUtil;
-import cc.unknown.util.vector.Vector2f;
-import cc.unknown.util.vector.Vector3d;
+import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.geometry.Vector3d;
+import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.RotationUtil;
 import jdk.nashorn.api.scripting.JSObject;
 import net.minecraft.client.Minecraft;
 
@@ -139,7 +138,7 @@ public class ScriptAPI {
     }
 
     public void displayChat(final String message) {
-        ChatUtil.display(message);
+    	PlayerUtil.display(message);
     }
 
     public void displayInfoNotification(final String title, final String message) {
@@ -179,14 +178,10 @@ public class ScriptAPI {
     }
 
     public ScriptBlockPos newBlockPos(int x, int y, int z) {
-        ChatUtil.display("Please use world.newBlockPos(), instead of sakura.newBlockPos().");
+    	PlayerUtil.display("Please use world.newBlockPos(), instead of sakura.newBlockPos().");
         return null;
     }
 
-    public void threadPool(JSObject function) throws ScriptException {
-        if (!function.isFunction()) throw new ScriptException("Not a function!");
-        ThreadAccess.threadPool.execute(() -> function.call(null));
-    }
 
     public void thread(JSObject function) throws ScriptException {
         if (!function.isFunction()) throw new ScriptException("Not a function!");

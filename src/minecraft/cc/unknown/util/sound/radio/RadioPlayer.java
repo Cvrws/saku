@@ -12,7 +12,7 @@ import javax.sound.sampled.FloatControl;
 
 import cc.unknown.Sakura;
 import cc.unknown.module.impl.other.MusicPlayer;
-import cc.unknown.util.time.StopWatch;
+import cc.unknown.util.client.StopWatch;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 

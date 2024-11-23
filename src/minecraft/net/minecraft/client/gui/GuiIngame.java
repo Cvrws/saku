@@ -4,7 +4,7 @@ import java.util.Random;
 
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.render.Render2DEvent;
-import cc.unknown.util.font.impl.minecraft.FontRenderer;
+import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

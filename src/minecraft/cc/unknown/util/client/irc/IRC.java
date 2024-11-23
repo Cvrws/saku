@@ -1,12 +1,12 @@
 package cc.unknown.util.client.irc;
 
-import static cc.unknown.util.streamer.StreamerUtil.blue;
-import static cc.unknown.util.streamer.StreamerUtil.darkAqua;
-import static cc.unknown.util.streamer.StreamerUtil.lightPurple;
-import static cc.unknown.util.streamer.StreamerUtil.red;
-import static cc.unknown.util.streamer.StreamerUtil.reset;
+import static cc.unknown.util.client.StreamerUtil.blue;
+import static cc.unknown.util.client.StreamerUtil.darkAqua;
+import static cc.unknown.util.client.StreamerUtil.lightPurple;
+import static cc.unknown.util.client.StreamerUtil.red;
+import static cc.unknown.util.client.StreamerUtil.reset;
 
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.security.aes.AesUtil;
 import cc.unknown.util.security.hook.WebhookUtil;
 import cc.unknown.util.security.remote.RemoteUtil;
@@ -55,9 +55,9 @@ public class IRC extends ListenerAdapter {
 	    	String extUser = extractUsername(content);
 	    	String extContent = extractMessage(content);
 	    	
-		    ChatUtil.display(lightPurple + "[Sakura] " + darkAqua + extUser + ": " + reset + extContent);
+	    	PlayerUtil.display(lightPurple + "[Sakura] " + darkAqua + extUser + ": " + reset + extContent);
 	    } else {
-	    	ChatUtil.display(blue + "[Discord] " + red + username + ": " + reset + content);
+	    	PlayerUtil.display(blue + "[Discord] " + red + username + ": " + reset + content);
 	    }
 	}
 

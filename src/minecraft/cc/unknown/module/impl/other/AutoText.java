@@ -11,7 +11,7 @@ import cc.unknown.event.impl.input.KeyboardInputEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.chat.ChatUtil;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.DescValue;
 import cc.unknown.value.impl.StringValue;
 
@@ -39,7 +39,7 @@ public final class AutoText extends Module {
                 int keyCode = Keyboard.class.getField(keyFieldName).getInt(null);
 
                 if (event.getKeyCode() == keyCode) {
-                    ChatUtil.send(pair.message.getValue());
+                	PlayerUtil.send(pair.message.getValue());
                     break;
                 }
             } catch (NoSuchFieldException | IllegalAccessException e) {

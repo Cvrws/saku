@@ -7,7 +7,7 @@ import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.event.impl.netty.PacketSendEvent;
 import cc.unknown.event.impl.player.AttackEvent;
-import cc.unknown.util.vector.Vector3d;
+import cc.unknown.util.geometry.Vector3d;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;

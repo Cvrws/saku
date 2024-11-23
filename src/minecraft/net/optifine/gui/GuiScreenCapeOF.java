@@ -2,7 +2,7 @@ package net.optifine.gui;
 
 import com.mojang.authlib.exceptions.InvalidCredentialsException;
 
-import cc.unknown.util.font.impl.minecraft.FontRenderer;
+import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;

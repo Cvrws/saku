@@ -15,7 +15,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.RayCastUtil;
+import cc.unknown.util.player.RayCastUtil;
 import de.florianmichael.viamcp.fixes.FixedSoundEngine;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHopper;

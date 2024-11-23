@@ -10,15 +10,15 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.util.EvictingList;
-import cc.unknown.util.animation.Animation;
-import cc.unknown.util.animation.Easing;
-import cc.unknown.util.font.Font;
+import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.geometry.Triple;
+import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
-import cc.unknown.util.time.StopWatch;
-import cc.unknown.util.tuples.Triple;
-import cc.unknown.util.vector.Vector2d;
+import cc.unknown.util.render.animation.Animation;
+import cc.unknown.util.render.animation.Easing;
+import cc.unknown.util.render.font.Font;
+import cc.unknown.util.structure.EvictingList;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class NotificationComponent extends Component {
