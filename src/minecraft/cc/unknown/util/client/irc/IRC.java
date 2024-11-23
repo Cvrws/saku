@@ -6,39 +6,33 @@ import static cc.unknown.util.streamer.StreamerUtil.lightPurple;
 import static cc.unknown.util.streamer.StreamerUtil.red;
 import static cc.unknown.util.streamer.StreamerUtil.reset;
 
-import java.util.List;
-
-import cc.unknown.util.Accessor;
 import cc.unknown.util.chat.ChatUtil;
 import cc.unknown.util.security.aes.AesUtil;
-import cc.unknown.util.security.hook.AuthUtil;
-import cc.unknown.util.security.user.UserUtil;
+import cc.unknown.util.security.hook.WebhookUtil;
+import cc.unknown.util.security.remote.RemoteUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.minecraft.util.ChatFormatting;
 
 @Getter
 @Setter
 public class IRC extends ListenerAdapter {
 	private String channelId = "1308613616198746143";
-	private String token = "Izj7lzMa2QdWdWlR1oxm8Tlu2yVWO+nePVcf0pE7oVkqfK0Y6wZMP1qO+/n+iFvWBdxYL4AwuiHm94hnjZRRll8ibfOATugLsUmDgZb/kx8=";
 
 	@Getter
 	private JDA jda;
 	private String lastMessage = "";
 
 	@SneakyThrows
-	public void init() {		
+	public synchronized void init() {
         if (jda == null || jda.getStatus() == JDA.Status.SHUTDOWN || jda.getStatus() == JDA.Status.FAILED_TO_LOGIN) {
-            jda = JDABuilder.createDefault(AesUtil.decrypt(token)).enableIntents(GatewayIntent.MESSAGE_CONTENT).addEventListeners(new IRC()).build();
+            jda = JDABuilder.createDefault(AesUtil.decrypt(RemoteUtil.tokenRemote)).enableIntents(GatewayIntent.MESSAGE_CONTENT).addEventListeners(new IRC()).build();
             jda.awaitReady();
         }
 	}
@@ -97,7 +91,7 @@ public class IRC extends ListenerAdapter {
 	public synchronized void sendMessage(String message) {
 		TextChannel channel = jda.getTextChannelById(channelId);
 		if (channel != null) {
-			AuthUtil.ircMessage(message);
+			WebhookUtil.ircMessage(message);
 		}
 	}
 	

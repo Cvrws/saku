@@ -9,6 +9,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import cc.unknown.util.security.remote.RemoteUtil;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
@@ -16,7 +17,6 @@ import lombok.experimental.UtilityClass;
 public class AesUtil {
 
     private final String PRIVATE_SECRET_KEY = "5q7inZ34T0LiadFjaZWexQryC0G8Fr";
-	private final String SECRET_KEY = decrypt2(NetworkUtility.getRaw("https://raw.githubusercontent.com/Cvrwed/cloud/refs/heads/main/auth"));
 
 	@SneakyThrows
     public String encrypt(String data) {
@@ -65,7 +65,7 @@ public class AesUtil {
     @SneakyThrows
     private SecretKey getSecretKey() {
         MessageDigest sha = MessageDigest.getInstance("SHA-256");
-        byte[] key = sha.digest(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        byte[] key = sha.digest(RemoteUtil.SECRET_KEY.getBytes(StandardCharsets.UTF_8));
         return new SecretKeySpec(key, "AES");
     }
 

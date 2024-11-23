@@ -1,36 +1,23 @@
 package cc.unknown.util.security.hook;
 
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
 import java.util.Date;
 
-import cc.unknown.util.security.aes.NetworkUtility;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import cc.unknown.util.Accessor;
-import cc.unknown.util.security.HardwareUtil;
 import cc.unknown.util.security.aes.AesUtil;
 import cc.unknown.util.security.hook.impl.Hook;
+import cc.unknown.util.security.remote.RemoteUtil;
 import cc.unknown.util.security.user.UserUtil;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class AuthUtil implements Accessor {
-	private String authRemote = NetworkUtility.getRaw("https://raw.githubusercontent.com/Cvrwed/cloud/refs/heads/main/changelog");
-	private String ircCrypt = "beODxuM36qmG5349T3nTtEZWwZ+Hao6/cn8mldvaIj+mO025Z8ZWqDsnu14TUidIYMr+M7vR5F+VE3ElNkqfmmem3kjjTNrZm1eKiI5rWtvRX4v26MU21a74c6oHgts70Q8uLLBuNkufqfGr1glJtnON3Sj6+7nWEV5tgc7m55c=";
+public class WebhookUtil implements Accessor {
 	
 	@SneakyThrows
 	public void notify(String content) {
 	    try {
-	    	Hook webhook = new Hook(AesUtil.decrypt(authRemote));
+	    	Hook webhook = new Hook(AesUtil.decrypt(RemoteUtil.authRemote));
 	        webhook.setAvatarUrl("https://i.ibb.co/bNfZbWL/sakura.png");
 	        webhook.setUsername("Sakura Auth");
 	        webhook.setContent("-# [" + getTime() + "] " + content);
@@ -43,7 +30,7 @@ public class AuthUtil implements Accessor {
 	
 	@SneakyThrows
 	public void ircMessage(String message) {
-		Hook irc = new Hook(AesUtil.decrypt(ircCrypt));
+		Hook irc = new Hook(AesUtil.decrypt(RemoteUtil.ircRemote));
 		irc.setAvatarUrl("https://i.ibb.co/bNfZbWL/sakura.png");
 		irc.setUsername("Sakura IRC");
 		irc.setContent("-# [IRC] " + UserUtil.getUser() + ": " + message);

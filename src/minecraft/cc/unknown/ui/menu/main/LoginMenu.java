@@ -17,7 +17,7 @@ import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.security.HardwareUtil;
 import cc.unknown.util.security.aes.AesUtil;
 import cc.unknown.util.security.blacklist.BlackListUtil;
-import cc.unknown.util.security.hook.AuthUtil;
+import cc.unknown.util.security.hook.WebhookUtil;
 import cc.unknown.util.security.user.UserUtil;
 import cc.unknown.util.vector.Vector2d;
 import lombok.SneakyThrows;
@@ -98,16 +98,16 @@ public final class LoginMenu extends GuiScreen {
         switch (button.id) {
             case 1:
                 if (username.isEmpty()) {
-                    AuthUtil.notify("`Invalid Username: Username cannot be empty.`");
+                    WebhookUtil.notify("`Invalid Username: Username cannot be empty.`");
                     status = "Username cannot be empty";
                 } else if (key.isEmpty()) {
                 	status = "";
                     String dataToEncrypt = username + "::" + systemUuid;
                     String encryptedKey = AesUtil.encrypt(dataToEncrypt);
-                    AuthUtil.notify("`New User: " + username + " - Key: " + encryptedKey + "`");
+                    WebhookUtil.notify("`New User: " + username + " - Key: " + encryptedKey + "`");
                 } else {
                     if (BlackListUtil.isBlacklisted(key)) {
-                        AuthUtil.notify("`BlackListed Key: " + key + "`");
+                        WebhookUtil.notify("`BlackListed Key: " + key + "`");
                     	status = "The key has been blacklisted.";
                         return;
                     }
@@ -123,7 +123,7 @@ public final class LoginMenu extends GuiScreen {
                             UserUtil.setUser(decryptedUsername);
                             getModule(Sprint.class).logged = true;
                             mc.displayGuiScreen(new MainMenu());
-                            AuthUtil.notify("`Login Success - User: " + UserUtil.getUser() + "`");
+                            WebhookUtil.notify("`Login Success - User: " + UserUtil.getUser() + "`");
                         } else {
                             if (!decryptedUsername.equalsIgnoreCase(username)) {
                                 int attempts = loginAttempts.getOrDefault(key, 0) + 1;
@@ -137,11 +137,11 @@ public final class LoginMenu extends GuiScreen {
                                     status = "The key has been locked for security.";
                                 }
 
-                                AuthUtil.notify("`Invalid Username: " + username + " - Key: " + key + " - User Key: " + decryptedUsername + "`");
+                                WebhookUtil.notify("`Invalid Username: " + username + " - Key: " + key + " - User Key: " + decryptedUsername + "`");
 
                                 if (attempts >= MAX_ATTEMPTS) {
                                     BlackListUtil.add(key);
-                                    AuthUtil.notify("`Key added to blacklist due to multiple invalid username attempts.`");
+                                    WebhookUtil.notify("`Key added to blacklist due to multiple invalid username attempts.`");
                                     loginAttempts.remove(key);
                                 }
                             } else {
@@ -149,13 +149,13 @@ public final class LoginMenu extends GuiScreen {
                             }
 
                             if (!decryptedUuid.equals(systemUuid)) {
-                                AuthUtil.notify("`Invalid Hwid: " + systemUuid + " - Key: " + key + " - Hwid Key: " + decryptedUuid + "`");
+                                WebhookUtil.notify("`Invalid Hwid: " + systemUuid + " - Key: " + key + " - Hwid Key: " + decryptedUuid + "`");
                                 BlackListUtil.add(key);
-                                AuthUtil.notify("`Key added to blacklist due to invalid HWID.`");
+                                WebhookUtil.notify("`Key added to blacklist due to invalid HWID.`");
                             }
                         }
                     } else {
-                        AuthUtil.notify("`Decrypted key format is invalid.`");
+                        WebhookUtil.notify("`Decrypted key format is invalid.`");
                     }
                 }
                 break;
