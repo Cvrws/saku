@@ -477,10 +477,6 @@ public final class KillAura extends Module {
 				furry = true;
 			}
 			
-			/*if (mc.player.moveStrafing > 1) {
-				furry = true;
-			}*/
-			
 			if (furry) {
 				mc.player.setItemInUse(getComponent(Slot.class).getItemStack(), 0);
 				PacketUtil.sendNoEvent(new C07PacketPlayerDigging(

@@ -47,7 +47,6 @@ public final class ModuleManager {
         // Latency
         this.put(BackTrack.class, new BackTrack());
         this.put(PingSpoof.class, new PingSpoof());
-        this.put(LegitBlink.class, new LegitBlink());
         this.put(Clumsy.class, new Clumsy());
         this.put(PerfectCriticals.class, new PerfectCriticals());
         this.put(FakeLag.class, new FakeLag());
@@ -105,10 +104,10 @@ public final class ModuleManager {
         this.put(AntiVoid.class, new AntiVoid());
         this.put(AutoPot.class, new AutoPot());
         this.put(AutoTool.class, new AutoTool());
+        this.put(Blink.class, new Blink());
         this.put(Derp.class, new Derp());
         this.put(NoClickDelay.class, new NoClickDelay());
         this.put(Breaker.class, new Breaker());
-        this.put(Blink.class, new Blink());
         this.put(FastUse.class, new FastUse());
         this.put(InventoryManager.class, new InventoryManager());
         this.put(NoFall.class, new NoFall());

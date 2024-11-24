@@ -1,65 +1,63 @@
 package cc.unknown.module.impl.player;
 
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.event.Listener;
-import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.other.BlockDamageEvent;
-import cc.unknown.event.impl.player.PreUpdateEvent;
+import cc.unknown.event.impl.player.AttackEvent;
+import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.player.SlotUtil;
-import net.minecraft.util.BlockPos;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovingObjectPosition;
 
 @ModuleInfo(aliases = {"Auto Tool"}, description = "Cambia a la mejor herramienta cada que rompes un bloque", category = Category.PLAYER)
 public class AutoTool extends Module {
 
-    private int slot, lastSlot = -1;
-    private int blockBreak, ran;
-    private BlockPos blockPos;
+	private int prevItem = 0;
+	private boolean mining = false;
+	private int bestSlot = 0;
     
-    @EventLink(Priority.VERY_HIGH)
-    public final Listener<BlockDamageEvent> onBlockDamage = event -> {
-        if (event.getPlayer() != mc.player || mc.player.getDistanceSq(event.getBlockPos().getX(), event.getBlockPos().getY(),event.getBlockPos().getZ()) > 5 * 5) return;
-        blockBreak = 15;
-        blockPos = event.getBlockPos();
-        this.update();
-    };
+	@EventLink
+	public final Listener<AttackEvent> onAttack = event -> {
+		mining = false;
+	};
+	
+	@EventLink
+	public final Listener<Render3DEvent> onRender3D = event -> {
+		if (!mc.gameSettings.keyBindUseItem.isKeyDown() && mc.gameSettings.keyBindAttack.isKeyDown() && mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+			int bestSpeed = 0;
+			bestSlot = -1;
 
-    @EventLink
-    public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-        this.update();
-    };
+			if (!mining) {
+				prevItem = mc.player.inventory.currentItem;
+			}
 
-    public void update() {
-        if (mc.objectMouseOver == null) {
-            blockBreak = -1;
-            return;
-        }
+			Block block = mc.world.getBlockState(mc.objectMouseOver.getBlockPos()).getBlock();
 
-        switch (mc.objectMouseOver.typeOfHit) {
-            case BLOCK:
-                if (blockPos != null && blockBreak > 0) {
-                    slot = SlotUtil.findTool(blockPos);
-                } else {
-                    slot = -1;
-                }
-                break;
+			for (int i = 0; i <= 8; i++) {
+				ItemStack item = mc.player.inventory.getStackInSlot(i);
+				if (item == null)
+					continue;
 
-            default:
-                slot = -1;
-                break;
-        }
+				float speed = item.getStrVsBlock(block);
 
-        if (lastSlot != -1) {
-            getComponent(Slot.class).setSlot(lastSlot);
-        } else if (slot != -1) {
-            getComponent(Slot.class).setSlot(slot);
-        }
+				if (speed > bestSpeed) {
+					bestSpeed = (int) speed;
+					bestSlot = i;
+				}
 
-        lastSlot = slot;
-        blockBreak--;
-    }
-
+				if (bestSlot != -1) {
+					mc.player.inventory.currentItem = bestSlot;
+				}
+			}
+			mining = true;
+		} else {
+			if (mining) {
+				mining = false;
+			} else {
+				prevItem = mc.player.inventory.currentItem;
+			}
+		}
+	};
 }

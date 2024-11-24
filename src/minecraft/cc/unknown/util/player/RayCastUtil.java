@@ -1,23 +1,30 @@
 package cc.unknown.util.player;
 
+import java.util.List;
+
 import com.google.common.base.Predicates;
 
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.geometry.Vector2f;
+import lombok.experimental.UtilityClass;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 
-import java.util.List;
-
+@UtilityClass
 public final class RayCastUtil implements Accessor {
 
-    public static MovingObjectPosition rayCast(final Vector2f rotation, final double range) {
+    public MovingObjectPosition rayCast(final Vector2f rotation, final double range) {
         return rayCast(rotation, range, 0);
     }
 
-    public static boolean inView(final Entity entity) {
+    public boolean inView(final Entity entity) {
         int renderDistance = 16 * mc.gameSettings.renderDistanceChunks;
 
         Vector2f rotations = RotationUtil.calculate(entity);
@@ -50,11 +57,11 @@ public final class RayCastUtil implements Accessor {
         return false;
     }
 
-    public static MovingObjectPosition rayCast(final Vector2f rotation, final double range, final float expand) {
+    public MovingObjectPosition rayCast(final Vector2f rotation, final double range, final float expand) {
         return rayCast(rotation, range, expand, mc.player);
     }
 
-    public static MovingObjectPosition rayCast(final Vector2f rotation, final double range, final float expand, Entity entity) {
+    public MovingObjectPosition rayCast(final Vector2f rotation, final double range, final float expand, Entity entity) {
         final float partialTicks = mc.timer.renderPartialTicks;
         MovingObjectPosition objectMouseOver;
 
@@ -107,7 +114,7 @@ public final class RayCastUtil implements Accessor {
         return null;
     }
 
-    public static boolean overBlock(final Vector2f rotation, final EnumFacing enumFacing, final BlockPos pos, final boolean strict) {
+    public boolean overBlock(final Vector2f rotation, final EnumFacing enumFacing, final BlockPos pos, final boolean strict) {
         final MovingObjectPosition movingObjectPosition = mc.player.rayTraceCustom(4.5f, rotation.x, rotation.y);
 
         if (movingObjectPosition == null) return false;
@@ -118,7 +125,7 @@ public final class RayCastUtil implements Accessor {
         return movingObjectPosition.getBlockPos().equals(pos) && (!strict || movingObjectPosition.sideHit == enumFacing);
     }
 
-    public static boolean overBlock(final EnumFacing enumFacing, final BlockPos pos, final boolean strict) {
+    public boolean overBlock(final EnumFacing enumFacing, final BlockPos pos, final boolean strict) {
         final MovingObjectPosition movingObjectPosition = mc.objectMouseOver;
 
         if (movingObjectPosition == null) return false;
@@ -129,11 +136,11 @@ public final class RayCastUtil implements Accessor {
         return movingObjectPosition.getBlockPos().equals(pos) && (!strict || movingObjectPosition.sideHit == enumFacing);
     }
 
-    public static Boolean overBlock(final Vector2f rotation, final BlockPos pos) {
+    public Boolean overBlock(final Vector2f rotation, final BlockPos pos) {
         return overBlock(rotation, EnumFacing.UP, pos, false);
     }
 
-    public static Boolean overBlock(final Vector2f rotation, final BlockPos pos, final EnumFacing enumFacing) {
+    public Boolean overBlock(final Vector2f rotation, final BlockPos pos, final EnumFacing enumFacing) {
         return overBlock(rotation, enumFacing, pos, true);
     }
 }

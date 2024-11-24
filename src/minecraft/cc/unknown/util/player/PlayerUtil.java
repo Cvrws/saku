@@ -176,6 +176,17 @@ public class PlayerUtil implements Accessor {
 	public double getFov(final double posX, final double posZ) {
 		return getFov(mc.player.rotationYaw, posX, posZ);
 	}
+	
+	public double fovFromTarget(Entity tg) {
+	    return ((mc.player.rotationYaw - fovToTarget(tg)) % 360.0 + 540.0) % 360.0 - 180.0;
+	}
+
+	private float fovToTarget(Entity tg) {
+	    double x = tg.posX - mc.player.posX;
+	    double z = tg.posZ - mc.player.posZ;
+	    double yaw = Math.atan2(x, z) * 57.2957795;
+	    return (float) (yaw * -1.0);
+	}
 
 	public double getFov(final float yaw, final double posX, final double posZ) {
 		double angle = (yaw - angle(posX, posZ)) % 360.0;
@@ -548,43 +559,6 @@ public class PlayerUtil implements Accessor {
 						rotationVector.zCoord * range));
 
 		return movingObjectPosition.hitVec.distanceTo(eyes);
-	}
-
-	public double fovFromEntity(EntityPlayer en) {
-		return ((((double) (mc.player.rotationYaw - fovToEntity(en)) % 360.0D) + 540.0D) % 360.0D) - 180.0D;
-	}
-
-	public boolean inFov(float fov, Entity entity) {
-		return inFov(fov, entity.posX, entity.posZ);
-	}
-
-	public boolean inFov(float fov, final double n2, final double n3) {
-		fov *= 0.5F;
-		final double fovToPoint = getFov(n2, n3);
-		if (fovToPoint > 0.0) {
-			return fovToPoint < fov;
-		} else
-			return fovToPoint > -fov;
-	}
-
-	public boolean inFov(float yaw, float fov, final double n2, final double n3) {
-		fov *= 0.5F;
-		final double fovToPoint = getFov(yaw, n2, n3);
-		if (fovToPoint > 0.0) {
-			return fovToPoint < fov;
-		} else
-			return fovToPoint > -fov;
-	}
-
-	public boolean inFov(float fov, Entity self, Entity target) {
-		return inFov(self.rotationYaw, fov, target.posX, target.posZ);
-	}
-
-	public float fovToEntity(EntityPlayer ent) {
-		double x = ent.posX - mc.player.posX;
-		double z = ent.posZ - mc.player.posZ;
-		double yaw = Math.atan2(x, z) * 57.2957795D;
-		return (float) (yaw * -1.0D);
 	}
 
 	public boolean isHoldingWeapon() {

@@ -7,7 +7,9 @@ import static cc.unknown.util.client.StreamerUtil.red;
 import static cc.unknown.util.client.StreamerUtil.reset;
 
 import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.security.HardwareUtil;
 import cc.unknown.util.security.aes.AesUtil;
+import cc.unknown.util.security.blacklist.BlackListUtil;
 import cc.unknown.util.security.hook.WebhookUtil;
 import cc.unknown.util.security.remote.RemoteUtil;
 import lombok.Getter;
@@ -60,6 +62,11 @@ public class IRC extends ListenerAdapter {
 	    	PlayerUtil.display(blue + "[Discord] " + red + username + ": " + reset + content);
 	    }
 	}
+	
+    private String getPrefix(String content) {
+        String pre1 = content.split(" ")[0];
+        return pre1.replace("x","");
+    }
 
 	private String extractUsername(String content) {
 	    int startIdx = content.indexOf("]") + 2;

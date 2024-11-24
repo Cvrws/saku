@@ -48,4 +48,10 @@ public class WebhookUtil implements Accessor {
     public String getTime() {
         return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
     }
+    
+    public String getDiscordID() {
+    	
+    	
+    	return null;
+    }
 }

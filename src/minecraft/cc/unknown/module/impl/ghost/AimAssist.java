@@ -12,6 +12,7 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RotationUtil;
@@ -37,7 +38,7 @@ public final class AimAssist extends Module {
 			.setDefault("Advanced");
 	
 	private final NumberValue horizontalAimSpeed = new NumberValue("Horizontal Speed", this, 45.0, 5.0, 100.0, 1.0);
-	private final NumberValue horizontalComplement = new NumberValue("Horizontal Complement", this, 15.0, 2.0, 97.0, 1.0);
+	private final NumberValue horizontalComplement = new NumberValue("Horizontal Complement", this, 35.0, 2.0, 97.0, 1.0);
 	
 	private final ModeValue randomMode = new ModeValue("Speed Randomization", this)
 			.add(new SubMode("Thread Local Random"))
@@ -45,7 +46,7 @@ public final class AimAssist extends Module {
 			.add(new SubMode("Gaussian"))
 			.setDefault("Thread Local Random");
 	
-	private final NumberValue maxAngle = new NumberValue("Max Angle", this, 180, 15, 360, 5);
+	private final NumberValue maxAngle = new NumberValue("Max Angle", this, 180, 1, 180, 1);
 	private final NumberValue distance = new NumberValue("Distance", this, 4, 1, 8, 0.1);
 	private final BooleanValue clickAim = new BooleanValue("Aim on Click", this, true);
 	private final BooleanValue ignoreFriendlyEntities = new BooleanValue("Ignore Friends", this, false);
@@ -59,8 +60,8 @@ public final class AimAssist extends Module {
 	private final BooleanValue disableAimWhileBreakingBlock = new BooleanValue("Disable While Breaking Blocks", this, false);
 	private final BooleanValue weaponOnly = new BooleanValue("Only Aim While Holding at Weapon", this, false);
 	public EntityPlayer target;
-	private final Random random = new Random();
-
+	private StopWatch stopWatch = new StopWatch();
+	
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotionEvent = event -> {
 		if (noAim()) {
@@ -75,7 +76,7 @@ public final class AimAssist extends Module {
         double randomOffset = ThreadLocalRandom.current().nextDouble(advancedCSpeed - 1.47328, advancedCSpeed + 2.48293) / 100;
 
         Vector2f targetRotations = RotationUtil.calculate(target, true, distance.getValue().doubleValue());
-        double yawFov = PlayerUtil.fovFromEntity(target);
+        double yawFov = PlayerUtil.fovFromTarget(target);
         float resultHorizontal = getSpeedRandomize(randomMode.getValue().getName(), yawFov, randomOffset, advancedSpeed, advancedCSpeed);
         
         if (onTarget(target)) {
@@ -112,7 +113,6 @@ public final class AimAssist extends Module {
 				if (Sakura.instance.getComponentManager().get(BotComponent.class).contains(entityPlayer) && ignoreBots.getValue()) continue;
 				if (ignoreTeammates.getValue() && PlayerUtil.isTeam(entityPlayer, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
 				if (dist > distance.getValue().doubleValue()) continue;
-				if (fov != 360 && !PlayerUtil.inFov(fov, entityPlayer)) continue;
 				if (lineOfSightCheck.getValue() && !mc.player.canEntityBeSeen(entityPlayer)) continue;
 				double curFov = Math.abs(PlayerUtil.getFov(entityPlayer.posX, entityPlayer.posZ));
 				if (curFov < targetFov) {
@@ -138,6 +138,7 @@ public final class AimAssist extends Module {
 	            }
 	        }
 	    }
+        
 	    return false;
 	}
 

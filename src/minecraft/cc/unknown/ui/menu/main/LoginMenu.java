@@ -91,74 +91,98 @@ public final class LoginMenu extends GuiScreen {
     
     @Override
     public void actionPerformed(final GuiButton button) {
-        String username = usernameBox.getText();
-        String key = keyBox.getText();
+        String username = usernameBox.getText().trim();
+        String key = keyBox.getText().trim();
         String systemUuid = HardwareUtil.getUuid();
+        String discordID = "";
 
         switch (button.id) {
             case 1:
                 if (username.isEmpty()) {
-                    WebhookUtil.notify("`Invalid Username: Username cannot be empty.`");
-                    status = "Username cannot be empty";
-                } else if (key.isEmpty()) {
-                	status = "";
-                    String dataToEncrypt = username + "::" + systemUuid;
-                    String encryptedKey = AesUtil.encrypt(dataToEncrypt);
-                    WebhookUtil.notify("`New User: " + username + " - Key: " + encryptedKey + "`");
-                } else {
-                    if (BlackListUtil.isBlacklisted(key)) {
-                        WebhookUtil.notify("`BlackListed Key: " + key + "`");
-                    	status = "The key has been blacklisted.";
-                        return;
-                    }
-
-                    String decryptedKey = AesUtil.decrypt(key);
-                    String[] parts = decryptedKey.split("::");
-
-                    if (parts.length == 2) {
-                        String decryptedUsername = parts[0];
-                        String decryptedUuid = parts[1];
-
-                        if (decryptedUuid.equals(systemUuid) && username.equalsIgnoreCase(decryptedUsername)) {
-                            UserUtil.setUser(decryptedUsername);
-                            getModule(Sprint.class).logged = true;
-                            mc.displayGuiScreen(new MainMenu());
-                            WebhookUtil.notify("`Login Success - User: " + UserUtil.getUser() + "`");
-                        } else {
-                            if (!decryptedUsername.equalsIgnoreCase(username)) {
-                                int attempts = loginAttempts.getOrDefault(key, 0) + 1;
-                                loginAttempts.put(key, attempts);
-
-                                int remainingAttempts = MAX_ATTEMPTS - attempts;
-
-                                if (remainingAttempts > 0) {
-                                    status = "You have " + remainingAttempts + " attempt" + (remainingAttempts > 1 ? "s" : "") + " left otherwise the key will be locked for security.";
-                                } else {
-                                    status = "The key has been locked for security.";
-                                }
-
-                                WebhookUtil.notify("`Invalid Username: " + username + " - Key: " + key + " - User Key: " + decryptedUsername + "`");
-
-                                if (attempts >= MAX_ATTEMPTS) {
-                                    BlackListUtil.add(key);
-                                    WebhookUtil.notify("`Key added to blacklist due to multiple invalid username attempts.`");
-                                    loginAttempts.remove(key);
-                                }
-                            } else {
-                                loginAttempts.remove(key);
-                            }
-
-                            if (!decryptedUuid.equals(systemUuid)) {
-                                WebhookUtil.notify("`Invalid Hwid: " + systemUuid + " - Key: " + key + " - Hwid Key: " + decryptedUuid + "`");
-                                BlackListUtil.add(key);
-                                WebhookUtil.notify("`Key added to blacklist due to invalid HWID.`");
-                            }
-                        }
-                    } else {
-                        WebhookUtil.notify("`Decrypted key format is invalid.`");
-                    }
+                    setStatusAndNotify("Username cannot be empty.", "Invalid Username: Username cannot be empty.");
+                    return;
                 }
+
+                if (key.isEmpty()) {
+                    handleNewUser(username, systemUuid);
+                    return;
+                }
+
+                if (BlackListUtil.isBlacklisted(key)) {
+                    setStatusAndNotify("The key has been blacklisted.", "BlackListed Key: " + key);
+                    return;
+                }
+
+                handleExistingUser(username, key, systemUuid);
                 break;
+
+            default:
+            	status = "Invalid action.";
         }
+    }
+    
+    private void handleNewUser(String username, String systemUuid) {
+        String dataToEncrypt = username + "::" + systemUuid;
+        String encryptedKey = AesUtil.encrypt(dataToEncrypt);
+        WebhookUtil.notify("`New User: " + username + " - Key: " + encryptedKey + "`");
+        status = "New user created successfully.";
+    }
+
+    private void handleExistingUser(String username, String key, String systemUuid) {
+        String decryptedKey = AesUtil.decrypt(key);
+        String[] parts = decryptedKey.split("::");
+
+        if (parts.length != 2) {
+            WebhookUtil.notify("`Decrypted key format is invalid.`");
+            status = "Invalid key format.";
+            return;
+        }
+
+        String decryptedUsername = parts[0];
+        String decryptedUuid = parts[1];
+
+        if (!decryptedUuid.equals(systemUuid)) {
+            blacklistKey(key, "Invalid HWID: " + systemUuid + " - Key: " + key + " - Hwid Key: " + decryptedUuid);
+            return;
+        }
+
+        if (!decryptedUsername.equalsIgnoreCase(username)) {
+            handleInvalidUsername(username, key, decryptedUsername);
+            return;
+        }
+
+        UserUtil.setUser(decryptedUsername);
+        getModule(Sprint.class).logged = true;
+        mc.displayGuiScreen(new MainMenu());
+        WebhookUtil.notify("`Login Success - User: " + UserUtil.getUser() + "`");
+        status = "Login successful!";
+    }
+
+    private void handleInvalidUsername(String username, String key, String decryptedUsername) {
+        int attempts = loginAttempts.getOrDefault(key, 0) + 1;
+        loginAttempts.put(key, attempts);
+
+        int remainingAttempts = MAX_ATTEMPTS - attempts;
+        if (remainingAttempts > 0) {
+        	status = "You have " + remainingAttempts + " attempt" + (remainingAttempts > 1 ? "s" : "") + " left otherwise the key will be locked for security.";
+        } else {
+        	status = "The key has been locked for security.";
+            BlackListUtil.add(key);
+            WebhookUtil.notify("`Key added to blacklist due to multiple invalid username attempts.`");
+            loginAttempts.remove(key);
+        }
+
+        WebhookUtil.notify("`Invalid Username: " + username + " - Key: " + key + " - User Key: " + decryptedUsername + "`");
+    }
+
+    private void blacklistKey(String key, String message) {
+        WebhookUtil.notify("`" + message + "`");
+        BlackListUtil.add(key);
+        WebhookUtil.notify("`Key added to blacklist.`");
+    }
+
+    private void setStatusAndNotify(String statusMessage, String webhookMessage) {
+    	status = statusMessage;
+        WebhookUtil.notify("`" + webhookMessage + "`");
     }
 }
