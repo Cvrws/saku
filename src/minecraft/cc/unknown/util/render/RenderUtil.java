@@ -608,4 +608,8 @@ public final class RenderUtil implements Accessor {
         GlStateManager.resetColor();
         GlStateManager.popMatrix();
     }
+    
+    public double interpolate(double current, double old, double scale) {
+        return old + (current - old) * scale;
+    }
 }

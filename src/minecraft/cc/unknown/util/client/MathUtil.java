@@ -10,62 +10,85 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class MathUtil {
 
-    public double getRandom(double min, double max) {
-        if (min == max) {
-            return min;
-        } else if (min > max) {
-            final double d = min;
-            min = max;
-            max = d;
-        }
-        return ThreadLocalRandom.current().nextDouble(min, max);
-    }
+	public static int nextInt(int origin, int bound) {
+		return origin == bound ? origin : ThreadLocalRandom.current().nextInt(origin, bound);
+	}
 
-    public double round(final double value, final int places) {
-        try {
-            final BigDecimal bigDecimal = BigDecimal.valueOf(value);
+	public static long nextLong(long origin, long bound) {
+		return origin == bound ? origin : ThreadLocalRandom.current().nextLong(origin, bound);
+	}
 
-            return bigDecimal.setScale(places, RoundingMode.HALF_UP).doubleValue();
-        } catch (Exception exception) {
-            return 0;
-        }
-    }
-    
-    public double roundWithSteps(final double value, final double steps) {
-        double a = ((Math.round(value / steps)) * steps);
-        a *= 1000;
-        a = (int) a;
-        a /= 1000;
-        return a;
-    }
+	public static float nextFloat(double origin, double bound) {
+		return origin == bound ? (float) origin
+				: (float) ThreadLocalRandom.current().nextDouble((double) ((float) origin), (double) ((float) bound));
+	}
 
-    public double lerp(final double a, final double b, final double c) {
-        return a + c * (b - a);
-    }
+	public static float nextFloat(float origin, float bound) {
+		return origin == bound ? origin
+				: (float) ThreadLocalRandom.current().nextDouble((double) origin, (double) bound);
+	}
 
-    public float lerp(final float a, final float b, final float c) {
-        return a + c * (b - a);
-    }
+	public static double nextDouble(double origin, double bound) {
+		return origin == bound ? origin : ThreadLocalRandom.current().nextDouble(origin, bound);
+	}
 
-    public double clamp(double min, double max, double n) {
-        return Math.max(min, Math.min(max, n));
-    }
+	public double getRandom(double min, double max) {
+		if (min == max) {
+			return min;
+		} else if (min > max) {
+			final double d = min;
+			min = max;
+			max = d;
+		}
+		return ThreadLocalRandom.current().nextDouble(min, max);
+	}
 
-    public double wrappedDifference(double number1, double number2) {
-        return Math.min(Math.abs(number1 - number2), Math.min(Math.abs(number1 - 360) - Math.abs(number2 - 0), Math.abs(number2 - 360) - Math.abs(number1 - 0)));
-    }
-    
-    public double nextSecureInt(int origin, int bound) {
-		if (origin == bound) {
-			return (double)origin;
-		} else {
-			SecureRandom secureRandom = new SecureRandom();
-			int difference = bound - origin;
-			return (double)(origin + secureRandom.nextInt(difference));
+	public double round(final double value, final int places) {
+		try {
+			final BigDecimal bigDecimal = BigDecimal.valueOf(value);
+
+			return bigDecimal.setScale(places, RoundingMode.HALF_UP).doubleValue();
+		} catch (Exception exception) {
+			return 0;
 		}
 	}
 
-    public double nextSecureDouble(double origin, double bound) {
+	public double roundWithSteps(final double value, final double steps) {
+		double a = ((Math.round(value / steps)) * steps);
+		a *= 1000;
+		a = (int) a;
+		a /= 1000;
+		return a;
+	}
+
+	public double lerp(final double a, final double b, final double c) {
+		return a + c * (b - a);
+	}
+
+	public float lerp(final float a, final float b, final float c) {
+		return a + c * (b - a);
+	}
+
+	public double clamp(double min, double max, double n) {
+		return Math.max(min, Math.min(max, n));
+	}
+
+	public double wrappedDifference(double number1, double number2) {
+		return Math.min(Math.abs(number1 - number2), Math.min(Math.abs(number1 - 360) - Math.abs(number2 - 0),
+				Math.abs(number2 - 360) - Math.abs(number1 - 0)));
+	}
+
+	public double nextSecureInt(int origin, int bound) {
+		if (origin == bound) {
+			return (double) origin;
+		} else {
+			SecureRandom secureRandom = new SecureRandom();
+			int difference = bound - origin;
+			return (double) (origin + secureRandom.nextInt(difference));
+		}
+	}
+
+	public double nextSecureDouble(double origin, double bound) {
 		if (origin == bound) {
 			return origin;
 		} else {
@@ -75,13 +98,13 @@ public class MathUtil {
 		}
 	}
 
-    public float nextSecureFloat(double origin, double bound) {
+	public float nextSecureFloat(double origin, double bound) {
 		if (origin == bound) {
-			return (float)origin;
+			return (float) origin;
 		} else {
 			SecureRandom secureRandom = new SecureRandom();
-			float difference = (float)(bound - origin);
-			return (float)(origin + (double)(secureRandom.nextFloat() * difference));
+			float difference = (float) (bound - origin);
+			return (float) (origin + (double) (secureRandom.nextFloat() * difference));
 		}
 	}
 }

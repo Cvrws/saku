@@ -20,9 +20,6 @@ public class LegitSpeed extends Mode<Speed> {
 
     @EventLink(value = Priority.VERY_HIGH)
     public final Listener<PreUpdateEvent> preUpdate = event -> {
-    	if (!mc.player.onGround) {
-    		RotationComponent.setRotations(new Vector2f(mc.player.rotationYaw + 45, mc.player.rotationPitch), 10, MovementFix.SILENT);
-    	}
     	mc.player.jumpTicks = 0;
     };
 

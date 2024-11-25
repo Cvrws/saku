@@ -20,65 +20,9 @@ import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.network.NetworkManager.InboundHandlerTuplePacketListener;
 import net.minecraft.network.Packet;
 
-@ModuleInfo(aliases = "Fake Lag", description = "Retiene los datos del servidor ocasionando lag (BETA)", category = Category.LATENCY)
+@ModuleInfo(aliases = "Lag Range", description = "Retiene los datos del servidor ocasionando lag", category = Category.LATENCY)
 public class FakeLag extends Module {
 	
-	private ModeValue mode = new ModeValue("Withhold Mode", this)
-			.add(new SubMode("Delay"))
-			.add(new SubMode("Tick"))
-			.setDefault("Delay");
-	
-	private NumberValue tick = new NumberValue("Tick", this, 2, 1, 10, 1, () -> !mode.is("Tick"));
-	private NumberValue delay = new NumberValue("Delay", this, 500, 0, 1000, 10, () -> !mode.is("Delay"));
-	
-	private final List<Packet<?>> packets = new CopyOnWriteArrayList<>();
-	private StopWatch stopWatch = new StopWatch();
 
-	@Override
-	public void onDisable() {
-		for (Packet packet : packets) {
-			mc.getNetHandler().getNetworkManager().outboundPacketsQueue.add(new InboundHandlerTuplePacketListener(packet, (GenericFutureListener) null));
-		}
-		packets.clear();
-	}
-	
-	@EventLink
-	public Listener<PacketSendEvent> onSend = event -> {
-		if (mc.player == null) return;
-		Packet<?> packet = event.getPacket();
-		
-		packets.add(packet);
-		event.setCancelled();
-	};
-	
-	@EventLink
-	public final Listener<GameEvent> onGame = event -> {
-		if (this.isEnabled() && mc.player != null) {
-			switch (mode.getValue().getName()) {
-			case "Delay":
-		    	if (stopWatch.reached(delay.getValue().intValue())) {
-		    		sendPackets();
-		    	    stopWatch.reset();
-		    	}
-				break;
-			case "Tick":
-				for (int i = 0; i < tick.getValue().intValue(); i++) {
-					sendPackets();
-				}
-				break;
-			}
-		}
-	};
-	
-	public void sendPackets() {
-	    while (!packets.isEmpty()) {
-			PacketUtil.sendNoEvent(packets.get(0));
-			packets.remove(packets.get(0));
-	    }
-	}
- 	
-	@EventLink
-	public Listener<DisconnectionEvent> onDisconnect = event -> {
-		this.toggle();
-	};
+
 }

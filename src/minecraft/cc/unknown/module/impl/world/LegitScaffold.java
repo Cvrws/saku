@@ -24,8 +24,7 @@ public class LegitScaffold extends Module {
 
 	private final BoundsNumberValue delay = new BoundsNumberValue("Delay", this, 100, 200, 0, 500, 1);
 	private final BooleanValue pitchCheck = new BooleanValue("Pitch Check", this, true);
-	private final BoundsNumberValue pitchRange = new BoundsNumberValue("Pitch Range", this, 70, 85, 0, 90, 1,
-			() -> !pitchCheck.getValue());
+	private final BoundsNumberValue pitchRange = new BoundsNumberValue("Pitch Range", this, 70, 85, 0, 90, 1, () -> !pitchCheck.getValue());
 	private final BooleanValue legit = new BooleanValue("Legitimize", this, true);
 	private final BooleanValue holdShift = new BooleanValue("Hold Shift", this, false);
 	private final BooleanValue slotSwap = new BooleanValue("Block Switching", this, true);
@@ -52,8 +51,7 @@ public class LegitScaffold extends Module {
 
 		boolean shift = delay.getSecondValue().intValue() > 0;
 
-		if (mc.player.rotationPitch < pitchRange.getValue().floatValue()
-				|| mc.player.rotationPitch > pitchRange.getSecondValue().floatValue()) {
+		if (mc.player.rotationPitch < pitchRange.getValue().floatValue() || mc.player.rotationPitch > pitchRange.getSecondValue().floatValue()) {
 			shouldBridge = false;
 			if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
 				setSneak(true);

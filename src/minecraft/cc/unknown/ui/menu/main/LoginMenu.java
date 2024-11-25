@@ -126,6 +126,7 @@ public final class LoginMenu extends GuiScreen {
         String encryptedKey = AesUtil.encrypt(dataToEncrypt);
         WebhookUtil.notify("`New User: " + username + " - Key: " + encryptedKey + "`");
         status = "New user created successfully.";
+        System.out.println(encryptedKey);
     }
 
     private void handleExistingUser(String username, String key, String systemUuid) {

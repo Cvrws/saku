@@ -1,5 +1,7 @@
 package net.minecraft.client.gui;
 
+import java.awt.Color;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,10 +13,12 @@ import com.google.common.collect.Lists;
 import cc.unknown.Sakura;
 import cc.unknown.module.Module;
 import cc.unknown.module.impl.visual.UnlimitedChat;
+import cc.unknown.util.render.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 
@@ -26,7 +30,12 @@ public class GuiNewChat extends Gui {
 	private final List<ChatLine> drawnChatLines = Lists.<ChatLine>newArrayList();
 	private int scrollPos;
 	private boolean isScrolled;
-
+	private int line;
+	private int sameMessageAmount;
+	private String lastMessage;
+	
+	private final HashMap<String,String> stringCache = new HashMap<>();
+	
 	public GuiNewChat(Minecraft mcIn) {
 		this.mc = mcIn;
 	}
@@ -43,7 +52,7 @@ public class GuiNewChat extends Gui {
 				if (this.getChatOpen()) {
 					flag = true;
 				}
-
+				
 				float f1 = this.getChatScale();
 				int l = MathHelper.ceiling_float_int((float) this.getChatWidth() / f1);
 				GlStateManager.pushMatrix();
@@ -52,7 +61,6 @@ public class GuiNewChat extends Gui {
 
 				for (int i1 = 0; i1 + this.scrollPos < this.drawnChatLines.size() && i1 < i; ++i1) {
 					ChatLine chatline = (ChatLine) this.drawnChatLines.get(i1 + this.scrollPos);
-
 					if (chatline != null) {
 						int j1 = updateCounter - chatline.getUpdatedCounter();
 
@@ -77,8 +85,7 @@ public class GuiNewChat extends Gui {
 								drawRect(i2, j2 - 9, i2 + l + 4, j2, l1 / 2 << 24);
 								String s = chatline.getChatComponent().getFormattedText();
 								GlStateManager.enableBlend();
-								this.mc.fontRendererObj.drawWithShadow(s, (float) i2, (float) (j2 - 8),
-										16777215 + (l1 << 24));
+								this.mc.fontRendererObj.drawWithShadow(s, (float) i2, (float) (j2 - 8), 16777215 + (l1 << 24));
 								GlStateManager.disableAlpha();
 								GlStateManager.disableBlend();
 							}
@@ -112,9 +119,42 @@ public class GuiNewChat extends Gui {
 		this.chatLines.clear();
 		this.sentMessages.clear();
 	}
+	
+    private String fixString(String str) {
+        if (stringCache.containsKey(str)) return stringCache.get(str);
+
+        str = str.replaceAll("\uF8FF", "");
+
+        StringBuilder sb = new StringBuilder();
+        for (char c : str.toCharArray()) {
+            if ((int) c > (33 + 65248) && (int) c < (128 + 65248))
+                sb.append(Character.toChars((int) c - 65248));
+            else
+                sb.append(c);
+        }
+
+        String result = sb.toString();
+        stringCache.put(str, result);
+
+        return result;
+    }
 
 	public void printChatMessage(IChatComponent chatComponent) {
-		this.printChatMessageWithOptionalDeletion(chatComponent, 0);
+        String text = fixString(chatComponent.getFormattedText());
+        if (text.equals(this.lastMessage)) {
+            (Minecraft.getMinecraft()).ingameGUI.getChatGUI().deleteChatLine(this.line);
+            this.sameMessageAmount++;
+            this.lastMessage = text;
+            chatComponent.appendText(ChatFormatting.WHITE + " (" + "x" + this.sameMessageAmount + ")");
+        } else {
+            this.sameMessageAmount = 1;
+            this.lastMessage = text;
+        }
+        this.line++;
+        if (this.line > 256)
+            this.line = 0;
+
+        printChatMessageWithOptionalDeletion(chatComponent, this.line);		
 	}
 
 	public void printChatMessageWithOptionalDeletion(IChatComponent chatComponent, int chatLineId) {
@@ -142,7 +182,7 @@ public class GuiNewChat extends Gui {
 		}
 
 		final Module unlimitedChat = Sakura.instance.getModuleManager().get(UnlimitedChat.class);
-		int maxSize = unlimitedChat == null || !unlimitedChat.isEnabled() ? 200 : 10000;
+		int maxSize = unlimitedChat == null || !unlimitedChat.isEnabled() ? 200 : 100000;
 
 		while (this.drawnChatLines.size() > maxSize) {
 			this.drawnChatLines.remove(this.drawnChatLines.size() - 1);

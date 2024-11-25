@@ -54,7 +54,6 @@ public final class ComponentManager {
         // viamcp
         this.add(new BlockPlacementFixComponent());
         this.add(new FlyingPacketFixComponent());
-        this.add(new HitboxFixComponent());
         this.add(new LadderFixComponent());
         this.add(new MinimumMotionFixComponent());
         this.add(new BoundsFixComponent());

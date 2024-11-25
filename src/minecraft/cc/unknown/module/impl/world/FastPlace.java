@@ -1,12 +1,17 @@
 package cc.unknown.module.impl.world;
 
+import org.lwjgl.input.Mouse;
+
 import cc.unknown.component.impl.player.Slot;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.input.NaturalPressEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.MathUtil;
+import cc.unknown.util.client.StopWatch;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 import net.minecraft.item.Item;
@@ -14,24 +19,38 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemEgg;
 import net.minecraft.item.ItemSnowball;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovingObjectPosition;
 
 @ModuleInfo(aliases = "Fast Place", description = "Te permite colocar bloques más rapido", category = Category.WORLD)
 public class FastPlace extends Module {
 
 	private final BooleanValue blocks = new BooleanValue("Blocks", this, true);
-	private final NumberValue blockDelay = new NumberValue("Block Delay", this, 0, 0, 3, 1, () -> !blocks.getValue());
+	private final NumberValue blockDelay = new NumberValue("Block Delay", this, 50.0, 0.0, 300.0, 0, () -> !blocks.getValue());
 	private final BooleanValue projectiles = new BooleanValue("Egg/SnowBall", this, true);
-	private final NumberValue projectileDelay = new NumberValue("Egg/SnowBall Delay", this, 0, 0, 3, 1, () -> !projectiles.getValue());
+	private final NumberValue projectileDelay = new NumberValue("Egg/SnowBall Delay", this, 50.0, 0.0, 300.0, 0, () -> !projectiles.getValue());
+	private StopWatch stopWatch = new StopWatch();
 
 	@EventLink
-	public final Listener<PreMotionEvent> onPreMotionEvent = event -> {
-		ItemStack stack = getComponent(Slot.class).getItemStack();		
-		if (stack != null) {
-			Item item = getComponent(Slot.class).getItemStack().getItem();
-			if (blocks.getValue() && item instanceof ItemBlock) {
-				mc.rightClickDelayTimer = Math.min(mc.rightClickDelayTimer, blockDelay.getValue().intValue());
-			} else if (projectiles.getValue() && item instanceof ItemSnowball || item instanceof ItemEgg) {
-				mc.rightClickDelayTimer = Math.min(mc.rightClickDelayTimer, projectileDelay.getValue().intValue());
+	public final Listener<NaturalPressEvent> onNatural = event -> {
+		if (mc.currentScreen == null && Mouse.isButtonDown(1)) {
+			ItemStack stack = mc.player.getCurrentEquippedItem();
+			if (stack != null) {
+				Item item = mc.player.getCurrentEquippedItem().getItem();
+				if (blocks.getValue() && item instanceof ItemBlock && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+					long random = this.blockDelay.getValue().longValue() == 0.0 ? 0L : this.blockDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
+					if (stopWatch.reached(random)) {
+						mc.rightClickMouse();
+						stopWatch.reset();
+					}
+					event.setCancelled();
+				} else if (projectiles.getValue() && item instanceof ItemSnowball || item instanceof ItemEgg) {
+					long random = this.projectileDelay.getValue().longValue() == 0.0 ? 0L : this.projectileDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
+					if (stopWatch.reached(random)) {
+						mc.rightClickMouse();
+						stopWatch.reset();
+					}
+					event.setCancelled();
+				}
 			}
 		}
 	};

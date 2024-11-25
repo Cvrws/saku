@@ -7,20 +7,19 @@ import java.util.UUID;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.Slot;
 import cc.unknown.event.impl.player.HitSlowDownEvent;
-import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
+import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -56,6 +55,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.potion.Potion;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;
@@ -92,6 +92,8 @@ public abstract class EntityPlayer extends EntityLivingBase implements java.io.S
 	 */
 	public InventoryPlayer inventory = new InventoryPlayer(this);
 	private InventoryEnderChest theInventoryEnderChest = new InventoryEnderChest();
+    private final ItemStack[] mainInventory = new ItemStack[36];
+    private final ItemStack[] armorInventory = new ItemStack[4];
 
 	/**
 	 * The Container for the player's inventory (which opens when they press E)
@@ -769,6 +771,23 @@ public abstract class EntityPlayer extends EntityLivingBase implements java.io.S
 	}
 
 	public EntityItem dropItem(final ItemStack droppedItem, final boolean dropAround, final boolean traceItem) {
+		
+        for (int i = 0; i < this.mainInventory.length; ++i) {
+            if (ViaLoadingBase.getInstance().getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_16))
+                mc.getNetHandler().addToSendQueue(new C0APacketAnimation());
+            if (this.mainInventory[i] != null) {
+                this.mainInventory[i] = null;
+            }
+        }
+
+        for (int j = 0; j < this.armorInventory.length; ++j) {
+            if (ViaLoadingBase.getInstance().getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_16))
+                mc.getNetHandler().addToSendQueue(new C0APacketAnimation());
+            if (this.armorInventory[j] != null) {
+                this.armorInventory[j] = null;
+            }
+        }
+        
 		if (droppedItem == null) {
 			return null;
 		} else if (droppedItem.stackSize == 0) {

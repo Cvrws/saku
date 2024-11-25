@@ -13,6 +13,10 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+
+import de.florianmichael.vialoadingbase.ViaLoadingBase;
+
 public class BlockLilyPad extends BlockBush {
     protected BlockLilyPad() {
         final float f = 0.5F;
@@ -33,7 +37,9 @@ public class BlockLilyPad extends BlockBush {
     }
 
     public AxisAlignedBB getCollisionBoundingBox(final World worldIn, final BlockPos pos, final IBlockState state) {
-        return new AxisAlignedBB((double) pos.getX() + this.minX, (double) pos.getY() + this.minY, (double) pos.getZ() + this.minZ, (double) pos.getX() + this.maxX, (double) pos.getY() + this.maxY, (double) pos.getZ() + this.maxZ);
+    	if (ViaLoadingBase.getInstance().getTargetVersion().newerThan(ProtocolVersion.v1_8))
+    		return new AxisAlignedBB((double) pos.getX() + 0.0625D, (double) pos.getY() + 0.0D, (double) pos.getZ() + 0.0625D, (double) pos.getX() + 0.9375D, (double) pos.getY() + 0.09375D, (double) pos.getZ() + 0.9375D);
+    	return new AxisAlignedBB((double) pos.getX() + 0.0D, (double) pos.getY() + 0.0D, (double) pos.getZ() + 0.0D, (double) pos.getX() + 1.0D, (double) pos.getY() + 0.015625D, (double) pos.getZ() + 1.0D);
     }
 
     public int getBlockColor() {
