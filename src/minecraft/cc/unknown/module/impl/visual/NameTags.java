@@ -33,13 +33,7 @@ public final class NameTags extends Module {
     private final BooleanValue health = new BooleanValue("Show Health", this, true);
     private final BooleanValue showFriendTag = new BooleanValue("Show Friend Tag", this, false);
     private final BooleanValue showInvis = new BooleanValue("Show Invisibles", this, false);
-    private final BooleanValue showSelfTag = new BooleanValue("Show Self Tag", this, false);
-    
-    private final Font nunitoLight14 = Fonts.MAIN.get(14, Weight.LIGHT);
-	private final Map<String, Integer> nameWidths = new HashMap<>();
-
-    public final Listener<WorldChangeEvent> onWorldChange = event -> nameWidths.clear();
-    
+        
     @EventLink
     public final Listener<Render2DEvent> onRender2D = event -> {
         for (EntityPlayer player : mc.world.playerEntities) {
@@ -48,10 +42,6 @@ public final class NameTags extends Module {
             }
 
             if (player.getName().contains("[NPC]")) {
-                continue;
-            }
-
-            if (player == mc.player && !showSelfTag.getValue()) {
                 continue;
             }
 
@@ -93,10 +83,4 @@ public final class NameTags extends Module {
             GlStateManager.popMatrix();
         }
     };
-
-    private float getWidth(String name, Font font) {
-        String id = name + font.hashCode();
-        if (!nameWidths.containsKey(id)) nameWidths.put(id, font.width(name));
-        return nameWidths.get(id);
-    }
 }

@@ -275,17 +275,16 @@ public class Scaffold extends Module {
 			sameY = ((!this.sameYValue.is("Off") || this.getModule(Speed.class).isEnabled()) && !mc.gameSettings.keyBindJump.isKeyDown()) && MoveUtil.isMoving();
 
 			// Getting ItemSlot
-			
+	        
 	        if (slot == -1) {
 	        	slot = getComponent(Slot.class).getItemIndex();
 	        }
 	        
-	        int lastSlot = getComponent(Slot.class).getItemIndex();
 	        if (getComponent(Slot.class).getItemStack() == null || !(getComponent(Slot.class).getItemStack().getItem() instanceof ItemBlock)) {
-	        	lastSlot = getSlot();
+	        	slot = getSlot();
 	        }
 	        
-	        getComponent(Slot.class).setSlotDelayed(lastSlot, mc.player.offGroundTicks > 5 || ticksOnAir > 0 || sprint.is("Normal"));
+	        getComponent(Slot.class).setSlotDelayed(slot, mc.player.offGroundTicks > 5 || ticksOnAir > 0 || sprint.is("Normal"));
 	        
 			// Used to detect when to place a block, if over air, allow placement of blocks
 			if (doesNotContainBlock(1) && (!sameY || (doesNotContainBlock(2) && doesNotContainBlock(3) && doesNotContainBlock(4)))) {
@@ -543,33 +542,38 @@ public class Scaffold extends Module {
 			break;
 
 		case "Legit":
-			float yaw = (mc.player.rotationYaw + 10000000) % 360;
-			float staticYaw = (yaw - 180) - (yaw % 90) + 45;
-			float staticPitch = 79;
+		    if (canPlace && !mc.gameSettings.keyBindPickBlock.isKeyDown()) {
+		        if (mc.objectMouseOver.sideHit != enumFacing.getEnumFacing()
+		                || !mc.objectMouseOver.getBlockPos().equals(blockFace)) {
+		     
+				    float yaw = (mc.player.rotationYaw + 10000000) % 360;
+				    float staticYaw = (yaw - 180) - (yaw % 90) + 45;
+				    float staticPitch = 79;
 
-			boolean straight = (Math.min(Math.abs(yaw % 90), Math.abs(90 - yaw) % 90) < Math
-					.min(Math.abs(yaw + 45) % 90, Math.abs(90 - (yaw + 45)) % 90));
+				    boolean straight = (Math.min(Math.abs(yaw % 90), Math.abs(90 - yaw) % 90) < Math
+				            .min(Math.abs(yaw + 45) % 90, Math.abs(90 - (yaw + 45)) % 90));
 
-			if (straight
-					&& RayCastUtil.rayCast(new Vector2f(staticYaw + 90, staticPitch),
-							3).typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK
-					&& RayCastUtil.rayCast(new Vector2f(staticYaw, staticPitch),
-							3).typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) {
-				staticYaw += 90;
+				    if (straight
+				            && RayCastUtil.rayCast(new Vector2f(staticYaw + 90, staticPitch),
+				                    3).typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK
+				            && RayCastUtil.rayCast(new Vector2f(staticYaw, staticPitch),
+				                    3).typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) {
+				        staticYaw += 90;
+				    }
 
-			}
+				    movementFix = MovementFix.SILENT;
 
-			movementFix = MovementFix.SILENT;
+				    if (!straight) {
+				        staticYaw += 90;
+				    }
+				    
+				    mc.entityRenderer.getMouseOver(1);
 
-			if (!straight) {
-				staticYaw += 90;
-			}
-			
-	        mc.entityRenderer.getMouseOver(1);
-
-			targetYaw = staticYaw + yawDrift / 2;
-			targetPitch = staticPitch + pitchDrift / 2;
-			break;
+				    targetYaw = staticYaw;
+				    targetPitch = staticPitch;
+		        }
+		    }
+		    break;
 
 		case "Telly":
 			if (recursion == 0) {

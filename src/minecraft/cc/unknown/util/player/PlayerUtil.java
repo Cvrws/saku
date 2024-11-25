@@ -182,10 +182,15 @@ public class PlayerUtil implements Accessor {
 	}
 
 	private float fovToTarget(Entity tg) {
-	    double x = tg.posX - mc.player.posX;
-	    double z = tg.posZ - mc.player.posZ;
-	    double yaw = Math.atan2(x, z) * 57.2957795;
-	    return (float) (yaw * -1.0);
+		double diffX = tg.posX - mc.player.posX;
+		double diffZ = tg.posZ - mc.player.posZ;
+		return (float) Math.toDegrees(Math.atan2(diffZ, diffX)) - 90.0F;
+	}
+	
+	public boolean fov(Entity entity, float fov) {
+		fov = (float) ((double) fov * 0.5D);
+		double v = ((double) (mc.player.rotationYaw - fovToTarget(entity)) % 360.0D + 540.0D) % 360.0D - 180.0D;
+		return v > 0.0D && v < (double) fov || (double) (-fov) < v && v < 0.0D;
 	}
 
 	public double getFov(final float yaw, final double posX, final double posZ) {

@@ -12,6 +12,7 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.player.PlayerUtil;
@@ -73,7 +74,7 @@ public final class AimAssist extends Module {
 
         double advancedSpeed = horizontalAimSpeed.getValue().doubleValue();
         double advancedCSpeed = horizontalComplement.getValue().doubleValue();
-        double randomOffset = ThreadLocalRandom.current().nextDouble(advancedCSpeed - 1.47328, advancedCSpeed + 2.48293) / 100;
+        double randomOffset = MathUtil.nextSecureDouble(advancedSpeed, advancedCSpeed) / 180;
 
         Vector2f targetRotations = RotationUtil.calculate(target, true, distance.getValue().doubleValue());
         double yawFov = PlayerUtil.fovFromTarget(target);
@@ -84,11 +85,9 @@ public final class AimAssist extends Module {
                 mc.player.rotationYaw += resultHorizontal;
                 mc.player.setAngles(resultHorizontal, 0);
             }
-        } else {
-        	if (isYawFov(yawFov)) {
-                mc.player.rotationYaw += resultHorizontal;
-                mc.player.setAngles(resultHorizontal, 0);
-            }
+        } else if (isYawFov(yawFov)) {
+        	mc.player.rotationYaw += resultHorizontal;
+        	mc.player.setAngles(resultHorizontal, 0);
         }
 	};
 
@@ -98,26 +97,25 @@ public final class AimAssist extends Module {
 	}
 
 	public EntityPlayer getEnemy() {
-		final int fov = maxAngle.getValue().intValue();
-		final List<EntityPlayer> players = mc.world.playerEntities;
+		int fov = maxAngle.getValue().intValue();
 		final Vec3 playerPos = new Vec3(mc.player);
 
 		target = null;
-		double targetFov = Double.MAX_VALUE;
-		for (final EntityPlayer entityPlayer : players) {
-			if (entityPlayer != mc.player && entityPlayer.deathTime == 0) {
-				double dist = playerPos.distanceTo(entityPlayer);
-				if (Sakura.instance.getEnemyManager().isEnemy(entityPlayer)) continue;
-	            if (entityPlayer.getName().contains("[NPC]")) continue;
-				if (Sakura.instance.getFriendManager().isFriend(entityPlayer) && ignoreFriendlyEntities.getValue()) continue;
-				if (Sakura.instance.getComponentManager().get(BotComponent.class).contains(entityPlayer) && ignoreBots.getValue()) continue;
-				if (ignoreTeammates.getValue() && PlayerUtil.isTeam(entityPlayer, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
-				if (dist > distance.getValue().doubleValue()) continue;
-				if (lineOfSightCheck.getValue() && !mc.player.canEntityBeSeen(entityPlayer)) continue;
-				double curFov = Math.abs(PlayerUtil.getFov(entityPlayer.posX, entityPlayer.posZ));
-				if (curFov < targetFov) {
-					target = entityPlayer;
-					targetFov = curFov;
+		double targetFov = 180;
+		for (final EntityPlayer player : mc.world.playerEntities) {
+			if (player != mc.player && player.deathTime == 0) {
+				if (Sakura.instance.getEnemyManager().isEnemy(player)) continue;
+	            if (player.getName().contains("[NPC]")) continue;
+				if (Sakura.instance.getFriendManager().isFriend(player) && ignoreFriendlyEntities.getValue()) continue;
+				if (getComponent(BotComponent.class).contains(player) && ignoreBots.getValue()) continue;
+				if (ignoreTeammates.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
+				if (playerPos.distanceTo(player) > distance.getValue().doubleValue()) continue;
+				if (lineOfSightCheck.getValue() && !mc.player.canEntityBeSeen(player)) continue;
+				if (fov != 180 && !PlayerUtil.fov(player, fov)) continue;
+				double fov2 = Math.abs(PlayerUtil.getFov(player.posX, player.posZ));
+				if (fov2 < targetFov) {
+					target = player;
+					targetFov = fov2;
 				}
 			}
 		}
@@ -134,7 +132,7 @@ public final class AimAssist extends Module {
 	        if (p != null) {
 	            Block bl = mc.world.getBlockState(p).getBlock();
 	            if (bl != Blocks.air && !(bl instanceof BlockLiquid) && bl instanceof Block) {
-	                return false;
+	                return true;
 	            }
 	        }
 	    }
@@ -144,6 +142,7 @@ public final class AimAssist extends Module {
 
 	private boolean onTarget(EntityPlayer target) {
 		return mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectType.ENTITY
+				&& mc.objectMouseOver.typeOfHit != MovingObjectType.BLOCK
 				&& mc.objectMouseOver.entityHit == target;
 	}
 

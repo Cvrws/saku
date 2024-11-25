@@ -29,7 +29,7 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ChatFormatting;
 
-@ModuleInfo(aliases = {"Scoreboard"}, description = "Cambia el diseño de la scoreboard", category = Category.VISUALS, autoEnabled = true)
+@ModuleInfo(aliases = "Scoreboard", description = "Cambia el diseño de la scoreboard", category = Category.VISUALS, autoEnabled = true)
 public final class ScoreBoard extends Module {
 
     private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));
@@ -48,14 +48,11 @@ public final class ScoreBoard extends Module {
 
         final int size = collection.size();
         final int height = fontHeight * size + padding;
-        this.renderScoreboard(position.x, position.y, new Color(0, 0, 0, 120), true, 10);
+        this.renderScoreboard(position.x, position.y, new Color(0, 0, 0, 255), true, 0);
 
     };
 
-    /**
-     * Updates the scoreboard each tick.
-     */
-    @EventLink()
+    @EventLink
     public final Listener<TickEvent> onTick = event -> {
         this.scoreObjective = this.getScoreObjective();
         if (this.scoreObjective == null) return;
@@ -117,14 +114,14 @@ public final class ScoreBoard extends Module {
         y += padding + 1.5;
 
         final String objective = scoreObjective.getDisplayName();
-        fontRenderer.draw(objective, x + maxWidth / 2.0F - fontRenderer.width(objective) / 2.0F, y, fontColor);
+        fontRenderer.drawWithShadow(objective, x + maxWidth / 2.0F - fontRenderer.width(objective) / 2.0F, y, fontColor);
 
         int currentY = y + fontHeight;
         for (int i = collection.size() - 1; i >= 0; i--) { 
             Score score1 = ((List<Score>) collection).get(i);
             ScorePlayerTeam scorePlayerTeam = this.scoreObjective.getScoreboard().getPlayersTeam(score1.getPlayerName());
             String s1 = ScorePlayerTeam.formatPlayerName(scorePlayerTeam, score1.getPlayerName());
-            fontRenderer.draw(s1, x, currentY, fontColor);
+            fontRenderer.drawWithShadow(s1, x, currentY, fontColor);
             currentY += fontHeight;
         }
     }
