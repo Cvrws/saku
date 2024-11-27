@@ -76,22 +76,6 @@ public class RenderAPI extends API implements Accessor {
         return new ScriptMCFontRenderer(MC.fontRendererObj);
     }
 
-    public ScriptSakuraFontRenderer getCustomFontRenderer(String name, int size, boolean antialiasing) {
-        return new ScriptSakuraFontRenderer(new FontRenderer(new Font(name, Font.PLAIN, size), antialiasing));
-    }
-
-    public ScriptSakuraFontRenderer getCustomFontRendererBold(String name, int size, boolean antialiasing) {
-        return new ScriptSakuraFontRenderer(new FontRenderer(new Font(name, Font.BOLD, size), antialiasing));
-    }
-
-    public ScriptSakuraFontRenderer getCustomFontRendererItalic(String name, int size, boolean antialiasing) {
-        return new ScriptSakuraFontRenderer(new FontRenderer(new Font(name, Font.ITALIC, size), antialiasing));
-    }
-
-    public ScriptSakuraFontRenderer getCustomFontRendererBoldItalic(String name, int size, boolean antialiasing) {
-        return new ScriptSakuraFontRenderer(new FontRenderer(new Font(name, Font.BOLD | Font.ITALIC, size), antialiasing));
-    }
-
     public float getEyeHeight() {
         return MC.player.getEyeHeight();
     }

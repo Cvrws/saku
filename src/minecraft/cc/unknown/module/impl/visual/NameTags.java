@@ -1,86 +1,49 @@
 package cc.unknown.module.impl.visual;
 
-import static cc.unknown.util.client.StreamerUtil.gray;
-import static cc.unknown.util.client.StreamerUtil.green;
-import static cc.unknown.util.client.StreamerUtil.reset;
-
-import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.vecmath.Vector4d;
-
-import cc.unknown.Sakura;
-import cc.unknown.component.impl.render.ProjectionComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.other.WorldChangeEvent;
-import cc.unknown.event.impl.render.Render2DEvent;
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
+import cc.unknown.event.impl.render.RenderLabelEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.render.RenderUtil;
-import cc.unknown.util.render.font.Font;
-import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 
 @ModuleInfo(aliases = "Name Tags", description = "Renderiza el nombre de los jugadores", category = Category.VISUALS)
 public final class NameTags extends Module {
-    
-    private final BooleanValue health = new BooleanValue("Show Health", this, true);
-    private final BooleanValue showFriendTag = new BooleanValue("Show Friend Tag", this, false);
-    private final BooleanValue showInvis = new BooleanValue("Show Invisibles", this, false);
-        
-    @EventLink
-    public final Listener<Render2DEvent> onRender2D = event -> {
-        for (EntityPlayer player : mc.world.playerEntities) {
-            if (!player.isEntityAlive() || !RenderUtil.isInViewFrustrum(player)) {
-                continue;
-            }
 
-            if (player.getName().contains("[NPC]")) {
-                continue;
-            }
-
-            Vector4d position = ProjectionComponent.get(player);
-            if (position == null) {
-                continue;
-            }
-
-            if (!showInvis.getValue() && player.isInvisible()) {
-                continue;
-            }
-
-            player.hideNameTag();
-
-            Font font = mc.fontRendererObj;
-            GlStateManager.pushMatrix();
-
-            String health = "";
-            String friendTag = "";
-
-            if (this.health.getValue()) {
-                health = " §7[§4" + Math.round(player.getHealth()) + "§7] ";
-            }
-
-            if (Sakura.instance.getFriendManager().getFriends().contains(player.getName()) && this.showFriendTag.getValue()) {
-                friendTag = gray + "[" + green + "Friend" + gray + "] " + reset;
-            }
-
-            String nametag = friendTag + player.getDisplayName().getFormattedText() + health;
-
-            float padding = 2;
-            int height = 8;
-            float width = font.width(nametag);
-            float posX = (float) (position.x + (position.z - position.x) / 2);
-            float posY = (float) position.y - height;
-            RenderUtil.rectangle(posX - width / 2 - padding, posY - padding - 3, width + padding * 2, height + padding * 2, getTheme().getBackgroundShade());
-            font.drawCentered(nametag, posX + 0.5f, posY - 2, Color.WHITE.getRGB());
-
-            GlStateManager.popMatrix();
+	@EventLink
+	public final Listener<RenderLabelEvent> onRender2D = event -> {
+        if (event.getTarget() instanceof EntityPlayer && event.getTarget() != mc.player && ((EntityPlayer)event.getTarget()).deathTime == 0) {
+            EntityPlayer player = (EntityPlayer) event.getTarget();
+            String name = player.getDisplayName().getFormattedText();
+            
+            event.setCancelled();
+            
+            renderNewTag(event, player, name);
         }
-    };
+	};
+	
+	private void renderNewTag(RenderLabelEvent event, EntityPlayer player, String name) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((float) event.getX() + 0.0F, (float) event.getY() + player.height + 0.5F, (float) event.getZ());
+        GlStateManager.rotate(-mc.getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(mc.getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+        float scale = 0.02666667F;
+        GlStateManager.scale(-scale, -scale, scale);
+        if (player.isSneaking()) {
+            GlStateManager.translate(0.0F, 9.374999F, 0.0F);
+        }
+        GlStateManager.disableLighting();
+        GlStateManager.depthMask(false);
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        mc.fontRendererObj.drawWithShadow(name, -mc.fontRendererObj.width(name) / 2, 0, -1);
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
+        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
+	}
 }

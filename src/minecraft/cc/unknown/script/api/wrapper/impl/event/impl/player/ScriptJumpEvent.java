@@ -3,10 +3,6 @@ package cc.unknown.script.api.wrapper.impl.event.impl.player;
 import cc.unknown.event.impl.player.JumpEvent;
 import cc.unknown.script.api.wrapper.impl.event.CancellableScriptEvent;
 
-/**
- * @author Auth
- * @since 9/07/2022
- */
 public class ScriptJumpEvent extends CancellableScriptEvent<JumpEvent> {
 
     public ScriptJumpEvent(final JumpEvent wrappedEvent) {

@@ -1,7 +1,5 @@
 package cc.unknown.module.impl.ghost;
 
-import java.security.SecureRandom;
-
 import org.lwjgl.input.Mouse;
 
 import cc.unknown.event.Listener;
@@ -13,11 +11,11 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.NumberValue;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MovingObjectPosition;
 
 @ModuleInfo(aliases = "Auto Clicker V2", description = "Clickea automáticamente [BETA]", category = Category.GHOST)
@@ -60,9 +58,11 @@ public class AutoClicker2 extends Module {
 
 		if (Mouse.isButtonDown(0) && mc.currentScreen == null) {
 			if (!mc.player.isUsingItem()) {
-				mc.clickMouse();
-				timeHelper.reset();
-				setRandomDelay();
+		        if (timeHelper.reached(randomDelay)) {
+		            mc.clickMouse();
+		            timeHelper.reset();
+		            setRandomDelay();
+		        }
 			} else {
 				if (!mc.gameSettings.keyBindUseItem.isKeyDown()) {
 					mc.playerController.onStoppedUsingItem(mc.player);
@@ -82,9 +82,6 @@ public class AutoClicker2 extends Module {
 				mc.rightClickMouse();
 			}
 
-			if (mc.currentScreen == null) {
-			}
-
 			mc.sendClickBlockToController(false);
 			event.setCancelled();
 		}
@@ -96,7 +93,7 @@ public class AutoClicker2 extends Module {
     };
 
 	private void setRandomDelay() {
-		randomDelay = (long) MathUtil.nextSecureInt((int) cps.getValue().intValue(), (int) cps.getSecondValue().intValue());
+		randomDelay = (long) MathUtil.nextSecureInt(cps.getValue().intValue(), cps.getSecondValue().intValue());
 
 		if (spikes.getValue()) {
 			if (spikesDelayTimeHelper.reached(nextSpikeDelay) || !spikesDurationTimeHelper.reached(spikeDuration) && !drop) {
@@ -107,7 +104,7 @@ public class AutoClicker2 extends Module {
 				} else {
 					spikeCPS = (long) (spikeCps.getValue().intValue());
 				}
-				double expectedCPS = (int) (1000.0 / randomDelay) + spikeCPS;
+				double expectedCPS = (1000.0 / randomDelay) + spikeCPS;
 				long processedDelay = (long) (1000.0 / expectedCPS);
 				randomDelay = (long) (1000.0 / expectedCPS);
 				spike = true;
@@ -142,7 +139,7 @@ public class AutoClicker2 extends Module {
 				} else {
 					dropCPS = (long) (spikeCps.getValue().intValue());
 				}
-				double expectedCPS = (int) (1000.0 / randomDelay) - dropCPS;
+				double expectedCPS = (1000.0 / randomDelay) - dropCPS;
 				long processedDelay = (long) (1000.0 / expectedCPS);
 				randomDelay = (long) (1000.0 / expectedCPS);
 				drop = true;

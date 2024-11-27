@@ -3,10 +3,6 @@ package cc.unknown.script.api.wrapper.impl.event.impl.player;
 import cc.unknown.event.impl.player.SlowDownEvent;
 import cc.unknown.script.api.wrapper.impl.event.CancellableScriptEvent;
 
-/**
- * @author Auth
- * @since 9/07/2022
- */
 public class ScriptSlowDownEvent extends CancellableScriptEvent<SlowDownEvent> {
 
     public ScriptSlowDownEvent(final SlowDownEvent wrappedEvent) {

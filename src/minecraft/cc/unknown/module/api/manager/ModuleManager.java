@@ -103,6 +103,7 @@ public final class ModuleManager {
         this.put(AntiFireBall.class, new AntiFireBall());
         this.put(AntiVoid.class, new AntiVoid());
         this.put(AutoPot.class, new AutoPot());
+        this.put(FakeHackers.class, new FakeHackers());
         this.put(AutoTool.class, new AutoTool());
         this.put(Blink.class, new Blink());
         this.put(Derp.class, new Derp());
@@ -117,7 +118,6 @@ public final class ModuleManager {
         // Render
         this.put(Ambience.class, new Ambience());
         this.put(Animations.class, new Animations());
-        this.put(BPSCounter.class, new BPSCounter());
         this.put(ChestESP.class, new ChestESP());
         this.put(RichPresence.class, new RichPresence());
         this.put(ClickGUI.class, new ClickGUI());
@@ -139,7 +139,6 @@ public final class ModuleManager {
         this.put(ScoreBoard.class, new ScoreBoard());
         this.put(Streamer.class, new Streamer());
         this.put(MusicPlayer.class, new MusicPlayer());
-        this.put(TargetInfo.class, new TargetInfo());
         this.put(Tracers.class, new Tracers());
         this.put(UnlimitedChat.class, new UnlimitedChat());
 

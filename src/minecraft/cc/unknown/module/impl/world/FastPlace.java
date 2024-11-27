@@ -25,9 +25,9 @@ import net.minecraft.util.MovingObjectPosition;
 public class FastPlace extends Module {
 
 	private final BooleanValue blocks = new BooleanValue("Blocks", this, true);
-	private final NumberValue blockDelay = new NumberValue("Block Delay", this, 50.0, 0.0, 300.0, 0, () -> !blocks.getValue());
+	private final NumberValue blockDelay = new NumberValue("Block Delay", this, 50.0, 0.0, 300.0, 1, () -> !blocks.getValue());
 	private final BooleanValue projectiles = new BooleanValue("Egg/SnowBall", this, true);
-	private final NumberValue projectileDelay = new NumberValue("Egg/SnowBall Delay", this, 50.0, 0.0, 300.0, 0, () -> !projectiles.getValue());
+	private final NumberValue projectileDelay = new NumberValue("Egg/SnowBall Delay", this, 50.0, 0.0, 300.0, 1, () -> !projectiles.getValue());
 	private StopWatch stopWatch = new StopWatch();
 
 	@EventLink

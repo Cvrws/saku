@@ -13,7 +13,19 @@ public class StopWatch {
     public boolean finished(long delay) {
         return System.currentTimeMillis() - delay >= millis;
     }
+    
+    public boolean elapse(double delay, boolean reset) {
+        if ((double)(System.currentTimeMillis() - this.millis) >= delay) {
+           if (reset) {
+              this.reset();
+           }
 
+           return true;
+        } else {
+           return false;
+        }
+     }
+    
     public boolean hasFinished() {
         return System.currentTimeMillis() >= millis;
     }

@@ -29,8 +29,9 @@ public abstract class GuiContainer extends GuiScreen {
 	protected int xSize = 176;
 	protected int ySize = 166;
 	public Container inventorySlots;
-	protected int guiLeft;
-	protected int guiTop;
+	public int guiLeft;
+	public boolean forceShift = false;
+	public int guiTop;
 	private Slot theSlot;
 	private Slot clickedSlot;
 	private boolean isRightMouseClick;
@@ -320,7 +321,7 @@ public abstract class GuiContainer extends GuiScreen {
 						if (mouseButton == this.mc.gameSettings.keyBindPickBlock.getKeyCode() + 100) {
 							this.handleMouseClick(slot, l, mouseButton, 3);
 						} else {
-							boolean flag2 = l != -999 && (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54));
+							boolean flag2 = l != -999 && (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54) || this.forceShift);
 							int i1 = 0;
 
 							if (flag2) {
@@ -354,9 +355,10 @@ public abstract class GuiContainer extends GuiScreen {
 		this.lastClickSlot = slot;
 		this.lastClickTime = i;
 		this.lastClickButton = mouseButton;
+		this.forceShift = false;
 	}
 
-	protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+	public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
 		Slot slot = this.getSlotAtPosition(mouseX, mouseY);
 		ItemStack itemstack = this.mc.player.inventory.getItemStack();
 

@@ -182,7 +182,6 @@ public class ScriptAPI {
         return null;
     }
 
-
     public void thread(JSObject function) throws ScriptException {
         if (!function.isFunction()) throw new ScriptException("Not a function!");
         new Thread(() -> function.call(null)).start();
