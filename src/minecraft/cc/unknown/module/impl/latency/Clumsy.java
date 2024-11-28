@@ -85,8 +85,7 @@ public final class Clumsy extends Module {
 	
 	public void releasePackets() {
 		for (Packet packet : packets) {
-			mc.getNetHandler().getNetworkManager().outboundPacketsQueue
-					.add(new InboundHandlerTuplePacketListener(packet, (GenericFutureListener) null));
+			mc.getNetHandler().getNetworkManager().outboundPacketsQueue.add(new InboundHandlerTuplePacketListener(packet, (GenericFutureListener) null));
 		}
 		packets.clear();
 	}

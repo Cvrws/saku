@@ -83,15 +83,6 @@ public final class CategoryScreen implements Screen, Accessor {
         }
     }
 
-    /*@Override
-    public void onBloom() {
-        if (this.category == null) return;
-
-        for (final ModuleComponent module : this.getRelevantModules()) {
-            module.bloom();
-        }
-    }*/
-
     @Override
     public void onInit() {
         this.category = this.getCategory();

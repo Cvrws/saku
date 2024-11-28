@@ -152,7 +152,7 @@ public final class BackTrack extends Module {
 
         this.packetListener = mc.getNetHandler();
 
-        synchronized (BackTrack.class) {
+        synchronized (this) {
         	if (event.getPacket() instanceof S14PacketEntity) {
         		handleS14PacketEntity((S14PacketEntity) event.getPacket());
         	} else if (event.getPacket() instanceof S18PacketEntityTeleport) {

@@ -49,7 +49,7 @@ public final class ModuleManager {
         this.put(PingSpoof.class, new PingSpoof());
         this.put(Clumsy.class, new Clumsy());
         this.put(PerfectCriticals.class, new PerfectCriticals());
-        this.put(FakeLag.class, new FakeLag());
+        this.put(LagRange.class, new LagRange());
         
         // Exploit
         this.put(Disabler.class, new Disabler());

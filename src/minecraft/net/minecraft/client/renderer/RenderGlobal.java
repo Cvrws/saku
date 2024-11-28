@@ -2344,7 +2344,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                     axisalignedbb = BlockModelUtils.getOffsetBoundingBox(axisalignedbb, block$enumoffsettype, blockpos);
                 }
 
-                func_181561_a(axisalignedbb.expand(0.0020000000949949026D, 0.0020000000949949026D, 0.0020000000949949026D).offset(-d0, -d1, -d2));
+                drawSelectionBoundingBox(axisalignedbb.expand(0.0020000000949949026D, 0.0020000000949949026D, 0.0020000000949949026D).offset(-d0, -d1, -d2));
             }
 
             GlStateManager.depthMask(true);
@@ -2358,7 +2358,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
         }
     }
 
-    public static void func_181561_a(final AxisAlignedBB p_181561_0_) {
+    public static void drawSelectionBoundingBox(final AxisAlignedBB p_181561_0_) {
         final Tessellator tessellator = Tessellator.getInstance();
         final WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(3, DefaultVertexFormats.POSITION);

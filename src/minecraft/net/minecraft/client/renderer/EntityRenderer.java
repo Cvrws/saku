@@ -2028,16 +2028,13 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 								Color color = Color.WHITE;
 								ResourceLocation texture = TEXTURE_SNOW_HEAVY;
 
-								// Determine what texture we want to draw with
 								if (ambience.isEnabled()) {
-									color = ambience.snowColor.getValue();
+									color = new Color(Color.getHSBColor((ambience.snowColor.getValue().floatValue() % 360) / 360.0f, 1.0f, 1f).getRGB());;
 									if (ambience.getWeather().getValue().getName().equals("Light Snow"))
 										texture = TEXTURE_SNOW_LIGHT;
 									else if (ambience.getWeather().getValue().getName().equals("Nether Particles")) {
 										texture = TEXTURE_NETHER_PARTICLES;
 										color = new Color(220, 200, 230);
-//                                        this.fogColorRed = 0.5F;
-//                                        this.fogColorBlue = 0.5F;
 									}
 								}
 

@@ -48,10 +48,6 @@ public class RenderAPI extends API implements Accessor {
         RenderUtil.roundedRectangle(x, y, width, height, radius, intArrayToColor(color));
     }
 
-    public void roundedOutlineRectangle(final double x, final double y, final double width, final double height, final double radius, final double borderSize, final int[] color) {
-        RenderUtil.roundedOutlineRectangle(x, y, width, height, radius, borderSize, intArrayToColor(color));
-    }
-
     public void centeredRectangle(final double x, final double y, final double width, final double height, final int[] rgba) throws ScriptException {
         try {
             RenderUtil.rectangle(x - width / 2, y - height / 2, width, height, intArrayToColor(rgba));

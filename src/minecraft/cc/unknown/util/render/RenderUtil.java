@@ -4,8 +4,6 @@ import java.awt.Color;
 
 import javax.vecmath.Vector4d;
 
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.Sakura;
@@ -13,15 +11,17 @@ import cc.unknown.component.impl.render.ProjectionComponent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.shader.Shaders;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -37,9 +37,6 @@ public final class RenderUtil implements Accessor {
     private final Frustum FRUSTUM = new Frustum();
     public final int GENERIC_SCALE = 22;
     
-    /**
-     * Better to use gl state manager to avoid bugs
-     */
     public void start() {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -49,9 +46,6 @@ public final class RenderUtil implements Accessor {
         GlStateManager.disableDepth();
     }
 
-    /**
-     * Better to use gl state manager to avoid bugs
-     */
     public void stop() {
         GlStateManager.enableDepth();
         GlStateManager.enableAlpha();
@@ -345,14 +339,6 @@ public final class RenderUtil implements Accessor {
         polygon(x, y, sideLength, 3);
     }
 
-    public void drawRoundedGradientRect(double x, double y, double width, double height, double radius, Color firstColor, Color secondColor, boolean vertical) {
-        Shaders.RGQ.draw(x, y, width, height, radius, firstColor, secondColor, vertical);
-    }
-    
-    public void drawRoundedGradientRect(double x, double y, double width, double height, double radius, Color firstColor, Color secondColor, boolean vertical, boolean leftTop, boolean rightTop, boolean rightBottom, boolean leftBottom) {
-        Shaders.RGQ.draw(x, y, width, height, radius, firstColor, secondColor, vertical, leftTop, rightTop, rightBottom, leftBottom);
-    }
-
     public void drawRoundedGradientRectTest(double x, double y, double width, double height, double radius, Color firstColor, Color secondColor, boolean vertical) {
         Shaders.RGQTest.draw(x, y, width, height, radius, firstColor, secondColor, vertical);
     }
@@ -372,15 +358,7 @@ public final class RenderUtil implements Accessor {
     public void roundedRectangle(double x, double y, double width, double height, double radius, Color color, boolean leftTop, boolean rightTop, boolean rightBottom, boolean leftBottom) {
         Shaders.RQ.draw((float) x, (float) y, (float) width, (float) height, (float) radius, color, leftTop, rightTop, rightBottom, leftBottom);
     }
-
-    public void roundedOutlineRectangle(double x, double y, double width, double height, double radius, double borderSize, Color color) {
-        Shaders.ROQ.draw(x, y, width, height, radius, borderSize, color);
-    }
-
-    public void roundedOutlineGradientRectangle(double x, double y, double width, double height, double radius, double borderSize, Color color1, Color color2) {
-        Shaders.ROGQ.draw(x, y, width, height, radius, borderSize, color1, color2);
-    }
-
+    
     public void end() {
         GL11.glEnd();
     }
@@ -521,10 +499,10 @@ public final class RenderUtil implements Accessor {
 
         final Color c = color;
 
-        RenderUtil.lineNoGl(-50, 0, 50, 0, c);
-        RenderUtil.lineNoGl(-50, -95, -50, 0, c);
-        RenderUtil.lineNoGl(-50, -95, 50, -95, c);
-        RenderUtil.lineNoGl(50, -95, 50, 0, c);
+        lineNoGl(-50, 0, 50, 0, c);
+        lineNoGl(-50, -95, -50, 0, c);
+        lineNoGl(-50, -95, 50, -95, c);
+        lineNoGl(50, -95, 50, 0, c);
 
         GL11.glPopMatrix();
     }
@@ -550,66 +528,58 @@ public final class RenderUtil implements Accessor {
 
         final Color c = color;
 
-        RenderUtil.lineNoGl(-50, 0, 50, 0, c);
-        RenderUtil.lineNoGl(-50, -95, -50, 0, c);
-        RenderUtil.lineNoGl(-50, -95, 50, -95, c);
-        RenderUtil.lineNoGl(50, -95, 50, 0, c);
+        lineNoGl(-50, 0, 50, 0, c);
+        lineNoGl(-50, -95, -50, 0, c);
+        lineNoGl(-50, -95, 50, -95, c);
+        lineNoGl(50, -95, 50, 0, c);
 
         GL11.glPopMatrix();
     }
     
-    public void drawSimpleBox(EntityPlayer player, Color color) {
-        Vector4d pos = ProjectionComponent.get(player);
-        if (pos == null) {
-            return;
-        }
-        double offset = 0.5;
-    	horizontalGradient(pos.x + offset, pos.y + offset, pos.z - pos.x, 0.5, color, color);
-    	verticalGradient(pos.x + offset, pos.y + offset, 0.5, pos.w - pos.y + 0.5, color, color);
-    	verticalGradient(pos.z + offset, pos.y + offset, 0.5, pos.w - pos.y + 0.5, color, color);
-    	horizontalGradient(pos.x + offset, pos.w + offset, pos.z - pos.x, 0.5, color, color);
-    }
-    
-    public void drawSimpleBackground(EntityPlayer player, Color color) {
-        Vector4d pos = ProjectionComponent.get(player);
-        if (pos == null) {
-            return;
-        }
-        
-    	rectangle(pos.x, pos.y, pos.z - pos.x, 1.5, color);
-    	rectangle(pos.x, pos.y, 1.5, pos.w - pos.y + 1.5, color);
-    	rectangle(pos.z, pos.y, 1.5, pos.w - pos.y + 1.5, color);
-    	rectangle(pos.x, pos.w, pos.z - pos.x, 1.5, color);
-    }
-    
-    public void drawSimpleBox(EntityPlayer player, Color primaryColor, Color secondaryColor) {
-        Vector4d pos = ProjectionComponent.get(player);
-        if (pos == null) {
-            return;
-        }
-        double offset = 0.5;
-    	horizontalGradient(pos.x + offset, pos.y + offset, pos.z - pos.x, 0.5, primaryColor, secondaryColor);
-    	verticalGradient(pos.x + offset, pos.y + offset, 0.5, pos.w - pos.y + 0.5, primaryColor, secondaryColor);
-    	verticalGradient(pos.z + offset, pos.y + offset, 0.5, pos.w - pos.y + 0.5, secondaryColor, primaryColor);
-    	horizontalGradient(pos.x + offset, pos.w + offset, pos.z - pos.x, 0.5, secondaryColor, primaryColor);
-    }
-    
-    public void drawSimpleLine(EntityPlayer player, float ticks, Color color) {
+    public void drawSimpleLine(EntityPlayer player, float partialTicks, Color color) {
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
-        mc.entityRenderer.orientCamera(mc.timer.renderPartialTicks);
-
-        final double x = player.lastTickPosX + (player.posX - player.lastTickPosX) * ticks;
-        final double y = (player.lastTickPosY + (player.posY - player.lastTickPosY) * ticks) + 1.62F;
-        final double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * ticks;
-
-        RenderUtil.drawLine(mc.getRenderManager().renderPosX, mc.getRenderManager().renderPosY + mc.player.getEyeHeight(), mc.getRenderManager().renderPosZ, x, y, z, color, 1.5F);
-
+        mc.entityRenderer.orientCamera(partialTicks);
+        final double x = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
+        final double y = (player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks) + 1.62F;
+        final double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
+        double renderX = mc.getRenderManager().renderPosX;
+        double renderY = mc.getRenderManager().renderPosY;
+        double renderZ = mc.getRenderManager().renderPosZ;
+        drawLine(renderX, renderY + mc.player.getEyeHeight(), renderZ, x, y, z, color, 1.5F);
         GlStateManager.resetColor();
         GlStateManager.popMatrix();
     }
     
-    public double interpolate(double current, double old, double scale) {
-        return old + (current - old) * scale;
+    public void drawSimpleBox(EntityPlayer player, int color, float partialTicks) {
+    	double expand = 0.0D;
+    	float a = (float) ((color >> 24) & 255) / 255.0F;
+        float r = (float) ((color >> 16) & 255) / 255.0F;
+        float g = (float) ((color >> 8) & 255) / 255.0F;
+        float b = (float) (color & 255) / 255.0F;
+        
+        double x = (player.lastTickPosX + ((player.posX - player.lastTickPosX) * (double) partialTicks)) - mc.getRenderManager().viewerPosX;
+        double y = (player.lastTickPosY + ((player.posY - player.lastTickPosY) * (double) partialTicks)) - mc.getRenderManager().viewerPosY;
+        double z = (player.lastTickPosZ + ((player.posZ - player.lastTickPosZ) * (double) partialTicks)) - mc.getRenderManager().viewerPosZ;
+        
+        AxisAlignedBB bbox = player.getEntityBoundingBox().expand(0.1D + expand, 0.1D + expand, 0.1D + expand);
+        AxisAlignedBB axis = new AxisAlignedBB((bbox.minX - player.posX) + x, (bbox.minY - player.posY) + y, (bbox.minZ - player.posZ) + z, (bbox.maxX - player.posX) + x, (bbox.maxY - player.posY) + y,  (bbox.maxZ - player.posZ) + z);
+        GL11.glPushMatrix();
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(false);
+        GL11.glLineWidth(1.0F);
+        GL11.glColor4f(r, g, b, a);
+
+        RenderGlobal.drawSelectionBoundingBox(axis);
+
+        GL11.glColor4f(1f, 1f, 1f, 1f);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(true);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glPopMatrix();
     }
 }

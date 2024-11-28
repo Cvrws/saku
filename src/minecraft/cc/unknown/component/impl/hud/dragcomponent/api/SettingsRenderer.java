@@ -4,7 +4,14 @@ import java.util.ArrayList;
 
 import cc.unknown.module.Module;
 import cc.unknown.ui.clickgui.components.value.ValueComponent;
-import cc.unknown.ui.clickgui.components.value.impl.*;
+import cc.unknown.ui.clickgui.components.value.impl.BooleanValueComponent;
+import cc.unknown.ui.clickgui.components.value.impl.BoundsNumberValueComponent;
+import cc.unknown.ui.clickgui.components.value.impl.DescValueComponent;
+import cc.unknown.ui.clickgui.components.value.impl.ListValueComponent;
+import cc.unknown.ui.clickgui.components.value.impl.ModeValueComponent;
+import cc.unknown.ui.clickgui.components.value.impl.NumberValueComponent;
+import cc.unknown.ui.clickgui.components.value.impl.PositionValueComponent;
+import cc.unknown.ui.clickgui.components.value.impl.StringValueComponent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
@@ -13,7 +20,6 @@ import cc.unknown.util.render.animation.Easing;
 import cc.unknown.value.Value;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
-import cc.unknown.value.impl.ColorValue;
 import cc.unknown.value.impl.DescValue;
 import cc.unknown.value.impl.DragValue;
 import cc.unknown.value.impl.ListValue;
@@ -50,8 +56,6 @@ public class SettingsRenderer implements Accessor {
                 valueList.add(new PositionValueComponent(value));
             } else if (value instanceof ListValue<?>) {
                 valueList.add(new ListValueComponent(value));
-            } else if (value instanceof ColorValue) {
-                valueList.add(new ColorValueComponent(value));
             }
         }
     }

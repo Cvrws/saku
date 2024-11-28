@@ -1,7 +1,5 @@
 package cc.unknown.module.impl.visual;
 
-import java.awt.Color;
-
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
@@ -10,7 +8,6 @@ import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.value.impl.ColorValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
@@ -39,9 +36,8 @@ public final class Ambience extends Module {
 		}
 	};
 
-	public final ColorValue snowColor = new ColorValue("Snow Color", this, Color.WHITE,
-			() -> !weather.getValue().getName().equals("Heavy Snow")
-					&& !weather.getValue().getName().equals("Light Snow"));
+    public final NumberValue snowColor = new NumberValue("Color", this, 0, 0, 350, 10, () -> !weather.getValue().getName().equals("Heavy Snow")
+			&& !weather.getValue().getName().equals("Light Snow"));
 
 	@Override
 	public void onDisable() {

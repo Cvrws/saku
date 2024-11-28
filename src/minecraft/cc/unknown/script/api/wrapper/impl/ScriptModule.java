@@ -1,25 +1,21 @@
 package cc.unknown.script.api.wrapper.impl;
 
-import java.awt.Color;
 import java.util.function.Function;
-
-import jdk.nashorn.api.scripting.JSObject;
-import jdk.nashorn.internal.runtime.Undefined;
 
 import cc.unknown.Sakura;
 import cc.unknown.event.Event;
 import cc.unknown.module.Module;
-import cc.unknown.script.api.RenderAPI;
 import cc.unknown.script.api.wrapper.ScriptHandlerWrapper;
 import cc.unknown.script.api.wrapper.impl.event.ScriptEvent;
 import cc.unknown.value.Value;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
-import cc.unknown.value.impl.ColorValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.StringValue;
 import cc.unknown.value.impl.SubMode;
+import jdk.nashorn.api.scripting.JSObject;
+import jdk.nashorn.internal.runtime.Undefined;
 
 /**
  * @author Strikeless
@@ -127,35 +123,13 @@ public final class ScriptModule extends ScriptHandlerWrapper<Module> {
                 value.setDefault((String) defaultValue);
                 break;
             }
-            case "color": {
-                Color c = Color.WHITE;
-                if (defaultValue instanceof JSObject) {
-                    JSObject object = (JSObject) defaultValue;
-                    if (object.isArray()) {
-                        int[] values = object.values().stream().map(x -> x instanceof Number ? ((Number) x).intValue() : 255).mapToInt(Integer::intValue).toArray();
-                        if (values.length >= 3) {
-                            c = RenderAPI.intArrayToColor(values);
-                        }
-                    }
-                }
-                new ColorValue(name, this.wrapped, c);
-                break;
-            }
         }
     }
 
     public Object getSetting(String name) {
         try {
             Value<?> o = this.wrapped.getAllValues().stream().filter(x -> x.getName().equalsIgnoreCase(name)).findFirst().get();
-            if (o instanceof ColorValue) {
-                int[] array = new int[4];
-                Color c = ((ColorValue) o).getValue();
-                array[0] = c.getRed();
-                array[1] = c.getGreen();
-                array[2] = c.getBlue();
-                array[3] = c.getAlpha();
-                return array;
-            } else if (o instanceof NumberValue) {
+            if (o instanceof NumberValue) {
                 return ((NumberValue) o).getValue().doubleValue();
             } else if (o instanceof BoundsNumberValue) {
                 double[] array = new double[2];
@@ -175,10 +149,7 @@ public final class ScriptModule extends ScriptHandlerWrapper<Module> {
     public void setSetting(String name, Object value) {
         try {
             Value<?> o = this.wrapped.getAllValues().stream().filter(x -> x.getName().equalsIgnoreCase(name)).findFirst().get();
-            if (o instanceof ColorValue) {
-                int[] array = (int[]) value;
-                ((ColorValue) o).setValue(new Color(array[0], array[1], array[2], array[3]));
-            } else if (o instanceof NumberValue) {
+            if (o instanceof NumberValue) {
                 ((NumberValue) o).setValue((Number) value);
             } else if (o instanceof BoundsNumberValue) {
                 Number[] array = (Number[]) value;

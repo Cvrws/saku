@@ -21,9 +21,12 @@ import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.render.animation.Easing;
 import cc.unknown.util.render.gui.GUIUtil;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ModuleComponent implements Accessor {
-
     public Module module;
     public Vector2f scale = getClickGUI().getModuleDefaultScale();
     public boolean expanded;
@@ -139,11 +142,6 @@ public class ModuleComponent implements Accessor {
                 valueComponent.key(typedChar, keyCode);
             }
         }
-
-//        final boolean overModule = GUIUtil.mouseOver(position.x, position.y, scale.x, getClickGUI().moduleDefaultScale.getY() - 3, Mouse.getMouse().x, Mouse.getMouse().y);
-//        if (overModule) {
-//            module.setKeyCode(keyCode);
-//        }
     }
 
     public void click(final int mouseX, final int mouseY, final int mouseButton) {
@@ -205,92 +203,4 @@ public class ModuleComponent implements Accessor {
             }
         }
     }
-
-	public Module getModule() {
-		return module;
-	}
-
-	public Vector2f getScale() {
-		return scale;
-	}
-
-	public boolean isExpanded() {
-		return expanded;
-	}
-
-	public ArrayList<ValueComponent> getValueList() {
-		return valueList;
-	}
-
-	public Vector2d getPosition() {
-		return position;
-	}
-
-	public double getOpacity() {
-		return opacity;
-	}
-
-	public StopWatch getStopwatch() {
-		return stopwatch;
-	}
-
-	public Animation getHoverAnimation() {
-		return hoverAnimation;
-	}
-
-	public Animation getOpening() {
-		return opening;
-	}
-
-	public Animation getSettingOpacity() {
-		return settingOpacity;
-	}
-
-	public boolean isMouseDown() {
-		return mouseDown;
-	}
-
-	public void setModule(Module module) {
-		this.module = module;
-	}
-
-	public void setScale(Vector2f scale) {
-		this.scale = scale;
-	}
-
-	public void setExpanded(boolean expanded) {
-		this.expanded = expanded;
-	}
-
-	public void setValueList(ArrayList<ValueComponent> valueList) {
-		this.valueList = valueList;
-	}
-
-	public void setPosition(Vector2d position) {
-		this.position = position;
-	}
-
-	public void setOpacity(double opacity) {
-		this.opacity = opacity;
-	}
-
-	public void setStopwatch(StopWatch stopwatch) {
-		this.stopwatch = stopwatch;
-	}
-
-	public void setHoverAnimation(Animation hoverAnimation) {
-		this.hoverAnimation = hoverAnimation;
-	}
-
-	public void setOpening(Animation opening) {
-		this.opening = opening;
-	}
-
-	public void setSettingOpacity(Animation settingOpacity) {
-		this.settingOpacity = settingOpacity;
-	}
-
-	public void setMouseDown(boolean mouseDown) {
-		this.mouseDown = mouseDown;
-	}
 }

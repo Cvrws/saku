@@ -21,7 +21,7 @@ import net.minecraft.network.NetworkManager.InboundHandlerTuplePacketListener;
 import net.minecraft.network.Packet;
 
 @ModuleInfo(aliases = "Lag Range", description = "Retiene los datos del servidor ocasionando lag", category = Category.LATENCY)
-public class FakeLag extends Module {
+public class LagRange extends Module {
 	
 
 

@@ -24,7 +24,7 @@ public final class Tracers extends Module {
     @EventLink
     public final Listener<Render3DEvent> onRender3D = event -> {
         for (final Entity player : mc.world.playerEntities) {
-            if (player == mc.player || player.isDead || Sakura.instance.getComponentManager().get(BotComponent.class).contains(player)) {
+            if (player == mc.player || player.isDead || getComponent(BotComponent.class).contains(player)) {
                 continue;
             }
             

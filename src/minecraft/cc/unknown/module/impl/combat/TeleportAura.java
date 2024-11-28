@@ -194,7 +194,7 @@ public class TeleportAura extends Module {
 
 		if ((mc.player.isEntityAlive()) && !(entity instanceof EntityPlayerSP)) {
 			if (mc.player.getDistanceToEntity(entity) <= range) {
-				if (Sakura.instance.getComponentManager().get(BotComponent.class).contains(entity)) {
+				if (getComponent(BotComponent.class).contains(entity)) {
 					return false;
 				}
 				if (entity.isPlayerSleeping()) {
@@ -254,44 +254,6 @@ public class TeleportAura extends Module {
 		targets.sort((o1, o2) -> (int) (o1.getDistanceToEntity(mc.player) * 1000
 				- o2.getDistanceToEntity(mc.player) * 1000));
 		return targets;
-	}
-
-	public void drawESP(Entity entity, int color) {
-		double x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * mc.timer.renderPartialTicks;
-
-		double y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * mc.timer.renderPartialTicks;
-
-		double z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * mc.timer.renderPartialTicks;
-		double width = Math.abs(entity.getEntityBoundingBox().maxX - entity.getEntityBoundingBox().minX);
-		double height = Math.abs(entity.getEntityBoundingBox().maxY - entity.getEntityBoundingBox().minY);
-		Vec3 vec = new Vec3(x - width / 2, y, z - width / 2);
-		Vec3 vec2 = new Vec3(x + width / 2, y + height, z + width / 2);
-        GL11.glPushMatrix();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDepthMask(false);
-        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-		mc.entityRenderer.setupCameraTransform(mc.timer.renderPartialTicks, 2);
-        float alpha = (color >> 24 & 0xFF) / 255.0F;
-        float red = (color >> 16 & 0xFF) / 255.0F;
-        float green = (color >> 8 & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
-        GL11.glColor4f(red, green, blue, alpha);
-        RenderUtil.drawSimpleBox((EntityPlayer) entity, getTheme().getAccentColor());
-
-		GL11.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-        GL11.glDepthMask(true);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_LINE_SMOOTH);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glPopMatrix();
-        GL11.glColor4f(1, 1, 1, 1);
 	}
 
 	public static class AStarCustomPathFinder {

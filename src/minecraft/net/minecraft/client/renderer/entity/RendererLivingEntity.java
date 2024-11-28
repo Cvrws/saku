@@ -11,6 +11,8 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.collect.Lists;
 
 import cc.unknown.Sakura;
+import cc.unknown.event.impl.render.PostRenderLivingEntityEvent;
+import cc.unknown.event.impl.render.PreRenderLivingEntityEvent;
 import cc.unknown.event.impl.render.RenderLabelEvent;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.client.Minecraft;
@@ -216,11 +218,8 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 	 *
 	 * @param entityYaw The yaw rotation of the passed entity
 	 */
-	public void doRender(final T entity, final double x, final double y, final double z, final float entityYaw,
-			final float partialTicks) {
-		if (!Reflector.RenderLivingEvent_Pre_Constructor.exists()
-				|| !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Pre_Constructor, entity, this,
-						Double.valueOf(x), Double.valueOf(y), Double.valueOf(z))) {
+	public void doRender(final T entity, final double x, final double y, final double z, final float entityYaw, final float partialTicks) {
+		if (!Reflector.RenderLivingEvent_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Pre_Constructor, entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z))) {
 			if (animateModelLiving) {
 				entity.limbSwingAmount = 1.0F;
 			}
@@ -267,8 +266,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 					f2 = f1 - f;
 				}
 
-				final float f7 = entity.prevRotationPitch
-						+ (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+				final float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
 				this.renderLivingAt(entity, x, y, z);
 				final float f8 = this.handleRotationFloat(entity, partialTicks);
 				this.rotateCorpse(entity, f8, f, partialTicks);
@@ -277,10 +275,18 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 				this.preRenderCallback(entity, partialTicks);
 				final float f4 = 0.0625F;
 				GlStateManager.translate(0.0F, -1.5078125F, 0.0F);
-				float f5 = entity.prevLimbSwingAmount
-						+ (entity.limbSwingAmount - entity.prevLimbSwingAmount) * partialTicks;
+				float f5 = entity.prevLimbSwingAmount + (entity.limbSwingAmount - entity.prevLimbSwingAmount) * partialTicks;
 				float f6 = entity.limbSwing - entity.limbSwingAmount * (1.0F - partialTicks);
 
+	            if (entity instanceof EntityPlayer) {
+	            	PreRenderLivingEntityEvent pre = new PreRenderLivingEntityEvent(entity, f6, f5, f7, f2, f8, f, f4);
+	                Sakura.instance.getEventBus().handle(pre);
+
+	                if (pre.isCancelled()) {
+	                    return;
+	                }
+	            }
+				
 				if (entity.isChild()) {
 					f6 *= 3.0F;
 				}
@@ -370,10 +376,12 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 			if (!this.renderOutlines) {
 				super.doRender(entity, x, y, z, entityYaw, partialTicks);
 			}
+			
+			PostRenderLivingEntityEvent post = new PostRenderLivingEntityEvent(entity);
+	        Sakura.instance.getEventBus().handle(post);
 
 			if (Reflector.RenderLivingEvent_Post_Constructor.exists()) {
-				Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Post_Constructor, entity, this,
-						Double.valueOf(x), Double.valueOf(y), Double.valueOf(z));
+				Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Post_Constructor, entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z));
 			}
 		}
 	}
@@ -418,7 +426,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 	/**
 	 * Renders the model in RenderLiving
 	 */
-	protected void renderModel(T entitylivingbaseIn, float p_77036_2_, float p_77036_3_, float p_77036_4_,
+	public void renderModel(T entitylivingbaseIn, float p_77036_2_, float p_77036_3_, float p_77036_4_,
 			float p_77036_5_, float p_77036_6_, float scaleFactor) {
 		boolean flag = !entitylivingbaseIn.isInvisible();
 		boolean flag1 = !flag && !entitylivingbaseIn.isInvisibleToPlayer(Minecraft.getMinecraft().player);
@@ -628,7 +636,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 		return (float) livingBase.ticksExisted + partialTicks;
 	}
 
-	protected void renderLayers(T entitylivingbaseIn, float p_177093_2_, float p_177093_3_, float partialTicks,
+	public void renderLayers(T entitylivingbaseIn, float p_177093_2_, float p_177093_3_, float partialTicks,
 			float p_177093_5_, float p_177093_6_, float p_177093_7_, float p_177093_8_) {
 		for (LayerRenderer<T> layerrenderer : this.layerRenderers) {
 			boolean flag = this.setBrightness(entitylivingbaseIn, partialTicks, layerrenderer.shouldCombineTextures());
@@ -689,11 +697,12 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 	}
 
 	public void renderName(T entity, double x, double y, double z) {
-		RenderLabelEvent event = new RenderLabelEvent(entity, x, y, z);
-		Sakura.instance.getEventBus().handle(event);
-		if (event.isCancelled()) return;
-		
 		if (!Reflector.RenderLivingEvent_Specials_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Pre_Constructor, new Object[] { entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z) })) {
+			
+			RenderLabelEvent event = new RenderLabelEvent(entity, x, y, z);
+			Sakura.instance.getEventBus().handle(event);
+			if (event.isCancelled()) return;
+			
 			if (this.canRenderName(entity)) {
 				double d0 = entity.getDistanceSqToEntity(this.renderManager.livingPlayer);
 				float f = entity.isSneaking() ? NAME_TAG_RANGE_SNEAK : NAME_TAG_RANGE;

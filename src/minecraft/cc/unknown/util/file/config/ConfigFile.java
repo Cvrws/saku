@@ -136,25 +136,6 @@ public class ConfigFile extends cc.unknown.util.file.File {
                             if (valueJsonObject.has("second")) {
                                 boundsNumberValue.setSecondValue(valueJsonObject.get("second").getAsDouble());
                             }
-                        } else if (value instanceof ColorValue) {
-                            final ColorValue colorValue = (ColorValue) value;
-
-                            int red = 0, green = 0, blue = 0, alpha = 0;
-
-                            if (valueJsonObject.has("red")) {
-                                red = valueJsonObject.get("red").getAsInt();
-                            }
-                            if (valueJsonObject.has("green")) {
-                                green = valueJsonObject.get("green").getAsInt();
-                            }
-                            if (valueJsonObject.has("blue")) {
-                                blue = valueJsonObject.get("blue").getAsInt();
-                            }
-                            if (valueJsonObject.has("alpha")) {
-                                alpha = valueJsonObject.get("alpha").getAsInt();
-                            }
-
-                            colorValue.setValue(new Color(red, green, blue, alpha));
                         } else if (value instanceof DragValue) {
                             final DragValue positionValue = (DragValue) value;
 
@@ -272,13 +253,6 @@ public class ConfigFile extends cc.unknown.util.file.File {
                         final BoundsNumberValue boundsNumberValue = (BoundsNumberValue) value;
                         valueJsonObject.addProperty("first", boundsNumberValue.getValue().doubleValue());
                         valueJsonObject.addProperty("second", boundsNumberValue.getSecondValue().doubleValue());
-                    } else if (value instanceof ColorValue) {
-                        final ColorValue colorValue = (ColorValue) value;
-
-                        valueJsonObject.addProperty("red", colorValue.getValue().getRed());
-                        valueJsonObject.addProperty("green", colorValue.getValue().getGreen());
-                        valueJsonObject.addProperty("blue", colorValue.getValue().getBlue());
-                        valueJsonObject.addProperty("alpha", colorValue.getValue().getAlpha());
                     } else if (value instanceof DragValue) {
                         final DragValue positionValue = (DragValue) value;
 

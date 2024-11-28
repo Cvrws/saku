@@ -29,7 +29,6 @@ import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.font.Font;
 import cc.unknown.value.impl.BooleanValue;
-import cc.unknown.value.impl.ColorValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
@@ -53,7 +52,6 @@ public final class HUD extends Module {
     private final BooleanValue lowercase = new BooleanValue("Lowercase", this, false);
     private final BooleanValue arrayAnimation = new BooleanValue("ArrayList Animation", this, true);
     private final BooleanValue removeSpaces = new BooleanValue("No Spaces", this, false);
-    public final ColorValue colorBackground = new ColorValue("Color", this, Color.BLACK);
     private final NumberValue alphaBackground = new NumberValue("Alpha BackGround", this, 180, 0, 255, 1);
     private final BooleanValue toggleNotifications = new BooleanValue("Toggle Notifications", this, false);
     
@@ -210,7 +208,7 @@ public final class HUD extends Module {
     }
 
     private Color getColor() {
-    	return new Color(colorBackground.getValue().getRed(), colorBackground.getValue().getGreen(), colorBackground.getValue().getBlue(), alphaBackground.getValue().intValue());
+    	return new Color(0, 0, 0, alphaBackground.getValue().intValue());
     }
     
     private void setRenderRectangle(ModuleComponent moduleComponent, double x, double y, double widthOffset) {

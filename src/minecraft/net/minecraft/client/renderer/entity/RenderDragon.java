@@ -52,7 +52,7 @@ public class RenderDragon extends RenderLiving<EntityDragon> {
     /**
      * Renders the model in RenderLiving
      */
-    protected void renderModel(final EntityDragon entitylivingbaseIn, final float p_77036_2_, final float p_77036_3_, final float p_77036_4_, final float p_77036_5_, final float p_77036_6_, final float p_77036_7_) {
+    public void renderModel(final EntityDragon entitylivingbaseIn, final float p_77036_2_, final float p_77036_3_, final float p_77036_4_, final float p_77036_5_, final float p_77036_6_, final float p_77036_7_) {
         if (entitylivingbaseIn.deathTicks > 0) {
             final float f = (float) entitylivingbaseIn.deathTicks / 200.0F;
             GlStateManager.depthFunc(515);

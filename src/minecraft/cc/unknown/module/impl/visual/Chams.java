@@ -6,6 +6,8 @@ import org.lwjgl.opengl.GL11;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.render.PostRenderLivingEntityEvent;
+import cc.unknown.event.impl.render.PreRenderLivingEntityEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
@@ -16,7 +18,15 @@ import net.minecraft.entity.player.EntityPlayer;
 
 @ModuleInfo(aliases = "Chams", description = "Renders the player through blocks or walls", category = Category.VISUALS)
 public final class Chams extends Module {
-    
+	
+	@EventLink
+	public final Listener<PreRenderLivingEntityEvent> onPreRenderLiving = event -> {
+        if (event.getEntity() instanceof EntityPlayer && event.getEntity() != mc.player) {
+        	GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+        	GL11.glPolygonOffset(1.0F, -2000000.0F);
+        }
+	};
+	
     @EventLink
     public final Listener<Render3DEvent> onRender3D = event -> {
 		for (EntityPlayer player : mc.world.playerEntities) {
@@ -49,5 +59,15 @@ public final class Chams extends Module {
 	
 		RenderHelper.disableStandardItemLighting();
 		mc.entityRenderer.disableLightmap();   
+    };
+	
+    @EventLink
+    public final Listener<PostRenderLivingEntityEvent> onPostRenderLiving = event -> {
+    	if (event.getEntity() instanceof EntityPlayer) {
+    		GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
+    		GL11.glPolygonOffset(1.0F, -2000000.0F);
+    		RenderHelper.disableStandardItemLighting();
+    		mc.entityRenderer.disableLightmap();
+        }
     };
 }
