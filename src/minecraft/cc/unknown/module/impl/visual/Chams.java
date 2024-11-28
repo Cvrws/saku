@@ -33,7 +33,7 @@ public final class Chams extends Module {
 			if (player == mc.player || player.isDead || player == null) {
 				continue;
 			}
-						
+			
 			final float partialTicks = mc.timer.renderPartialTicks;
 			final double renderPosX = mc.getRenderManager().renderPosX;
 			final double renderPosY = mc.getRenderManager().renderPosY;

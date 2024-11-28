@@ -93,6 +93,7 @@ public final class ModuleManager {
         this.put(Translator.class, new Translator());
         this.put(InternetRelayChat.class, new InternetRelayChat());
         this.put(AutoSword.class, new AutoSword());
+        this.put(MidClick.class, new MidClick());
         this.put(Insults.class, new Insults());
         this.put(AutoLeave.class, new AutoLeave());
         this.put(MurderMystery.class, new MurderMystery());

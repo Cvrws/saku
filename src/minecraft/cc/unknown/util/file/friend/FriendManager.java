@@ -79,15 +79,6 @@ public class FriendManager {
         return new ArrayList<>();
     }
     
-    /*public List<String> getFriends() {
-        FriendFile friendFile = Sakura.instance.getFriendManager().getFriendFile();        
-        if (friendFile.read()) {
-            return friendComponent.getFriends();
-        }
-        
-        return new ArrayList<>();
-    }*/
-    
     public void removeFriends() {
         friendComponent.removeFriends();
         update();

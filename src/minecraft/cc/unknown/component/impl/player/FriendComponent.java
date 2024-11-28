@@ -17,6 +17,16 @@ public class FriendComponent {
     public static void removeFriend(String friend) {
         friends.remove(friend);
     }
+    
+    public static void addFriend(EntityPlayer entityPlayer) {
+        if (!friends.contains(entityPlayer.getName().toLowerCase())) {
+            friends.add(entityPlayer.getName().toLowerCase());
+        }
+    }
+    
+    public static boolean removeFriend(EntityPlayer entityPlayer) {
+        return !friends.isEmpty() && friends.remove(entityPlayer.getName().toLowerCase());
+    }
 
     public static boolean isFriend(String friend) {
         return friends.contains(friend);

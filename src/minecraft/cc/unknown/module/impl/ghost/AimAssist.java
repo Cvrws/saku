@@ -40,11 +40,7 @@ public final class AimAssist extends Module {
 	
 	private final NumberValue horizontalSpeed = new NumberValue("Horizontal Speed", this, 45.0, 5.0, 100.0, 1.0);
 	private final NumberValue horizontalCompl = new NumberValue("Horizontal Complement", this, 35.0, 2.0, 97.0, 1.0);
-	
-	private final BooleanValue vertical = new BooleanValue("Vertical", this, false);
-	private final NumberValue verticalSpeed = new NumberValue("Vertical Speed", this, 45.0, 5.0, 100.0, 1.0, () -> !vertical.getValue());
-	private final NumberValue verticalCompl = new NumberValue("Vertical Complement", this, 35.0, 2.0, 97.0, 1.0, () -> !vertical.getValue());
-	
+
 	private final ModeValue randomMode = new ModeValue("Speed Randomization", this)
 			.add(new SubMode("Thread Local Random"))
 			.add(new SubMode("Random Secure"))
@@ -68,7 +64,7 @@ public final class AimAssist extends Module {
 	private StopWatch stopWatch = new StopWatch();
 	
 	@EventLink
-	public final Listener<PreMotionEvent> onPreMotionEvent = event -> {
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (noAim()) {
 			return;
 		}
@@ -78,15 +74,10 @@ public final class AimAssist extends Module {
 
         double yawSpeed = this.horizontalSpeed.getValue().doubleValue();
         double yawCompl = this.horizontalCompl.getValue().doubleValue();
-        double yawOffset = MathUtil.nextSecureDouble(yawSpeed, yawCompl) / 180;   
-        
-        double pitchSpeed = this.verticalSpeed.getValue().doubleValue();
-        double pitchCompl = this.verticalCompl.getValue().doubleValue();
-        double pitchOffset = MathUtil.nextSecureDouble(pitchSpeed, pitchCompl) / 180;
+        double yawOffset = MathUtil.nextSecureDouble(yawSpeed, yawCompl) / 180;
         
         double yawFov = PlayerUtil.fovFromTarget(target);
-        float yaw = getSpeedRandomize(randomMode.getValue().getName(), yawFov, yawOffset, yawSpeed, yawCompl, false);
-        float pitch = getSpeedRandomize(randomMode.getValue().getName(), yawFov, pitchOffset, pitchSpeed, pitchCompl, true);
+        float yaw = getSpeedRandomize(randomMode.getValue().getName(), yawFov, yawOffset, yawSpeed, yawCompl);
         
         if (onTarget(target)) {
             if (isYawFov(yawFov)) {
@@ -117,9 +108,9 @@ public final class AimAssist extends Module {
 	
 	    for (final EntityPlayer player : mc.world.playerEntities) {
 	        if (player != mc.player && player.deathTime == 0) {
-	            if (Sakura.instance.getEnemyManager().isEnemy(player)) continue;
+	            if (getInstance().getEnemyManager().isEnemy(player)) continue;
 	            if (player.getName().contains("[NPC]")) continue;
-	            if (Sakura.instance.getFriendManager().isFriend(player) && ignoreFriendlyEntities.getValue()) continue;
+	            if (getInstance().getFriendManager().isFriend(player) && ignoreFriendlyEntities.getValue()) continue;
 	            if (getComponent(BotComponent.class).contains(player) && ignoreBots.getValue()) continue;
 	            if (ignoreTeammates.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
 	            if (playerPos.distanceTo(player) > distance.getValue().doubleValue()) continue;
@@ -166,29 +157,23 @@ public final class AimAssist extends Module {
 				&& mc.objectMouseOver.entityHit == target;
 	}
 
-	public float getSpeedRandomize(String mode, double fov, double offset, double speed, double complement, boolean withPitch) {
+	public float getSpeedRandomize(String mode, double fov, double offset, double speed, double complement) {
 	    double randomComplement;
 	    float result;
 
 	    switch (mode) {
 	        case "Thread Local Random":
-	            randomComplement = withPitch
-	                    ? PlayerUtil.pitchFromTarget(target, 4) * MathUtil.nextDouble(complement - 1.47328, complement + 2.48293) / 100
-	                    : MathUtil.nextDouble(complement - 1.47328, complement + 2.48293) / 100;
+	            randomComplement = MathUtil.nextDouble(complement - 1.47328, complement + 2.48293) / 100;
 	            result = (float) (-(fov * offset + fov / (101.0 - MathUtil.nextDouble(speed - 4.723847, speed))));
 	            return (float) (randomComplement + result);
 
 	        case "Random Secure":
-	            randomComplement = withPitch
-	                    ? PlayerUtil.pitchFromTarget(target, 4) * MathUtil.nextSecureDouble(complement - 1.47328, complement + 2.48293) / 100
-	                    : MathUtil.nextSecureDouble(complement - 1.47328, complement + 2.48293) / 100;
+	            randomComplement = MathUtil.nextSecureDouble(complement - 1.47328, complement + 2.48293) / 100;
 	            result = (float) (-(fov * offset + fov / (101.0 - MathUtil.nextSecureDouble(speed - 4.723847, speed))));
 	            return (float) (randomComplement + result);
 
 	        case "Gaussian":
-	            randomComplement = withPitch
-	                    ? PlayerUtil.pitchFromTarget(target, 4) * complement + new Random().nextGaussian() * 0.5
-	                    : complement + new Random().nextGaussian() * 0.5;
+	            randomComplement = complement + new Random().nextGaussian() * 0.5;
 	            randomComplement /= 100;
 	            result = (float) (-(fov * offset + fov / (101.0 - (speed + new Random().nextGaussian() * 0.3))));
 	            return (float) (randomComplement + result);

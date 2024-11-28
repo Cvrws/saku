@@ -76,6 +76,7 @@ import cc.unknown.ui.menu.main.MainMenu;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
+import cc.unknown.util.structure.CPSHelper;
 import de.florianmichael.viamcp.fixes.AttackOrder;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -1441,6 +1442,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 	public void clickMouse(boolean swing, boolean events) {
 		Sakura.instance.getEventBus().handle(new MouseEvent(0));
+		CPSHelper.registerClick(CPSHelper.MouseButton.LEFT);
 
 		if (this.leftClickCounter <= 0) {
 			if (events) {

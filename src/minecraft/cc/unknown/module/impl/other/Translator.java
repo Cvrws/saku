@@ -77,30 +77,20 @@ public final class Translator extends Module {
             try {
                 String encodedText = URLEncoder.encode(text, "UTF-8");
                 String response = requestLine("https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=" + encodedText, "GET");
-
-                Gson gson = new Gson();
                 JsonParser jsonParser = new JsonParser();
-
                 JsonElement jsonElement = jsonParser.parse(response);
                 JsonArray array = jsonElement.getAsJsonArray();
-
-
                 String translated = array.get(0).getAsJsonArray().get(0).getAsJsonArray().get(0).getAsString();
                 String language = new Locale(array.get(2).getAsString()).getDisplayLanguage(Locale.ENGLISH);
-
                 ChatComponentText translatedComponent = new ChatComponentText(translated);
-
                 if (!translated.equals(text)) {
                     translatedComponent.appendText(" ");
-
                     ChatComponentText hoverComponent = new ChatComponentText(getTheme().getChatAccentColor() + "[T]");
                     ChatStyle style = new ChatStyle();
                     style.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText("Translated from " + language + "\n" + text)));
                     hoverComponent.setChatStyle(style);
-
                     translatedComponent.appendSibling(hoverComponent);
                 }
-
                 mc.player.addChatMessage(translatedComponent);
             } catch (Exception e) {
                 e.printStackTrace();

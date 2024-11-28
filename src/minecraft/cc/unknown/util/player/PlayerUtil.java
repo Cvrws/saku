@@ -186,17 +186,7 @@ public class PlayerUtil implements Accessor {
 		double diffZ = tg.posZ - mc.player.posZ;
 		return (float) Math.toDegrees(Math.atan2(diffZ, diffX)) - 90.0F;
 	}
-	
-	public float pitchToTarget(EntityPlayer ent, float f) {
-		double x = mc.player.getDistanceToEntity(ent);
-		double y = mc.player.posY - (ent.posY + f);
-		return (float) (90 - (((Math.atan2(x, y) * 180.0D) / Math.PI)));
-	}
-	
-    public static double pitchFromTarget(EntityPlayer en, float f) {
-        return (double) (mc.player.rotationPitch - pitchToTarget(en, f));
-    }
-		
+
 	public boolean fov(Entity entity, float fov) {
 		fov = (float) ((double) fov * 0.5D);
 		double v = ((double) (mc.player.rotationYaw - fovToTarget(entity)) % 360.0D + 540.0D) % 360.0D - 180.0D;
@@ -672,4 +662,8 @@ public class PlayerUtil implements Accessor {
             PacketUtil.send(new C01PacketChatMessage(message.toString()));
         }
     }
+    
+	public int getPing(EntityPlayer player) {
+		return mc.getNetHandler().getPlayerInfo(player.getUniqueID()) != null ? mc.getNetHandler().getPlayerInfo(player.getUniqueID()).getResponseTime() : 0;
+	}
 }

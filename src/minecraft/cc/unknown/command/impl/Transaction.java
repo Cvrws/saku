@@ -20,7 +20,7 @@ public final class Transaction extends Command {
     
     public Transaction() {
         super("Muestra las transacciones del servidor", "transaction");
-        Sakura.instance.getEventBus().register(this);
+        getInstance().getEventBus().register(this);
     }
     
     @Override
