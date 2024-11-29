@@ -86,7 +86,7 @@ public final class SidebarCategory implements Accessor {
         lastTime = time;
 
         /* Renders all categories */
-        double offsetTop = 10;
+        double offsetTop = -15;
 
         for (final CategoryComponent category : categories) {
             category.render((offsetTop += 19.5), sidebarWidth + animation.getValue(), (int) opacity, clickGUI.selectedScreen);

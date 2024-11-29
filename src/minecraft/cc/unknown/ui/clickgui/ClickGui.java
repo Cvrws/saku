@@ -129,7 +129,6 @@ public class ClickGui extends GuiScreen implements Accessor {
 
         final Minecraft mc = Minecraft.getMinecraft();
 
-        //Information from gui draw screen to use in this event, we use this event instead of gui draw screen because it allows the clickgui to have an outro animation
         final int mouseX = (int) mouse.x;
         final int mouseY = (int) mouse.y;
         final float partialTicks = mc.getTimer().renderPartialTicks;
@@ -137,7 +136,6 @@ public class ClickGui extends GuiScreen implements Accessor {
         /* Handles dragging */
         if (dragging) {
 
-            // I'm a horrible programmer and can't think of a better way to fix this bug
             if (this.selectedScreen instanceof ThemeScreen) {
                 ((ThemeScreen) selectedScreen).resetAnimations();
             }
@@ -157,7 +155,6 @@ public class ClickGui extends GuiScreen implements Accessor {
 
         if (mc.currentScreen == Sakura.instance.getClickGui() && animationTime == 0) animationTime = 0.01;
 
-        // Makes it not render the ClickGUI if it's animation is 0
         if (animationTime == 0) {
             Sakura.instance.getModuleManager().get(ClickGUI.class).setEnabled(false);
             return;
@@ -188,7 +185,7 @@ public class ClickGui extends GuiScreen implements Accessor {
         GL11.glPushMatrix();
         GL11.glTranslated(0, 0, 0);
 
-        int length = 200;
+        int length = 0;
 
         /* Renders screen depending on selected category */
         (renderedScreen = timeInCategory.finished(length) ? selectedScreen : lastScreen)

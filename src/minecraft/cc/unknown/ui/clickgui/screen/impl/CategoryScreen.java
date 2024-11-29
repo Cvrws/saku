@@ -48,12 +48,6 @@ public final class CategoryScreen implements Screen, Accessor {
 
         endOfList = positionY;
 
-        double padding = 7;
-        double scrollX = clickGUI.getPosition().getX() + clickGUI.getScale().getX() - 4;
-        double scrollY = clickGUI.getPosition().getY() + padding;
-
-        scrollUtil.renderScrollBar(new Vector2d(scrollX, scrollY), getClickGUI().scale.y - padding * 2);
-
         scrollUtil.setMax(-height + clickGUI.scale.y - 7);
         stopwatch.reset();
     }
