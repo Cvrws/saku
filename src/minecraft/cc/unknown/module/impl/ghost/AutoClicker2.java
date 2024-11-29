@@ -22,8 +22,6 @@ import net.minecraft.util.MovingObjectPosition;
 public class AutoClicker2 extends Module {
 
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 10, 14, 1, 20, 1);
-	private final NumberValue cpsCap = new NumberValue("CPS Cap", this, 18.0, 0.0, 40.0, 1);
-	private final BoundsNumberValue cpsCapR = new BoundsNumberValue("CPS Cap ReTick", this, 18, 18, 0, 40, 1);
 
 	private final BooleanValue spikes = new BooleanValue("Spikes", this, false);
 	private final BoundsNumberValue spikeCps = new BoundsNumberValue("Spike CPS", this, 4, 6, 1, 40, 1, () -> !spikes.getValue());
@@ -161,14 +159,6 @@ public class AutoClicker2 extends Module {
 					dropsDurationTimeHelper.reset();
 					dropsDelayTimeHelper.reset();
 				}
-			}
-		}
-
-		if (cpsCap.getValue().intValue() > 0 && 1000.0 / randomDelay > cpsCap.getValue().intValue()) {
-			if (!(cpsCapR.getValue().intValue() > cpsCap.getValue().intValue() && cpsCapR.getSecondValue().intValue() > cpsCap.getValue().intValue())) {
-				randomDelay = (long) MathUtil.nextSecureDouble((long) (1000.0 / cpsCapR.getValue().intValue()), (long) (1000.0 / cpsCapR.getSecondValue().intValue()));
-			} else {
-				randomDelay = (long) (1000.0 / cpsCap.getValue().longValue());
 			}
 		}
 	}

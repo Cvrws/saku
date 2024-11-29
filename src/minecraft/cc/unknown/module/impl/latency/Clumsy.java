@@ -24,12 +24,9 @@ import net.minecraft.network.play.server.S14PacketEntity;
 
 @ModuleInfo(aliases = "Clumsy", description = "Empeora significativamente tu latencia.", category = Category.LATENCY)
 public final class Clumsy extends Module {
-	private final BoundsNumberValue client = new BoundsNumberValue("ClientSide Delay", this, 100, 200, 0, 500, 1);
-	private final BoundsNumberValue server = new BoundsNumberValue("ServerSide Delay", this, 20, 30, 0, 500, 1);
+	private final BoundsNumberValue client = new BoundsNumberValue("Delay", this, 100, 200, 0, 500, 1);
 	private final List<Packet<?>> packets = new CopyOnWriteArrayList<>();
-	private final List<Packet> s14 = new CopyOnWriteArrayList<>();
 	private StopWatch stopWatch = new StopWatch();
-	private StopWatch stopWatch2 = new StopWatch();
 
 	@Override
 	public void onDisable() {
@@ -40,15 +37,6 @@ public final class Clumsy extends Module {
 	public final Listener<PacketSendEvent> onPacketSend = event -> {		
 		if (this.isEnabled() && mc.player != null) {
 			packets.add(event.getPacket());
-			event.setCancelled(true);
-		}
-	};
-	
-	@EventLink
-	public final Listener<PacketReceiveEvent> onPacket = event -> {		
-		Packet<?> p = event.getPacket();
-		if (p instanceof S14PacketEntity) {
-			s14.add(p);
 			event.setCancelled(true);
 		}
 	};
@@ -71,14 +59,6 @@ public final class Clumsy extends Module {
         			packets.remove(packets.get(0));
         	    }
         	    stopWatch.reset();
-        	}
-        	
-        	if (stopWatch2.reached(server.getValue().intValue(), server.getSecondValue().intValue())) {
-        		while (!s14.isEmpty()) {
-        			s14.get(0).processPacket(mc.getNetHandler().getNetworkManager().packetListener);
-        			s14.remove(s14.get(0));
-        		}
-        		stopWatch2.reset();
         	}
         }
 	}
