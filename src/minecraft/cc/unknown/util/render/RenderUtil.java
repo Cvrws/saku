@@ -553,10 +553,10 @@ public final class RenderUtil implements Accessor {
     
     public void drawSimpleBox(EntityPlayer player, int color, float partialTicks) {
     	double expand = 0.0D;
-    	float a = (float) ((color >> 24) & 255) / 255.0F;
-        float r = (float) ((color >> 16) & 255) / 255.0F;
-        float g = (float) ((color >> 8) & 255) / 255.0F;
-        float b = (float) (color & 255) / 255.0F;
+    	float alpha = (float) ((color >> 24) & 255) / 255.0F;
+        float red = (float) ((color >> 16) & 255) / 255.0F;
+        float green = (float) ((color >> 8) & 255) / 255.0F;
+        float blue = (float) (color & 255) / 255.0F;
         
         double x = (player.lastTickPosX + ((player.posX - player.lastTickPosX) * (double) partialTicks)) - mc.getRenderManager().viewerPosX;
         double y = (player.lastTickPosY + ((player.posY - player.lastTickPosY) * (double) partialTicks)) - mc.getRenderManager().viewerPosY;
@@ -571,7 +571,7 @@ public final class RenderUtil implements Accessor {
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(false);
         GL11.glLineWidth(1.0F);
-        GL11.glColor4f(r, g, b, a);
+        GL11.glColor4f(red, green, blue, alpha);
 
         RenderGlobal.drawSelectionBoundingBox(axis);
 

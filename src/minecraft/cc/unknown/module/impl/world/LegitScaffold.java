@@ -4,6 +4,7 @@ import org.lwjgl.input.Keyboard;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
@@ -13,7 +14,10 @@ import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
+import cc.unknown.value.impl.ModeValue;
+import cc.unknown.value.impl.SubMode;
 import net.minecraft.block.Block;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -22,6 +26,13 @@ import net.minecraft.world.WorldSettings;
 @ModuleInfo(aliases = "Legit Scaffold", description = "Shiftea al borde de cada bloque", category = Category.WORLD)
 public class LegitScaffold extends Module {
 
+	private final ModeValue eventMode = new ModeValue("Event Mode", this) {{
+		add(new SubMode("Pre Motion"));
+		add(new SubMode("Pre Update"));
+		add(new SubMode("Tick"));
+		setDefault("Tick");
+	}};
+	
 	private final BoundsNumberValue delay = new BoundsNumberValue("Delay", this, 100, 200, 0, 500, 1);
 	private final BooleanValue pitchCheck = new BooleanValue("Pitch Check", this, true);
 	private final BoundsNumberValue pitchRange = new BoundsNumberValue("Pitch Range", this, 70, 85, 0, 90, 1, () -> !pitchCheck.getValue());
@@ -32,7 +43,7 @@ public class LegitScaffold extends Module {
 	private final BooleanValue backwards = new BooleanValue("Backwards Movement Only", this, true);
 
 	private boolean shouldBridge, isShifting = false;
-	private StopWatch shiftTimer = new StopWatch();
+	private StopWatch stopWatch = new StopWatch();
 
 	@Override
 	public void onDisable() {
@@ -45,13 +56,38 @@ public class LegitScaffold extends Module {
 	}
 
 	@EventLink
-	public final Listener<PreMotionEvent> onPreMotionEvent = event -> {
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
+		if (eventMode.is("Pre Motion")) place();
+	};
+	
+	@EventLink
+	public final Listener<PreMotionEvent> onPreUpdate = event -> {
+		if (eventMode.is("Pre Update")) place();
+	};
+	@EventLink
+	public final Listener<TickEvent> onTick = event -> {
+		if (eventMode.is("Tick")) place();
+	};
+
+	@EventLink
+	public final Listener<Render3DEvent> onRender3D = event -> {
+		if (!isInGame())
+			return;
+
+		if (slotSwap.getValue() && shouldSkipBlockCheck())
+			swapToBlock();
+
+		if (mc.currentScreen != null || mc.player.getHeldItem() == null)
+			return;
+	};
+	
+	private void place() {
 		if (!(mc.currentScreen == null) || !isInGame())
 			return;
 
 		boolean shift = delay.getSecondValue().intValue() > 0;
 
-		if (mc.player.rotationPitch < pitchRange.getValue().floatValue() || mc.player.rotationPitch > pitchRange.getSecondValue().floatValue()) {
+		if (shouldPitchCheck()) {
 			shouldBridge = false;
 			if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
 				setSneak(true);
@@ -82,8 +118,7 @@ public class LegitScaffold extends Module {
 		}
 
 		if (backwards.getValue()) {
-			if ((mc.player.movementInput.moveForward > 0) && (mc.player.movementInput.moveStrafe == 0)
-					|| mc.player.movementInput.moveForward >= 0) {
+			if (shouldBridgeCheck()) {
 				shouldBridge = false;
 				return;
 			}
@@ -92,9 +127,8 @@ public class LegitScaffold extends Module {
 		if (mc.player.onGround) {
 			if (PlayerUtil.isOverAir()) {
 				if (shift) {
-					shiftTimer.setMillis(MathHelper.randomInt(delay.getValue().intValue(),
-							(int) (delay.getSecondValue().intValue() + 0.1)));
-					shiftTimer.reset();
+					stopWatch.setMillis(MathHelper.randomInt(delay.getValue().intValue(), (int) (delay.getSecondValue().intValue() + 0.1)));
+					stopWatch.reset();
 				}
 
 				isShifting = true;
@@ -109,13 +143,11 @@ public class LegitScaffold extends Module {
 				isShifting = false;
 				shouldBridge = false;
 				setSneak(false);
-			} else if (mc.player.isSneaking()
-					&& (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) && holdShift.getValue())
-					&& (!shift || shiftTimer.hasFinished())) {
+			} else if (mc.player.isSneaking() && (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) && holdShift.getValue()) && (!shift || stopWatch.hasFinished())) {
 				isShifting = false;
 				setSneak(false);
 				shouldBridge = true;
-			} else if (mc.player.isSneaking() && !holdShift.getValue() && (!shift || shiftTimer.hasFinished())) {
+			} else if (mc.player.isSneaking() && !holdShift.getValue() && (!shift || stopWatch.hasFinished())) {
 				isShifting = false;
 				setSneak(false);
 				shouldBridge = true;
@@ -130,20 +162,7 @@ public class LegitScaffold extends Module {
 			isShifting = false;
 			setSneak(false);
 		}
-
-	};
-
-	@EventLink
-	public final Listener<Render3DEvent> onRender3D = event -> {
-		if (!isInGame())
-			return;
-
-		if (slotSwap.getValue() && shouldSkipBlockCheck())
-			swapToBlock();
-
-		if (mc.currentScreen != null || mc.player.getHeldItem() == null)
-			return;
-	};
+	}
 
 	private void swapToBlock() {
 		for (int slot = 0; slot <= 8; slot++) {
@@ -179,7 +198,7 @@ public class LegitScaffold extends Module {
 	}
 
 	private void setSneak(boolean sneak) {
-		mc.gameSettings.keyBindSneak.setPressed(sneak);
+		mc.player.movementInput.sneak = sneak;
+		KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), sneak);		
 	}
-
 }

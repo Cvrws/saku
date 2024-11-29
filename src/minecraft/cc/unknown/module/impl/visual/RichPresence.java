@@ -39,7 +39,6 @@ public class RichPresence extends Module {
     private boolean started;
     private String serverName;
     private String serverAddresses;
-    public String status = "";
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     
@@ -57,9 +56,7 @@ public class RichPresence extends Module {
 	        String currentServerIP = mc.getCurrentServerData() != null ? mc.getCurrentServerData().serverIP : null;
 	
 	        if (!started || !isInGame() || (currentServerIP != null && !currentServerIP.endsWith(serverAddresses))) {
-	        	status = "ON";
 	            if (started) {
-	            	status = "OFF";
 	                onDisable();
 	            }
 	            if (serverDataMap.isEmpty()) {

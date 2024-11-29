@@ -10,17 +10,34 @@ import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 
 @ModuleInfo(aliases = "Extra Sensory Perception", description = "Renderiza a los jugadores", category = Category.VISUALS)
 public final class ExtraSensoryPerception extends Module {
 
+	
+	private final BooleanValue colorName = new BooleanValue("Color based in name color", this, true);
+	private final BooleanValue colorTeams = new BooleanValue("Color based in team color", this, true);
 	private final BooleanValue checkInvis = new BooleanValue("Check Invisibles", this, false);
 	
     @EventLink
     public final Listener<Render3DEvent> onRender3D = event -> {
     	for (EntityPlayer player : mc.world.playerEntities) {
             if (player != mc.player && player.deathTime == 0 && (checkInvis.getValue() || !player.isInvisible())) {
-            	RenderUtil.drawSimpleBox(player, ColorUtil.getTeamColor(player), event.getPartialTicks());
+            	int color = 0;
+            	
+            	if (colorTeams.getValue()) {
+            		color = ColorUtil.getTeamColor(player);
+            	} else if (colorName.getValue() && player.getTeam() != null) {
+            		ScorePlayerTeam team = (ScorePlayerTeam) player.getTeam();
+            		String prefix = team.getColorPrefix();
+            		if (prefix != null && prefix.length() >= 2) {
+            			int nameColor = mc.fontRendererObj.getColorCode(prefix.charAt(1));
+            			color = nameColor;
+            		}
+            	}
+            	 
+            	RenderUtil.drawSimpleBox(player, color, event.getPartialTicks());
             }
     	}
     };
