@@ -137,19 +137,11 @@ public class SearchResourcePacks implements Accessor {
             return new String(b);
         }
 
-        public char getChar() {
-            return code;
-        }
-
         @Override
         public String toString() {
             return toString;
         }
-
-        public boolean isFormat() {
-            return isFormat;
-        }
-
+        
         public boolean isColor() {
             return !isFormat && this != RESET;
         }

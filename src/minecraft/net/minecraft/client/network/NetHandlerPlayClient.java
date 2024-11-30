@@ -21,7 +21,7 @@ import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.netty.DisconnectionEvent;
 import cc.unknown.event.impl.other.TeleportEvent;
-import cc.unknown.ui.menu.main.MainMenu;
+import cc.unknown.ui.menu.MainMenu;
 import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;

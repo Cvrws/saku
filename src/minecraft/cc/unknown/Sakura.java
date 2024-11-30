@@ -12,7 +12,7 @@ import cc.unknown.event.Event;
 import cc.unknown.event.bus.impl.EventBus;
 import cc.unknown.module.api.manager.ModuleManager;
 import cc.unknown.script.ScriptManager;
-import cc.unknown.ui.clickgui.ClickGui;
+import cc.unknown.ui.ClickGui;
 import cc.unknown.ui.theme.ThemeManager;
 import cc.unknown.util.file.FileManager;
 import cc.unknown.util.file.config.ConfigManager;

@@ -6,7 +6,7 @@ import java.util.List;
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.LastConnectionComponent;
 import cc.unknown.event.impl.other.ServerKickEvent;
-import cc.unknown.ui.menu.main.MainMenu;
+import cc.unknown.ui.menu.MainMenu;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;

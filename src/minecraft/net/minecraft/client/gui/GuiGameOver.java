@@ -2,7 +2,7 @@ package net.minecraft.client.gui;
 
 import java.io.IOException;
 
-import cc.unknown.ui.menu.main.MainMenu;
+import cc.unknown.ui.menu.MainMenu;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ChatFormatting;

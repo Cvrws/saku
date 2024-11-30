@@ -32,7 +32,7 @@ import cc.unknown.module.impl.visual.Ambience;
 import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.module.impl.visual.HurtCamera;
 import cc.unknown.module.impl.visual.NoCameraClip;
-import cc.unknown.ui.menu.main.MainMenu;
+import cc.unknown.ui.menu.MainMenu;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
 import net.minecraft.block.Block;

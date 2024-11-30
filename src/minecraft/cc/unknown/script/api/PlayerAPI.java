@@ -13,7 +13,7 @@ import cc.unknown.script.api.wrapper.impl.ScriptInventory;
 import cc.unknown.script.api.wrapper.impl.ScriptItemStack;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector2f;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector3d;
-import cc.unknown.ui.clickgui.ClickGui;
+import cc.unknown.ui.ClickGui;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.geometry.Vector3d;
 import cc.unknown.util.player.MoveUtil;

@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.Component;
 import cc.unknown.module.Module;
-import cc.unknown.ui.clickgui.ClickGui;
+import cc.unknown.ui.ClickGui;
 import cc.unknown.ui.theme.Themes;
 import net.minecraft.client.Minecraft;
 

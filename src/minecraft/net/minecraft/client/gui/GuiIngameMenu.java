@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import java.io.IOException;
 
 import cc.unknown.component.impl.player.LastConnectionComponent;
-import cc.unknown.ui.menu.main.MainMenu;
+import cc.unknown.ui.menu.MainMenu;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.multiplayer.GuiConnecting;

@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import java.io.IOException;
 import java.util.Random;
 
-import cc.unknown.ui.menu.main.alt.AltManagerScreen;
+import cc.unknown.ui.menu.alt.AltManagerScreen;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.BackgroundUtil;
 import net.minecraft.client.Minecraft;

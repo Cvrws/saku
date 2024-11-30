@@ -16,7 +16,7 @@ import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.ui.clickgui.ClickGui;
+import cc.unknown.ui.ClickGui;
 import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.geometry.Vector2i;
 import cc.unknown.util.render.RenderUtil;
