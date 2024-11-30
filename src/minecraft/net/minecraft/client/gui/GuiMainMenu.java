@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import java.io.IOException;
 import java.util.Random;
 
-import cc.unknown.ui.menu.account.AccountManagerScreen;
+import cc.unknown.ui.menu.main.alt.AltManagerScreen;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.BackgroundUtil;
 import net.minecraft.client.Minecraft;
@@ -78,7 +78,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Accessor
         }
         
         if (button.id == 3) {
-        	this.mc.displayGuiScreen(new AccountManagerScreen(this));
+        	this.mc.displayGuiScreen(new AltManagerScreen());
         }
         
         if (button.id == 4) {

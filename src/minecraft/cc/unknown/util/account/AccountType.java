@@ -1,7 +1,6 @@
 package cc.unknown.util.account;
 
 public enum AccountType {
-    CRACKED("Cracked"),
     MICROSOFT("Microsoft");
 
     private final String name;

@@ -96,19 +96,19 @@ public final class HUD extends Module {
     	Font minecraft = Fonts.MINECRAFT.get();
     	if (!font.equals(minecraft)) font = minecraft;
         
-        for (final ModuleComponent moduleComponent : activeModuleComponents) {
-        	String name = getName(moduleComponent);
+        for (final ModuleComponent module : activeModuleComponents) {
+        	String name = getName(module);
         	Color color = getTheme().getFirstColor();
                 
         	if (colorMode.is("Fade")) {
-        		color = getTheme().getAccentColor(new Vector2d(0, moduleComponent.getPosition().getY()));
+        		color = getTheme().getAccentColor(new Vector2d(0, module.getPosition().getY()));
         	}
         	
         	if (colorMode.is("Breathe")) {
                 color = ColorUtil.mixColors(color, this.getTheme().getSecondColor(), this.getTheme().getBlendFactor(new Vector2d(0, 0)));
         	}
                 
-        	setVarious(moduleComponent, color, name);
+        	setVarious(module, color, name);
         }
     };
 
@@ -124,13 +124,13 @@ public final class HUD extends Module {
         float sy = event.getScaledResolution().getScaledHeight() - font.height() - 1;
         double widthOffset = 3.5;
 
-        for (final ModuleComponent moduleComponent : activeModuleComponents) {
-            double x = moduleComponent.getPosition().getX();
-            double y = moduleComponent.getPosition().getY();
+        for (final ModuleComponent module : activeModuleComponents) {
+            double x = module.getPosition().getX();
+            double y = module.getPosition().getY();
 
-            Color finalColor = moduleComponent.getColor();
-        	setRenderRectangle(moduleComponent, x, y, widthOffset);
-            drawText(moduleComponent, x, y - .7f, finalColor.getRGB());
+            Color finalColor = module.getColor();
+        	setRenderRectangle(module, x, y, widthOffset);
+            drawText(module, x, y - .7f, finalColor.getRGB());
         }
 
         if (stopwatch.finished(150 * 50)) {
@@ -140,11 +140,11 @@ public final class HUD extends Module {
         
         final float screenWidth = event.getScaledResolution().getScaledWidth();
         final Vector2f position = new Vector2f(0, 0);
-        for (final ModuleComponent moduleComponent : activeModuleComponents) {
-            moduleComponent.targetPosition = new Vector2d(screenWidth - moduleComponent.getNameWidth(), position.getY());
+        for (final ModuleComponent module : activeModuleComponents) {
+        	module.targetPosition = new Vector2d(screenWidth - module.getNameWidth(), position.getY());
 
-            if (!moduleComponent.getModule().isEnabled()) {
-                moduleComponent.targetPosition = new Vector2d(screenWidth + moduleComponent.getNameWidth(), position.getY());
+            if (!module.getModule().isEnabled()) {
+                module.targetPosition = new Vector2d(screenWidth + module.getNameWidth(), position.getY());
             } else {
                 position.setY(position.getY() + moduleSpacing);
             }
@@ -152,16 +152,16 @@ public final class HUD extends Module {
             float offsetX = edgeOffset;
             float offsetY = edgeOffset;
 
-            moduleComponent.targetPosition.x -= offsetX;
-            moduleComponent.targetPosition.y += offsetY;
+            module.targetPosition.x -= offsetX;
+            module.targetPosition.y += offsetY;
             
             if (arrayAnimation.getValue()) {
-            	if (Math.abs(moduleComponent.getPosition().getX() - moduleComponent.targetPosition.x) > 0.5 || Math.abs(moduleComponent.getPosition().getY() - moduleComponent.targetPosition.y) > 0.5) {
-                    moduleComponent.position.x = MathUtil.lerp(moduleComponent.position.x, moduleComponent.targetPosition.x, 1.5E-2F * stopwatch.getElapsedTime());
-                    moduleComponent.position.y = MathUtil.lerp(moduleComponent.position.y, moduleComponent.targetPosition.y, 1.5E-2F * stopwatch.getElapsedTime());
+            	if (Math.abs(module.getPosition().getX() - module.targetPosition.x) > 0.5 || Math.abs(module.getPosition().getY() - module.targetPosition.y) > 0.5) {
+                    module.position.x = MathUtil.lerp(module.position.x, module.targetPosition.x, 1.5E-2F * stopwatch.getElapsedTime());
+                    module.position.y = MathUtil.lerp(module.position.y, module.targetPosition.y, 1.5E-2F * stopwatch.getElapsedTime());
                 }
             } else {
-                moduleComponent.position = moduleComponent.targetPosition;
+                module.position = module.targetPosition;
             }
         }
 
@@ -179,14 +179,14 @@ public final class HUD extends Module {
     }
 
     private void updateTranslations() {
-        allModuleComponents.forEach(moduleComponent -> 
-            moduleComponent.setTranslatedName(moduleComponent.getModule().getName())
+        allModuleComponents.forEach(module -> 
+        module.setTranslatedName(module.getModule().getName())
         );
     }
 
     private void sortArrayList() {
         activeModuleComponents = allModuleComponents.stream()
-                .filter(moduleComponent -> moduleComponent.getModule().shouldDisplay(this))
+                .filter(module -> module.getModule().shouldDisplay(this))
                 .sorted(Comparator.comparingDouble(module -> -(module.getNameWidth())))
                 .collect(Collectors.toList());
     }
@@ -203,21 +203,21 @@ public final class HUD extends Module {
         }
     }
     
-    private String getName(ModuleComponent moduleComponent) {
-    	return (lowercase.getValue() ? moduleComponent.getTranslatedName().toLowerCase() : moduleComponent.getTranslatedName()).replace(removeSpaces.getValue() ? " " : "", "");
+    private String getName(ModuleComponent module) {
+    	return (lowercase.getValue() ? module.getTranslatedName().toLowerCase() : module.getTranslatedName()).replace(removeSpaces.getValue() ? " " : "", "");
     }
 
     private Color getColor() {
     	return new Color(0, 0, 0, alphaBackground.getValue().intValue());
     }
     
-    private void setRenderRectangle(ModuleComponent moduleComponent, double x, double y, double widthOffset) {
-    	RenderUtil.rectangle(x - widthOffset, y - 3f, moduleComponent.nameWidth + 3 + widthOffset, moduleSpacing, getColor());
+    private void setRenderRectangle(ModuleComponent module, double x, double y, double widthOffset) {
+    	RenderUtil.rectangle(x - widthOffset, y - 3f, module.nameWidth + 3 + widthOffset, moduleSpacing, getColor());
     }
     
-    private void setVarious(ModuleComponent moduleComponent, Color color, String name) {
-        moduleComponent.setColor(color);
-        moduleComponent.setNameWidth(font.width(name));
-        moduleComponent.setDisplayName(name);
+    private void setVarious(ModuleComponent module, Color color, String name) {
+    	module.setColor(color);
+    	module.setNameWidth(font.width(name));
+    	module.setDisplayName(name);
     }
 }

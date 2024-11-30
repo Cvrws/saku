@@ -1,4 +1,4 @@
-package cc.unknown.ui.menu.account.impl;
+package cc.unknown.ui.menu.main.alt;
 
 import java.awt.FileDialog;
 import java.awt.Frame;
@@ -17,7 +17,7 @@ import javax.swing.SwingUtilities;
 
 import com.google.gson.Gson;
 
-import cc.unknown.ui.menu.account.AccountManagerScreen;
+import cc.unknown.ui.menu.main.MainMenu;
 import cc.unknown.ui.menu.main.impl.Button;
 import cc.unknown.ui.menu.main.impl.TextField;
 import cc.unknown.util.Accessor;
@@ -44,17 +44,15 @@ public class CookieScreen extends GuiScreen implements Accessor {
     @Override
     public void initGui() {
     	buttonList.clear();
-        int boxWidth = 200;
         int boxHeight = 24;
         int padding = 4;
-        float buttonWidth = (boxWidth - padding * 2) / 3.0F;
+        float buttonWidth = (200 - 4 * 2) / 3.0F;
 
-        Vector2d position = new Vector2d(this.width / 2 - boxWidth / 2, this.height / 2 - 24);
-        usernameBox = new TextField(0, this.fontRendererObj, (int) position.x, (int) position.y, (int) boxWidth, (int) boxHeight);
-    	this.buttonList.add(new Button(1, (int) position.x, (int) position.y + boxHeight + padding, (int) boxWidth, (int) boxHeight, "Login"));
-    	this.buttonList.add(new Button(2, (int) position.x, (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Select file"));
-    	this.buttonList.add(new Button(3, (int) ((int) position.x + buttonWidth + padding), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Microsoft Login"));
-    	this.buttonList.add(new Button(4, (int) ((int) position.x + (buttonWidth + padding) * 2), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Atrás"));
+        Vector2d position = new Vector2d(this.width / 2 - 200 / 2, this.height / 2 - 24);
+        usernameBox = new TextField(0, this.fontRendererObj, (int) position.x, (int) position.y, (int) 200, (int) boxHeight);
+    	this.buttonList.add(new Button(1, (int) position.x, (int) position.y + boxHeight + padding, (int) 200, (int) boxHeight, "Login"));
+    	this.buttonList.add(new Button(2, (int) position.x, (int) position.y + (boxHeight + padding) * 2, (int) ((410 - 4 * 2) / 3.0F), (int) boxHeight, "Select file"));
+    	this.buttonList.add(new Button(3, (int) ((int) position.x + (buttonWidth + padding) * 2), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Atrás"));
     }
 
     @Override
@@ -77,7 +75,7 @@ public class CookieScreen extends GuiScreen implements Accessor {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
     	usernameBox.textboxKeyTyped(typedChar, keyCode);
         if (typedChar == '\r') {
-            this.actionPerformed(this.buttonList.get(2));
+            this.actionPerformed(this.buttonList.get(1));
         }
     }
     
@@ -158,9 +156,7 @@ public class CookieScreen extends GuiScreen implements Accessor {
                         }
                         
                         MicrosoftAccount microsoftAccount = new MicrosoftAccount(profileRes.name, profileRes.id, mcRes.access_token, "");
-                        AccountManagerScreen.addAccount(microsoftAccount);
                         microsoftAccount.login();
-                        mc.displayGuiScreen(new AccountScreen());
                     }
                 } catch (Exception e) {
                     text_to_render = "Cuenta inválida";
@@ -202,11 +198,9 @@ public class CookieScreen extends GuiScreen implements Accessor {
                 }
             }, "Select Cookie File").start();
             break;
+            
         case 3:
-        	mc.displayGuiScreen(new MicrosoftScreen());
-        	break;
-        case 4:
-        	mc.displayGuiScreen(new AccountScreen());
+        	mc.displayGuiScreen(new AltManagerScreen());
         	break;
 
         }

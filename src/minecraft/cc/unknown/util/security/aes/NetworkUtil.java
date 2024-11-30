@@ -1,16 +1,16 @@
 package cc.unknown.util.security.aes;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 
+import cc.unknown.util.Accessor;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import net.minecraft.entity.player.EntityPlayer;
 
 @UtilityClass
-public class NetworkUtility {
+public class NetworkUtil implements Accessor {
 
 	@SneakyThrows
     public String getRaw(String url) {
@@ -41,4 +41,9 @@ public class NetworkUtility {
     		return response.toString().trim();
     	}
     }
+    
+    
+	public int getPing(EntityPlayer player) {
+		return mc.getNetHandler().getPlayerInfo(player.getUniqueID()) != null ? mc.getNetHandler().getPlayerInfo(player.getUniqueID()).getResponseTime() : 0;
+	}
 }

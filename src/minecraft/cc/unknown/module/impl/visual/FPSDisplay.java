@@ -10,16 +10,14 @@ import cc.unknown.font.Weight;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.ui.clickgui.ClickGui;
 import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.render.RenderUtil;
-import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.DragValue;
 import net.minecraft.client.Minecraft;
 
-@ModuleInfo(aliases = "FPS Counter", description = "Muestra tus frames por segundo", category = Category.VISUALS)
-public final class FPSCounter extends Module {
+@ModuleInfo(aliases = "FPS Display", description = "Muestra tus frames por segundo", category = Category.VISUALS)
+public final class FPSDisplay extends Module {
 
     private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));
 

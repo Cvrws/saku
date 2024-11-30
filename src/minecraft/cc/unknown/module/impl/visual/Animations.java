@@ -19,9 +19,8 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemMap;
 import net.minecraft.util.MathHelper;
 
-@ModuleInfo(aliases = {"Animations"}, description = "Ajusta las animaciones de los items", category = Category.VISUALS)
-public final class
-Animations extends Module {
+@ModuleInfo(aliases = "Animations", description = "Ajusta las animaciones de los items", category = Category.VISUALS)
+public final class Animations extends Module {
 
     private final ModeValue blockAnimation = new ModeValue("Block Animation", this)
             .add(new SubMode("None"))
@@ -31,11 +30,6 @@ Animations extends Module {
             .add(new SubMode("Astro"))
             .add(new SubMode("Smooth"))
             .add(new SubMode("Spin"))
-            .add(new SubMode("Leaked"))
-            .add(new SubMode("Old"))
-            .add(new SubMode("Exhibition"))
-            .add(new SubMode("Exhibition Old"))
-            .add(new SubMode("Exhibition New"))
             .add(new SubMode("Swong"))
             .add(new SubMode("Stella"))
             .add(new SubMode("Flup"))
@@ -45,19 +39,8 @@ Animations extends Module {
             .add(new SubMode("Swing"))
             .add(new SubMode("?"))
             .add(new SubMode("Stab"))
-            .add(new SubMode("Beta"))
-            .add(new SubMode("Dortware"))
-            .add(new SubMode("Avatar"))
             .add(new SubMode("Tap"))
             .setDefault("1.7");
-
-    public final ModeValue swingAnimation = new ModeValue("Swing Animation", this)
-            .add(new SubMode("None"))
-            .add(new SubMode("Punch"))
-            .add(new SubMode("Shove"))
-            .add(new SubMode("Smooth"))
-            .add(new SubMode("1.9+"))
-            .setDefault("None");
 
     private final BooleanValue onlyWhenBlocking = new BooleanValue("Update Position Only When Blocking", this, true);
     public final NumberValue swingSpeed = new NumberValue("Swing Speed", this, 1, -200, 50, 1);
@@ -155,18 +138,6 @@ Animations extends Module {
                     itemRenderer.blockTransformation();
                     break;
 
-                case "Beta":
-                    GL11.glTranslatef(0, 0.3f, 0);
-                    float var15 = MathHelper.sin(swingProgress * swingProgress * 3.1415927F);
-                    itemRenderer.transformFirstPersonItem(itemRenderer.equippedProgress * 0.5f, 0);
-                    GlStateManager.scale(var7, var7, var7);
-                    GlStateManager.rotate(-var15 * 55 / 2.0F, -8.0F, -0.0F, 9.0F);
-                    GlStateManager.rotate(-var15 * 45, 1.0F, var15 / 2, -0.0F);
-                    itemRenderer.blockTransformation();
-                    GL11.glTranslated(1.2, 0.3, 0.5);
-                    GL11.glTranslatef(-1, this.mc.player.isSneaking() ? -0.1F : -0.2F, 0.2F);
-                    break;
-
                 case "Slide":
                     GL11.glTranslatef(0, 0.3f, 0);
                     float smooth2 = (swingProgress * 0.8f - (swingProgress * swingProgress) * 0.8f);
@@ -176,22 +147,6 @@ Animations extends Module {
                     GlStateManager.rotate(45.0F, 0.0F, 2 + smooth2 * 0.5f, smooth2 * 3);
                     GlStateManager.rotate(0f, 0.0F, 1.0F, 0.0F);
                     GlStateManager.scale(0.37F, 0.37F, 0.37F);
-                    itemRenderer.blockTransformation();
-                    break;
-
-                case "Avatar":
-
-                    GlStateManager.translate(0.56F, -0.52F, -0.71999997F);
-
-                    GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
-                    float f = MathHelper.sin(swingProgress * swingProgress * (float) Math.PI);
-                    float f1 = MathHelper.sin(MathHelper.sqrt_float(swingProgress) * (float) Math.PI);
-
-                    GlStateManager.rotate(f * -20.0F, 0.0F, 1.0F, 0.0F);
-                    GlStateManager.rotate(f1 * -20.0F, 0.0F, 0.0F, 1.0F);
-                    GlStateManager.rotate(f1 * -40.0F, 1.0F, 0.0F, 0.0F);
-                    GlStateManager.scale(0.4F, 0.4F, 0.4F);
-
                     itemRenderer.blockTransformation();
                     break;
 
@@ -226,67 +181,8 @@ Animations extends Module {
                     GlStateManager.scale(var7, var7, var7);
                     GlStateManager.translate(0, 0.2F, -1);
                     GlStateManager.rotate(-59, -1, 0, 3);
-                    // Don't make the /2 a float it causes the animation to break
                     GlStateManager.rotate(-(System.currentTimeMillis() / 2 % 360), 1, 0, 0.0F);
                     GlStateManager.rotate(60.0F, 0.0F, 1.0F, 0.0F);
-                    break;
-                }
-
-                case "Leaked": {
-                    GlStateManager.translate(.0f, -.03f, -.13f);
-                    itemRenderer.transformFirstPersonItem(animationProgression / 3F, 0.0F);
-                    GlStateManager.scale(var7, var7, var7);
-                    GlStateManager.translate(0.0f, 0.1F, 0.0F);
-                    itemRenderer.blockTransformation();
-                    GlStateManager.rotate(convertedProgress * 20.0F / 2.0F, 0.0F, 1.0F, 1.5F);
-                    GlStateManager.rotate(-convertedProgress * 200.0F / 4.0F, 1.0f, 0.9F, 0.0F);
-
-                    break;
-                }
-
-                case "Old": {
-
-                    GlStateManager.translate(0.0F, 0.1F, 0.0F);
-                    itemRenderer.transformFirstPersonItem(animationProgression / 2f - 0.2F, swingProgress);
-                    GlStateManager.scale(var7, var7, var7);
-                    itemRenderer.blockTransformation();
-
-                    break;
-                }
-
-                case "Exhibition": {
-                    GlStateManager.translate(.0f, -.05f, -0f);
-                    itemRenderer.transformFirstPersonItem(animationProgression / 2.0F, 0.0F);
-                    GlStateManager.scale(var7, var7, var7);
-                    GlStateManager.translate(0.0F, 0.3F, -0.0F);
-                    GlStateManager.rotate(-convertedProgress * 31.0F, 1.0F, 0.0F, 2.0F);
-                    GlStateManager.rotate(-convertedProgress * 33.0F, 1.5F, (convertedProgress / 1.1F), 0.0F);
-                    itemRenderer.blockTransformation();
-
-                    break;
-                }
-
-                case "Exhibition Old": {
-                    GlStateManager.translate(.0f, -.05f, 0f);
-                    GlStateManager.translate(-0.04F, 0.13F, 0.0F);
-                    itemRenderer.transformFirstPersonItem(animationProgression / 2.5F, 0.0F);
-                    GlStateManager.scale(var7, var7, var7);
-                    GlStateManager.rotate(-convertedProgress * 40.0F / 2.0F, convertedProgress / 2.0F, 1.0F, 4.0F);
-                    GlStateManager.rotate(-convertedProgress * 30.0F, 1.0F, convertedProgress / 3.0F, -0.0F);
-                    itemRenderer.blockTransformation();
-
-                    break;
-                }
-
-                case "Exhibition New": {
-                    GlStateManager.translate(.0f, -.04f, -.01f);
-                    itemRenderer.transformFirstPersonItem(animationProgression / 2.0F, 0.0F);
-                    GlStateManager.scale(var7, var7, var7);
-                    GlStateManager.translate(0.0F, 0.3F, -0.0F);
-                    GlStateManager.rotate(-convertedProgress * 30.0F, 1.0F, 0.0F, 2.0F);
-                    GlStateManager.rotate(-convertedProgress * 44.0F, 1.5F, (convertedProgress / 1.2F), 0.0F);
-                    itemRenderer.blockTransformation();
-
                     break;
                 }
 
@@ -380,75 +276,10 @@ Animations extends Module {
 
                     break;
                 }
-
-                case "Dortware": {
-                    final float var1 = MathHelper.sin((float) (swingProgress * swingProgress * Math.PI - 3));
-                    final float var = MathHelper.sin((float) (MathHelper.sqrt_float(swingProgress) * Math.PI));
-
-                    itemRenderer.transformFirstPersonItem(animationProgression, 1.0f);
-
-                    GlStateManager.rotate(-var * 10, 0.0f, 15.0f, 200.0f);
-                    GlStateManager.rotate(-var * 10f, 300.0f, var / 2.0f, 1.0f);
-
-                    itemRenderer.blockTransformation();
-
-                    GL11.glTranslated(2.4, 0.3, 0.5);
-                    GL11.glTranslatef(-2.10f, -0.2f, 0.1f);
-                    GlStateManager.rotate(var1 * 13.0f, -10.0f, -1.4f, -10.0f);
-                }
             }
 
             event.setCancelled();
 
-        } else if (!event.isUseItem()) {
-
-            switch (swingAnimation.getValue().getName()) {
-                case "None":
-                    itemRenderer.func_178105_d(swingProgress);
-                    itemRenderer.transformFirstPersonItem(animationProgression, swingProgress);
-                    if (!onlyWhenBlocking.getValue()) {
-                        GlStateManager.scale(var7, var7, var7);
-                    }
-                    break;
-
-                case "Punch": {
-                    itemRenderer.transformFirstPersonItem(animationProgression, swingProgress);
-                    itemRenderer.func_178105_d(swingProgress);
-                    if (!onlyWhenBlocking.getValue()) {
-                        GlStateManager.scale(var7, var7, var7);
-                    }
-                    break;
-                }
-
-                case "1.9+": {
-                    itemRenderer.func_178105_d(swingProgress);
-                    itemRenderer.transformFirstPersonItem(animationProgression, swingProgress);
-                    if (!onlyWhenBlocking.getValue()) {
-                        GlStateManager.scale(var7, var7, var7);
-                    }
-                    break;
-                }
-
-                case "Shove": {
-                    itemRenderer.transformFirstPersonItem(animationProgression, animationProgression);
-                    itemRenderer.func_178105_d(swingProgress);
-                    if (!onlyWhenBlocking.getValue()) {
-                        GlStateManager.scale(var7, var7, var7);
-                    }
-                    break;
-                }
-
-                case "Smooth": {
-                    itemRenderer.transformFirstPersonItem(animationProgression, swingProgress);
-                    itemRenderer.func_178105_d(animationProgression);
-                    if (!onlyWhenBlocking.getValue()) {
-                        GlStateManager.scale(var7, var7, var7);
-                    }
-                    break;
-                }
-            }
-
-            event.setCancelled();
         }
     };
 

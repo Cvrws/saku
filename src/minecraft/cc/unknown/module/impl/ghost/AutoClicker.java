@@ -58,6 +58,7 @@ public class AutoClicker extends Module {
 
 	@EventLink
 	public final Listener<NaturalPressEvent> onTick = event -> {
+		mc.leftClickCounter = 0;
 		if (button.is("Left") && mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && mc.world.getBlockState(mc.objectMouseOver.getBlockPos()).getBlock().getMaterial() != Material.air) return;
 
 		attackTicks++;
@@ -138,11 +139,13 @@ public class AutoClicker extends Module {
 	    if (guiClicker.getValue()) {
 	    	inInvClick(mc.currentScreen);
 	    }
+	    mc.leftClickCounter = 0;
 	};
 	
 	@EventLink
 	public final Listener<AttackEvent> onAttack = event -> {
 	    attackTicks = 0;
+	    mc.leftClickCounter = 0;
 	};
 	
 	@EventLink

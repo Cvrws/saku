@@ -48,29 +48,6 @@ public final class ColorUtil {
 	    }
 	    return new Color(color.getRed(), color.getGreen(), color.getBlue(), clampedAlpha);
 	}
-
-	public void setColor(Color color) {
-	    float red = color.getRed() / 255f;
-	    float green = color.getGreen() / 255f;
-	    float blue = color.getBlue() / 255f;
-	    float alpha = color.getAlpha() / 255f;
-	    GlStateManager.color(red, green, blue, alpha);
-	}
-	
-    public Color averageColor(BufferedImage bi, int width, int height, int pixelStep) {
-
-        int[] color = new int[3];
-        for (int x = 0; x < width; x += pixelStep) {
-            for (int y = 0; y < height; y += pixelStep) {
-                Color pixel = new Color(bi.getRGB(x, y));
-                color[0] += pixel.getRed();
-                color[1] += pixel.getGreen();
-                color[2] += pixel.getBlue();
-            }
-        }
-        int num = width * height;
-        return new Color(color[0] / num, color[1] / num, color[2] / num);
-    }
     
 	public Color blend(Color color, Color color1, double d0) {
 		float f = (float) d0;
@@ -111,11 +88,8 @@ public final class ColorUtil {
 			if (colorChar == 'd' || colorChar == '5') {
 				return Color.MAGENTA.getRGB();
 			}
-			if (colorChar == 'f' || colorChar == '7') {
+			if (colorChar == 'f' || colorChar == '7' || colorChar == '8' || colorChar == '0') {
 				return Color.WHITE.getRGB();
-			}
-			if (colorChar == '8' || colorChar == '0') {
-				return Color.BLACK.getRGB();
 			}
 		}
 		return Color.WHITE.getRGB();

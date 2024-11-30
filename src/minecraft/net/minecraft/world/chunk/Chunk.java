@@ -773,8 +773,7 @@ public class Chunk {
 		this.isModified = true;
 	}
 
-	public void getEntitiesWithinAABBForEntity(Entity entityIn, AxisAlignedBB aabb, List<Entity> listToFill,
-			Predicate<? super Entity> p_177414_4_) {
+	public void getEntitiesWithinAABBForEntity(Entity entityIn, AxisAlignedBB aabb, List<Entity> listToFill, Predicate<? super Entity> p_177414_4_) {
 		int i = MathHelper.floor_double((aabb.minY - 2.0D) / 16.0D);
 		int j = MathHelper.floor_double((aabb.maxY + 2.0D) / 16.0D);
 		i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
@@ -806,8 +805,7 @@ public class Chunk {
 		}
 	}
 
-	public <T extends Entity> void getEntitiesOfTypeWithinAAAB(Class<? extends T> entityClass, AxisAlignedBB aabb,
-			List<T> listToFill, Predicate<? super T> p_177430_4_) {
+	public <T extends Entity> void getEntitiesOfTypeWithinAAAB(Class<? extends T> entityClass, AxisAlignedBB aabb, List<T> listToFill, Predicate<? super T> p_177430_4_) {
 		int i = MathHelper.floor_double((aabb.minY - 2.0D) / 16.0D);
 		int j = MathHelper.floor_double((aabb.maxY + 2.0D) / 16.0D);
 		i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);

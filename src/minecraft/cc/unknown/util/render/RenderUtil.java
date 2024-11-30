@@ -339,16 +339,8 @@ public final class RenderUtil implements Accessor {
         polygon(x, y, sideLength, 3);
     }
 
-    public void drawRoundedGradientRectTest(double x, double y, double width, double height, double radius, Color firstColor, Color secondColor, boolean vertical) {
-        Shaders.RGQTest.draw(x, y, width, height, radius, firstColor, secondColor, vertical);
-    }
-
-    public void drawRoundedGradientRectTest(double x, double y, double width, double height, double radius, Color firstColor, Color secondColor, boolean vertical, boolean leftTop, boolean rightTop, boolean rightBottom, boolean leftBottom) {
-        Shaders.RGQTest.draw((float) x, (float) y, (float) width, (float) height, (float) radius, firstColor, secondColor, vertical, leftTop, rightTop, rightBottom, leftBottom);
-    }
-
-    public void drawRoundedGradientRectTest(double x, double y, double width, double height, double radius, Color firstColor, Color secondColor, Color thirdColor, boolean vertical, boolean leftTop, boolean rightTop, boolean rightBottom, boolean leftBottom) {
-        Shaders.RTRIGQ.draw((float) x, (float) y, (float) width, (float) height, (float) radius, firstColor, secondColor, thirdColor, vertical, leftTop, rightTop, rightBottom, leftBottom);
+    public void drawRoundedGradientRectTest(double x, double y, double width, double height, double radius, Color firstColor, Color secondColor, Color thirdColor) {
+        Shaders.RTRIGQ.draw((float) x, (float) y, (float) width, (float) height, (float) radius, firstColor, secondColor, thirdColor, false, true, true, false, false);
     }
 
     public void roundedRectangle(double x, double y, double width, double height, double radius, Color color) {
@@ -581,5 +573,14 @@ public final class RenderUtil implements Accessor {
         GL11.glDepthMask(true);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
+    }
+    
+    public void drawShadedString(final String text, final int x, final int y, final int color) {
+    	final String unformattedText = text.replaceAll("(?i)§[\\da-f]", "");
+        mc.fontRendererObj.draw(unformattedText, x + 1, y, 0);
+        mc.fontRendererObj.draw(unformattedText, x - 1, y, 0);
+        mc.fontRendererObj.draw(unformattedText, x, y + 1, 0);
+        mc.fontRendererObj.draw(unformattedText, x, y - 1, 0);
+        mc.fontRendererObj.draw(text, x, y, color);
     }
 }

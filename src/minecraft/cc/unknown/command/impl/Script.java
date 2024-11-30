@@ -49,6 +49,7 @@ public final class Script extends Command {
                     else script.unload();
                     break;
 
+                case "open":
                 case "folder":
                     try {
                         Desktop desktop = Desktop.getDesktop();
@@ -57,7 +58,7 @@ public final class Script extends Command {
                     } catch (IllegalArgumentException | IOException exception) {
                     	PlayerUtil.display("Script directory not found");
                     }
-                    return;
+                    break;
             }
 
             PlayerUtil.display(

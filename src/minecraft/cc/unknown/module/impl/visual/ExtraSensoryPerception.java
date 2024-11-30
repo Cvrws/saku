@@ -15,8 +15,6 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 @ModuleInfo(aliases = "Extra Sensory Perception", description = "Renderiza a los jugadores", category = Category.VISUALS)
 public final class ExtraSensoryPerception extends Module {
 
-	
-	private final BooleanValue colorName = new BooleanValue("Color based in name color", this, true);
 	private final BooleanValue colorTeams = new BooleanValue("Color based in team color", this, true);
 	private final BooleanValue checkInvis = new BooleanValue("Check Invisibles", this, false);
 	
@@ -28,13 +26,8 @@ public final class ExtraSensoryPerception extends Module {
             	
             	if (colorTeams.getValue()) {
             		color = ColorUtil.getTeamColor(player);
-            	} else if (colorName.getValue() && player.getTeam() != null) {
-            		ScorePlayerTeam team = (ScorePlayerTeam) player.getTeam();
-            		String prefix = team.getColorPrefix();
-            		if (prefix != null && prefix.length() >= 2) {
-            			int nameColor = mc.fontRendererObj.getColorCode(prefix.charAt(1));
-            			color = nameColor;
-            		}
+            	} else {
+            		color = getTheme().getFirstColor().getRGB();
             	}
             	 
             	RenderUtil.drawSimpleBox(player, color, event.getPartialTicks());

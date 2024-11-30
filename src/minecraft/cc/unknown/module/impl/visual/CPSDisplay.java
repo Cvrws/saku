@@ -17,8 +17,8 @@ import cc.unknown.util.structure.CPSHelper;
 import cc.unknown.util.structure.CPSHelper.MouseButton;
 import cc.unknown.value.impl.DragValue;
 
-@ModuleInfo(aliases = "CPS Counter", description = "Muestra tus clicks por segundo", category = Category.VISUALS)
-public final class CPSCounter extends Module {
+@ModuleInfo(aliases = "CPS Display", description = "Muestra tus clicks por segundo", category = Category.VISUALS)
+public final class CPSDisplay extends Module {
 
 	private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));
 	private final Vector2f scale = new Vector2f(RenderUtil.GENERIC_SCALE, RenderUtil.GENERIC_SCALE);

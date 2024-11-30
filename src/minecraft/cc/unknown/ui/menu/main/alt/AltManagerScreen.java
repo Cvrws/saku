@@ -1,16 +1,21 @@
-package cc.unknown.ui.menu.account.impl;
+package cc.unknown.ui.menu.main.alt;
+
+import static cc.unknown.util.client.StreamerUtil.gray;
+import static cc.unknown.util.client.StreamerUtil.green;
+import static cc.unknown.util.client.StreamerUtil.red;
+import static cc.unknown.util.client.StreamerUtil.yellow;
 
 import java.awt.Color;
 import java.io.IOException;
 
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.ui.menu.account.AccountManagerScreen;
+import cc.unknown.ui.menu.main.MainMenu;
 import cc.unknown.ui.menu.main.impl.Button;
 import cc.unknown.ui.menu.main.impl.TextField;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.account.Account;
-import cc.unknown.util.account.impl.CrackedAccount;
+import cc.unknown.util.account.impl.MicrosoftAccount;
 import cc.unknown.util.account.name.UsernameGenerator;
 import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.BackgroundUtil;
@@ -20,17 +25,18 @@ import cc.unknown.util.render.animation.Easing;
 import cc.unknown.util.render.font.Font;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.Session;
+import net.minecraft.util.Session.Type;
 
-public class CrackedScreen extends GuiScreen implements Accessor {
+public class AltManagerScreen extends GuiScreen implements Accessor {
     private static TextField usernameBox;
     private static GuiScreen reference;
-    private String userDisplay = "Idle...";
+    private String status = yellow + "Idle...";
     private Animation animation;
     private static final Font FONT_RENDERER = Fonts.MAIN.get(20, Weight.LIGHT);
 
-    public CrackedScreen() {
+    public AltManagerScreen() {
         reference = this;
     }
     
@@ -45,9 +51,11 @@ public class CrackedScreen extends GuiScreen implements Accessor {
         Vector2d position = new Vector2d(this.width / 2 - boxWidth / 2, this.height / 2 - 24);
         usernameBox = new TextField(0, this.fontRendererObj, (int) position.x, (int) position.y, (int) boxWidth, (int) boxHeight);
     	this.buttonList.add(new Button(1, (int) position.x, (int) position.y + boxHeight + padding, (int) boxWidth, (int) boxHeight, "Generar un nick random"));
-    	this.buttonList.add(new Button(2, (int) position.x, (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Añadir"));
-    	this.buttonList.add(new Button(3, (int) ((int) position.x + buttonWidth + padding), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Login"));
-    	this.buttonList.add(new Button(4, (int) ((int) position.x + (buttonWidth + padding) * 2), (int) position.y + (boxHeight + padding) * 2, (int) buttonWidth, (int) boxHeight, "Atrás"));
+    	this.buttonList.add(new Button(2, (int) (position.x + padding - 32), (int) (position.y + (boxHeight + padding) * 2), (int) buttonWidth, (int) boxHeight, "Login"));
+    	this.buttonList.add(new Button(3, (int) (position.x + (buttonWidth + padding) * 1 - 30), (int) (position.y + (boxHeight + padding) * 2), (int) buttonWidth, (int) boxHeight, "Browser Login"));
+    	this.buttonList.add(new Button(4, (int) (position.x + (buttonWidth + padding) * 2 - 30), (int) (position.y + (boxHeight + padding) * 2), (int) buttonWidth, (int) boxHeight, "Cookie Login"));
+    	this.buttonList.add(new Button(5, (int) (position.x + (buttonWidth + padding) * 3 - 30), (int) (position.y + (boxHeight + padding) * 2), (int) buttonWidth, (int) boxHeight, "Atràs"));
+    	
         animation = new Animation(Easing.EASE_OUT_QUINT, 600);
         animation.setStartValue(-200);
     }
@@ -59,17 +67,15 @@ public class CrackedScreen extends GuiScreen implements Accessor {
 
         usernameBox.drawTextBox();
         GlStateManager.pushMatrix();
-        int backgroundWidth = FONT_RENDERER.width(userDisplay) + 10;
-        int backgroundHeight = (int) (FONT_RENDERER.height() + 5);
 
-        int backgroundX = (width / 2) - (backgroundWidth / 2);
-        int backgroundY = (int) ((height / 2 - 55 + animation.getValue()) - (backgroundHeight / 2));
-
-        RenderUtil.drawRoundedRect2(backgroundX, backgroundY + animation.getValue(), backgroundX + backgroundWidth, backgroundY + backgroundHeight + animation.getValue(), 6.0, new Color(0, 0, 0, 150).getRGB());
-        FONT_RENDERER.drawCentered(userDisplay, width / 2, height / 2 - 58 + animation.getValue(), Color.WHITE.getRGB());
-
-        this.buttonList.forEach(button -> button.drawButton(mc, mouseX, mouseY));
-        GlStateManager.popMatrix();
+	     int backgroundWidth = FONT_RENDERER.width(status) + 22;
+	     int backgroundHeight = (int) (FONT_RENDERER.height() + 5);
+	     int backgroundX = (width / 2) - (backgroundWidth / 2);
+	     int backgroundY = (int) ((height / 2 - 35 + animation.getValue()) - (backgroundHeight / 2));
+	
+	     FONT_RENDERER.drawCentered(status, width / 2, (int) (backgroundY + backgroundHeight / 2 - FONT_RENDERER.height() / 2), Color.WHITE.getRGB());
+	     this.buttonList.forEach(button -> button.drawButton(mc, mouseX, mouseY));
+	     GlStateManager.popMatrix();
     }
 
     @Override
@@ -82,7 +88,7 @@ public class CrackedScreen extends GuiScreen implements Accessor {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
     	usernameBox.textboxKeyTyped(typedChar, keyCode);
         if (typedChar == '\r') {
-            this.actionPerformed(this.buttonList.get(3));
+            this.actionPerformed(this.buttonList.get(1));
         }
     }
     
@@ -91,29 +97,29 @@ public class CrackedScreen extends GuiScreen implements Accessor {
         String username = usernameBox.getText();
 
     	switch (button.id) {
-        case 1: 
+        case 1:        	
         	String name = UsernameGenerator.generate();
         	if (name != null && UsernameGenerator.validate(name)) {
         		usernameBox.setText(name);
         	}
-        	userDisplay = "Te gusta este nombre " + name + "?";
+        	status = gray + "Te gusta este nombre > " + red + name + gray + "?";
         	break;
         case 2:
+        	if (username.isEmpty()) status = gray + "Debes ingresar un ign primero.";
             if (UsernameGenerator.validate(username)) {
-                Account account = new CrackedAccount(username);
-                AccountManagerScreen.addAccount(account);
-                account.login();
-                mc.displayGuiScreen(new AccountManagerScreen(reference));
+            	mc.setSession(new Session(username, "none", "none", "mojang"));
+            	status = gray + "Logeado como > " + green + username;
             }
         	break;
         case 3:
-            if (UsernameGenerator.validate(username)) {
-                new CrackedAccount(username).login();
-                mc.displayGuiScreen(new AccountManagerScreen(reference));
-            }
+        	status = gray + "Abriendo navegador...";
+            MicrosoftAccount.create();
         	break;
         case 4:
-        	mc.displayGuiScreen(new AccountScreen());
+        	mc.displayGuiScreen(new CookieScreen());
+            break;
+        case 5:
+        	mc.displayGuiScreen(new MainMenu());
         	break;
         }
     }

@@ -8,7 +8,7 @@ import cc.unknown.Sakura;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
 import cc.unknown.module.impl.movement.Sprint;
-import cc.unknown.ui.menu.account.AccountManagerScreen;
+import cc.unknown.ui.menu.main.alt.AltManagerScreen;
 import cc.unknown.ui.menu.main.impl.Button;
 import cc.unknown.ui.menu.particles.RainParticleSystem;
 import cc.unknown.util.client.user.UserUtil;
@@ -27,14 +27,14 @@ import net.minecraft.client.resources.I18n;
 public class MainMenu extends GuiMainMenu {
 
     private Font fontRenderer;
-    private final Map<Integer, Consumer<GuiButton>> buttonActions = new HashMap<>();
     private RainParticleSystem rainParticleSystem;
+    private final Map<Integer, Consumer<GuiButton>> buttonActions = new HashMap<>();
 
     public MainMenu() {
         fontRenderer = Fonts.MAIN.get(18, Weight.LIGHT);
         buttonActions.put(0, button -> mc.displayGuiScreen(new GuiSelectWorld(this)));
         buttonActions.put(1, button -> mc.displayGuiScreen(new GuiMultiplayer(this)));
-        buttonActions.put(2, button -> mc.displayGuiScreen(new AccountManagerScreen(this)));
+        buttonActions.put(2, button -> mc.displayGuiScreen(new AltManagerScreen()));
         buttonActions.put(3, button -> mc.displayGuiScreen(new GuiOptions(this, mc.gameSettings)));
     }
 
@@ -60,7 +60,7 @@ public class MainMenu extends GuiMainMenu {
             int yOffset = initHeight + i * buttonSpacing;
             this.buttonList.add(new Button(i, xMid, yOffset, objWidth, objHeight, translatedString));
         }
-
+        
         rainParticleSystem = new RainParticleSystem(width, height);
     }
 
@@ -79,10 +79,10 @@ public class MainMenu extends GuiMainMenu {
         super.drawScreen(mouseX, mouseY, partialTicks);
         ScaledResolution sr = mc.scaledResolution;
 
-        final String title = "§fSakura Client";
+        String title = "§fSakura Client";
         String name = String.format("§fLogged in as §7%s", UserUtil.getUser());
 
-        if(getModule(Sprint.class).logged){
+        if(getModule(Sprint.class).logged) {
         	getModule(Sprint.class).sleek = 1;
         }
         

@@ -15,7 +15,6 @@ import cc.unknown.script.ScriptManager;
 import cc.unknown.ui.clickgui.ClickGui;
 import cc.unknown.ui.theme.ThemeManager;
 import cc.unknown.util.file.FileManager;
-import cc.unknown.util.file.alt.AltManager;
 import cc.unknown.util.file.config.ConfigManager;
 import cc.unknown.util.file.enemy.EnemyManager;
 import cc.unknown.util.file.friend.FriendManager;
@@ -41,7 +40,6 @@ public enum Sakura {
     private EnemyManager enemyManager;
 
     private ConfigManager configManager;
-    private AltManager altManager;
     private BindableManager bindableManager;
     private ScriptManager scriptManager;
 
@@ -59,7 +57,6 @@ public enum Sakura {
         configManager = new ConfigManager();
         friendManager = new FriendManager();
         enemyManager = new EnemyManager();
-        altManager = new AltManager();
         themeManager = new ThemeManager();
         eventBus = new EventBus<>();
         bindableManager = new BindableManager();
@@ -71,7 +68,6 @@ public enum Sakura {
         scriptManager.init();
         componentManager.init();
         commandManager.init();
-        altManager.init();
         friendManager.init();
         enemyManager.init();
 

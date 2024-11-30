@@ -25,14 +25,16 @@ import com.sun.net.httpserver.HttpServer;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class MicrosoftLogin {
 
-    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class LoginData {
+    public class LoginData {
         public String mcToken;
         public String newRefreshToken;
         public String uuid, username;
@@ -42,28 +44,44 @@ public class MicrosoftLogin {
         }
     }
 
-    private static final String CLIENT_ID = "ba89e6e0-8490-4a26-8746-f389a0d3ccc7", CLIENT_SECRET = "hlQ8Q~33jTRilP4yE-UtuOt9wG.ZFLqq6pErIa2B";
-    private static final int PORT = 8247;
+    private final String CLIENT_ID = "ba89e6e0-8490-4a26-8746-f389a0d3ccc7", CLIENT_SECRET = "hlQ8Q~33jTRilP4yE-UtuOt9wG.ZFLqq6pErIa2B";
+    private final int PORT = 8247;
 
-    private static HttpServer server;
-    private static Consumer<String> callback;
+    private HttpServer server;
+    private Consumer<String> callback;
 
+    private void browse(final String url) {
+    	String[] browsers = {
+    		    "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe " + url,
+    		    "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe " + url,
+    		    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe " + url,
+    		    "open -na \"Google Chrome\" --args \"" + url + "\""
+    	};
+    	
+        for (String browser : browsers) {
+            try {
+                Runtime.getRuntime().exec(browser);
+                return;
+            } catch (Exception ignored) {
+            }
+        }
+    }
 
-    private static void copy(final String url) {
+    private void copy(final String url) {
         final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(url), null);
     }
 
-    public static void getRefreshToken(final Consumer<String> callback) {
+    public void getRefreshToken(final Consumer<String> callback) {
         MicrosoftLogin.callback = callback;
 
         startServer();
-        copy("https://login.live.com/oauth20_authorize.srf?client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&response_type=code&redirect_uri=http://localhost:" + PORT + "&scope=XboxLive.signin%20offline_access&prompt=select_account");
+        browse("https://login.live.com/oauth20_authorize.srf?client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&response_type=code&redirect_uri=http://localhost:" + PORT + "&scope=XboxLive.signin%20offline_access&prompt=select_account");
     }
 
-    private static final Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
-    public static LoginData login(String refreshToken) {
+    public LoginData login(String refreshToken) {
         // Refresh access token
         final AuthTokenResponse res = gson.fromJson(
                 Browser.postExternal("https://login.live.com/oauth20_token.srf", "client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&refresh_token=" + refreshToken + "&grant_type=refresh_token&redirect_uri=http://localhost:" + PORT + "&prompt=select_account", false),
@@ -109,7 +127,7 @@ public class MicrosoftLogin {
         return new LoginData(mcRes.access_token, refreshToken, profileRes.id, profileRes.name);
     }
 
-    private static void startServer() {
+    private void startServer() {
         if (server != null) return;
 
         try {
@@ -123,7 +141,7 @@ public class MicrosoftLogin {
         }
     }
 
-    private static void stopServer() {
+    private void stopServer() {
         if (server == null) return;
 
         server.stop(0);
@@ -132,7 +150,7 @@ public class MicrosoftLogin {
         callback = null;
     }
 
-    private static class Handler implements HttpHandler {
+    private class Handler implements HttpHandler {
         @Override
         public void handle(final HttpExchange req) throws IOException {
             if (req.getRequestMethod().equals("GET")) {
@@ -182,7 +200,7 @@ public class MicrosoftLogin {
         }
     }
 
-    private static class AuthTokenResponse {
+    private class AuthTokenResponse {
         @Expose
         @SerializedName("access_token")
         public String access_token;
@@ -191,7 +209,7 @@ public class MicrosoftLogin {
         public String refresh_token;
     }
 
-    private static class XblXstsResponse {
+    private class XblXstsResponse {
         @Expose
         @SerializedName("Token")
         public String Token;
@@ -199,12 +217,12 @@ public class MicrosoftLogin {
         @SerializedName("DisplayClaims")
         public DisplayClaims DisplayClaims;
 
-        private static class DisplayClaims {
+        private class DisplayClaims {
             @Expose
             @SerializedName("xui")
             private Claim[] xui;
 
-            private static class Claim {
+            private class Claim {
                 @Expose
                 @SerializedName("uhs")
                 private String uhs;
@@ -212,18 +230,18 @@ public class MicrosoftLogin {
         }
     }
 
-    public static class McResponse {
+    public class McResponse {
         @Expose
         @SerializedName("access_token")
         public String access_token;
     }
 
-    private static class GameOwnershipResponse {
+    private class GameOwnershipResponse {
         @Expose
         @SerializedName("items")
         private Item[] items;
 
-        private static class Item {
+        private class Item {
             @Expose
             @SerializedName("name")
             private String name;
@@ -242,7 +260,7 @@ public class MicrosoftLogin {
         }
     }
 
-    public static class ProfileResponse {
+    public class ProfileResponse {
         @Expose
         @SerializedName("id")
         public String id;

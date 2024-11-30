@@ -35,32 +35,22 @@ public class LagRange extends Module {
             return;
         }
 
-        try {
-			Thread.sleep(lagTime.getValue().intValue());
-		} catch (InterruptedException e) {
-		}
-        lastLagTime = System.currentTimeMillis();
+        startLag();
 	};
 	
     private boolean shouldStart() {
         if (!isInGame()) return false;
         if (!MoveUtil.isMoving()) return false;
         if (System.currentTimeMillis() - lastLagTime < delay.getValue().longValue()) return false;
-
-        EntityPlayer target = mc.world.playerEntities.stream()
-                .filter(p -> p != mc.player)
-                .filter(p -> !checkTeams.getValue() || !PlayerUtil.sameTeam(p))
-                .filter(p -> !FriendComponent.isFriend(p))
-                .filter(p -> !getComponent(BotComponent.class).contains(p))
-                .map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p)))
-                .min(Comparator.comparing(Doble::getSecond))
-                .map(Doble::getFirst)
-                .orElse(null);
-
+        EntityPlayer target = mc.world.playerEntities.stream().filter(p -> p != mc.player).filter(p -> !checkTeams.getValue() || !PlayerUtil.sameTeam(p)).filter(p -> !FriendComponent.isFriend(p)).filter(p -> !getComponent(BotComponent.class).contains(p)).map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p))).min(Comparator.comparing(Doble::getSecond)).map(Doble::getFirst).orElse(null);
         if (target == null) return false;
-
         double distance = new Vec3(target).distanceTo(mc.player);
         return distance >= range.getValue().doubleValue() && distance <= range.getSecondValue().doubleValue();
     }
-
+    
+    @SneakyThrows
+    private void startLag() {
+		Thread.sleep(lagTime.getValue().intValue());
+		lastLagTime = System.currentTimeMillis();
+    }
 }

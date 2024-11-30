@@ -12,6 +12,8 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
+import cc.unknown.value.impl.BoundsNumberValue;
+import cc.unknown.value.impl.NumberValue;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.enchantment.Enchantment;
@@ -27,14 +29,17 @@ import net.minecraft.item.ItemTool;
 @ModuleInfo(aliases = "Name Tags", description = "Renderiza el nombre de los jugadores", category = Category.VISUALS)
 public final class NameTags extends Module {
 	
+	private final BoundsNumberValue distance = new BoundsNumberValue("Distance", this, 2, 6, 1, 7, 1);
+	private final NumberValue scale = new NumberValue("Scale", this, 4.5, 0.1, 10, 0.1);
 	private final BooleanValue selfTag = new BooleanValue("Self Tag", this, true);
-	private BooleanValue durability = new BooleanValue("Durability", this, false);
+	private final BooleanValue durability = new BooleanValue("Durability", this, false);
 	private final BooleanValue background = new BooleanValue("Background", this, false);
 	private final BooleanValue armor = new BooleanValue("Armor", this, false);
+	private final BooleanValue checkInvis = new BooleanValue("Show Invisibles", this, false);
 
 	@EventLink
 	public final Listener<RenderLabelEvent> onRender2D = event -> {
-        if (event.getTarget() instanceof EntityPlayer && ((EntityPlayer)event.getTarget()).deathTime == 0) {
+        if (event.getTarget() instanceof EntityPlayer && ((EntityPlayer)event.getTarget()).deathTime == 0 && (checkInvis.getValue() || !((EntityPlayer)event.getTarget()).isInvisible())) {
             EntityPlayer player = (EntityPlayer) event.getTarget();
             String name = player.getDisplayName().getFormattedText();
             
@@ -50,13 +55,15 @@ public final class NameTags extends Module {
 	
 	private void renderNewTag(RenderLabelEvent event, EntityPlayer player, String name) {
 		float nameWidth = mc.fontRendererObj.width(name);
-		
+        double scaleRatio = (double) (getSize(player) / 10.0F * scale.getValue().doubleValue()) * 1.5D;
+        float scale = 0.02666667F;
+        
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) event.getX() + 0.0F, (float) event.getY() + player.height + 0.5F, (float) event.getZ());
         GlStateManager.rotate(-mc.getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(mc.getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
-        float scale = 0.02666667F;
-        GlStateManager.scale(-scale, -scale, scale);
+        GlStateManager.scale(-scale * scaleRatio, -scale * scaleRatio, scale * scaleRatio);
+        		
         if (player.isSneaking()) {
             GlStateManager.translate(0.0F, 9.374999F, 0.0F);
         }
@@ -226,4 +233,9 @@ public final class NameTags extends Module {
 			}
 		}
 	}
+	
+	private float getSize(EntityPlayer player) {
+		return Math.max(mc.player.getDistanceToEntity(player) / distance.getValue().floatValue(), distance.getSecondValue().floatValue());
+	}
+
 }

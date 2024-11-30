@@ -662,8 +662,4 @@ public class PlayerUtil implements Accessor {
             PacketUtil.send(new C01PacketChatMessage(message.toString()));
         }
     }
-    
-	public int getPing(EntityPlayer player) {
-		return mc.getNetHandler().getPlayerInfo(player.getUniqueID()) != null ? mc.getNetHandler().getPlayerInfo(player.getUniqueID()).getResponseTime() : 0;
-	}
 }

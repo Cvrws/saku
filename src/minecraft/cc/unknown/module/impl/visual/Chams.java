@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.player.EntityPlayer;
 
-@ModuleInfo(aliases = "Chams", description = "Renders the player through blocks or walls", category = Category.VISUALS)
+@ModuleInfo(aliases = "Chams", description = "Renderiza a los jugadores detras de bloques o paredes", category = Category.VISUALS)
 public final class Chams extends Module {
 	
 	@EventLink
@@ -58,7 +58,7 @@ public final class Chams extends Module {
 		}
 	
 		RenderHelper.disableStandardItemLighting();
-		mc.entityRenderer.disableLightmap();   
+		mc.entityRenderer.disableLightmap();
     };
 	
     @EventLink

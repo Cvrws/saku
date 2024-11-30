@@ -46,8 +46,6 @@ public class Account {
     public void parseJson(JsonObject object) {
         if (object.has("type")) {
             type = AccountType.getByName(object.get("type").getAsString());
-        } else {
-            type = AccountType.CRACKED;
         }
 
         if (object.has("name")) {

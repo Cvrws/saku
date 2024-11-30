@@ -401,22 +401,19 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 	 * drops
 	 */
 	public boolean destroyBlock(final BlockPos pos, final boolean dropBlock) {
-        return FixedSoundEngine.destroyBlock(this, pos, dropBlock);
+		return FixedSoundEngine.destroyBlock(this, pos, dropBlock);
 
-		/*final IBlockState iblockstate = this.getBlockState(pos);
-		final Block block = iblockstate.getBlock();
-
-		if (block.getMaterial() == Material.air) {
-			return false;
-		} else {
-			this.playAuxSFX(2001, pos, Block.getStateId(iblockstate));
-
-			if (dropBlock) {
-				block.dropBlockAsItem(this, pos, iblockstate, 0);
-			}
-
-			return this.setBlockState(pos, Blocks.air.getDefaultState(), 3);
-		}*/
+		/*
+		 * final IBlockState iblockstate = this.getBlockState(pos); final Block block =
+		 * iblockstate.getBlock();
+		 * 
+		 * if (block.getMaterial() == Material.air) { return false; } else {
+		 * this.playAuxSFX(2001, pos, Block.getStateId(iblockstate));
+		 * 
+		 * if (dropBlock) { block.dropBlockAsItem(this, pos, iblockstate, 0); }
+		 * 
+		 * return this.setBlockState(pos, Blocks.air.getDefaultState(), 3); }
+		 */
 	}
 
 	/**
@@ -1564,7 +1561,7 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 //	        });
 
 		this.theProfiler.endSection();
-		//this.theProfiler.endSection();
+		// this.theProfiler.endSection();
 	}
 
 	public boolean addTileEntity(final TileEntity tile) {
@@ -1637,11 +1634,11 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 					entityIn.timerName.reset();
 				}
 
-                if (entityIn.ridingEntity != null) {
-                    entityIn.updateRidden();
-                } else {
-                    entityIn.onUpdate();
-                }
+				if (entityIn.ridingEntity != null) {
+					entityIn.updateRidden();
+				} else {
+					entityIn.onUpdate();
+				}
 			}
 
 			this.theProfiler.startSection("chunkCheck");
@@ -2596,8 +2593,7 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 		return this.getEntitiesInAABBexcluding(entityIn, bb, EntitySelectors.NOT_SPECTATING);
 	}
 
-	public List<Entity> getEntitiesInAABBexcluding(Entity entityIn, AxisAlignedBB boundingBox,
-			Predicate<? super Entity> predicate) {
+	public List<Entity> getEntitiesInAABBexcluding(Entity entityIn, AxisAlignedBB boundingBox, Predicate<? super Entity> predicate) {
 		List<Entity> list = Lists.<Entity>newArrayList();
 		int i = MathHelper.floor_double((boundingBox.minX - 2.0D) / 16.0D);
 		int j = MathHelper.floor_double((boundingBox.maxX + 2.0D) / 16.0D);

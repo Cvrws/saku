@@ -87,19 +87,4 @@ public class ShaderUtil implements Accessor {
         }
     }
 
-    public void drawQuads(final ScaledResolution sr) {
-        if (Minecraft.getMinecraft().gameSettings.ofFastRender) return;
-        final float width = (float) sr.getScaledWidth_double();
-        final float height = (float) sr.getScaledHeight_double();
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 1);
-        glVertex2f(0, 0);
-        glTexCoord2f(0, 0);
-        glVertex2f(0, height);
-        glTexCoord2f(1, 0);
-        glVertex2f(width, height);
-        glTexCoord2f(1, 1);
-        glVertex2f(width, 0);
-        glEnd();
-    }
 }

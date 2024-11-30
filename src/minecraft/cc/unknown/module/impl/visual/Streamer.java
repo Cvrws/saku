@@ -42,8 +42,6 @@ public final class Streamer extends Module {
 			.setDefault("Jup");
 	
     public final StringValue replacement = new StringValue("Spoof Name: ", this, "You");
-    private final BooleanValue checkFriends = new BooleanValue("Check Friends", this, false);
-    private final StringValue protectFriends = new StringValue("New Name: ", this, "Friend", () -> !checkFriends.getValue());
     
     private Map<String, ChatFormatting> ranks = new HashMap<>();
     
@@ -84,22 +82,6 @@ public final class Streamer extends Module {
 
             text = text.replace(playerName, newName);
             event.setString(text);
-        }
-
-        if (checkFriends.getValue()) {
-            for (String friend : Sakura.instance.getFriendManager().getFriends()) {
-                text = text.replaceAll(jup, "");
-                
-                if (color != null) {
-                	newName = getPrefix(spoofMode, color) + friend; 
-                } else {
-                	newName = friend;
-                }
-
-                text = text.replace(friend, newName);
-                
-                event.setString(text);
-            }
         }
     };
 }

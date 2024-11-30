@@ -18,8 +18,8 @@ import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 
-@ModuleInfo(aliases = "Packet Debug", description = "Muestra los datos del cliente o servidor", category = Category.VISUALS)
-public class PacketDebug extends Module {
+@ModuleInfo(aliases = "Packet Display", description = "Muestra los datos del cliente o servidor", category = Category.VISUALS)
+public class PacketDisplay extends Module {
 	
     ArrayList<Group<Class<?>, String, Long>> list = new ArrayList<>();
     
