@@ -60,7 +60,6 @@ public final class Velocity extends Module {
 				reduced = false;
 			break;
 		}
-
 	};
 
 	@EventLink

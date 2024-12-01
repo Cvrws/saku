@@ -24,6 +24,7 @@ import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 
 import cc.unknown.Sakura;
+import cc.unknown.event.impl.other.RotationEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.event.impl.render.RenderGUIEvent;
@@ -1241,18 +1242,22 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 				i = -1;
 			}
 
-			if (this.mc.gameSettings.smoothCamera) {
-				this.smoothCamYaw += f2;
-				this.smoothCamPitch += f3;
-				final float f4 = partialTicks - this.smoothCamPartialTicks;
-				this.smoothCamPartialTicks = partialTicks;
-				f2 = this.smoothCamFilterX * f4;
-				f3 = this.smoothCamFilterY * f4;
-			} else {
-				this.smoothCamYaw = 0.0F;
-				this.smoothCamPitch = 0.0F;
-			}
-			this.mc.player.setAngles(f2, f3 * (float) i);
+	         if (this.mc.gameSettings.smoothCamera) {
+	             this.smoothCamYaw += f2;
+	             this.smoothCamPitch += f3;
+	             float f4 = partialTicks - this.smoothCamPartialTicks;
+	             this.smoothCamPartialTicks = partialTicks;
+	             f2 = this.smoothCamFilterX * f4;
+	             f3 = this.smoothCamFilterY * f4;
+	             this.mc.player.setAngles(f2, f3 * (float)i);
+	          } else {
+	             this.smoothCamYaw = 0.0F;
+	             this.smoothCamPitch = 0.0F;
+	             this.mc.player.setAngles(f2, f3 * (float)i);
+	          }
+			
+	         RotationEvent event = new RotationEvent();
+	         Sakura.instance.getEventBus().handle(event);
 		}
 
 		this.mc.mcProfiler.endSection();
