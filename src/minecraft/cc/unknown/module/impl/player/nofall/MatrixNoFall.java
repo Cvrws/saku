@@ -9,10 +9,6 @@ import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.Mode;
 
-/**
- * @author Alan
- * @since 3/02/2022
- */
 public class MatrixNoFall extends Mode<NoFall> {
 
 	public MatrixNoFall(String name, NoFall parent) {

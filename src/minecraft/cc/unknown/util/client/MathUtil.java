@@ -107,4 +107,10 @@ public class MathUtil {
 			return (float) (origin + (double) (secureRandom.nextFloat() * difference));
 		}
 	}
+	
+	public long getSafeRandom(long min, long max) {
+		double randomPercent = ThreadLocalRandom.current().nextDouble(0.7, 1.3);
+		long delay = (long) (randomPercent * ThreadLocalRandom.current().nextLong(min, max + 1));
+		return delay;
+	}
 }

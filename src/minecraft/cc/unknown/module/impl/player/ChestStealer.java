@@ -2,7 +2,6 @@ package cc.unknown.module.impl.player;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 import org.lwjgl.input.Mouse;
@@ -15,12 +14,10 @@ import cc.unknown.event.impl.render.RenderContainerEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
-import cc.unknown.value.impl.ModeValue;
-import cc.unknown.value.impl.SubMode;
-import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -145,19 +142,13 @@ public class ChestStealer extends Module {
 	private double getRandomDelay() {
 		long min = (long) delay.getValue().doubleValue();
 		long max = (long) delay.getSecondValue().doubleValue();
-		return min + (double) getSafeRandom(min, max);
+		return min + (double) MathUtil.getSafeRandom(min, max);
 	}
 
 	private double getRandomStartDelay() {
 		long min = (long) startdelay.getValue().doubleValue();
 		long max = (long) startdelay.getSecondValue().doubleValue();
-		return min + (double) getSafeRandom(min, max);
-	}
-
-	public static long getSafeRandom(long min, long max) {
-		double randomPercent = ThreadLocalRandom.current().nextDouble(0.7, 1.3);
-		long delay = (long) (randomPercent * ThreadLocalRandom.current().nextLong(min, max + 1));
-		return delay;
+		return min + (double) MathUtil.getSafeRandom(min, max);
 	}
 
 	public boolean isBestChestItem(ItemStack itemStack) {

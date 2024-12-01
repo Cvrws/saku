@@ -24,10 +24,11 @@ public final class ChestESP extends Module {
 			
 			if (tileEntity instanceof TileEntityChest) {
 				color = new Color(255, 255, 0).getRGB();
+				RenderUtil.drawSimpleItemBox(tileEntity, new Color(color));
 			} else if (tileEntity instanceof TileEntityEnderChest) {
 				color = new Color(128, 0, 128).getRGB();
+				RenderUtil.drawSimpleItemBox(tileEntity, new Color(color));
 			}
-			RenderUtil.drawSimpleItemBox(tileEntity, new Color(color));
 		}
 	};
 }

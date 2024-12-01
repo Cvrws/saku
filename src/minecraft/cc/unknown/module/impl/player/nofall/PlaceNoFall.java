@@ -11,10 +11,6 @@ import cc.unknown.value.Mode;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 
-/**
- * @author Auth
- * @since 3/02/2022
- */
 public class PlaceNoFall extends Mode<NoFall> {
 
 	public PlaceNoFall(String name, NoFall parent) {

@@ -43,6 +43,7 @@ public enum Themes {
     HYPER("Hyper", new Color(236, 110, 173), new Color(52, 148, 230), LIGHT_PURPLE, new Color(255, 128, 255), new Color(50, 100, 200), new Color(50, 200, 255)),
     MAGIC("Magic", new Color(74, 0, 224), new Color(142, 45, 226), BLUE, new Color(50, 100, 200), new Color(128, 50, 255)),
     MAY("May", new Color(238, 79, 238), new Color(253, 219, 245), LIGHT_PURPLE, new Color(255, 128, 255), new Color(128, 50, 255)),
+    NETFLIX("Netflix", new Color(142, 14, 0), new Color(31, 28, 24), ChatFormatting.DARK_RED),
     ORANGE_JUICE("Orange Juice", new Color(252, 74, 26), new Color(247, 183, 51), GOLD, new Color(255, 128, 50), new Color(255, 255, 50)),
     PASTEL("Pastel", new Color(243, 155, 178), new Color(207, 196, 243), LIGHT_PURPLE, new Color(255, 128, 255)),
     PUMPKIN("Pumpkin", new Color(241, 166, 98), new Color(255, 216, 169), new Color(227, 139, 42), GOLD, new Color(255, 128, 50)),

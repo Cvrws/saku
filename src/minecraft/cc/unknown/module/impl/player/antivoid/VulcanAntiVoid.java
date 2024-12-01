@@ -20,10 +20,6 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 import net.minecraft.util.AxisAlignedBB;
 
-/**
- * @author Strikeless
- * @since 18.03.2022
- */
 public class VulcanAntiVoid extends Mode<AntiVoid> {
 
 	private final NumberValue distance = new NumberValue("Distance", this, 2.6, 0, 10, 0.1);

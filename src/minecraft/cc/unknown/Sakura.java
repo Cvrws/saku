@@ -87,7 +87,7 @@ public enum Sakura {
         Display.setTitle(NAME + " " + VERSION_FULL);
         
         // ddlc song
-        this.welcomeSound = true;
+        this.welcomeSound = false;
     }
 
     public void terminate() {

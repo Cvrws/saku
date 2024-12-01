@@ -11,7 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 
-@ModuleInfo(aliases = {"Auto Tool"}, description = "Cambia a la mejor herramienta cada que rompes un bloque", category = Category.PLAYER)
+@ModuleInfo(aliases = "Auto Tool", description = "Cambia a la mejor herramienta cada que rompes un bloque", category = Category.PLAYER)
 public class AutoTool extends Module {
 
 	private int prevItem = 0;

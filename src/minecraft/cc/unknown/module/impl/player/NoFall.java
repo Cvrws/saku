@@ -7,7 +7,7 @@ import cc.unknown.module.impl.player.nofall.*;
 import cc.unknown.value.impl.ModeValue;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 
-@ModuleInfo(aliases = {"No Fall"}, description = "Reduce o elimina los daños de caida", category = Category.PLAYER)
+@ModuleInfo(aliases = "No Fall", description = "Reduce o elimina los daños de caida", category = Category.PLAYER)
 public class NoFall extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", this)

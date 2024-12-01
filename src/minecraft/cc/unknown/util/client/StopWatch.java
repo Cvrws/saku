@@ -1,8 +1,10 @@
 package cc.unknown.util.client;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.LongSupplier;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class StopWatch {
     public long millis;
 
@@ -44,9 +46,5 @@ public class StopWatch {
 
     public long getElapsedTime() {
         return System.currentTimeMillis() - this.millis;
-    }
-
-    public void setMillis(long millis) {
-        this.millis = millis;
     }
 }

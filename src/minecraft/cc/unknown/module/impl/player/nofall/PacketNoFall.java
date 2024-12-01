@@ -9,10 +9,6 @@ import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.value.Mode;
 import net.minecraft.network.play.client.C03PacketPlayer;
 
-/**
- * @author Auth
- * @since 3/02/2022
- */
 public class PacketNoFall extends Mode<NoFall> {
 
 	public PacketNoFall(String name, NoFall parent) {

@@ -11,7 +11,7 @@ import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 import net.minecraft.network.play.client.C03PacketPlayer;
 
-@ModuleInfo(aliases = { "Fast Use" }, description = "Uses items faster", category = Category.PLAYER)
+@ModuleInfo(aliases = "Fast Use", description = "Uses items faster", category = Category.PLAYER)
 public class FastUse extends Module {
 
 	private final NumberValue speed = new NumberValue("Packets", this, 1, 1, 100, 1);
@@ -21,8 +21,7 @@ public class FastUse extends Module {
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (mc.player.isUsingItem()) {
 			for (int i = 0; i <= speed.getValue().intValue(); i++) {
-				PacketUtil.send(new C03PacketPlayer.C06PacketPlayerPosLook(mc.player.posX, mc.player.posY,
-						mc.player.posZ, mc.player.rotationYaw, mc.player.rotationPitch, mc.player.onGround));
+				PacketUtil.send(new C03PacketPlayer.C06PacketPlayerPosLook(mc.player.posX, mc.player.posY, mc.player.posZ, mc.player.rotationYaw, mc.player.rotationPitch, mc.player.onGround));
 			}
 
 			if (fast.getValue()) {
