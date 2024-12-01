@@ -107,6 +107,7 @@ public final class ModuleManager {
         this.put(AutoPot.class, new AutoPot());
         this.put(FakeHackers.class, new FakeHackers());
         this.put(AutoArmor.class, new AutoArmor());
+        this.put(NoPlaceDelay.class, new NoPlaceDelay());
         this.put(AutoTool.class, new AutoTool());
         this.put(Respawn.class, new Respawn());
         this.put(Blink.class, new Blink());
