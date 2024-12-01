@@ -27,8 +27,8 @@ public class BooleanValueComponent extends ValueComponent {
         final BooleanValue booleanValue = (BooleanValue) value;
 
         // Draws name
-        Fonts.MAIN.get(16, Weight.LIGHT).draw(this.value.getName(), this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
-        final double positionX = this.position.x + Fonts.MAIN.get(16, Weight.LIGHT).width(this.value.getName()) + 3;
+        Fonts.ROBOTO.get(16, Weight.LIGHT).draw(this.value.getName(), this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
+        final double positionX = this.position.x + Fonts.ROBOTO.get(16, Weight.LIGHT).width(this.value.getName()) + 3;
 
         if (booleanValue.getValue()) {
             scale = Math.min(5, scale + stopwatch.getElapsedTime() / 20f);

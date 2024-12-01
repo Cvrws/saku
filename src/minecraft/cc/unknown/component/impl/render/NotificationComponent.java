@@ -32,8 +32,8 @@ public class NotificationComponent extends Component {
 	private static final Vector2d POSITION = new Vector2d(5, 27);
 	private static final double SPACER = (SCALE.y - ICON_SCALE.y) / 2f;
 
-	private static final Font bold = Fonts.MAIN.get(15, Weight.BOLD);
-	private static final Font light = Fonts.MAIN.get(15, Weight.LIGHT);
+	private static final Font bold = Fonts.MONSERAT.get(15, Weight.BOLD);
+	private static final Font light = Fonts.ROBOTO.get(15, Weight.LIGHT);
 
 	@EventLink(value = Priority.VERY_HIGH)
 	public final Listener<Render2DEvent> onRender2DEvent = event -> {

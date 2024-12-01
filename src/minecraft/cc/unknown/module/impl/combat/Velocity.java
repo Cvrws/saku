@@ -26,7 +26,6 @@ public final class Velocity extends Module {
 			.add(new SubMode("Legit"))
 			.add(new SubMode("Polar"))
 			.add(new SubMode("Matrix"))
-			.add(new SubMode("Watchdog Simple"))
 			.setDefault("Simple");
 
 	public final NumberValue horizontal = new NumberValue("Horizontal", this, 0, 0, 100, 1, () -> !mode.is("Simple"));

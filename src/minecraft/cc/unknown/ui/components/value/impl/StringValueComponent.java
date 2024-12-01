@@ -15,7 +15,7 @@ import cc.unknown.value.impl.StringValue;
 
 public class StringValueComponent extends ValueComponent {
 
-    public final TextBox textBox = new TextBox(new Vector2d(200, 200), Fonts.MAIN.get(16, Weight.LIGHT), Color.WHITE, TextAlign.LEFT, "", 20);
+    public final TextBox textBox = new TextBox(new Vector2d(200, 200), Fonts.ROBOTO.get(16, Weight.LIGHT), Color.WHITE, TextAlign.LEFT, "", 20);
 
     public StringValueComponent(final Value<?> value) {
         super(value);
@@ -32,7 +32,7 @@ public class StringValueComponent extends ValueComponent {
 
         this.height = 28;
 
-        Fonts.MAIN.get(16, Weight.LIGHT).draw(this.value.getName(), this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
+        Fonts.ROBOTO.get(16, Weight.LIGHT).draw(this.value.getName(), this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
 
         this.textBox.setColor(ColorUtil.withAlpha(this.textBox.getColor(), opacity));
         this.position = new Vector2d(this.position.x, this.position.y + 14);

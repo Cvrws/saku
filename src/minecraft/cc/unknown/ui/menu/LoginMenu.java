@@ -31,7 +31,7 @@ public final class LoginMenu extends GuiScreen {
     private TextField keyBox;
     private String status = "";
     private Animation animation;
-    private final Font FONT_RENDERER = Fonts.MAIN.get(20, Weight.LIGHT);
+    private final Font FONT_RENDERER = Fonts.ROBOTO.get(20, Weight.LIGHT);
     private final int MAX_ATTEMPTS = 3;
     private final Map<String, Integer> loginAttempts = new HashMap<>();
     

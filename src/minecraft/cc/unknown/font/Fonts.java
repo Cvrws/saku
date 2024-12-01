@@ -15,7 +15,8 @@ import net.minecraft.client.Minecraft;
 
 @Getter
 public enum Fonts {
-    MAIN("SF-Pro-Rounded-%s", getExt()),
+    MONSERAT("Montserrat-%s", getExt()),
+    ROBOTO("Roboto-%s", getExt()),
     ICONS_1("Icon-1", "ttf"),
     ICONS_2("Icon-2", "ttf"),
     MINECRAFT("Minecraft", () -> Minecraft.getMinecraft().fontRendererObj);

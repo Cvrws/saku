@@ -66,7 +66,7 @@ public class ModuleComponent implements Accessor {
 
             final ClickGui clickGUI = this.getClickGUI();
 
-            // Main module background
+            // ROBOTO module background
             RenderUtil.roundedRectangle(position.x, position.y, scale.x, scale.y, 6, Colors.OVERLAY.get());
             final Color fontColor = Colors.TEXT.getWithAlpha(module.isEnabled() ? 255 : 200);
 
@@ -75,22 +75,22 @@ public class ModuleComponent implements Accessor {
 
             hoverAnimation.run(overModule ? mouseDown ? 35 : 20 : 0);
 
-            // Main module background HOVER OVERLAY
+            // ROBOTO module background HOVER OVERLAY
             RenderUtil.roundedRectangle(position.x, position.y, scale.x, scale.y, 6, ColorUtil.withAlpha(Color.BLACK, (int) hoverAnimation.getValue()));
 
             // Draw the module's category if the user is searching
             if (clickGUI.getRenderedScreen() instanceof HomeScreen) {
-                Fonts.MAIN.get(15, Weight.LIGHT).draw("(" + module.getModuleInfo().category().getName() + ")",
-                        (float) (position.getX() + Fonts.MAIN.get(20, Weight.LIGHT).width(this.module.getName()) + 10F),
+                Fonts.ROBOTO.get(15, Weight.LIGHT).draw("(" + module.getModuleInfo().category().getName() + ")",
+                        (float) (position.getX() + Fonts.ROBOTO.get(20, Weight.LIGHT).width(this.module.getName()) + 10F),
                         (float) position.getY() + 10, ColorUtil.withAlpha(fontColor, 64).hashCode());
             }
 
             // Draw module name
-            Fonts.MAIN.get(20, Weight.LIGHT).draw(this.module.getName(), (float) position.x + 6f, (float) position.y + 8,
+            Fonts.ROBOTO.get(20, Weight.LIGHT).draw(this.module.getName(), (float) position.x + 6f, (float) position.y + 8,
                     module.isEnabled() ? getTheme().getAccentColor(new Vector2d(0, position.y / 5)).getRGB() : fontColor.getRGB());
 
             // Draw module category
-            Fonts.MAIN.get(15, Weight.LIGHT).draw(module.getModuleInfo().description(), (float) position.x + 6f,
+            Fonts.ROBOTO.get(15, Weight.LIGHT).draw(module.getModuleInfo().description(), (float) position.x + 6f,
                     (float) position.y + 25, ColorUtil.withAlpha(fontColor, 70).hashCode());
 
             scale = new Vector2f(getClickGUI().moduleDefaultScale.x, height);

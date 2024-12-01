@@ -135,7 +135,7 @@ public class TextBox {
 
         /* Renders cursor */
         if (this.selected) {
-            (this.fontRenderer == Minecraft.getMinecraft().fontRendererObj ? Fonts.MAIN.get(18, Weight.LIGHT) : this.fontRenderer).draw("|", (float) (posX + animatedCursorPosition + 1), position.y - 1, new Color(this.color.getRed(), this.color.getBlue(), this.color.getGreen(), this.color.getAlpha() == 0 ? 0 : (int) ((((Math.sin(System.currentTimeMillis() / 150D) + 1) / 2) * 255))).hashCode());
+            (this.fontRenderer == Minecraft.getMinecraft().fontRendererObj ? Fonts.ROBOTO.get(18, Weight.LIGHT) : this.fontRenderer).draw("|", (float) (posX + animatedCursorPosition + 1), position.y - 1, new Color(this.color.getRed(), this.color.getBlue(), this.color.getGreen(), this.color.getAlpha() == 0 ? 0 : (int) ((((Math.sin(System.currentTimeMillis() / 150D) + 1) / 2) * 255))).hashCode());
         }
     }
 

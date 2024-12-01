@@ -2,6 +2,7 @@ package cc.unknown.module.impl.player;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.netty.PacketSendEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
@@ -13,8 +14,9 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition;
+import net.minecraft.network.play.client.C03PacketPlayer.C06PacketPlayerPosLook;
 
 @ModuleInfo(aliases = "Fake Hackers", description = ">:3c", category = Category.PLAYER)
 public class FakeHackers extends Module {
@@ -22,6 +24,7 @@ public class FakeHackers extends Module {
 	private final ModeValue mode = new ModeValue("Mode", this)
 	        .add(new SubMode("Sneak"))
 	        .add(new SubMode("KillAura"))
+	        .add(new SubMode("Reach"))
 	        .setDefault("Sneak");
 	
 	private final NumberValue range = new NumberValue("Range", this, 6, 3.2, 6, 0.1);
@@ -42,6 +45,28 @@ public class FakeHackers extends Module {
 	}
 	
 	@EventLink
+	public final Listener<PacketSendEvent> onPacketSend = event -> {
+		Packet packet = event.getPacket();
+		
+		if (mode.is("Reach")) {
+			if (packet instanceof C04PacketPlayerPosition) {
+				C04PacketPlayerPosition wrapped = (C04PacketPlayerPosition) packet;
+				double angleA = Math.toRadians(normalizeAngle(wrapped.getYaw() - 90.0F));
+				wrapped.x = wrapped.x + Math.cos(angleA) * 0.5;
+				wrapped.z = wrapped.z + Math.cos(angleA) * 0.5;
+                
+			}
+			
+			if (packet instanceof C06PacketPlayerPosLook) {
+				C06PacketPlayerPosLook wrapped = (C06PacketPlayerPosLook) packet;
+				double angleA = Math.toRadians(normalizeAngle(wrapped.getYaw() - 90.0F));
+				wrapped.x = wrapped.x + Math.cos(angleA) * 0.5;
+				wrapped.z = wrapped.z + Math.cos(angleA) * 0.5;
+			}
+		}
+	};
+ 	
+	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 	    if (mc.world != null) {
 	        String playerName = name.getValue();
@@ -53,14 +78,16 @@ public class FakeHackers extends Module {
 	                }
 
 	                if (mode.is("KillAura")) {
-	                    EntityLivingBase toFace = getClosestEntityToEntity(range.getValue().floatValue(), player);
-	                    if (toFace != null) {
-	                        float[] rots = getFacePosEntityRemote(player, toFace);
-	                        if (rots != null && rots.length == 2) {
-	                            player.swingItem();
-	                            player.rotationYawHead = rots[0];
-	                            player.rotationPitch = rots[1];
-	                        }
+	                	float range = this.range.getValue().floatValue();
+	                    if (mc.player.getDistanceToEntity(player) < range) {
+	                        float[] yawAndPitch = getAnglesForThisEntityToHitYou(player);
+	                        float yaw = yawAndPitch[0];
+	                        float pitch = yawAndPitch[1];
+	                        player.rotationYaw = yaw;
+	                        player.setRotationYawHead(yaw);
+	                        player.rotationPitch = pitch;
+	                        player.cameraPitch = pitch;
+	                        player.swingItem();
 	                    }
 	                }
 	            }
@@ -68,43 +95,21 @@ public class FakeHackers extends Module {
 	    }
 	};
     
-    private EntityLivingBase getClosestEntityToEntity(float range, Entity ent) {
-		EntityLivingBase closestEntity = null;
-		float mindistance = range;
-		for (Object o : mc.world.loadedEntityList) {
-			if (isNotItem(o) && !ent.isEntityEqual((EntityLivingBase) o)) {
-				EntityLivingBase en = (EntityLivingBase) o;
-				if (ent.getDistanceToEntity(en) < mindistance) {
-					mindistance = ent.getDistanceToEntity(en);
-					closestEntity = en;
-				}
-			}
-		}
-		return closestEntity;
-	}
-
-    private boolean isNotItem(Object o) {
-		if (!(o instanceof EntityLivingBase)) {
-			return false;
-		}
-		return true;
-	}
+    private float[] getAnglesForThisEntityToHitYou(EntityLivingBase entityLiving) {
+        double difX = mc.player.posX - entityLiving.posX;
+        double difY = mc.player.posY - entityLiving.posY + (double) (mc.player.getEyeHeight() / 1.4f);
+        double difZ = mc.player.posZ - entityLiving.posZ;
+        double hypo = entityLiving.getDistanceToEntity((Entity) mc.player);
+        float yaw = (float) Math.toDegrees(Math.atan2(difZ, difX)) - 90.0f;
+        float pitch = (float) (-Math.toDegrees(Math.atan2(difY, hypo)));
+        return new float[]{yaw, pitch};
+    }
     
-    private float[] getFacePosEntityRemote(EntityLivingBase facing, Entity en) {
-		if (en == null) {
-			return new float[] { facing.rotationYawHead, facing.rotationPitch };
-		}
-		return getFacePosRemote(new Vec3(facing.posX, facing.posY + en.getEyeHeight(), facing.posZ),
-				new Vec3(en.posX, en.posY + en.getEyeHeight(), en.posZ));
-	}
-        
-    private float[] getFacePosRemote(Vec3 src, Vec3 dest) {
-		double diffX = dest.xCoord - src.xCoord;
-		double diffY = dest.yCoord - (src.yCoord);
-		double diffZ = dest.zCoord - src.zCoord;
-		double dist = MathHelper.sqrt_double(diffX * diffX + diffZ * diffZ);
-		float yaw = (float) (Math.atan2(diffZ, diffX) * 180.0D / Math.PI) - 90.0F;
-		float pitch = (float) -(Math.atan2(diffY, dist) * 180.0D / Math.PI);
-		return new float[] { MathHelper.wrapAngleTo180_float(yaw), MathHelper.wrapAngleTo180_float(pitch) };
-	}
+	private float normalizeAngle(float angle) {
+        return (angle + 360.0F) % 360.0F;
+    }
+
+    private float getDistanceBetweenAngles(final float angle1, final float angle2) {
+        return Math.abs(angle1 % 360.0f - angle2 % 360.0f) % 360.0f;
+    }
 }

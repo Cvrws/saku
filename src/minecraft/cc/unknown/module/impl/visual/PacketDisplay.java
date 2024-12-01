@@ -52,7 +52,7 @@ public class PacketDisplay extends Module {
 	public final Listener<Render2DEvent> onRender2D = event -> {		
 		for (int i = 0; i < list.size(); i++) {
 			Group<Class<?>, String, Long> group = list.get(i);
-			Fonts.MAIN.get(12, Weight.LIGHT).drawWithShadow(group.b, 10, 20 + i * Fonts.MAIN.get(12, Weight.LIGHT).height(), -1);
+			Fonts.ROBOTO.get(12, Weight.LIGHT).drawWithShadow(group.b, 10, 20 + i * Fonts.ROBOTO.get(12, Weight.LIGHT).height(), -1);
 		}
 	};
 	

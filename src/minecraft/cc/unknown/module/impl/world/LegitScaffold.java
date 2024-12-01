@@ -25,13 +25,6 @@ import net.minecraft.world.WorldSettings;
 
 @ModuleInfo(aliases = "Legit Scaffold", description = "Shiftea al borde de cada bloque", category = Category.WORLD)
 public class LegitScaffold extends Module {
-
-	private final ModeValue eventMode = new ModeValue("Event Mode", this) {{
-		add(new SubMode("Pre Motion"));
-		add(new SubMode("Pre Update"));
-		add(new SubMode("Tick"));
-		setDefault("Tick");
-	}};
 	
 	private final BoundsNumberValue delay = new BoundsNumberValue("Delay", this, 100, 200, 0, 500, 1);
 	private final BooleanValue pitchCheck = new BooleanValue("Pitch Check", this, true);
@@ -57,37 +50,13 @@ public class LegitScaffold extends Module {
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
-		if (eventMode.is("Pre Motion")) place();
-	};
-	
-	@EventLink
-	public final Listener<PreMotionEvent> onPreUpdate = event -> {
-		if (eventMode.is("Pre Update")) place();
-	};
-	@EventLink
-	public final Listener<TickEvent> onTick = event -> {
-		if (eventMode.is("Tick")) place();
-	};
-
-	@EventLink
-	public final Listener<Render3DEvent> onRender3D = event -> {
-		if (!isInGame())
-			return;
-
-		if (slotSwap.getValue() && shouldSkipBlockCheck())
-			swapToBlock();
-
-		if (mc.currentScreen != null || mc.player.getHeldItem() == null)
-			return;
-	};
-	
-	private void place() {
 		if (!(mc.currentScreen == null) || !isInGame())
 			return;
 
 		boolean shift = delay.getSecondValue().intValue() > 0;
 
-		if (shouldPitchCheck()) {
+		if (mc.player.rotationPitch < pitchRange.getValue().floatValue()
+				|| mc.player.rotationPitch > pitchRange.getSecondValue().floatValue()) {
 			shouldBridge = false;
 			if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
 				setSneak(true);
@@ -118,7 +87,8 @@ public class LegitScaffold extends Module {
 		}
 
 		if (backwards.getValue()) {
-			if (shouldBridgeCheck()) {
+			if ((mc.player.movementInput.moveForward > 0) && (mc.player.movementInput.moveStrafe == 0)
+					|| mc.player.movementInput.moveForward >= 0) {
 				shouldBridge = false;
 				return;
 			}
@@ -127,7 +97,8 @@ public class LegitScaffold extends Module {
 		if (mc.player.onGround) {
 			if (PlayerUtil.isOverAir()) {
 				if (shift) {
-					stopWatch.setMillis(MathHelper.randomInt(delay.getValue().intValue(), (int) (delay.getSecondValue().intValue() + 0.1)));
+					stopWatch.setMillis(MathHelper.randomInt(delay.getValue().intValue(),
+							(int) (delay.getSecondValue().intValue() + 0.1)));
 					stopWatch.reset();
 				}
 
@@ -143,7 +114,9 @@ public class LegitScaffold extends Module {
 				isShifting = false;
 				shouldBridge = false;
 				setSneak(false);
-			} else if (mc.player.isSneaking() && (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) && holdShift.getValue()) && (!shift || stopWatch.hasFinished())) {
+			} else if (mc.player.isSneaking()
+					&& (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) && holdShift.getValue())
+					&& (!shift || stopWatch.hasFinished())) {
 				isShifting = false;
 				setSneak(false);
 				shouldBridge = true;
@@ -162,7 +135,19 @@ public class LegitScaffold extends Module {
 			isShifting = false;
 			setSneak(false);
 		}
-	}
+	};
+
+	@EventLink
+	public final Listener<Render3DEvent> onRender3D = event -> {
+		if (!isInGame())
+			return;
+
+		if (slotSwap.getValue() && shouldSkipBlockCheck())
+			swapToBlock();
+
+		if (mc.currentScreen != null || mc.player.getHeldItem() == null)
+			return;
+	};
 
 	private void swapToBlock() {
 		for (int slot = 0; slot <= 8; slot++) {
@@ -185,20 +170,8 @@ public class LegitScaffold extends Module {
 		return heldItem == null || !(heldItem.getItem() instanceof ItemBlock);
 	}
 
-	private boolean shouldPitchCheck() {
-		boolean maxPitch = mc.player.rotationPitch > pitchRange.getValue().floatValue();
-		boolean minPitch = mc.player.rotationPitch < pitchRange.getValue().floatValue();
-		return (maxPitch || minPitch);
-	}
-
-	private boolean shouldBridgeCheck() {
-		double moveForward = mc.player.movementInput.moveForward;
-		double moveStrafe = mc.player.movementInput.moveStrafe;
-		return (moveForward > 0 && moveStrafe == 0);
-	}
-
 	private void setSneak(boolean sneak) {
-		mc.player.movementInput.sneak = sneak;
+		//mc.player.movementInput.sneak = sneak;
 		KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), sneak);		
 	}
 }

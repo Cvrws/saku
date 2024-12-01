@@ -27,7 +27,7 @@ public class BoundsNumberValueComponent extends ValueComponent {
     private double renderPercentage1, renderPercentage2;
     private boolean mouseOver;
     private float hoverTime;
-    public final TextBox valueDisplay = new TextBox(new Vector2d(0, 0), Fonts.MAIN.get(16, Weight.LIGHT), Colors.SECONDARY_TEXT.get(), TextAlign.LEFT, (((BoundsNumberValue) value).getDefaultValue()).toString().replace(".0", "") + " " + (((BoundsNumberValue) value).getDefaultSecondValue()).toString().replace(".0", ""), 100, "1234567890. ");
+    public final TextBox valueDisplay = new TextBox(new Vector2d(0, 0), Fonts.ROBOTO.get(16, Weight.LIGHT), Colors.SECONDARY_TEXT.get(), TextAlign.LEFT, (((BoundsNumberValue) value).getDefaultValue()).toString().replace(".0", "") + " " + (((BoundsNumberValue) value).getDefaultSecondValue()).toString().replace(".0", ""), 100, "1234567890. ");
 
     public BoundsNumberValueComponent(final Value<?> value) {
         super(value);
@@ -64,7 +64,7 @@ public class BoundsNumberValueComponent extends ValueComponent {
         }
 
         final String value = firstValue + " " + secondValue;
-        final float valueWidth = Fonts.MAIN.get(16, Weight.LIGHT).width(this.value.getName()) + 7;
+        final float valueWidth = Fonts.ROBOTO.get(16, Weight.LIGHT).width(this.value.getName()) + 7;
 
         //Used to determine if the mouse is over the slider
         this.mouseOver = GUIUtil.mouseOver(this.position.x + valueWidth - 5, this.position.y - 3.5f, SLIDER_WIDTH + 10, this.height, mouseX, mouseY);
@@ -75,7 +75,7 @@ public class BoundsNumberValueComponent extends ValueComponent {
         }
 
         // Draws name
-        Fonts.MAIN.get(16, Weight.LIGHT).draw(this.value.getName(), this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
+        Fonts.ROBOTO.get(16, Weight.LIGHT).draw(this.value.getName(), this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
 
         // Draws value
         this.valueDisplay.setPosition(new Vector2d(this.position.x + valueWidth + 105, this.position.y));

@@ -34,7 +34,7 @@ public class AltManagerScreen extends GuiScreen implements Accessor {
     private static GuiScreen reference;
     private String status = yellow + "Idle...";
     private Animation animation;
-    private static final Font FONT_RENDERER = Fonts.MAIN.get(20, Weight.LIGHT);
+    private static final Font FONT_RENDERER = Fonts.ROBOTO.get(20, Weight.LIGHT);
 
     public AltManagerScreen() {
         reference = this;

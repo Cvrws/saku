@@ -48,7 +48,7 @@ public final class CategoryComponent implements Accessor {
         animation.run(selectedScreen.equals(category.getClickGUIScreen()) ? 255 : 0);
 
         final double spacer = 4;
-        final double width = Fonts.MAIN.get(16, Weight.LIGHT).width(category.getName()) + spacer * 2 + category.getFontRenderer().width(category.getIcon());
+        final double width = Fonts.ROBOTO.get(16, Weight.LIGHT).width(category.getName()) + spacer * 2 + category.getFontRenderer().width(category.getIcon());
 
         double scale = 0.5;
         GlStateManager.pushMatrix();
@@ -60,7 +60,7 @@ public final class CategoryComponent implements Accessor {
 
         category.getFontRenderer().draw(category.getIcon(), (float) (x + animation.getValue() / 80f + 3), y, color);
 
-        Fonts.MAIN.get(16, Weight.LIGHT).draw(category.getName(), (float) (x + animation.getValue() / 80f + 3 + spacer) +
+        Fonts.ROBOTO.get(16, Weight.LIGHT).draw(category.getName(), (float) (x + animation.getValue() / 80f + 3 + spacer) +
                 Fonts.ICONS_1.get(17).width(category.getIcon()), y, color);
 
         GlStateManager.popMatrix();

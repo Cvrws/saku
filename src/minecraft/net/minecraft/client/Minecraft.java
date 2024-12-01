@@ -58,6 +58,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.Slot;
+import cc.unknown.event.impl.input.ClickBlockEvent;
 import cc.unknown.event.impl.input.ClickEvent;
 import cc.unknown.event.impl.input.KeyboardInputEvent;
 import cc.unknown.event.impl.input.MouseEvent;
@@ -1421,12 +1422,14 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 
 		if (this.leftClickCounter <= 0 && !this.player.isUsingItem()) {
-			if (leftClick && this.objectMouseOver != null
-					&& this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+			if (leftClick && this.objectMouseOver != null && this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
 				final BlockPos blockpos = this.objectMouseOver.getBlockPos();
 
-				if (this.world.getBlockState(blockpos).getBlock().getMaterial() != Material.air
-						&& this.playerController.onPlayerDamageBlock(blockpos, this.objectMouseOver.sideHit)) {
+		        if (leftClickCounter == 0 && world.getBlockState(objectMouseOver.getBlockPos()).getBlock().getMaterial() != Material.air) {
+		            Sakura.instance.getEventBus().handle(new ClickBlockEvent(objectMouseOver.getBlockPos(), objectMouseOver.sideHit));
+		        }
+				
+				if (this.world.getBlockState(blockpos).getBlock().getMaterial() != Material.air && this.playerController.onPlayerDamageBlock(blockpos, this.objectMouseOver.sideHit)) {
 					this.effectRenderer.addBlockHitEffects(blockpos, this.objectMouseOver.sideHit);
 					this.player.swingItem();
 				}

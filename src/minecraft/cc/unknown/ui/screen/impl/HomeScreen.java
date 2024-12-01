@@ -23,7 +23,7 @@ import lombok.Getter;
 @Getter
 public final class HomeScreen implements Screen, Accessor {
 
-    public final TextBox searchBar = new TextBox(new Vector2d(200, 200), Fonts.MAIN.get(20, Weight.LIGHT), Color.WHITE,
+    public final TextBox searchBar = new TextBox(new Vector2d(200, 200), Fonts.ROBOTO.get(20, Weight.LIGHT), Color.WHITE,
             TextAlign.CENTER, "Start typing to search...", 150);
     private final StopWatch stopwatch = new StopWatch();
 

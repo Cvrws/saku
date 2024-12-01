@@ -52,7 +52,7 @@ public final class ModuleManager {
         
         // Exploit
         this.put(Disabler.class, new Disabler());
-        this.put(CustomDisabler.class, new CustomDisabler());
+        this.put(CancelPackets.class, new CancelPackets());
         this.put(NoRotate.class, new NoRotate());
         this.put(AntiCrash.class, new AntiCrash());
 
@@ -82,6 +82,8 @@ public final class ModuleManager {
         this.put(LegitScaffold.class, new LegitScaffold());
         this.put(SafeWalk.class, new SafeWalk());
         this.put(Spammer.class, new Spammer());
+        this.put(Breaker.class, new Breaker());
+
 
         // Other
         this.put(AntiAFK.class, new AntiAFK());
@@ -107,7 +109,6 @@ public final class ModuleManager {
         this.put(Blink.class, new Blink());
         this.put(Derp.class, new Derp());
         this.put(NoClickDelay.class, new NoClickDelay());
-        this.put(Breaker.class, new Breaker());
         this.put(FastUse.class, new FastUse());
         this.put(InventoryManager.class, new InventoryManager());
         this.put(NoFall.class, new NoFall());

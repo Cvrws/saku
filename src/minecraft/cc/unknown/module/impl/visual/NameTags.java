@@ -29,7 +29,7 @@ import net.minecraft.item.ItemTool;
 @ModuleInfo(aliases = "Name Tags", description = "Renderiza el nombre de los jugadores", category = Category.VISUALS)
 public final class NameTags extends Module {
 	
-	private final BoundsNumberValue distance = new BoundsNumberValue("Distance", this, 2, 6, 1, 7, 1);
+	private final BoundsNumberValue distance = new BoundsNumberValue("Distance", this, 2, 6, 1, 7, 0.1);
 	private final NumberValue scale = new NumberValue("Scale", this, 4.5, 0.1, 10, 0.1);
 	private final BooleanValue selfTag = new BooleanValue("Self Tag", this, true);
 	private final BooleanValue durability = new BooleanValue("Durability", this, false);

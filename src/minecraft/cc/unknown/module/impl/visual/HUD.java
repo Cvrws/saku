@@ -57,9 +57,9 @@ public final class HUD extends Module {
     
     private List<ModuleComponent> activeModuleComponents = new ArrayList<>();
     private List<ModuleComponent> allModuleComponents = new ArrayList<>();
-    private Font widthComparator = Fonts.MAIN.get(20, Weight.LIGHT);
+    private Font widthComparator = Fonts.ROBOTO.get(20, Weight.LIGHT);
     private final StopWatch stopwatch = new StopWatch();
-    private Font font = Fonts.MAIN.get(18, Weight.LIGHT);
+    private Font font = Fonts.ROBOTO.get(18, Weight.LIGHT);
     private float moduleSpacing = 12, edgeOffset;
     
 	@Override

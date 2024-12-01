@@ -31,7 +31,7 @@ public class MainMenu extends GuiMainMenu {
     private final Map<Integer, Consumer<GuiButton>> buttonActions = new HashMap<>();
 
     public MainMenu() {
-        fontRenderer = Fonts.MAIN.get(18, Weight.LIGHT);
+        fontRenderer = Fonts.ROBOTO.get(18, Weight.LIGHT);
         buttonActions.put(0, button -> mc.displayGuiScreen(new GuiSelectWorld(this)));
         buttonActions.put(1, button -> mc.displayGuiScreen(new GuiMultiplayer(this)));
         buttonActions.put(2, button -> mc.displayGuiScreen(new AltManagerScreen()));

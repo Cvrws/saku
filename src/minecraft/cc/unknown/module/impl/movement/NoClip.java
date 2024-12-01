@@ -89,7 +89,7 @@ public class NoClip extends Module {
         final ScaledResolution scaledResolution = mc.scaledResolution;
 
         final String name = "Para usar el noclip coloca un bloque en tu mano, una ves activado presiona shift";
-        Fonts.MAIN.get(18, Weight.LIGHT).drawCentered(name, scaledResolution.getScaledWidth() / 2F, scaledResolution.getScaledHeight() - 89.5F, new Color(0, 0, 0, 200).hashCode());
-        Fonts.MAIN.get(18, Weight.LIGHT).drawCentered(name, scaledResolution.getScaledWidth() / 2F, scaledResolution.getScaledHeight() - 90, getTheme().getAccentColor().getRGB());
+        mc.fontRendererObj.drawCentered(name, scaledResolution.getScaledWidth() / 2F, scaledResolution.getScaledHeight() - 89.5F, new Color(0, 0, 0, 200).hashCode());
+        mc.fontRendererObj.drawCentered(name, scaledResolution.getScaledWidth() / 2F, scaledResolution.getScaledHeight() - 90, getTheme().getAccentColor().getRGB());
 	};
 }

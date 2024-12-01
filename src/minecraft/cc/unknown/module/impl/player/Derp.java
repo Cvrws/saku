@@ -31,9 +31,4 @@ public class Derp extends Module {
         mc.player.renderYawOffset = yaw;
         mc.player.rotationYawHead = yaw;
     };
-
-    @EventLink
-    public final Listener<MoveInputEvent> onMoveInput = event -> {
-    	MoveUtil.fixMovement(event, yaw);
-    };
 }

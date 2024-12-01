@@ -24,8 +24,8 @@ public class ModeValueComponent extends ValueComponent {
 
         final String prefix = this.value.getName() + ":";
 
-        Fonts.MAIN.get(16, Weight.LIGHT).draw(prefix, this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(Math.min(opacity, Colors.SECONDARY_TEXT.get().getAlpha())));
-        Fonts.MAIN.get(16, Weight.LIGHT).draw(modeValue.getValue().getName(), this.position.x + Fonts.MAIN.get(16, Weight.LIGHT).width(prefix) + 2, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(Math.min(opacity, Colors.SECONDARY_TEXT.get().getAlpha())));
+        Fonts.ROBOTO.get(16, Weight.LIGHT).draw(prefix, this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(Math.min(opacity, Colors.SECONDARY_TEXT.get().getAlpha())));
+        Fonts.ROBOTO.get(16, Weight.LIGHT).draw(modeValue.getValue().getName(), this.position.x + Fonts.ROBOTO.get(16, Weight.LIGHT).width(prefix) + 2, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(Math.min(opacity, Colors.SECONDARY_TEXT.get().getAlpha())));
     }
 
     @Override
