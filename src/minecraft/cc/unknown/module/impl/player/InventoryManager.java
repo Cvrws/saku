@@ -15,6 +15,7 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemAppleGold;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBow;
@@ -40,14 +41,16 @@ public class InventoryManager extends Module {
 	private final NumberValue speed = new NumberValue("Speed", this, 150.0D, 0.0D, 1000.0D, 1.0D);
 	private final BooleanValue sword = new BooleanValue("Sword", this, true);
 	private final NumberValue swordSlot = new NumberValue("sword Slot", this, 1.0D, 1.0D, 9.0D, 1.0D, () -> !sword.getValue());
-	private final BooleanValue axe = new BooleanValue("Axe", this, true);
+	private final BooleanValue axe = new BooleanValue("Axe", this, false);
 	private final NumberValue axeSlot = new NumberValue("Axe Slot", this, 2.0D, 1.0D, 9.0D, 1.0D, () -> !axe.getValue());
-	private final BooleanValue pickaxe = new BooleanValue("Pickaxe", this, true);
+	private final BooleanValue pickaxe = new BooleanValue("Pickaxe", this, false);
 	private final NumberValue pickaxeSlot = new NumberValue("Pickaxe", this, 3.0D, 1.0D, 9.0D, 1.0D, () -> !pickaxe.getValue());
 	private final BooleanValue shovel = new BooleanValue("Shovel", this, false);
 	private final NumberValue shovelSlot = new NumberValue("Shovel Slot", this, 4.0D, 1.0D, 9.0D, 1.0D, () -> !shovel.getValue());
 	private final BooleanValue bow = new BooleanValue("Bow", this, false);
 	private final NumberValue bowSlot = new NumberValue("Bow Slot", this, 5.0D, 1.0D, 9.0D, 1.0D, () -> !bow.getValue());
+	private final BooleanValue goldenApple = new BooleanValue("Bow", this, false);
+	private final NumberValue goldenAppleSlot = new NumberValue("Bow Slot", this, 5.0D, 1.0D, 9.0D, 1.0D, () -> !goldenApple.getValue());
 	private final BooleanValue blocks = new BooleanValue("Blocks", this, true);
 	private final NumberValue blockSlot = new NumberValue("Block Slot", this, 6.0D, 1.0D, 9.0D, 1.0D, () -> !blocks.getValue());
 	private final BooleanValue projectiles = new BooleanValue("Projectiles", this, true);
@@ -95,6 +98,15 @@ public class InventoryManager extends Module {
 							}
 						
 						} else if (bowSlot.getValue().doubleValue() != 0.0D && is.getItem() instanceof ItemBow && is == InventoryUtil.bestBow() && mc.player.inventoryContainer.getInventory().contains(InventoryUtil.bestBow()) && mc.player.inventoryContainer.getSlot((int) (35.0D + bowSlot.getValue().doubleValue())).getStack() != is && bow.getValue()) {
+							InventoryUtil.openInv(mode.getValue().getName());
+							mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, (int) (bowSlot.getValue().doubleValue() - 1.0D), 2, mc.player);
+							InventoryUtil.closeInv(mode.getValue().getName());
+							
+							InventoryUtil.timer.reset();
+							if (speed.getValue().doubleValue() != 0.0D) {
+								break;
+							}
+						} else if (goldenAppleSlot.getValue().doubleValue() != 0.0D && is.getItem() instanceof ItemAppleGold && is == InventoryUtil.getGoldenAppleSlotInventory() && mc.player.inventoryContainer.getInventory().contains(InventoryUtil.getGoldenAppleSlotInventory()) && mc.player.inventoryContainer.getSlot((int) (35.0D + goldenAppleSlot.getValue().doubleValue())).getStack() != is && goldenApple.getValue()) {
 							InventoryUtil.openInv(mode.getValue().getName());
 							mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, (int) (bowSlot.getValue().doubleValue() - 1.0D), 2, mc.player);
 							InventoryUtil.closeInv(mode.getValue().getName());

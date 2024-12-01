@@ -1,7 +1,9 @@
 package cc.unknown.util.player;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.lwjgl.input.Keyboard;
 
@@ -17,7 +19,9 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemAppleGold;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBlock;
@@ -29,6 +33,7 @@ import net.minecraft.item.ItemSnowball;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.C0DPacketCloseWindow;
 import net.minecraft.network.play.client.C16PacketClientStatus;
 
@@ -79,27 +84,69 @@ public class InventoryUtil implements Accessor {
 	}
 
 	public ItemStack getBlockSlotInventory() {
-		ItemStack item = null;
-		int stacksize = 0;
-		if (mc.player.getHeldItem() != null && mc.player.getHeldItem().getItem() != null
-				&& mc.player.getHeldItem().getItem() instanceof ItemBlock
-				&& !invalidBlocks.contains(((ItemBlock) mc.player.getHeldItem().getItem()).getBlock())) {
-			return mc.player.getHeldItem();
-		} else {
-			for (int i = 9; i < 45; ++i) {
-				if (mc.player.inventoryContainer.getSlot(i).getStack() != null
-						&& mc.player.inventoryContainer.getSlot(i).getStack().getItem() instanceof ItemBlock
-						&& !invalidBlocks
-								.contains(((ItemBlock) mc.player.inventoryContainer.getSlot(i).getStack().getItem())
-										.getBlock())
-						&& mc.player.inventoryContainer.getSlot(i).getStack().stackSize >= stacksize) {
-					item = mc.player.inventoryContainer.getSlot(i).getStack();
-					stacksize = mc.player.inventoryContainer.getSlot(i).getStack().stackSize;
-				}
-			}
+	    ItemStack item = null;
+	    int stacksize = 0;
 
-			return item;
-		}
+	    if (mc.player != null && mc.player.getHeldItem() != null) {
+	        ItemStack heldItem = mc.player.getHeldItem();
+	        if (heldItem.getItem() instanceof ItemBlock) {
+	            ItemBlock itemBlock = (ItemBlock) heldItem.getItem();
+	            Block block = itemBlock.getBlock();
+	            if (block != null && invalidBlocks != null && !invalidBlocks.contains(block)) {
+	                return heldItem;
+	            }
+	        }
+	    }
+
+	    if (mc.player != null && mc.player.inventoryContainer != null) {
+	        for (int i = 9; i < 45; ++i) {
+	            Slot slot = mc.player.inventoryContainer.getSlot(i);
+	            if (slot != null) {
+	                ItemStack stack = slot.getStack();
+	                if (stack != null && stack.getItem() instanceof ItemBlock) {
+	                    ItemBlock itemBlock = (ItemBlock) stack.getItem();
+	                    Block block = itemBlock.getBlock();
+	                    if (block != null && invalidBlocks != null && !invalidBlocks.contains(block)) {
+	                        if (stack.stackSize > stacksize) {
+	                            item = stack;
+	                            stacksize = stack.stackSize;
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	    }
+
+	    return item;
+	}
+	
+	public ItemStack getGoldenAppleSlotInventory() {
+	    ItemStack item = null;
+	    int stacksize = 0;
+
+	    if (mc.player != null && mc.player.getHeldItem() != null) {
+	        ItemStack heldItem = mc.player.getHeldItem();
+	        if (heldItem.getItem() instanceof ItemAppleGold) {
+	            return heldItem;
+	        }
+	    }
+
+	    if (mc.player != null && mc.player.inventoryContainer != null) {
+	        for (int i = 9; i < 45; ++i) {
+	            Slot slot = mc.player.inventoryContainer.getSlot(i);
+	            if (slot != null) {
+	                ItemStack stack = slot.getStack();
+	                if (stack != null && stack.getItem() instanceof ItemAppleGold) {
+	                    if (stack.stackSize > stacksize) {
+	                        item = stack;
+	                        stacksize = stack.stackSize;
+	                    }
+	                }
+	            }
+	        }
+	    }
+
+	    return item;
 	}
 
 	public int getCobwebSlot() {
@@ -669,123 +716,41 @@ public class InventoryUtil implements Accessor {
 	}
 
 	public float getToolMaterialRating(ItemStack itemStack, boolean checkForDamage) {
-		Item is = itemStack.getItem();
-		float rating = 0.0F;
-		if (is instanceof ItemSword) {
-			String var4;
-			switch ((var4 = ((ItemSword) is).getToolMaterialName()).hashCode()) {
-			case -916080124:
-				if (var4.equals("EMERALD")) {
-					rating = 7.0F;
-				}
-				break;
-			case 2193504:
-				if (var4.equals("GOLD")) {
-					rating = 4.0F;
-				}
-				break;
-			case 2256072:
-				if (var4.equals("IRON")) {
-					rating = 6.0F;
-				}
-				break;
-			case 2670253:
-				if (var4.equals("WOOD")) {
-					rating = 4.0F;
-				}
-				break;
-			case 79233093:
-				if (var4.equals("STONE")) {
-					rating = 5.0F;
-				}
-			}
-		} else if (is instanceof ItemPickaxe) {
-			String var5;
-			switch ((var5 = ((ItemPickaxe) is).getToolMaterialName()).hashCode()) {
-			case -916080124:
-				if (var5.equals("EMERALD")) {
-					rating = (float) (checkForDamage ? 5 : 50);
-				}
-				break;
-			case 2193504:
-				if (var5.equals("GOLD")) {
-					rating = 2.0F;
-				}
-				break;
-			case 2256072:
-				if (var5.equals("IRON")) {
-					rating = (float) (checkForDamage ? 4 : 40);
-				}
-				break;
-			case 2670253:
-				if (var5.equals("WOOD")) {
-					rating = 2.0F;
-				}
-				break;
-			case 79233093:
-				if (var5.equals("STONE")) {
-					rating = 3.0F;
-				}
-			}
-		} else if (is instanceof ItemAxe) {
-			String var6;
-			switch ((var6 = ((ItemAxe) is).getToolMaterialName()).hashCode()) {
-			case -916080124:
-				if (var6.equals("EMERALD")) {
-					rating = 6.0F;
-				}
-				break;
-			case 2193504:
-				if (var6.equals("GOLD")) {
-					rating = 3.0F;
-				}
-				break;
-			case 2256072:
-				if (var6.equals("IRON")) {
-					rating = 5.0F;
-				}
-				break;
-			case 2670253:
-				if (var6.equals("WOOD")) {
-					rating = 3.0F;
-				}
-				break;
-			case 79233093:
-				if (var6.equals("STONE")) {
-					rating = 4.0F;
-				}
-			}
-		} else if (is instanceof ItemSpade) {
-			String var7;
-			switch ((var7 = ((ItemSpade) is).getToolMaterialName()).hashCode()) {
-			case -916080124:
-				if (var7.equals("EMERALD")) {
-					rating = 4.0F;
-				}
-				break;
-			case 2193504:
-				if (var7.equals("GOLD")) {
-					rating = 1.0F;
-				}
-				break;
-			case 2256072:
-				if (var7.equals("IRON")) {
-					rating = 3.0F;
-				}
-				break;
-			case 2670253:
-				if (var7.equals("WOOD")) {
-					rating = 1.0F;
-				}
-				break;
-			case 79233093:
-				if (var7.equals("STONE")) {
-					rating = 2.0F;
-				}
-			}
-		}
+	    if (itemStack == null || itemStack.getItem() == null) {
+	        return 0.0F;
+	    }
 
-		return rating;
+	    Item item = itemStack.getItem();
+	    String materialName = null;
+
+	    if (item instanceof ItemTool) {
+	        materialName = ((ItemTool) item).getToolMaterialName();
+	    } else if (item instanceof ItemSword) {
+	        materialName = ((ItemSword) item).getToolMaterialName();
+	    }
+
+	    if (materialName == null) {
+	        return 0.0F;
+	    }
+
+	    Map<String, Float> materialRatings = new HashMap<>();
+	    materialRatings.put("WOOD", 2.0F);
+	    materialRatings.put("STONE", 3.0F);
+	    materialRatings.put("IRON", 4.0F);
+	    materialRatings.put("GOLD", 2.0F);
+	    materialRatings.put("EMERALD", 5.0F);
+
+	    float baseRating = materialRatings.getOrDefault(materialName, 0.0F);
+
+	    if (item instanceof ItemSword) {
+	        baseRating += 2.0F;
+	    } else if (item instanceof ItemPickaxe || item instanceof ItemSpade) {
+	        baseRating = checkForDamage ? baseRating : baseRating * 10;
+	    } else if (item instanceof ItemAxe) {
+	        baseRating += 1.0F;
+	    }
+
+	    return baseRating;
 	}
 
 	public void openInv(String mode) {
@@ -798,18 +763,19 @@ public class InventoryUtil implements Accessor {
 	}
 
 	public void closeInv(String mode) {
-		if (mode.equalsIgnoreCase("Spoof") && isInventoryOpen && !(mc.currentScreen instanceof GuiInventory)) {
-			PacketUtil.sendNoEvent(new C0DPacketCloseWindow(mc.player.inventoryContainer.windowId));
-			KeyBinding[] var4;
-			int var3 = (var4 = moveKeys).length;
+	    if (mode != null && mode.equalsIgnoreCase("Spoof") && isInventoryOpen && mc != null && mc.currentScreen != null && !(mc.currentScreen instanceof GuiInventory) && mc.player != null && mc.player.inventoryContainer != null) {
 
-			for (int var2 = 0; var2 < var3; ++var2) {
-				KeyBinding bind = var4[var2];
-				KeyBinding.setKeyBindState(bind.getKeyCode(), Keyboard.isKeyDown(bind.getKeyCode()));
-			}
+	        PacketUtil.sendNoEvent(new C0DPacketCloseWindow(mc.player.inventoryContainer.windowId));
 
-			isInventoryOpen = false;
-		}
+	        if (moveKeys != null) {
+	            for (KeyBinding bind : moveKeys) {
+	                if (bind != null) {
+	                    KeyBinding.setKeyBindState(bind.getKeyCode(), Keyboard.isKeyDown(bind.getKeyCode()));
+	                }
+	            }
+	        }
 
+	        isInventoryOpen = false;
+	    }
 	}
 }

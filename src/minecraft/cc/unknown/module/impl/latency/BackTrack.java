@@ -1,9 +1,12 @@
 package cc.unknown.module.impl.latency;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import com.mojang.authlib.GameProfile;
 
+import cc.unknown.component.impl.player.BotComponent;
+import cc.unknown.component.impl.player.FriendComponent;
 import cc.unknown.event.CancellableEvent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -14,9 +17,15 @@ import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.combat.KillAura;
+import cc.unknown.module.impl.ghost.AimAssist;
+import cc.unknown.module.impl.world.LegitScaffold;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.geometry.Doble;
 import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.RotationUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
@@ -79,11 +88,11 @@ public final class BackTrack extends Module {
 	@EventLink
 	public final Listener<PacketSendEvent> onSend = event -> {
 		if (mc.player != null && mc.world != null && mc.getNetHandler().getNetworkManager().getNetHandler() != null) {
-			if (getModule(Scaffold.class).isEnabled()) {
+			if (getModule(Scaffold.class).isEnabled() || getModule(LegitScaffold.class).isEnabled()) {
 				outgoingPackets.clear();
 			} else {
-				entity = null;
-
+				entity = mc.world.playerEntities.stream().filter(p -> p != mc.player).filter(p -> !FriendComponent.isFriend(p)).filter(p -> !getComponent(BotComponent.class).contains(p)).map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p))).min(Comparator.comparing(Doble::getSecond)).map(Doble::getFirst).orElse(null);;
+				
 				if (mc.world != null && lastWorld != mc.world) {
 					resetOutgoingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
 					lastWorld = mc.world;
@@ -101,11 +110,10 @@ public final class BackTrack extends Module {
 		}
 	};
 
-	@SuppressWarnings("unused")
 	@EventLink
 	public final Listener<PacketReceiveEvent> onReceive = event -> {
 		if (mc.player != null && mc.world != null && mc.getNetHandler().getNetworkManager().getNetHandler() != null) {
-			if (getModule(Scaffold.class).isEnabled()) {
+			if (getModule(Scaffold.class).isEnabled() || getModule(LegitScaffold.class).isEnabled()) {
 				incomingPackets.clear();
 			} else {
 				Entity entity;
@@ -131,8 +139,8 @@ public final class BackTrack extends Module {
 						entityLivingBase.realPosZ = (int) packet.getZ();
 					}
 				}
-
-				entity = null;
+				
+				entity = mc.world.playerEntities.stream().filter(p -> p != mc.player).filter(p -> !FriendComponent.isFriend(p)).filter(p -> !getComponent(BotComponent.class).contains(p)).map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p))).min(Comparator.comparing(Doble::getSecond)).map(Doble::getFirst).orElse(null);;
 
 				if (mc.world != null && lastWorld != mc.world) {
 					resetIncomingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
@@ -172,7 +180,7 @@ public final class BackTrack extends Module {
 				resetOutgoingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
 			}
 
-			if (mc.player.getDistance(realX, realY, realZ) > hitRange.getValue().doubleValue() || timer.elapse(delay.getValue().doubleValue(), true)) {
+			if (mc.player.getDistance(realX, realY, realZ) > hitRange.getValue().doubleValue() || timer.elapse(delay.getValue().intValue(), true)) {
 				resetIncomingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
 				resetOutgoingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
 			}
@@ -194,7 +202,9 @@ public final class BackTrack extends Module {
 				if (mc.player.getDistanceToEntity(entity) > 3.0F && mc.player.getDistance(entity.posX, entity.posY, entity.posZ) >= mc.player.getDistance(realX, realY, realZ)) {
 					render = false;
 				}
-			} else if (mc.player.getDistance(entity.posX, entity.posY, entity.posZ) >= mc.player.getDistance(realX, realY, realZ) || mc.player.getDistance(realX, realY, realZ) < mc.player.getDistance(lastRealX, lastRealY, lastRealZ)) {
+			}
+			
+			if (mc.player.getDistance(entity.posX, entity.posY, entity.posZ) >= mc.player.getDistance(realX, realY, realZ) || mc.player.getDistance(realX, realY, realZ) < mc.player.getDistance(lastRealX, lastRealY, lastRealZ)) {
 				render = false;
 			}
 
@@ -202,7 +212,7 @@ public final class BackTrack extends Module {
 				render = false;
 			}
 
-			if (mc.player.getDistance(realX, realY, realZ) > hitRange.getValue().doubleValue() || timer.elapse(delay.getValue().doubleValue(), false)) {
+			if (mc.player.getDistance(realX, realY, realZ) > hitRange.getValue().doubleValue() || timer.elapse(delay.getValue().intValue(), false)) {
 				render = false;
 			}
 
