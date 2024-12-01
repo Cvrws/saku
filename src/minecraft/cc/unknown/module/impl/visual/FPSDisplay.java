@@ -30,7 +30,7 @@ public final class FPSDisplay extends Module {
 		
         final String titleString = "FPS ";
         final String fpsString = Minecraft.getDebugFPS() + "";
-        final float titleWidth = Fonts.MONSERAT.get(20, Weight.BOLD).width(titleString);
+        final float titleWidth = Fonts.MINECRAFT.get(20, Weight.BOLD).width(titleString);
 
         if (Minecraft.getDebugFPS() != lastFPS) {
             scale.x = titleWidth + Fonts.ROBOTO.get(20, Weight.LIGHT).width(fpsString);
@@ -44,7 +44,7 @@ public final class FPSDisplay extends Module {
 
         final double textX = position.x + 3.0F;
         final double textY = position.y + scale.y / 2.0F - Fonts.ROBOTO.get(20, Weight.LIGHT).height() / 4.0F;
-        Fonts.MONSERAT.get(20, Weight.BOLD).drawWithShadow(titleString, textX, textY, getTheme().getFirstColor().getRGB());
+        Fonts.MINECRAFT.get(20, Weight.BOLD).drawWithShadow(titleString, textX, textY, getTheme().getFirstColor().getRGB());
         Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(fpsString, textX + titleWidth, textY, Color.WHITE.getRGB());
     };
 }

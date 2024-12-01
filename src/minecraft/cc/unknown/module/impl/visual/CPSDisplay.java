@@ -30,7 +30,7 @@ public final class CPSDisplay extends Module {
 		final String titleString = "CPS ";
 		final String cpsString = CPSHelper.getCPS(MouseButton.LEFT) + "";
 
-		final float titleWidth = Fonts.MONSERAT.get(20, Weight.BOLD).width(titleString);
+		final float titleWidth = Fonts.MINECRAFT.get(20, Weight.BOLD).width(titleString);
 		scale.x = titleWidth + Fonts.ROBOTO.get(20, Weight.LIGHT).width(cpsString);
 
 		RenderUtil.roundedRectangle(position.x, position.y, scale.x + 6, scale.y - 1, 6, getTheme().getBackgroundShade());
@@ -39,7 +39,7 @@ public final class CPSDisplay extends Module {
 
 		final double textX = position.x + 3.0F;
 		final double textY = position.y + scale.y / 2.0F - Fonts.ROBOTO.get(20, Weight.LIGHT).height() / 4.0F;
-		Fonts.MONSERAT.get(20, Weight.BOLD).drawWithShadow(titleString, textX, textY, getTheme().getFirstColor().getRGB());
+		Fonts.MINECRAFT.get(20, Weight.BOLD).drawWithShadow(titleString, textX, textY, getTheme().getFirstColor().getRGB());
 		Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(cpsString, textX + titleWidth, textY, Color.WHITE.getRGB());
 	};
 }
