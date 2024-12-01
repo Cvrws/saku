@@ -1,30 +1,43 @@
 package cc.unknown.module.impl.latency;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.Cylinder;
-import org.lwjgl.util.glu.GLU;
+import com.mojang.authlib.GameProfile;
 
+import cc.unknown.event.CancellableEvent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
-import cc.unknown.event.impl.other.TickEvent;
+import cc.unknown.event.impl.netty.PacketSendEvent;
+import cc.unknown.event.impl.other.GameEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.module.impl.combat.KillAura;
-import cc.unknown.module.impl.ghost.AimAssist;
+import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.render.RenderUtil;
+import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.value.impl.BooleanValue;
+import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
+import cc.unknown.value.impl.SubMode;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.C00PacketKeepAlive;
+import net.minecraft.network.play.client.C02PacketUseEntity;
+import net.minecraft.network.play.client.C03PacketPlayer;
+import net.minecraft.network.play.client.C07PacketPlayerDigging;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.network.play.client.C09PacketHeldItemChange;
+import net.minecraft.network.play.client.C0APacketAnimation;
+import net.minecraft.network.play.client.C0BPacketEntityAction;
+import net.minecraft.network.play.client.C0FPacketConfirmTransaction;
 import net.minecraft.network.play.server.S00PacketKeepAlive;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
@@ -33,208 +46,266 @@ import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.network.play.server.S14PacketEntity;
 import net.minecraft.network.play.server.S18PacketEntityTeleport;
 import net.minecraft.network.play.server.S19PacketEntityHeadLook;
-import net.minecraft.network.play.server.S19PacketEntityStatus;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.network.play.server.S32PacketConfirmTransaction;
+import net.minecraft.network.status.client.C01PacketPing;
+import net.minecraft.network.status.server.S01PacketPong;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 
 @ModuleInfo(aliases = "Back Track", description = "Utiliza la latencia para atacar desde más lejos", category = Category.LATENCY)
 public final class BackTrack extends Module {
 
-    private final ArrayList<Packet> packets = new ArrayList<>();
+	private final ArrayList<Packet> incomingPackets = new ArrayList();
+	private final ArrayList<Packet> outgoingPackets = new ArrayList();
+	private double lastRealX;
+	private double lastRealY;
+	private double lastRealZ;
+	private WorldClient lastWorld;
+	private EntityLivingBase entity;
+	private final BooleanValue legit = new BooleanValue("Legit", this, false);
+	private final BooleanValue releaseOnHit = new BooleanValue("Release on hit", this, true, () -> !legit.getValue());
+	private final NumberValue delay = new NumberValue("Delay", this, 400.0D, 0.0D, 1000.0D, 10.0D);
+	private final NumberValue hitRange = new NumberValue("Hit Range", this, 3.0D, 0.0D, 10.0D, 0.1D);
+	private final BooleanValue onlyIfNeed = new BooleanValue("Only If Need", this, true);
+	private final BooleanValue esp = new BooleanValue("ESP", this, true);
+	private final StopWatch timer = new StopWatch();
+	
+	@Override
+	public void onEnable() {
+		incomingPackets.clear();
+		outgoingPackets.clear();
+	}
 
-    private EntityLivingBase entity = null;
-    private INetHandler packetListener = null;
-    private WorldClient lastWorld;
-    
-    private NumberValue delay = new NumberValue("Delay", this, 300, 25, 1000, 10);
-    private NumberValue reach = new NumberValue("Reach", this, 4.7, 3.0, 6, 0.1);
+	@EventLink
+	public final Listener<PacketSendEvent> onSend = event -> {
+		if (mc.player != null && mc.world != null && mc.getNetHandler().getNetworkManager().getNetHandler() != null) {
+			if (getModule(Scaffold.class).isEnabled()) {
+				outgoingPackets.clear();
+			} else {
+				entity = null;
 
-    StopWatch timerHelper = new StopWatch();
-    private boolean timeUpdate = true;
-    private boolean keepAlive = true;
-    private boolean knockback = true;
+				if (mc.world != null && lastWorld != mc.world) {
+					resetOutgoingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+					lastWorld = mc.world;
+				} else {
+					if (entity != null && (!onlyIfNeed.getValue() || !(mc.player.getDistanceToEntity(entity) < 3.0F))) {
+						addOutgoingPackets(event.getPacket(), event);
+					} else {
+						resetOutgoingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+					}
 
-    @EventLink
-    public final Listener<TickEvent> onTick = event -> {
-    	if(entity == null){
-            return;
-        }
-        try{
-            if (entity != null && mc.player != null && this.packetListener != null && mc.world != null) {
-                double d0 = (double) this.entity.realPosX / 32.0D;
-                double d1 = (double) this.entity.realPosY / 32.0D;
-                double d2 = (double) this.entity.realPosZ / 32.0D;
-                double d3 = (double) this.entity.serverPosX / 32.0D;
-                double d4 = (double) this.entity.serverPosY / 32.0D;
-                double d5 = (double) this.entity.serverPosZ / 32.0D;
-                AxisAlignedBB alignedBB = new AxisAlignedBB(d3 - (double) this.entity.width, d4, d5 - (double) this.entity.width, d3 + (double) this.entity.width, d4 + (double) this.entity.height, d5 + (double) this.entity.width);
-                Vec3 positionEyes = mc.player.getPositionEyes(mc.timer.renderPartialTicks);
-                double currentX = MathHelper.clamp_double(positionEyes.xCoord, alignedBB.minX, alignedBB.maxX);
-                double currentY = MathHelper.clamp_double(positionEyes.yCoord, alignedBB.minY, alignedBB.maxY);
-                double currentZ = MathHelper.clamp_double(positionEyes.zCoord, alignedBB.minZ, alignedBB.maxZ);
-                AxisAlignedBB alignedBB2 = new AxisAlignedBB(d0 - (double) this.entity.width, d1, d2 - (double) this.entity.width, d0 + (double) this.entity.width, d1 + (double) this.entity.height, d2 + (double) this.entity.width);
-                double realX = MathHelper.clamp_double(positionEyes.xCoord, alignedBB2.minX, alignedBB2.maxX);
-                double realY = MathHelper.clamp_double(positionEyes.yCoord, alignedBB2.minY, alignedBB2.maxY);
-                double realZ = MathHelper.clamp_double(positionEyes.zCoord, alignedBB2.minZ, alignedBB2.maxZ);
-                double distance = reach.getValue().doubleValue();
-                if (!mc.player.canEntityBeSeen(this.entity)) {
-                    distance = distance > 3 ? 3 : distance;
-                }
-                double bestX = MathHelper.clamp_double(positionEyes.xCoord, this.entity.getEntityBoundingBox().minX, this.entity.getEntityBoundingBox().maxX);
-                double bestY = MathHelper.clamp_double(positionEyes.yCoord, this.entity.getEntityBoundingBox().minY, this.entity.getEntityBoundingBox().maxY);
-                double bestZ = MathHelper.clamp_double(positionEyes.zCoord, this.entity.getEntityBoundingBox().minZ, this.entity.getEntityBoundingBox().maxZ);
-                boolean b = false;
-                boolean suwi = true;
-                if ((positionEyes.distanceTo(new Vec3(bestX, bestY, bestZ)) > 2.9)) {
-                    b = true;
-                }
-                if (!suwi) {
-                    b = true;
-                }
-                if (!(b && positionEyes.distanceTo(new Vec3(realX, realY, realZ)) > positionEyes.distanceTo(new Vec3(currentX, currentY, currentZ)) + 0.05) || (mc.player.getDistance(d0, d1, d2) > distance) || (mc.player.getDistance(d0, d1, d2) < 2.3) || timerHelper.reached(delay.getValue().longValue())) {
-                    this.resetPackets(this.packetListener);
-                    timerHelper.reset();
-                }
+				}
+			}
+		} else {
+			outgoingPackets.clear();
+		}
+	};
 
-            }
-        } catch (Exception e) {
-            entity = null;
-        }
-    };
-    
-    @EventLink
-    public final Listener<Render3DEvent> onRender3D = event -> {
-        if (this.entity != null && this.entity != mc.player && !this.entity.isInvisible()) {
-            try {
-                final double x = this.entity.realPosX / 32D - mc.getRenderManager().renderPosX;
-                final double y = this.entity.realPosY / 32D - mc.getRenderManager().renderPosY;
-                final double z = this.entity.realPosZ / 32D - mc.getRenderManager().renderPosZ;
+	@SuppressWarnings("unused")
+	@EventLink
+	public final Listener<PacketReceiveEvent> onReceive = event -> {
+		if (mc.player != null && mc.world != null && mc.getNetHandler().getNetworkManager().getNetHandler() != null) {
+			if (getModule(Scaffold.class).isEnabled()) {
+				incomingPackets.clear();
+			} else {
+				Entity entity;
+				EntityLivingBase entityLivingBase;
+				if (event.getPacket() instanceof S14PacketEntity) {
+					S14PacketEntity packet = (S14PacketEntity) event.getPacket();
+					entity = mc.world.getEntityByID(packet.entityId);
+					if (entity instanceof EntityLivingBase) {
+						entityLivingBase = (EntityLivingBase) entity;
+						entityLivingBase.realPosX += (double) packet.getPosX();
+						entityLivingBase.realPosY += (double) packet.getPosY();
+						entityLivingBase.realPosZ += (double) packet.getPosZ();
+					}
+				}
 
-                GL11.glPushMatrix();
-                GL11.glTranslated(x, y + this.entity.height, z);
-                GL11.glNormal3d(0.0, 1.0, 0.0);
-                GL11.glRotated(90, 1, 0, 0);
+				if (event.getPacket() instanceof S18PacketEntityTeleport) {
+					S18PacketEntityTeleport packet = (S18PacketEntityTeleport) event.getPacket();
+					entity = mc.world.getEntityByID(packet.getEntityId());
+					if (entity instanceof EntityLivingBase) {
+						entityLivingBase = (EntityLivingBase) entity;
+						entityLivingBase.realPosX = (int) packet.getX();
+						entityLivingBase.realPosY = (int) packet.getY();
+						entityLivingBase.realPosZ = (int) packet.getZ();
+					}
+				}
 
-                GL11.glDisable(GL11.GL_TEXTURE_2D);
-                GL11.glEnable(GL11.GL_BLEND);
+				entity = null;
 
-                GL11.glDisable(GL11.GL_DEPTH_TEST);
+				if (mc.world != null && lastWorld != mc.world) {
+					resetIncomingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+					lastWorld = mc.world;
+				} else {
+					if (entity != null && (!onlyIfNeed.getValue() || !(mc.player.getDistanceToEntity(entity) < 3.0F))) {
+						addIncomingPackets(event.getPacket(), event);
+					} else {
+						resetIncomingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+					}
 
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                GL11.glLineWidth(1);
-                RenderUtil.color(new Color(0, 255, 0));
-                final Cylinder cylinder = new Cylinder();
+				}
+			}
+		} else {
+			incomingPackets.clear();
+		}
+	};
 
-                cylinder.setDrawStyle(GLU.GLU_LINE);
-                cylinder.setOrientation(GLU.GLU_INSIDE);
-                cylinder.draw(0.62f, 0.62f, this.entity.height, 8, 1);
+	@EventLink
+	public final Listener<GameEvent> onGame = event -> {
+		if (entity != null && entity.getEntityBoundingBox() != null && mc.player != null && mc.world != null && entity.realPosX != 0.0D && entity.realPosY != 0.0D && entity.realPosZ != 0.0D && entity.width != 0.0F && entity.height != 0.0F && entity.posX != 0.0D && entity.posY != 0.0D && entity.posZ != 0.0D) {
+			double realX = entity.realPosX / 32.0D;
+			double realY = entity.realPosY / 32.0D;
+			double realZ = entity.realPosZ / 32.0D;
+			if (!onlyIfNeed.getValue()) {
+				if (mc.player.getDistanceToEntity(entity) > 3.0F && mc.player.getDistance(entity.posX, entity.posY, entity.posZ) >= mc.player.getDistance(realX, realY, realZ)) {
+					resetIncomingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+					resetOutgoingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+				}
+			} else if (mc.player.getDistance(entity.posX, entity.posY, entity.posZ) >= mc.player.getDistance(realX, realY, realZ) || mc.player.getDistance(realX, realY, realZ) < mc.player.getDistance(lastRealX, lastRealY, lastRealZ)) {
+				resetIncomingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+				resetOutgoingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+			}
 
-                RenderUtil.color(new Color(0, 255, 0, 150));
-                cylinder.setDrawStyle(GLU.GLU_FILL);
-                cylinder.setOrientation(GLU.GLU_INSIDE);
-                cylinder.draw(0.62f, 0.65f, this.entity.height, 8, 1);
+			if (legit.getValue() && releaseOnHit.getValue() && entity.hurtTime <= 1) {
+				resetIncomingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+				resetOutgoingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+			}
 
-                GL11.glDisable(GL11.GL_BLEND);
-                GL11.glEnable(GL11.GL_TEXTURE_2D);
-                GL11.glEnable(GL11.GL_DEPTH_TEST);
-                GL11.glPopMatrix();
-            } catch (NullPointerException exception) {
-            }
-        }
-    };
+			if (mc.player.getDistance(realX, realY, realZ) > hitRange.getValue().doubleValue() || timer.elapse(delay.getValue().doubleValue(), true)) {
+				resetIncomingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+				resetOutgoingPackets(mc.getNetHandler().getNetworkManager().getNetHandler());
+			}
 
-    @EventLink
-    public final Listener<PacketReceiveEvent> onPacket = event -> {
-        if (mc.world == null) return;
+			lastRealX = realX;
+			lastRealY = realY;
+			lastRealZ = realZ;
+		}
+	};
 
-        this.packetListener = mc.getNetHandler();
+	@EventLink
+	public final Listener<Render3DEvent> onRender3D = event -> {
+		if (entity != null && entity.getEntityBoundingBox() != null && mc.player != null && mc.world != null && entity.realPosX != 0.0D && entity.realPosY != 0.0D && entity.realPosZ != 0.0D && entity.width != 0.0F && entity.height != 0.0F && entity.posX != 0.0D && entity.posY != 0.0D && entity.posZ != 0.0D && esp.getValue()) {
+			boolean render = true;
+			double realX = entity.realPosX / 32.0D;
+			double realY = entity.realPosY / 32.0D;
+			double realZ = entity.realPosZ / 32.0D;
+			if (!onlyIfNeed.getValue()) {
+				if (mc.player.getDistanceToEntity(entity) > 3.0F && mc.player.getDistance(entity.posX, entity.posY, entity.posZ) >= mc.player.getDistance(realX, realY, realZ)) {
+					render = false;
+				}
+			} else if (mc.player.getDistance(entity.posX, entity.posY, entity.posZ) >= mc.player.getDistance(realX, realY, realZ) || mc.player.getDistance(realX, realY, realZ) < mc.player.getDistance(lastRealX, lastRealY, lastRealZ)) {
+				render = false;
+			}
 
-        synchronized (this) {
-        	if (event.getPacket() instanceof S14PacketEntity) {
-        		handleS14PacketEntity((S14PacketEntity) event.getPacket());
-        	} else if (event.getPacket() instanceof S18PacketEntityTeleport) {
-        		handleS18PacketEntityTeleport((S18PacketEntityTeleport) event.getPacket());
-        	} else if (event.getPacket() instanceof S08PacketPlayerPosLook) {
-        		resetPackets(mc.getNetHandler());
-        	}
+			if (legit.getValue() && releaseOnHit.getValue() && entity.hurtTime <= 1) {
+				render = false;
+			}
 
-        	this.entity = getModule(KillAura.class).isEnabled() && getModule(KillAura.class).target != null ? (getModule(AimAssist.class).isEnabled() && getModule(AimAssist.class).target != null ? getModule(AimAssist.class).target : getModule(KillAura.class).target) : null;
-        	
-        	if (this.entity == null) {
-        		resetPackets(mc.getNetHandler());
-        		return;
-        	}
-        	
-        	if (mc.world != null && mc.player != null) {
-        		if (this.lastWorld != mc.world) {
-        			resetPackets(mc.getNetHandler());
-        			this.lastWorld = mc.world;
-        			return;
-        		}
-        	
-        		addPackets(event.getPacket(), event);
-        		this.lastWorld = mc.world;
-        	}       
-        }
-    };
+			if (mc.player.getDistance(realX, realY, realZ) > hitRange.getValue().doubleValue() || timer.elapse(delay.getValue().doubleValue(), false)) {
+				render = false;
+			}
 
-    private void handleS14PacketEntity(S14PacketEntity packetEntity) {
-        Entity entity = mc.world.getEntityByID(packetEntity.entityId);
-        if (entity instanceof EntityLivingBase) {
-            EntityLivingBase entityLivingBase = (EntityLivingBase) entity;
-            entityLivingBase.realPosX += packetEntity.posX;
-            entityLivingBase.realPosY += packetEntity.posY;
-            entityLivingBase.realPosZ += packetEntity.posZ;
-        }
-    }
+			if (entity != null && entity != mc.player && !entity.isInvisible() && render) {
+				if (entity == null || entity.width == 0.0F || entity.height == 0.0F) {
+					return;
+				}
+				
+				EntityOtherPlayerMP entityOtherPlayerMP = new EntityOtherPlayerMP(mc.world, new GameProfile(EntityPlayer.getUUID(mc.player.getGameProfile()), ""));
+				entityOtherPlayerMP.setPosition(entity.realPosX / 32.0D, entity.realPosY / 32.0D, entity.realPosZ / 32.0D);
+				entityOtherPlayerMP.inventory = ((EntityOtherPlayerMP)entity).inventory;
+				entityOtherPlayerMP.inventoryContainer = ((EntityOtherPlayerMP)entity).inventoryContainer;
+				entityOtherPlayerMP.rotationYawHead = entity.rotationYawHead;
+				entityOtherPlayerMP.rotationYaw = entity.rotationYaw;
+				entityOtherPlayerMP.rotationPitch = entity.rotationPitch;
+				mc.world.addEntityToWorld(-42069, entityOtherPlayerMP);
+			}
+		}
+	};
+	
+	private void resetIncomingPackets(INetHandler netHandler) {
+		if (incomingPackets.size() > 0) {
+			while (true) {
+				if (incomingPackets.size() == 0) {
+					timer.reset();
+					break;
+				}
 
-    private void handleS18PacketEntityTeleport(S18PacketEntityTeleport teleportPacket) {
-        Entity entity = mc.world.getEntityByID(teleportPacket.getEntityId());
-        if (entity instanceof EntityLivingBase) {
-            EntityLivingBase entityLivingBase = (EntityLivingBase) entity;
-            entityLivingBase.realPosX = teleportPacket.getX();
-            entityLivingBase.realPosY = teleportPacket.getY();
-            entityLivingBase.realPosZ = teleportPacket.getZ();
-        }
-    }
+				try {
+					((Packet) incomingPackets.get(0)).processPacket(netHandler);
+				} catch (Exception var3) {
+				}
 
-    private void resetPackets(INetHandler netHandler) {
-        if (this.packets.size() > 0) {
-            synchronized (this.packets) {
-                while (this.packets.size() != 0) {
-                    try {
-                        this.packets.get(0).processPacket(mc.getNetHandler());
-                    } catch (Exception ignored) {
-                    }
-                    this.packets.remove(this.packets.get(0));
-                }
+				incomingPackets.remove(incomingPackets.get(0));
+			}
+		}
 
-            }
-        }
-    }
+	}
 
-    private void addPackets(Packet packet, PacketReceiveEvent event) {
-        synchronized (this.packets) {
-            if (this.blockPacket(packet)) {
-                this.packets.add(packet);
-                event.setCancelled(true);
-            }
-        }
-    }
+	private void addIncomingPackets(Packet packet, CancellableEvent event) {
+		if (event != null && packet != null) {
+			synchronized (incomingPackets) {
+				if (blockPacketIncoming(packet)) {
+					incomingPackets.add(packet);
+					event.setCancelled(true);
+				}
 
-    private boolean blockPacket(Packet packet) {
-        if (packet instanceof S03PacketTimeUpdate) {
-            return timeUpdate;
-        } else if (packet instanceof S00PacketKeepAlive) {
-            return keepAlive;
-        } else if (packet instanceof S12PacketEntityVelocity || packet instanceof S27PacketExplosion) {
-            return knockback;
-        } else {
-            return packet instanceof S32PacketConfirmTransaction || packet instanceof S14PacketEntity || packet instanceof S19PacketEntityStatus || packet instanceof S19PacketEntityHeadLook || packet instanceof S18PacketEntityTeleport || packet instanceof S0FPacketSpawnMob;
-        }
-    }
+			}
+		}
+	}
 
+	private void resetOutgoingPackets(INetHandler netHandler) {
+		if (outgoingPackets.size() > 0) {
+			while (true) {
+				if (outgoingPackets.size() == 0) {
+					timer.reset();
+					break;
+				}
+
+				try {
+					PacketUtil.sendNoEvent((Packet) outgoingPackets.get(0));
+				} catch (Exception var3) {
+				}
+
+				outgoingPackets.remove(outgoingPackets.get(0));
+			}
+		}
+
+	}
+
+	private void addOutgoingPackets(Packet packet, CancellableEvent event) {
+		if (event != null && packet != null) {
+			synchronized (outgoingPackets) {
+				if (blockPacketsOutgoing(packet)) {
+					outgoingPackets.add(packet);
+					event.setCancelled(true);
+				}
+
+			}
+		}
+	}
+
+	private boolean isEntityPacket(Packet packet) {
+		return packet instanceof S14PacketEntity || packet instanceof S19PacketEntityHeadLook
+				|| packet instanceof S18PacketEntityTeleport || packet instanceof S0FPacketSpawnMob;
+	}
+
+	private boolean blockPacketIncoming(Packet packet) {
+		return packet instanceof S03PacketTimeUpdate || packet instanceof S00PacketKeepAlive
+				|| packet instanceof S12PacketEntityVelocity || packet instanceof S27PacketExplosion
+				|| packet instanceof S32PacketConfirmTransaction || packet instanceof S08PacketPlayerPosLook
+				|| packet instanceof S01PacketPong || isEntityPacket(packet);
+	}
+
+	private boolean blockPacketsOutgoing(Packet packet) {
+		if (!legit.getValue()) {
+			return false;
+		} else {
+			return packet instanceof C03PacketPlayer || packet instanceof C02PacketUseEntity
+					|| packet instanceof C0FPacketConfirmTransaction || packet instanceof C08PacketPlayerBlockPlacement
+					|| packet instanceof C09PacketHeldItemChange || packet instanceof C07PacketPlayerDigging
+					|| packet instanceof C0APacketAnimation || packet instanceof C01PacketPing
+					|| packet instanceof C00PacketKeepAlive || packet instanceof C0BPacketEntityAction;
+		}
+	}
 }
