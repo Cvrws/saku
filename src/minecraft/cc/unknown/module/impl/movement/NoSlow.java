@@ -35,6 +35,7 @@ public class NoSlow extends Module {
 	private final NumberValue swordForward = shortNumber("Sword Forward", sword, swordSlowdown);
 	private final NumberValue swordStrafe = shortNumber("Sword Strafe", sword, swordSlowdown);
 	private final BooleanValue swordSprint = shortBoolean("Sprint", sword);
+	private final BooleanValue swordSwitchNormal = shortBoolean("Normal Switch", sword);
 	private final BooleanValue swordPostSwitch = shortBoolean("Post Switch", sword);
 	private final BooleanValue swordPreSwitch = shortBoolean("Pre Switch", sword);
 	private final BooleanValue swordC08Pre = shortBoolean("C08 Pre", sword);
@@ -58,6 +59,7 @@ public class NoSlow extends Module {
 	private final NumberValue bowForward = shortNumber("Bow Forward", bow, bowSlowdown);
 	private final NumberValue bowStrafe = shortNumber("Bow Strafe", bow, bowSlowdown);
 	private final BooleanValue bowSprint = shortBoolean("Sprint", bow);
+	private final BooleanValue bowSwitchNormal = shortBoolean("Normal Switch", bow);
 	private final BooleanValue bowPostSwitch = shortBoolean("Post Switch", bow);
 	private final BooleanValue bowPreSwitch = shortBoolean("Pre Switch", bow);
 	private final BooleanValue bowC08Pre = shortBoolean("C08 Pre", bow);
@@ -80,6 +82,7 @@ public class NoSlow extends Module {
 	private final NumberValue restForward = shortNumber("Rest Forward", rest, restSlowdown);
 	private final NumberValue restStrafe = shortNumber("Rest Strafe", rest, restSlowdown);
 	private final BooleanValue restSprint = shortBoolean("Sprint", rest);
+	private final BooleanValue restSwitchNormal = shortBoolean("Normal Switch", rest);
 	private final BooleanValue restPostSwitch = shortBoolean("Post Switch", rest);
 	private final BooleanValue restPreSwitch = shortBoolean("Pre Switch", rest);
 	private final BooleanValue restC08Pre = shortBoolean("C08 Pre", rest);
@@ -94,33 +97,18 @@ public class NoSlow extends Module {
 	private final BooleanValue restC07BDPre = shortBoolean("C07 Pre Block Drop", rest);
 	private final BooleanValue restC07BDPost = shortBoolean("C07 Post Block Drop", rest);
 	
-	private final BooleanValue restBug = shortBoolean("Bug", rest);
-	private final BooleanValue restLegitBug = new BooleanValue("Legit Bug", this, false, () -> !rest.getValue() || !restBug.getValue());
-	private final BooleanValue restNoPotions = new BooleanValue("No Potions", this, true, () -> !rest.getValue() || !restLegitBug.getValue());
-	private final BooleanValue restNoSingleItem = new BooleanValue("No Single Item", this, true, () -> !rest.getValue() || !restLegitBug.getValue());
-	
 	private final BooleanValue restTimer = shortBoolean("Timer", rest);
 	private final NumberValue timerRest = shortNumber("Timer Rest", rest, restTimer);
-	private final BooleanValue restLastUsingC07ND = shortBoolean("Last Using C07 ND", rest);
 		
-	private boolean restarted = false;
 	private final StopWatch timeHelper = new StopWatch();
-	private final StopWatch lbug_TimeHelper = new StopWatch();
 
-	private boolean lastUsingRestItem = false;
-
-	private boolean legitBugLast = false;
-	
 	@Override
 	public void onDisable() {
-		restarted = true;
 		mc.timer.timerSpeed = 1.0F;
-		legitBugLast = false;
 	}
 
 	@Override
 	public void onEnable() {
-		legitBugLast = false;
 		mc.timer.timerSpeed = 1.0F;
 	}
 
@@ -200,6 +188,7 @@ public class NoSlow extends Module {
         		if (swordC07NDPre.getValue()) sendC07DropNormal();
         		if (swordC07BDPre.getValue()) sendC07BlockDrop();
         		if (swordPostSwitch.getValue()) switchItem();
+        		if (swordSwitchNormal.getValue()) switchItem2();
         		if (swordPreSwitch.getValue() && mc.player.isBlocking()) switchItem();
         		setTimerSpeed(swordTimer, timerSword);
         	} else if (currentItem.getItem() instanceof ItemBow) {
@@ -210,6 +199,7 @@ public class NoSlow extends Module {
         		if (bowC07NDPre.getValue()) sendC07DropNormal();
         		if (bowC07BDPre.getValue()) sendC07BlockDrop();
         		if (bowPreSwitch.getValue()) switchItem();
+        		if (bowSwitchNormal.getValue()) switchItem2();
         		setTimerSpeed(bowTimer, timerBow);	    
         	} else if (currentItem.getItem() instanceof ItemFood || currentItem.getItem() instanceof ItemPotion || currentItem.getItem() instanceof ItemBucketMilk) {
         		if (restC08Pre.getValue()) sendC08();
@@ -219,8 +209,7 @@ public class NoSlow extends Module {
         		if (restC07NDPre.getValue()) sendC07DropNormal();
         		if (restC07BDPre.getValue()) sendC07BlockDrop();
         		if (restPreSwitch.getValue()) switchItem();
-        		if (restLastUsingC07ND.getValue()) handleRestLastUsing();
-        		if (restLegitBug.getValue()) handleLegitBug();
+        		if (restSwitchNormal.getValue()) switchItem2();
         		setTimerSpeed(restTimer, timerRest);
 		    }  	
         }
@@ -230,33 +219,11 @@ public class NoSlow extends Module {
 		PacketUtil.send(new C09PacketHeldItemChange((getComponent(Slot.class).getItemIndex() + 1) % 3));
 		PacketUtil.send(new C09PacketHeldItemChange(getComponent(Slot.class).getItemIndex()));
 	}
-
-	private void handleRestLastUsing() {
-	    if (!mc.player.isUsingItem()) {
-	        lastUsingRestItem = false;
-	        return;
-	    }
-	    if (!lastUsingRestItem)
-	        PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.UP));
-	    lastUsingRestItem = true;
-	}
-
-	private void handleLegitBug() {
-	    if (restNoPotions.getValue() && mc.player.inventory.getCurrentItem().getItem() instanceof ItemPotion)
-	        return;
-	    if (restNoSingleItem.getValue() && mc.player.inventory.getCurrentItem().stackSize <= 1)
-	        return;
-
-	    if (!legitBugLast)
-	        lbug_TimeHelper.reset();
-	    legitBugLast = true;
-	    if (lbug_TimeHelper.reached(40L)) {
-	        PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.DROP_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
-	        mc.gameSettings.keyBindUseItem.pressed = false;
-	        mc.player.stopUsingItem();
-	        lbug_TimeHelper.reset();
-	        legitBugLast = false;
-	    }
+	
+	private void switchItem2() {
+        PacketUtil.send(new C09PacketHeldItemChange(getComponent(Slot.class).getItemIndex() % 8 + 1));
+        PacketUtil.send(new C09PacketHeldItemChange(getComponent(Slot.class).getItemIndex() % 7 + 2));
+        PacketUtil.send(new C09PacketHeldItemChange(getComponent(Slot.class).getItemIndex()));
 	}
 
 	private void handleKeyPresses() {

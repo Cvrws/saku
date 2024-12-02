@@ -27,70 +27,81 @@ public class AutoArmor extends Module {
 	private final NumberValue speed = new NumberValue("Speed", this, 150.0D, 0.0D, 1000.0D, 1.0D);
 	private final KeyBinding[] moveKeys = new KeyBinding[] { mc.gameSettings.keyBindForward, mc.gameSettings.keyBindBack, mc.gameSettings.keyBindLeft, mc.gameSettings.keyBindRight, mc.gameSettings.keyBindJump, mc.gameSettings.keyBindSneak };
 	private final StopWatch startTimer = new StopWatch();
-	private final StopWatch timer = new StopWatch();
+	private final StopWatch stopWatch = new StopWatch();
 
 	@EventLink
 	public final Listener<MoveInputEvent> onMoveInput = event -> {
-		if (!mode.is("Spoof") || mc.currentScreen == null) {
-			if (mode.is("Open Inv")) {
-				if (mc.currentScreen == null) {
-					startTimer.reset();
-				}
+	    if (!mode.is("Spoof") || mc.currentScreen == null) {
+	        if (mode.is("Open Inv")) {
+	    	    if (mc.currentScreen == null) {
+	    	        startTimer.reset();
+	    	    }
 
-				if (!startTimer.elapse(startDelay.getValue().doubleValue(), false)) {
-					return;
-				}
-			}
+	    	    if (!startTimer.elapse(startDelay.getValue().doubleValue(), false)) {
+	    	        return;
+	    	    }
+	        }
 
-			if (InventoryUtil.timer.elapse(speed.getValue().doubleValue(), false)) {
-				if (mode.is("Open Inv") && !(mc.currentScreen instanceof GuiInventory)) {
-					return;
-				}
+	        if (stopWatch.elapse(speed.getValue().doubleValue(), false)) {
+	            if (mode.is("Open Inv") && !(mc.currentScreen instanceof GuiInventory)) {
+	                return;
+	            }
 
-				int type;
-				for (type = 1; type < 5; ++type) {
-					if (mc.player.inventoryContainer.getSlot(4 + type).getHasStack()) {
-						ItemStack is = mc.player.inventoryContainer.getSlot(4 + type).getStack();
-						if (!InventoryUtil.isBestArmor(is, type)) {
-							InventoryUtil.openInv(mode.getValue().getName());
-							InventoryUtil.drop(4 + type);
-							InventoryUtil.closeInv(mode.getValue().getName());
+	            removeNonOptimalArmor();
+	            equipBestArmor();
+	        }
 
-							InventoryUtil.timer.reset();
-							if (speed.getValue().doubleValue() != 0.0D) {
-								break;
-							}
-						}
-					}
-				}
-
-				for (type = 1; type < 5; ++type) {
-					if ((double) InventoryUtil.timer.getMillis() > speed.getValue().doubleValue()) {
-						for (int i = 9; i < 45; ++i) {
-							if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
-								ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
-								if (InventoryUtil.getProtection(is) > 0.0F && InventoryUtil.isBestArmor(is, type) && !InventoryUtil.isBadStack(is, true, true)) {
-									InventoryUtil.openInv(mode.getValue().getName());
-									InventoryUtil.shiftClick(i);
-									InventoryUtil.closeInv(mode.getValue().getName());
-
-									InventoryUtil.timer.reset();
-									if (speed.getValue().doubleValue() != 0.0D) {
-										break;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			if (InventoryUtil.timer.elapse(55.0D, false)) {
-				InventoryUtil.closeInv(mode.getValue().getName());
-			}
-
-		} else {
-			InventoryUtil.closeInv(mode.getValue().getName());
-		}
+	        if (stopWatch.elapse(55.0D, false)) {
+	            InventoryUtil.closeInv(mode.getValue().getName());
+	        }
+	    } else {
+	        InventoryUtil.closeInv(mode.getValue().getName());
+	    }
 	};
+	
+	private void removeNonOptimalArmor() {
+	    for (int type = 1; type < 5; ++type) {
+	        if (mc.player.inventoryContainer.getSlot(4 + type).getHasStack()) {
+	            ItemStack is = mc.player.inventoryContainer.getSlot(4 + type).getStack();
+	            if (!InventoryUtil.isBestArmor(is, type)) {
+	                InventoryUtil.openInv(mode.getValue().getName());
+	                InventoryUtil.drop(4 + type);
+	                InventoryUtil.closeInv(mode.getValue().getName());
+
+	                stopWatch.reset();
+	                if (speed.getValue().doubleValue() != 0.0D) {
+	                    break;
+	                }
+	            }
+	        }
+	    }
+	}
+	
+	private void equipBestArmor() {
+	    for (int type = 1; type < 5; ++type) {
+	        if (stopWatch.getMillis() > speed.getValue().doubleValue()) {
+	            for (int i = 9; i < 45; ++i) {
+	                if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
+	                    ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
+	                    if (isValidArmor(is, type)) {
+	                        InventoryUtil.openInv(mode.getValue().getName());
+	                        InventoryUtil.shiftClick(i);
+	                        InventoryUtil.closeInv(mode.getValue().getName());
+
+	                        stopWatch.reset();
+	                        if (speed.getValue().doubleValue() != 0.0D) {
+	                            break;
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	    }
+	}
+	
+	private boolean isValidArmor(ItemStack itemStack, int type) {
+	    return InventoryUtil.getProtection(itemStack) > 0.0F
+	            && InventoryUtil.isBestArmor(itemStack, type)
+	            && !InventoryUtil.isBadStack(itemStack, true, true);
+	}
 }

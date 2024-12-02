@@ -10,5 +10,4 @@ public class RemoteUtil {
 	public String SECRET_KEY = AesUtil.decrypt2(NetworkUtil.getRaw(api, "a"));
 	public String tokenRemote = NetworkUtil.getRaw(api, "b");
 	public String authRemote = NetworkUtil.getRaw(api, "c");
-	public String ircRemote = NetworkUtil.getRaw(api, "d");
 }

@@ -1,5 +1,9 @@
 package cc.unknown.module.impl.player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.MoveInputEvent;
@@ -14,8 +18,10 @@ import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemAppleGold;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBow;
@@ -26,6 +32,7 @@ import net.minecraft.item.ItemSnowball;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.util.DamageSource;
 
 @ModuleInfo(aliases = { "Inventory Manager", "Inv Manager",
 		"Manager" }, description = "Sorts your inventory for you and throws out useless items", category = Category.PLAYER)
@@ -60,7 +67,8 @@ public class InventoryManager extends Module {
 	private final KeyBinding[] moveKeys = new KeyBinding[] { mc.gameSettings.keyBindForward, mc.gameSettings.keyBindBack, mc.gameSettings.keyBindLeft, mc.gameSettings.keyBindRight, mc.gameSettings.keyBindJump, mc.gameSettings.keyBindSneak };
 
 	private final StopWatch startTimer = new StopWatch();
-	private final StopWatch timer = new StopWatch();
+	private final StopWatch stopWatch = new StopWatch();
+	private int[] bestArmorDamageReducment, bestArmorSlot;
 
 	@Override
 	public void onDisable() {
@@ -69,6 +77,7 @@ public class InventoryManager extends Module {
 
 	@EventLink
 	public final Listener<MoveInputEvent> onMoveInput = event -> {
+		
 		if (mode.is("Open Inv")) {
 			if (mc.currentScreen == null) {
 				startTimer.reset();
@@ -85,13 +94,13 @@ public class InventoryManager extends Module {
 			for (int i = 9; i < 45; ++i) {
 				if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
 					ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
-					if (InventoryUtil.timer.elapse(speed.getValue().doubleValue(), false)) {
+					if (stopWatch.elapse(speed.getValue().doubleValue(), false)) {
 						if (swordSlot.getValue().doubleValue() != 0.0D && is.getItem() instanceof ItemSword && is == InventoryUtil.bestSword() && mc.player.inventoryContainer.getInventory().contains(InventoryUtil.bestSword()) && mc.player.inventoryContainer.getSlot((int) (35.0D + swordSlot.getValue().doubleValue())).getStack() != is && sword.getValue()) {
 							InventoryUtil.openInv(mode.getValue().getName());
 							mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, (int) (swordSlot.getValue().doubleValue() - 1.0D), 2, mc.player);
 							InventoryUtil.closeInv(mode.getValue().getName());
 							
-							InventoryUtil.timer.reset();
+							stopWatch.reset();
 							
 							if (speed.getValue().doubleValue() != 0.0D) {
 								break;
@@ -102,7 +111,7 @@ public class InventoryManager extends Module {
 							mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, (int) (bowSlot.getValue().doubleValue() - 1.0D), 2, mc.player);
 							InventoryUtil.closeInv(mode.getValue().getName());
 							
-							InventoryUtil.timer.reset();
+							stopWatch.reset();
 							if (speed.getValue().doubleValue() != 0.0D) {
 								break;
 							}
@@ -111,7 +120,7 @@ public class InventoryManager extends Module {
 							mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, (int) (bowSlot.getValue().doubleValue() - 1.0D), 2, mc.player);
 							InventoryUtil.closeInv(mode.getValue().getName());
 							
-							InventoryUtil.timer.reset();
+							stopWatch.reset();
 							if (speed.getValue().doubleValue() != 0.0D) {
 								break;
 							}
@@ -120,7 +129,7 @@ public class InventoryManager extends Module {
 							mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, (int) (pickaxeSlot.getValue().doubleValue() - 1.0D), 2, mc.player);
 							InventoryUtil.closeInv(mode.getValue().getName());
 
-							InventoryUtil.timer.reset();
+							stopWatch.reset();
 							if (speed.getValue().doubleValue() != 0.0D) {
 								break;
 							}
@@ -129,7 +138,7 @@ public class InventoryManager extends Module {
 							mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, (int) (axeSlot.getValue().doubleValue() - 1.0D), 2, mc.player);
 							InventoryUtil.closeInv(mode.getValue().getName());
 
-							InventoryUtil.timer.reset();
+							stopWatch.reset();
 							if (speed.getValue().doubleValue() != 0.0D) {
 								break;
 							}
@@ -138,7 +147,7 @@ public class InventoryManager extends Module {
 							mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, (int) (shovelSlot.getValue().doubleValue() - 1.0D), 2, mc.player);
 							InventoryUtil.closeInv(mode.getValue().getName());
 
-							InventoryUtil.timer.reset();
+							stopWatch.reset();
 							if (speed.getValue().doubleValue() != 0.0D) {
 								break;
 							}
@@ -152,7 +161,7 @@ public class InventoryManager extends Module {
 							InventoryUtil.closeInv(mode.getValue().getName());
 							
 
-							InventoryUtil.timer.reset();
+							stopWatch.reset();
 							if (speed.getValue().doubleValue() != 0.0D) {
 								break;
 							}
@@ -166,7 +175,7 @@ public class InventoryManager extends Module {
 							InventoryUtil.closeInv(mode.getValue().getName());
 							
 
-							InventoryUtil.timer.reset();
+							stopWatch.reset();
 							if (speed.getValue().doubleValue() != 0.0D) {
 								break;
 							}
@@ -180,23 +189,22 @@ public class InventoryManager extends Module {
 							InventoryUtil.closeInv(mode.getValue().getName());
 							
 
-							InventoryUtil.timer.reset();
+							stopWatch.reset();
 							if (speed.getValue().doubleValue() != 0.0D) {
 								break;
 							}
 						} else if (InventoryUtil.isBadStack(is, true, true) && throwGarbage.getValue()) {
-							InventoryUtil.openInv(mode.getValue().getName());
-							mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, 1, 4, mc.player);
-							InventoryUtil.closeInv(mode.getValue().getName());
-							
+	                        InventoryUtil.openInv(mode.getValue().getName());
+	                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, 1, 4, mc.player);
+	                        InventoryUtil.closeInv(mode.getValue().getName());
 
-							InventoryUtil.timer.reset();
+							stopWatch.reset();
 							if (speed.getValue().doubleValue() != 0.0D) {
 								break;
 							}
 						}
 
-						if (InventoryUtil.timer.elapse(55.0D, false)) {
+						if (stopWatch.elapse(55.0D, false)) {
 							InventoryUtil.closeInv(mode.getValue().getName());
 						}
 					}
@@ -204,4 +212,9 @@ public class InventoryManager extends Module {
 			}
 		}
 	};
+	
+    private int armorReduction(final ItemStack stack) {
+        final ItemArmor armor = (ItemArmor) stack.getItem();
+        return armor.damageReduceAmount + EnchantmentHelper.getEnchantmentModifierDamage(new ItemStack[]{stack}, DamageSource.generic);
+    }
 }

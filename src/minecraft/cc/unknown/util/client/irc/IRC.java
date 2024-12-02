@@ -6,6 +6,7 @@ import static cc.unknown.util.client.StreamerUtil.lightPurple;
 import static cc.unknown.util.client.StreamerUtil.red;
 import static cc.unknown.util.client.StreamerUtil.reset;
 
+import cc.unknown.util.client.user.UserUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.security.HardwareUtil;
 import cc.unknown.util.security.aes.AesUtil;
@@ -98,7 +99,7 @@ public class IRC extends ListenerAdapter {
 	public synchronized void sendMessage(String message) {
 		TextChannel channel = jda.getTextChannelById(channelId);
 		if (channel != null) {
-			WebhookUtil.ircMessage(message);
+			channel.sendMessage("-# [IRC] " + UserUtil.getUser() + ": " + message).queue();
 		}
 	}
 	

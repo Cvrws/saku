@@ -17,8 +17,8 @@ public class Respawn extends Module {
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
 		if (mc.player != null) {
             if (canAuto()) {
+            	mc.gameSettings.keyBindForward.pressed = true;
                 mc.player.motionY = 0.45;
-                mc.player.motionX = 0.45;
                 mc.player.jump();
                 mc.player.onGround = true;
                 mc.player.jump();

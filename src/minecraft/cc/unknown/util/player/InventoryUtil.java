@@ -40,7 +40,6 @@ import net.minecraft.network.play.client.C16PacketClientStatus;
 @UtilityClass
 public class InventoryUtil implements Accessor {
 	public boolean isInventoryOpen;
-	public StopWatch timer = new StopWatch();
 	public List<Block> invalidBlocks;
 	KeyBinding[] moveKeys;
 
