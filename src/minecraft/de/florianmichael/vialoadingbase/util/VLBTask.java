@@ -23,6 +23,8 @@ import com.viaversion.viaversion.api.platform.PlatformTask;
 import com.viaversion.viaversion.api.scheduler.Task;
 import com.viaversion.viaversion.api.scheduler.TaskStatus;
 
+import java.util.concurrent.Future;
+
 public class VLBTask implements PlatformTask<Task> {
 
     private final Task object;
@@ -31,7 +33,7 @@ public class VLBTask implements PlatformTask<Task> {
         this.object = object;
     }
 
-    @Deprecated
+    @Override
     public Task getObject() {
         return object;
     }
@@ -41,7 +43,6 @@ public class VLBTask implements PlatformTask<Task> {
         object.cancel();
     }
 
-    @Deprecated
     public TaskStatus getStatus() {
         return this.getObject().status();
     }

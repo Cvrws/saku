@@ -18,31 +18,31 @@
 
 package de.florianmichael.viamcp;
 
-import com.viaversion.viabackwards.protocol.v1_17to1_16_4.Protocol1_17To1_16_4;
+import java.io.File;
+
+import com.viaversion.viabackwards.protocol.protocol1_16_4to1_17.Protocol1_16_4To1_17;
 import com.viaversion.viaversion.api.Via;
-import com.viaversion.viaversion.protocols.v1_16_1to1_16_2.packet.ClientboundPackets1_16_2;
-import com.viaversion.viaversion.protocols.v1_16_1to1_16_2.packet.ServerboundPackets1_16_2;
-import com.viaversion.viaversion.protocols.v1_16_4to1_17.packet.ClientboundPackets1_17;
-import com.viaversion.viaversion.protocols.v1_16_4to1_17.packet.ServerboundPackets1_17;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import com.viaversion.viaversion.protocols.protocol1_16_2to1_16_1.ClientboundPackets1_16_2;
+import com.viaversion.viaversion.protocols.protocol1_16_2to1_16_1.ServerboundPackets1_16_2;
+import com.viaversion.viaversion.protocols.protocol1_17to1_16_4.ClientboundPackets1_17;
+import com.viaversion.viaversion.protocols.protocol1_17to1_16_4.ServerboundPackets1_17;
+
+import cc.unknown.util.Accessor;
 import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import de.florianmichael.viamcp.gui.AsyncVersionSlider;
 
-import java.io.File;
-
-public class ViaMCP {
+public enum ViaMCP {
+	INSTANCE;
+	
     public final static int NATIVE_VERSION = 47;
-    public static ViaMCP INSTANCE;
-
-    public static void create() {
-        INSTANCE = new ViaMCP();
-    }
 
     private AsyncVersionSlider asyncVersionSlider;
-
-    public ViaMCP() {
-        ViaLoadingBase.ViaLoadingBaseBuilder.create().runDirectory(new File("ViaMCP")).nativeVersion(NATIVE_VERSION).onProtocolReload(protocolVersion -> {
+    
+    ViaMCP() {
+        ViaLoadingBase.ViaLoadingBaseBuilder.create().runDirectory(new File("ViaMCP")).nativeVersion(NATIVE_VERSION).onProtocolReload(comparableProtocolVersion -> {
             if (getAsyncVersionSlider() != null) {
-                getAsyncVersionSlider().setVersion(protocolVersion.getVersion());
+                getAsyncVersionSlider().setVersion(comparableProtocolVersion.getVersion());
             }
         }).build();
 
@@ -52,11 +52,10 @@ public class ViaMCP {
 
     private void fixTransactions() {
         // We handle the differences between those versions in the net code, so we can make the Via handlers pass through
-        final Protocol1_17To1_16_4 protocol = Via.getManager().getProtocolManager().getProtocol(Protocol1_17To1_16_4.class);
-        protocol.registerClientbound(ClientboundPackets1_17.PING, ClientboundPackets1_16_2.CONTAINER_ACK, wrapper -> {
-        }, true);
-        protocol.registerServerbound(ServerboundPackets1_16_2.CONTAINER_ACK, ServerboundPackets1_17.PONG, wrapper -> {
-        }, true);
+        final Protocol1_16_4To1_17 transaction1_17 = Via.getManager().getProtocolManager().getProtocol(Protocol1_16_4To1_17.class);
+        assert transaction1_17 != null;
+        transaction1_17.registerClientbound(ClientboundPackets1_17.PING, ClientboundPackets1_16_2.WINDOW_CONFIRMATION, wrapper -> {}, true);
+        transaction1_17.registerServerbound(ServerboundPackets1_16_2.WINDOW_CONFIRMATION, ServerboundPackets1_17.PONG, wrapper -> {}, true);
     }
 
     public void initAsyncSlider() {
@@ -69,5 +68,37 @@ public class ViaMCP {
 
     public AsyncVersionSlider getAsyncVersionSlider() {
         return asyncVersionSlider;
+    }
+    
+    public boolean newerThanOrEqualsTo1_8() {
+        return ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_8) && !Accessor.mc.isIntegratedServerRunning() || Accessor.mc.isIntegratedServerRunning();
+    }
+
+    public boolean newerThan1_8() {
+        return ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8) && !Accessor.mc.isIntegratedServerRunning();
+    }
+
+    public boolean newerThanOrEqualsTo1_9() {
+        return ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_9) && !Accessor.mc.isIntegratedServerRunning();
+    }
+
+    public boolean newerThanOrEqualsTo1_13() {
+        return ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_13) && !Accessor.mc.isIntegratedServerRunning();
+    }
+
+    public boolean olderThanOrEqualsTo1_13_2() {
+        return ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_13_2) && !Accessor.mc.isIntegratedServerRunning();
+    }
+
+    public boolean newerThanOrEqualsTo1_14() {
+        return ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_14) && !Accessor.mc.isIntegratedServerRunning();
+    }
+
+    public boolean newerThanOrEqualsTo1_16() {
+        return ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_14) && !Accessor.mc.isIntegratedServerRunning();
+    }
+
+    public boolean newerThanOrEqualsTo1_17() {
+        return ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_17) && !Accessor.mc.isIntegratedServerRunning();
     }
 }

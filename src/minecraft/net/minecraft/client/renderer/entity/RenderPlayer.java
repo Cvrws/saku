@@ -1,5 +1,7 @@
 package net.minecraft.client.renderer.entity;
 
+import cc.unknown.Sakura;
+import cc.unknown.module.impl.combat.KillAura;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelPlayer;
@@ -88,7 +90,10 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
                 modelplayer.heldItemRight = 0;
             } else {
                 modelplayer.heldItemRight = 1;
-                if (clientPlayer.getItemInUseCount() > 0) {
+
+                boolean flag = clientPlayer instanceof EntityPlayerSP && Sakura.instance.getModuleManager().get(KillAura.class).isEnabled() && !Sakura.instance.getModuleManager().get(KillAura.class).autoBlock.is("None") && Sakura.instance.getModuleManager().get(KillAura.class).target != null && Sakura.instance.getModuleManager().get(KillAura.class).canBlock();
+
+                if (flag || clientPlayer.getItemInUseCount() > 0) {
                     final EnumAction enumaction = itemstack.getItemUseAction();
 
                     if (enumaction == EnumAction.BLOCK) {

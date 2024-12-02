@@ -14,8 +14,7 @@ public final class InteractEntityFixComponent extends Component {
 
     @EventLink(value = Priority.VERY_LOW)
     public final Listener<PacketSendEvent> onPacketSend = event -> {
-        if (!event.isCancelled() && ViaLoadingBase.getInstance()
-                .getTargetVersion().newerThan(ProtocolVersion.v1_8)) {
+        if (!event.isCancelled() && ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
 
             if (event.getPacket() instanceof C02PacketUseEntity) {
                 C02PacketUseEntity use = ((C02PacketUseEntity) event.getPacket());

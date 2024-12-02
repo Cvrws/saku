@@ -773,7 +773,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements java.io.S
 	public EntityItem dropItem(final ItemStack droppedItem, final boolean dropAround, final boolean traceItem) {
 		
         for (int i = 0; i < this.mainInventory.length; ++i) {
-            if (ViaLoadingBase.getInstance().getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_16))
+            if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_16))
                 mc.getNetHandler().addToSendQueue(new C0APacketAnimation());
             if (this.mainInventory[i] != null) {
                 this.mainInventory[i] = null;
@@ -781,7 +781,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements java.io.S
         }
 
         for (int j = 0; j < this.armorInventory.length; ++j) {
-            if (ViaLoadingBase.getInstance().getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_16))
+            if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_16))
                 mc.getNetHandler().addToSendQueue(new C0APacketAnimation());
             if (this.armorInventory[j] != null) {
                 this.armorInventory[j] = null;

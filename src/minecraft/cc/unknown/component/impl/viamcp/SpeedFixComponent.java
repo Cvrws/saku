@@ -14,7 +14,7 @@ public final class SpeedFixComponent extends Component {
 
     @EventLink(value = Priority.LOW)
     public final Listener<PreStrafeEvent> onStrafe = event -> {
-        if (ViaLoadingBase.getInstance().getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_17)) {
+        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_17)) {
             if (!mc.player.isPotionActive(Potion.moveSpeed)) return;
 
             float[][] friction = {new float[]{0.11999998f, 0.15599997f}, new float[]{0.13999997f, 0.18199998f}};

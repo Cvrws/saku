@@ -53,12 +53,14 @@ public final class ComponentManager {
 
         // viamcp
         this.add(new BlockPlacementFixComponent());
+        this.add(new BlockFixComponent());
         this.add(new FlyingPacketFixComponent());
         this.add(new LadderFixComponent());
         this.add(new MinimumMotionFixComponent());
         this.add(new BoundsFixComponent());
         this.add(new TransactionFixComponent());
         this.add(new SpeedFixComponent());
+        this.add(new InteractEntityFixComponent());
         
         this.componentList.forEach((componentClass, component) -> Sakura.instance.getEventBus().register(component));
         this.componentList.forEach(((componentClass, component) -> component.onInit()));

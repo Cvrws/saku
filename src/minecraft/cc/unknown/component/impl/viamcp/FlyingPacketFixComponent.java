@@ -17,7 +17,7 @@ public final class FlyingPacketFixComponent extends Component {
 
     @EventLink(value = Priority.VERY_LOW)
     public final Listener<PacketSendEvent> onPacketSend = event -> {
-        if (ViaLoadingBase.getInstance().getTargetVersion().newerThan(ProtocolVersion.v1_8)) {
+        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
             final Packet<?> packet = event.getPacket();
 
             if (packet instanceof C03PacketPlayer) {

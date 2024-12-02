@@ -287,8 +287,8 @@ public class InventoryUtil implements Accessor {
 			return false;
 		} else {
 			for (int i = 5; i < 45; ++i) {
-				if (Minecraft.getMinecraft().player.inventoryContainer.getSlot(i).getHasStack()) {
-					ItemStack is = Minecraft.getMinecraft().player.inventoryContainer.getSlot(i).getStack();
+				if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
+					ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
 					if (getProtection(is) > prot && is.getUnlocalizedName().contains(strType)) {
 						return false;
 					}
@@ -300,15 +300,11 @@ public class InventoryUtil implements Accessor {
 	}
 
 	public void drop(int slot) {
-		Minecraft.getMinecraft().playerController.windowClick(
-				Minecraft.getMinecraft().player.inventoryContainer.windowId, slot, 1, 4,
-				Minecraft.getMinecraft().player);
+		mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 1, 4, mc.player);
 	}
 
 	public void shiftClick(int slot) {
-		Minecraft.getMinecraft().playerController.windowClick(
-				Minecraft.getMinecraft().player.inventoryContainer.windowId, slot, 0, 1,
-				Minecraft.getMinecraft().player);
+		mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, 1, mc.player);
 	}
 
 	public boolean isBadStack(ItemStack is, boolean preferSword, boolean keepTools) {

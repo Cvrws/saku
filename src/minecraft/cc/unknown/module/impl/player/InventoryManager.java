@@ -49,8 +49,8 @@ public class InventoryManager extends Module {
 	private final NumberValue shovelSlot = new NumberValue("Shovel Slot", this, 4.0D, 1.0D, 9.0D, 1.0D, () -> !shovel.getValue());
 	private final BooleanValue bow = new BooleanValue("Bow", this, false);
 	private final NumberValue bowSlot = new NumberValue("Bow Slot", this, 5.0D, 1.0D, 9.0D, 1.0D, () -> !bow.getValue());
-	private final BooleanValue goldenApple = new BooleanValue("Bow", this, false);
-	private final NumberValue goldenAppleSlot = new NumberValue("Bow Slot", this, 5.0D, 1.0D, 9.0D, 1.0D, () -> !goldenApple.getValue());
+	private final BooleanValue goldenApple = new BooleanValue("Golden Apple", this, false);
+	private final NumberValue goldenAppleSlot = new NumberValue("Golden Apple Slot", this, 5.0D, 1.0D, 9.0D, 1.0D, () -> !goldenApple.getValue());
 	private final BooleanValue blocks = new BooleanValue("Blocks", this, true);
 	private final NumberValue blockSlot = new NumberValue("Block Slot", this, 6.0D, 1.0D, 9.0D, 1.0D, () -> !blocks.getValue());
 	private final BooleanValue projectiles = new BooleanValue("Projectiles", this, true);

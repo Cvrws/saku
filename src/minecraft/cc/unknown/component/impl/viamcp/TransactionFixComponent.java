@@ -18,7 +18,7 @@ public final class TransactionFixComponent extends Component {
     @EventLink(value = Priority.VERY_LOW)
     public final Listener<PacketSendEvent> onPacketSend = event -> {
         if (!event.isCancelled() && ViaLoadingBase.getInstance()
-                .getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_17)) {
+                .getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_17)) {
             if (event.getPacket() instanceof C0FPacketConfirmTransaction) {
                 C0FPacketConfirmTransaction transaction = ((C0FPacketConfirmTransaction) event.getPacket());
 

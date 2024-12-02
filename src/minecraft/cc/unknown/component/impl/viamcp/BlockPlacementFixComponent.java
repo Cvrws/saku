@@ -14,15 +14,12 @@ public final class BlockPlacementFixComponent extends Component {
 
     @EventLink
     public final Listener<PacketSendEvent> onPacketSend = event -> {
-        if (ViaLoadingBase.getInstance().getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_11)) {
+        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_11)) {
             final Packet<?> packet = event.getPacket();
-
             if (packet instanceof C08PacketPlayerBlockPlacement) {
-                final C08PacketPlayerBlockPlacement wrapper = ((C08PacketPlayerBlockPlacement) packet);
-                wrapper.facingX /= 16.0F;
-                wrapper.facingY /= 16.0F;
-                wrapper.facingZ /= 16.0F;
-                event.setPacket(wrapper);
+                ((C08PacketPlayerBlockPlacement) packet).facingX = 0.5F;
+                ((C08PacketPlayerBlockPlacement) packet).facingY = 0.5F;
+                ((C08PacketPlayerBlockPlacement) packet).facingZ = 0.5F;
             }
         }
     };

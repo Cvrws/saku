@@ -13,7 +13,7 @@ public final class BoundsFixComponent extends Component {
 
     @EventLink
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-        if (ViaLoadingBase.getInstance().getTargetVersion().newerThan(ProtocolVersion.v1_8)) {
+        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
             mc.player.setEntityBoundingBox(new AxisAlignedBB(mc.player.posX - 0.3, mc.player.posY,
                     mc.player.posZ - 0.3, mc.player.posX + 0.3, mc.player.posY + 1.8,
                     mc.player.posZ + 0.3));

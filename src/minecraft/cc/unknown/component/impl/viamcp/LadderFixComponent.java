@@ -17,7 +17,7 @@ public final class LadderFixComponent extends Component {
 
     @EventLink
     public final Listener<BlockAABBEvent> onBlockAABB = event -> {
-        if (ViaLoadingBase.getInstance().getTargetVersion().newerThan(ProtocolVersion.v1_8)) {
+        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
             final Block block = event.getBlock();
 
             if (block instanceof BlockLadder) {

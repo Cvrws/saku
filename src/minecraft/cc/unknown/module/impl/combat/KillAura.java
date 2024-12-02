@@ -3,12 +3,11 @@ package cc.unknown.module.impl.combat;
 import java.util.Comparator;
 import java.util.List;
 
-import com.viaversion.viarewind.protocol.v1_9to1_8.Protocol1_9To1_8;
-import com.viaversion.viaversion.api.minecraft.BlockPosition;
+import com.viaversion.viarewind.protocol.protocol1_8to1_9.Protocol1_8To1_9;
+import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import com.viaversion.viaversion.api.type.Type;
-import com.viaversion.viaversion.protocols.v1_8to1_9.packet.ServerboundPackets1_9;
 
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.GUIDetectionComponent;
@@ -552,7 +551,7 @@ public final class KillAura extends Module {
 			if (interact && movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
 				this.interact(movingObjectPosition);
 			}
-
+			
 			PacketUtil.send(new C08PacketPlayerBlockPlacement(getComponent(Slot.class).getItemStack()));
 			
 

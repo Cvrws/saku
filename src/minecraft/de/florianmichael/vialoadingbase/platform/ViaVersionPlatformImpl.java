@@ -21,6 +21,7 @@ package de.florianmichael.vialoadingbase.platform;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.ViaAPI;
 import com.viaversion.viaversion.api.command.ViaCommandSender;
+import com.viaversion.viaversion.api.configuration.ConfigurationProvider;
 import com.viaversion.viaversion.api.configuration.ViaVersionConfig;
 import com.viaversion.viaversion.api.connection.UserConnection;
 import com.viaversion.viaversion.api.platform.UnsupportedSoftware;
@@ -35,24 +36,24 @@ import de.florianmichael.vialoadingbase.util.VLBTask;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class ViaVersionPlatformImpl implements ViaPlatform<UserConnection> {
+public class ViaVersionPlatformImpl implements ViaPlatform<UUID> {
 
-    private final ViaAPI<UserConnection> api = new VLBViaAPIWrapper();
+    private final ViaAPI<UUID> api = new VLBViaAPIWrapper();
 
     private final Logger logger;
     private final VLBViaConfig config;
 
     public ViaVersionPlatformImpl(final Logger logger) {
         this.logger = logger;
-        config = new VLBViaConfig(new File(ViaLoadingBase.getInstance().getRunDirectory(), "viaversion.yml"), logger);
+        config = new VLBViaConfig(new File(ViaLoadingBase.getInstance().getRunDirectory(), "viaversion.yml"));
     }
 
     public static List<ProtocolVersion> createVersionList() {
-        final List<ProtocolVersion> versions = new ArrayList<>(ProtocolVersion.getProtocols()).stream().filter(version -> version.newerThanOrEqualTo(ProtocolVersion.v1_8)).collect(Collectors.toList());
+        final List<ProtocolVersion> versions = new ArrayList<>(ProtocolVersion.getProtocols()).stream().filter(protocolVersion -> protocolVersion != ProtocolVersion.unknown && ProtocolVersion.getProtocols().indexOf(protocolVersion) >= 7).collect(Collectors.toList());
         Collections.reverse(versions);
         return versions;
     }
@@ -126,7 +127,7 @@ public class ViaVersionPlatformImpl implements ViaPlatform<UserConnection> {
     }
 
     @Override
-    public ViaAPI<UserConnection> getApi() {
+    public ViaAPI<UUID> getApi() {
         return api;
     }
 
@@ -142,7 +143,7 @@ public class ViaVersionPlatformImpl implements ViaPlatform<UserConnection> {
 
     @Override
     public String getPlatformName() {
-        return "ViaLoadingBase";
+        return "ViaLoadingBase by FlorianMichael";
     }
 
     @Override

@@ -26,7 +26,7 @@ public enum Sakura {
     instance;
 
     public static final String NAME = "Sakura";
-    public static final String VERSION_FULL = "5.2";
+    public static final String VERSION_FULL = "5.3";
 
     private EventBus<Event> eventBus;
     private ModuleManager moduleManager;
@@ -74,12 +74,9 @@ public enum Sakura {
         clickGui = new ClickGui();
         clickGui.initGui();
                 
-        new Thread(() -> {
-        	ViaMCP.create();
-        	ViaMCP.INSTANCE.initAsyncSlider();
-
-            ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);
-        }).start();
+        
+        ViaMCP.INSTANCE.initAsyncSlider();
+        ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);
 
         configManager.init();
         bindableManager.init();

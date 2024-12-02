@@ -1947,7 +1947,7 @@ public abstract class Entity implements ICommandSender {
     }
 
     public float getCollisionBorderSize() {
-        return ViaLoadingBase.getInstance().getTargetVersion().newerThan(ProtocolVersion.v1_8) ? 0 : 0.1f;
+        return ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8) ? 0 : 0.1f;
     }
 
     /**
