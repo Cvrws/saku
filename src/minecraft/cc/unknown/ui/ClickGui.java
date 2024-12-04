@@ -19,6 +19,7 @@ import cc.unknown.ui.components.value.impl.NumberValueComponent;
 import cc.unknown.ui.components.value.impl.StringValueComponent;
 import cc.unknown.ui.screen.Colors;
 import cc.unknown.ui.screen.Screen;
+import cc.unknown.ui.screen.impl.HomeScreen;
 import cc.unknown.ui.screen.impl.ThemeScreen;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
@@ -45,7 +46,7 @@ public class ClickGui extends GuiScreen implements Accessor {
     public SidebarCategory sidebar = new SidebarCategory();
 
     /* Selected Screen */
-    public Screen selectedScreen = Category.COMBAT.getClickGUIScreen();
+    public Screen selectedScreen = Category.SEARCH.getClickGUIScreen();
     public Screen renderedScreen = selectedScreen;
     public Screen lastScreen = selectedScreen;
 
@@ -250,6 +251,10 @@ public class ClickGui extends GuiScreen implements Accessor {
 
     @Override
     protected void keyTyped(final char typedChar, final int keyCode) throws IOException {
+        if ("abcdefghijklmnopqrstuvwxyz1234567890 ".contains(String.valueOf(typedChar).toLowerCase()) && selectedScreen.automaticSearchSwitching() && !getClickGUI().activeTextBox()) {
+            this.switchScreen(Category.SEARCH);
+        }
+
         selectedScreen.onKey(typedChar, keyCode);
         super.keyTyped(typedChar, keyCode);
     }
@@ -266,6 +271,9 @@ public class ClickGui extends GuiScreen implements Accessor {
 
             this.timeInCategory.reset();
             selectedScreen.onInit();
+            
+            final HomeScreen search = ((HomeScreen) Category.SEARCH.getClickGUIScreen());
+            search.relevantModules = search.getRelevantModules(search.searchBar.getText());
         }
     }
 
@@ -276,6 +284,9 @@ public class ClickGui extends GuiScreen implements Accessor {
 
             this.timeInCategory.reset();
             selectedScreen.onInit();
+            
+            final HomeScreen search = ((HomeScreen) Category.SEARCH.getClickGUIScreen());
+            search.relevantModules = search.getRelevantModules(search.searchBar.getText());
         }
     }
 

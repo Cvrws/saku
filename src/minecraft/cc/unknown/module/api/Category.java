@@ -10,6 +10,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Category {
+	SEARCH("Search", Fonts.ICONS_2.get(17), "U", 0x1, new HomeScreen()),
     COMBAT("Combat", Fonts.ICONS_1.get(17), "a", 0x2, new CategoryScreen()),
     MOVEMENT("Movement", Fonts.ICONS_1.get(17), "b", 0x3, new CategoryScreen()),
     PLAYER("Player", Fonts.ICONS_1.get(17), "c", 0x4, new CategoryScreen()),
