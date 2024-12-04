@@ -47,21 +47,17 @@ public final class CategoryComponent implements Accessor {
         animation.setDuration(200);
         animation.run(selectedScreen.equals(category.getClickGUIScreen()) ? 255 : 0);
 
-        final double spacer = 4;
+        final double spacer = 3;
         final double width = Fonts.ROBOTO.get(16, Weight.LIGHT).width(category.getName()) + spacer * 2 + category.getFontRenderer().width(category.getIcon());
 
         double scale = 0.5;
         GlStateManager.pushMatrix();
 
-        RenderUtil.roundedRectangle(x, y - 5.5, width + 8, 15, 5,
-                ColorUtil.withAlpha(getTheme().getAccentColor(new Vector2d(0, y / 5D)), (int) (Math.min(animation.getValue(), opacity))).darker());
-
         int color = new Color(255, 255, 255, Math.min(selectedScreen.equals(category.getClickGUIScreen()) ? 255 : 200, (int) opacity)).hashCode();
 
         category.getFontRenderer().draw(category.getIcon(), (float) (x + animation.getValue() / 80f + 3), y, color);
 
-        Fonts.ROBOTO.get(16, Weight.LIGHT).draw(category.getName(), (float) (x + animation.getValue() / 80f + 3 + spacer) +
-                Fonts.ICONS_1.get(17).width(category.getIcon()), y, color);
+        Fonts.ROBOTO.get(16, Weight.LIGHT).draw(category.getName(), (float) (x + animation.getValue() / 80f + 3 + spacer) + Fonts.ICONS_1.get(17).width(category.getIcon()), y, color);
 
         GlStateManager.popMatrix();
 

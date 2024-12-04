@@ -43,7 +43,6 @@ public class ScriptAPI {
     }
 
     public ScriptModule registerModule(final String name, final String description) {
-        // Sometimes my genius is almost frightening // True
         final AtomicReference<ScriptModule> scriptModuleReference = new AtomicReference<>(null);
 
         final Module module = new Module(new ScriptModuleInfo(name, description)) {

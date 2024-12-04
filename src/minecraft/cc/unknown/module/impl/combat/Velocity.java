@@ -2,10 +2,14 @@ package cc.unknown.module.impl.combat;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.lwjgl.input.Keyboard;
+
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.MoveInputEvent;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
+import cc.unknown.event.impl.player.PostUpdateEvent;
+import cc.unknown.event.impl.player.PreLivingUpdateEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
@@ -24,8 +28,8 @@ public final class Velocity extends Module {
 	public final ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Simple"))
 			.add(new SubMode("Legit"))
+			.add(new SubMode("Reset"))
 			.add(new SubMode("Polar"))
-			.add(new SubMode("Matrix"))
 			.setDefault("Simple");
 
 	public final NumberValue horizontal = new NumberValue("Horizontal", this, 0, 0, 100, 1, () -> !mode.is("Simple"));
@@ -42,6 +46,13 @@ public final class Velocity extends Module {
 	public void onEnable() {
 		reduced = false;
 	}
+	
+	@EventLink
+	public final Listener<PreLivingUpdateEvent> onPreLiving = event -> {
+		if (mode.is("Reset")) {
+			
+		}
+	};
 
 	@EventLink
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
@@ -53,7 +64,7 @@ public final class Velocity extends Module {
 	    if (!shouldPerformAction(chanceValue, randomFactor)) return;
 
 		switch (mode.getValue().getName()) {
-		case "Matrix":
+		case "Polar":
 			if (mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null && mc.player.hurtTime == 9 && !mc.player.isBurning()) {
 				reduced = true;
 			} else
@@ -68,7 +79,7 @@ public final class Velocity extends Module {
 			event.setJump(true);
 		}
 		
-		if (reduced && mode.is("Matrix")) {
+		if (reduced && mode.is("Polar")) {
 			event.setJump(true);
 		}
 	};
@@ -102,7 +113,7 @@ public final class Velocity extends Module {
 
 					event.setPacket(wrapper);
 					break;
-				case "Matrix":
+				case "Polar":
 					if (reduced) {
 						mc.player.jump();
 					}
@@ -115,11 +126,6 @@ public final class Velocity extends Module {
 					} else
 						reduced = false;
 
-					break;
-				case "Polar":
-					if (mc.player.onGround && mc.player.hurtTime >= 5 && !mc.player.isBurning()) {
-						mc.player.jump();
-					}
 					break;
 				}
 			}

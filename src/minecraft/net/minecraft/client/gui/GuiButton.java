@@ -94,7 +94,7 @@ public class GuiButton extends Gui {
         if (this.visible) {
         	final FontRenderer fontrenderer = mc.fontRendererObj;
             mc.getTextureManager().bindTexture(buttonTextures);
-            GlStateManager.color(1.0F, 0.6F, 0.6F, 0.3F);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
             final int i = this.getHoverState(this.hovered);
             GlStateManager.enableBlend();

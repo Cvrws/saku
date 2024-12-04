@@ -11,7 +11,6 @@ import cc.unknown.ui.components.value.ValueComponent;
 import cc.unknown.ui.components.value.impl.BoundsNumberValueComponent;
 import cc.unknown.ui.components.value.impl.NumberValueComponent;
 import cc.unknown.ui.screen.Colors;
-import cc.unknown.ui.screen.impl.HomeScreen;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.geometry.Vector2d;
@@ -67,31 +66,24 @@ public class ModuleComponent implements Accessor {
             final ClickGui clickGUI = this.getClickGUI();
 
             // ROBOTO module background
-            RenderUtil.roundedRectangle(position.x, position.y, scale.x, scale.y, 6, Colors.OVERLAY.get());
+            RenderUtil.roundedRectangle(position.x - 28, position.y, scale.x, scale.y, 6, Colors.OVERLAY.get());
             final Color fontColor = Colors.TEXT.getWithAlpha(module.isEnabled() ? 255 : 200);
 
             // Hover animation
-            final boolean overModule = GUIUtil.mouseOver(position.x, position.y, scale.x, this.scale.y, mouseX, mouseY);
+            final boolean overModule = GUIUtil.mouseOver(position.x - 28, position.y, scale.x, this.scale.y, mouseX, mouseY);
 
             hoverAnimation.run(overModule ? mouseDown ? 35 : 20 : 0);
 
-            // ROBOTO module background HOVER OVERLAY
-            RenderUtil.roundedRectangle(position.x, position.y, scale.x, scale.y, 6, ColorUtil.withAlpha(Color.BLACK, (int) hoverAnimation.getValue()));
-
             // Draw the module's category if the user is searching
-            if (clickGUI.getRenderedScreen() instanceof HomeScreen) {
-                Fonts.ROBOTO.get(15, Weight.LIGHT).draw("(" + module.getModuleInfo().category().getName() + ")",
-                        (float) (position.getX() + Fonts.ROBOTO.get(20, Weight.LIGHT).width(this.module.getName()) + 10F),
-                        (float) position.getY() + 10, ColorUtil.withAlpha(fontColor, 64).hashCode());
-            }
+            /*if (clickGUI.getRenderedScreen() instanceof HomeScreen) {
+                Fonts.ROBOTO.get(15, Weight.LIGHT).draw("(" + module.getModuleInfo().category().getName() + ")", (float) (position.getX() + Fonts.ROBOTO.get(20, Weight.LIGHT).width(this.module.getName()) + 10F), (float) position.getY() + 10, ColorUtil.withAlpha(fontColor, 64).hashCode());
+            }*/
 
             // Draw module name
-            Fonts.ROBOTO.get(20, Weight.LIGHT).draw(this.module.getName(), (float) position.x + 6f, (float) position.y + 8,
-                    module.isEnabled() ? getTheme().getAccentColor(new Vector2d(0, position.y / 5)).getRGB() : fontColor.getRGB());
+            Fonts.ROBOTO.get(20, Weight.LIGHT).draw(this.module.getName(), (float) position.x - 20f, (float) position.y + 8, module.isEnabled() ? getTheme().getAccentColor(new Vector2d(0, position.y / 5)).getRGB() : fontColor.getRGB());
 
-            // Draw module category
-            Fonts.ROBOTO.get(15, Weight.LIGHT).draw(module.getModuleInfo().description(), (float) position.x + 6f,
-                    (float) position.y + 25, ColorUtil.withAlpha(fontColor, 70).hashCode());
+            // Draw description
+            Fonts.ROBOTO.get(15, Weight.LIGHT).draw(module.getModuleInfo().description(), (float) position.x - 20f,  (float) position.y + 25, ColorUtil.withAlpha(fontColor, 70).hashCode());
 
             scale = new Vector2f(getClickGUI().moduleDefaultScale.x, height);
         }
@@ -110,10 +102,7 @@ public class ModuleComponent implements Accessor {
                 valueComponent.setOpacity(valueComponent.getValue().getHideIf() == null ? valueComponent.getOpacity() : Math.max(valueComponent.getOpacity() - 40, 0));
 
                 if (render) {
-                    valueComponent.draw(new Vector2d(position.x + 6f +
-                            (valueComponent.getValue().getHideIf() == null ? 0 : 10) +
-                            (valueComponent.getValue().getInternalHideIf() == null ? 0 : 10),
-                            (float) (position.y + height + 1)), mouseX, mouseY, partialTicks);
+                    valueComponent.draw(new Vector2d(position.x - 20f + (valueComponent.getValue().getHideIf() == null ? 0 : 10) + (valueComponent.getValue().getInternalHideIf() == null ? 0 : 10), (float) (position.y + height + 1)), mouseX, mouseY, partialTicks);
                 }
 
                 height = (float) (height + valueComponent.getHeight());
@@ -155,7 +144,7 @@ public class ModuleComponent implements Accessor {
         final boolean left = mouseButton == 0;
         final boolean right = mouseButton == 1;
         final boolean overClickGUI = GUIUtil.mouseOver(clickGUIPosition.x, clickGUIPosition.y, clickGUIScale.x, clickGUIScale.y, mouseX, mouseY);
-        final boolean overModule = GUIUtil.mouseOver(position.x, position.y, scale.x, getClickGUI().moduleDefaultScale.getY() - 3, mouseX, mouseY);
+        final boolean overModule = GUIUtil.mouseOver(position.x - 26, position.y, scale.x, getClickGUI().moduleDefaultScale.getY() - 3, mouseX, mouseY);
 
         if (overModule && getClickGUI().overlayPresent == null) {
             mouseDown = true;

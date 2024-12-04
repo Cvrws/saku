@@ -41,24 +41,6 @@ public final class SidebarCategory implements Accessor {
                 .collect(Collectors.toList());
     }
 
-    public void preRenderClickGUI() {
-        /* ClickGUI */
-        final ClickGui clickGUI = Sakura.instance.getClickGui();
-        final Color color = Colors.SECONDARY.getWithAlpha((int) opacity);
-
-        animation.setDuration(hovering ? 700 : 2000);
-        animation.run(hovering ? 0 : -sidebarWidth / 1.5f);
-
-        RenderUtil.roundedRectangle(clickGUI.position.x, clickGUI.position.y, sidebarWidth + animation.getValue(), clickGUI.scale.y, getClickGUI().getRound(), color, true, false, false, true);
-
-        dropShadowAnimation.setDuration(1000);
-        dropShadowAnimation.run(clickGUI.getSelectedScreen().hideSideBar() ? 255 : 0);
-
-        RenderUtil.horizontalGradient(clickGUI.position.x + sidebarWidth + animation.getValue(), clickGUI.position.y,
-                30, clickGUI.scale.y, ColorUtil.withAlpha(Color.BLACK, (int) (Math.min(dropShadowAnimation.getValue(), opacity / 7))),
-                new Color(0, 0, 0, 0));
-    }
-
     public void renderSidebar(final float mouseX, final float mouseY) {
         /* ClickGUI */
         final ClickGui clickGUI = Sakura.instance.getClickGui();
@@ -89,7 +71,7 @@ public final class SidebarCategory implements Accessor {
         double offsetTop = -15;
 
         for (final CategoryComponent category : categories) {
-            category.render((offsetTop += 19.5), sidebarWidth + animation.getValue(), (int) opacity, clickGUI.selectedScreen);
+            category.render((offsetTop += 19.2), sidebarWidth + animation.getValue(), (int) opacity, clickGUI.selectedScreen);
         }
     }
 

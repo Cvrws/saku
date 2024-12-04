@@ -7,12 +7,6 @@ import cc.unknown.util.player.PlayerUtil;
 import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.internal.runtime.ECMAException;
 
-/**
- * Provides methods to handle calling functions in the scripts from java
- *
- * @author Strikeless
- * @since 15.05.2022
- */
 public class ScriptHandler {
 
     private final Map<String, JSObject> functionRegistry = new HashMap<>();

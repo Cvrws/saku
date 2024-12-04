@@ -7,10 +7,6 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 
-/**
- * @author Strikeless
- * @since 20.06.2022
- */
 public class ScriptEntityLiving extends ScriptEntity {
 
     public EntityLivingBase wrappedLiving;
@@ -22,7 +18,6 @@ public class ScriptEntityLiving extends ScriptEntity {
     }
 
     private static ScriptEntityLiving tryInstantiate(final Entity entity) {
-        // yes yes this method was totally necessary
         if (entity instanceof EntityLiving) {
             return new ScriptEntityLiving((EntityLiving) entity);
         }

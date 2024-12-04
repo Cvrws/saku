@@ -177,7 +177,7 @@ public class FontRenderer extends cc.unknown.util.render.font.Font {
 
     @Override
     public int drawCentered(final String text, final double x, final double y, final int color) {
-        return draw(text, x - (width(text) >> 1), y, color, false); // whoever bitshifted this instead of diving by 2 is a fucking nerd and virgin
+        return draw(text, x - (width(text) >> 1), y, color, false);
     }
 
     @Override
@@ -223,7 +223,7 @@ public class FontRenderer extends cc.unknown.util.render.font.Font {
         y -= fontHeight / 5;
 
         final double startX = x;
-        int i = 0; // Inicializamos `i` aquí
+        int i = 0;
 
         final int length = text.length();
 
@@ -252,7 +252,6 @@ public class FontRenderer extends cc.unknown.util.render.font.Font {
                     continue;
                 }
 
-                // Renderizado del carácter
                 final FontCharacter fontCharacter = characterSet[character];
                 float characterWidth = fontCharacter.getWidth();
                 fontCharacter.render((float) x, (float) y);

@@ -24,7 +24,6 @@ public class FakeHackers extends Module {
 	private final ModeValue mode = new ModeValue("Mode", this)
 	        .add(new SubMode("Sneak"))
 	        .add(new SubMode("KillAura"))
-	        .add(new SubMode("Reach"))
 	        .setDefault("Sneak");
 	
 	private final NumberValue range = new NumberValue("Range", this, 6, 3.2, 6, 0.1);
@@ -43,29 +42,7 @@ public class FakeHackers extends Module {
 	    }
 	    super.onDisable();
 	}
-	
-	@EventLink
-	public final Listener<PacketSendEvent> onPacketSend = event -> {
-		Packet packet = event.getPacket();
-		
-		if (mode.is("Reach")) {
-			if (packet instanceof C04PacketPlayerPosition) {
-				C04PacketPlayerPosition wrapped = (C04PacketPlayerPosition) packet;
-				double angleA = Math.toRadians(normalizeAngle(wrapped.getYaw() - 90.0F));
-				wrapped.x = wrapped.x + Math.cos(angleA) * 0.5;
-				wrapped.z = wrapped.z + Math.cos(angleA) * 0.5;
-                
-			}
-			
-			if (packet instanceof C06PacketPlayerPosLook) {
-				C06PacketPlayerPosLook wrapped = (C06PacketPlayerPosLook) packet;
-				double angleA = Math.toRadians(normalizeAngle(wrapped.getYaw() - 90.0F));
-				wrapped.x = wrapped.x + Math.cos(angleA) * 0.5;
-				wrapped.z = wrapped.z + Math.cos(angleA) * 0.5;
-			}
-		}
-	};
- 	
+ 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 	    if (mc.world != null) {

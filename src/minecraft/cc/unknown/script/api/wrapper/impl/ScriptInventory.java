@@ -3,10 +3,6 @@ package cc.unknown.script.api.wrapper.impl;
 import cc.unknown.script.api.wrapper.ScriptWrapper;
 import net.minecraft.entity.player.InventoryPlayer;
 
-/**
- * @author Strikeless
- * @since 20.06.2022
- */
 public class ScriptInventory extends ScriptWrapper<InventoryPlayer> {
 
     public ScriptInventory(InventoryPlayer wrapped) {

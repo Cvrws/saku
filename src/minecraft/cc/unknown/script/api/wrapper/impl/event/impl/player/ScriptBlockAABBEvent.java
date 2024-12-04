@@ -1,32 +1,29 @@
 package cc.unknown.script.api.wrapper.impl.event.impl.player;
 
 import cc.unknown.event.impl.player.BlockAABBEvent;
+import cc.unknown.script.api.wrapper.impl.ScriptBlock;
+import cc.unknown.script.api.wrapper.impl.ScriptBlockPos;
+import cc.unknown.script.api.wrapper.impl.ScriptWorld;
 import cc.unknown.script.api.wrapper.impl.event.ScriptEvent;
-import net.minecraft.block.Block;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
 
-/**
- * @author Auth
- * @since 9/07/2022
- */
 public class ScriptBlockAABBEvent extends ScriptEvent<BlockAABBEvent> {
 
     public ScriptBlockAABBEvent(final BlockAABBEvent wrappedEvent) {
         super(wrappedEvent);
     }
     
-    public World getWorld() {
-    	return this.wrapped.getWorld();
+    public ScriptWorld getWorld() {
+    	return new ScriptWorld(this.wrapped.getWorld());
     }
     
-    public Block getBlock() {
-    	return this.wrapped.getBlock();
+    public ScriptBlock getBlock() {
+    	return new ScriptBlock(this.wrapped.getBlock());
     }
     
-    public BlockPos getBlockPos() {
-    	return this.wrapped.getBlockPos();
+    public ScriptBlockPos getBlockPos() {
+    	return new ScriptBlockPos(this.wrapped.getBlockPos());
     }
     
     public AxisAlignedBB getMaskBoundingBox() {

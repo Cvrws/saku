@@ -1,6 +1,6 @@
 package cc.unknown.ui.screen.settings;
 
-import static cc.unknown.ui.screen.impl.ConfigsScreen.PADDING;
+import static cc.unknown.ui.screen.impl.ConfigScreen.PADDING;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.ConcurrentModificationException;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
 import cc.unknown.ui.ClickGui;
-import cc.unknown.ui.screen.impl.ConfigsScreen;
+import cc.unknown.ui.screen.impl.ConfigScreen;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.render.dragging.Mouse;
@@ -89,7 +89,7 @@ public class Row extends ArrayList<Element> implements Accessor {
         if (position == null) return;
 
         if (over()) {
-            ConfigsScreen.SCROLL = false;
+            ConfigScreen.SCROLL = false;
         }
     }
 

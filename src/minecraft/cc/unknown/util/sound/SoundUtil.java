@@ -21,16 +21,6 @@ public class SoundUtil implements Accessor {
     public void playSound(final String sound, final float volume, final float pitch) {
         mc.world.playSound(mc.player.posX, mc.player.posY, mc.player.posZ, sound, volume, pitch, false);
     }
-
-    public void playLocalSound() {
-        try {
-            clip = AudioSystem.getClip();
-            clip.open(AudioSystem.getAudioInputStream(SoundUtil.class.getResource("/assets/minecraft/sakura/sound/sayonara.wav")));
-            clip.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
     
     public void stopLocalSound() {
         if (clip != null && clip.isRunning()) {

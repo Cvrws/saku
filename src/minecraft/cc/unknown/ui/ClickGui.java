@@ -19,7 +19,6 @@ import cc.unknown.ui.components.value.impl.NumberValueComponent;
 import cc.unknown.ui.components.value.impl.StringValueComponent;
 import cc.unknown.ui.screen.Colors;
 import cc.unknown.ui.screen.Screen;
-import cc.unknown.ui.screen.impl.HomeScreen;
 import cc.unknown.ui.screen.impl.ThemeScreen;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
@@ -46,7 +45,7 @@ public class ClickGui extends GuiScreen implements Accessor {
     public SidebarCategory sidebar = new SidebarCategory();
 
     /* Selected Screen */
-    public Screen selectedScreen = Category.HOME.getClickGUIScreen();
+    public Screen selectedScreen = Category.COMBAT.getClickGUIScreen();
     public Screen renderedScreen = selectedScreen;
     public Screen lastScreen = selectedScreen;
 
@@ -188,16 +187,13 @@ public class ClickGui extends GuiScreen implements Accessor {
         int length = 0;
 
         /* Renders screen depending on selected category */
-        (renderedScreen = timeInCategory.finished(length) ? selectedScreen : lastScreen)
-                .onRender(mouseX, mouseY, partialTicks);
+        (renderedScreen = timeInCategory.finished(length) ? selectedScreen : lastScreen).onRender(mouseX, mouseY, partialTicks);
 
         final int opacity2 = 255 - (int) Math.max(0, Math.min(255, timeInCategory.getElapsedTime() < length ? 255 - (timeInCategory.getElapsedTime() * (255f / length)) : ((timeInCategory.getElapsedTime() - length) * (255f / length))));
 
         if (timeInCategory.getElapsedTime() <= length * 2) {
             RenderUtil.roundedRectangle(position.x, position.y, scale.x, scale.y, round, Colors.BACKGROUND.getWithAlpha(opacity2));
         }
-
-        sidebar.preRenderClickGUI();
 
         for (int i = 0; i <= 8; i++) {
             double radius = i * 50;
@@ -254,13 +250,7 @@ public class ClickGui extends GuiScreen implements Accessor {
 
     @Override
     protected void keyTyped(final char typedChar, final int keyCode) throws IOException {
-        if ("abcdefghijklmnopqrstuvwxyz1234567890 ".contains(String.valueOf(typedChar).toLowerCase()) && selectedScreen.automaticSearchSwitching() && !getClickGUI().activeTextBox()) {
-            this.switchScreen(Category.HOME);
-        }
-
         selectedScreen.onKey(typedChar, keyCode);
-
-
         super.keyTyped(typedChar, keyCode);
     }
     
@@ -276,9 +266,6 @@ public class ClickGui extends GuiScreen implements Accessor {
 
             this.timeInCategory.reset();
             selectedScreen.onInit();
-
-            final HomeScreen search = ((HomeScreen) Category.HOME.getClickGUIScreen());
-            search.relevantModules = search.getRelevantModules(search.searchBar.getText());
         }
     }
 
@@ -289,9 +276,6 @@ public class ClickGui extends GuiScreen implements Accessor {
 
             this.timeInCategory.reset();
             selectedScreen.onInit();
-
-            final HomeScreen search = ((HomeScreen) Category.HOME.getClickGUIScreen());
-            search.relevantModules = search.getRelevantModules(search.searchBar.getText());
         }
     }
 

@@ -47,8 +47,42 @@ public class AutoArmor extends Module {
 	                return;
 	            }
 
-	            removeNonOptimalArmor();
-	            equipBestArmor();
+	    	    for (int type = 1; type < 5; ++type) {
+	    	    	if (stopWatch.elapse(speed.getValue().doubleValue(), false)) {
+		    	        if (mc.player.inventoryContainer.getSlot(4 + type).getHasStack()) {
+		    	            ItemStack is = mc.player.inventoryContainer.getSlot(4 + type).getStack();
+		    	            if (!InventoryUtil.isBestArmor(is, type)) {
+		    	                InventoryUtil.openInv(mode.getValue().getName());
+		    	                InventoryUtil.drop(4 + type);
+		    	                InventoryUtil.closeInv(mode.getValue().getName());
+	
+		    	                stopWatch.reset();
+		    	                if (speed.getValue().doubleValue() != 0.0D) {
+		    	                    break;
+		    	                }
+		    	            }
+		    	        }
+	    	    	}
+	    	    }
+	    	    for (int type = 1; type < 5; ++type) {
+	    	        if (stopWatch.elapse(speed.getValue().doubleValue(), false)) {
+	    	            for (int i = 9; i < 45; ++i) {
+	    	                if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
+	    	                    ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
+	    	                    if (isValidArmor(is, type)) {
+	    	                        InventoryUtil.openInv(mode.getValue().getName());
+	    	                        InventoryUtil.shiftClick(i);
+	    	                        InventoryUtil.closeInv(mode.getValue().getName());
+
+	    	                        stopWatch.reset();
+	    	                        if (speed.getValue().doubleValue() != 0.0D) {
+	    	                            break;
+	    	                        }
+	    	                    }
+	    	                }
+	    	            }
+	    	        }
+	    	    }
 	        }
 
 	        if (stopWatch.elapse(55.0D, false)) {
@@ -58,46 +92,6 @@ public class AutoArmor extends Module {
 	        InventoryUtil.closeInv(mode.getValue().getName());
 	    }
 	};
-	
-	private void removeNonOptimalArmor() {
-	    for (int type = 1; type < 5; ++type) {
-	        if (mc.player.inventoryContainer.getSlot(4 + type).getHasStack()) {
-	            ItemStack is = mc.player.inventoryContainer.getSlot(4 + type).getStack();
-	            if (!InventoryUtil.isBestArmor(is, type)) {
-	                InventoryUtil.openInv(mode.getValue().getName());
-	                InventoryUtil.drop(4 + type);
-	                InventoryUtil.closeInv(mode.getValue().getName());
-
-	                stopWatch.reset();
-	                if (speed.getValue().doubleValue() != 0.0D) {
-	                    break;
-	                }
-	            }
-	        }
-	    }
-	}
-	
-	private void equipBestArmor() {
-	    for (int type = 1; type < 5; ++type) {
-	        if (stopWatch.getMillis() > speed.getValue().doubleValue()) {
-	            for (int i = 9; i < 45; ++i) {
-	                if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
-	                    ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
-	                    if (isValidArmor(is, type)) {
-	                        InventoryUtil.openInv(mode.getValue().getName());
-	                        InventoryUtil.shiftClick(i);
-	                        InventoryUtil.closeInv(mode.getValue().getName());
-
-	                        stopWatch.reset();
-	                        if (speed.getValue().doubleValue() != 0.0D) {
-	                            break;
-	                        }
-	                    }
-	                }
-	            }
-	        }
-	    }
-	}
 	
 	private boolean isValidArmor(ItemStack itemStack, int type) {
 	    return InventoryUtil.getProtection(itemStack) > 0.0F

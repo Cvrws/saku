@@ -3,10 +3,6 @@ package cc.unknown.script.api.wrapper.impl.event.impl.input;
 import cc.unknown.event.impl.input.MoveInputEvent;
 import cc.unknown.script.api.wrapper.impl.event.ScriptEvent;
 
-/**
- * @author Auth
- * @since 9/07/2022
- */
 public class ScriptMoveInputEvent extends ScriptEvent<MoveInputEvent> {
 
     public ScriptMoveInputEvent(final MoveInputEvent wrappedEvent) {

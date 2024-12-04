@@ -4,10 +4,6 @@ import cc.unknown.script.api.wrapper.ScriptWrapper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
 
-/**
- * @author Strikeless
- * @since 20.06.2022
- */
 public class ScriptWorld extends ScriptWrapper<World> {
 
     public ScriptWorld(final World wrapped) {

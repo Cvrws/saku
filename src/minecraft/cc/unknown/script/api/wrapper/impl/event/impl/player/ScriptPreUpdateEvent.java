@@ -3,10 +3,6 @@ package cc.unknown.script.api.wrapper.impl.event.impl.player;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.script.api.wrapper.impl.event.ScriptEvent;
 
-/**
- * @author Auth
- * @since 9/07/2022
- */
 public class ScriptPreUpdateEvent extends ScriptEvent<PreUpdateEvent> {
 
     public ScriptPreUpdateEvent(final PreUpdateEvent wrappedEvent) {

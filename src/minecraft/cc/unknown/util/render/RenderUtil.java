@@ -346,10 +346,6 @@ public final class RenderUtil implements Accessor {
     public void roundedRectangle(double x, double y, double width, double height, double radius, Color color) {
         Shaders.RQ.draw((float) x, (float) y, (float) width, (float) height, (float) radius, color);
     }
-
-    public void roundedRectangle(double x, double y, double width, double height, double radius, Color color, boolean leftTop, boolean rightTop, boolean rightBottom, boolean leftBottom) {
-        Shaders.RQ.draw((float) x, (float) y, (float) width, (float) height, (float) radius, color, leftTop, rightTop, rightBottom, leftBottom);
-    }
     
     public void end() {
         GL11.glEnd();

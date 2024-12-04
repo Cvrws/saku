@@ -16,8 +16,7 @@ public class HardwareUtil {
 		return getOSType() == EnumOS.WINDOWS;
 	}
 	
-    private EnumOS getOSType()
-    {
+    private EnumOS getOSType() {
         String s = System.getProperty("os.name").toLowerCase();
         return s.contains("win") ? EnumOS.WINDOWS : (s.contains("mac") ? EnumOS.OSX : (s.contains("solaris") ? EnumOS.SOLARIS : (s.contains("sunos") ? EnumOS.SOLARIS : (s.contains("linux") ? EnumOS.LINUX : (s.contains("unix") ? EnumOS.LINUX : EnumOS.UNKNOWN)))));
     }

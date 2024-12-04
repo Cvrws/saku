@@ -17,10 +17,6 @@ import cc.unknown.value.impl.SubMode;
 import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.internal.runtime.Undefined;
 
-/**
- * @author Strikeless
- * @since 15.05.2022
- */
 public final class ScriptModule extends ScriptHandlerWrapper<Module> {
     private final Function<Event, Boolean> eventListenerFunction = event -> {
         if (!Sakura.instance.getBindableManager().getBinds().contains(this.wrapped)) return true;
@@ -48,7 +44,6 @@ public final class ScriptModule extends ScriptHandlerWrapper<Module> {
     }
 
     public void unregister() {
-        // Disable the wrapped thus calling the onDisable function
         if (this.wrapped.isEnabled()) this.wrapped.setEnabled(false);
 
         this.wrapped.getValues().clear();

@@ -1,6 +1,6 @@
 package cc.unknown.ui.screen.settings;
 
-import static cc.unknown.ui.screen.impl.ConfigsScreen.PADDING;
+import static cc.unknown.ui.screen.impl.ConfigScreen.PADDING;
 
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;

@@ -45,7 +45,7 @@ public class ScriptScreen implements Screen, Accessor {
         }
 
         ClickGui clickGUI = this.getClickGUI();
-        Vector2f position = new Vector2f(getClickGUI().getPosition().x, getClickGUI().getPosition().y);
+        Vector2f position = new Vector2f(getClickGUI().getPosition().x - 28, getClickGUI().getPosition().y);
         Vector2f scale = new Vector2f(getClickGUI().getScale().x, getClickGUI().getScale().y);
 
         SCROLL = true;

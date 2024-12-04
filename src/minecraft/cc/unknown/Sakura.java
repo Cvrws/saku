@@ -45,8 +45,6 @@ public enum Sakura {
 
     private ClickGui clickGui;
     
-    public boolean welcomeSound;
-
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public void init() {
@@ -73,7 +71,6 @@ public enum Sakura {
 
         clickGui = new ClickGui();
         clickGui.initGui();
-                
         
         ViaMCP.INSTANCE.initAsyncSlider();
         ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);
@@ -82,9 +79,6 @@ public enum Sakura {
         bindableManager.init();
 
         Display.setTitle(NAME + " " + VERSION_FULL);
-        
-        // ddlc song
-        this.welcomeSound = false;
     }
 
     public void terminate() {

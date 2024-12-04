@@ -58,10 +58,8 @@ public final class ScriptManager implements Accessor {
     public final Listener<WorldChangeEvent> onWorldChange = event -> loadBindings();
 
     public void init() {
-        // Unload any scripts in case the client was reloaded
         this.unloadScripts();
 
-        // Create a new nashorn engine factory
         this.engineFactory = new NashornScriptEngineFactory();
 
         this.loadBindings();
@@ -100,7 +98,6 @@ public final class ScriptManager implements Accessor {
     }
 
     public void loadBindings() {
-        // Create new global bindings
         this.globalBindings = new SimpleBindings() {{
             this.put("mc", new MinecraftAPI());
             this.put("sakura", new ScriptAPI());

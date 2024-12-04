@@ -3,10 +3,6 @@ package cc.unknown.script.api.wrapper.impl.event.impl.player;
 import cc.unknown.event.impl.player.PreStrafeEvent;
 import cc.unknown.script.api.wrapper.impl.event.CancellableScriptEvent;
 
-/**
- * @author Auth
- * @since 10/07/2022
- */
 public class ScriptPreStrafeEvent extends CancellableScriptEvent<PreStrafeEvent> {
 
     public ScriptPreStrafeEvent(final PreStrafeEvent wrappedEvent) {

@@ -7,10 +7,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;
 
-/**
- * @author Strikeless
- * @since 20.06.2022
- */
 public class ScriptEntity extends ScriptWrapper<Entity> {
 
     public ScriptEntity(final Entity wrapped) {
@@ -28,7 +24,6 @@ public class ScriptEntity extends ScriptWrapper<Entity> {
     }
 
     private static ScriptEntity tryInstantiate(final Entity entity) {
-        // yes yes this method was totally necessary
         return new ScriptEntity(entity);
     }
 

@@ -28,7 +28,7 @@ public class TextField extends Gui {
     private final int width;
     private final int height;
     private String text = "";
-    private int maxStringLength = 1000;
+    private int maxStringLength = 1000000;
     private int cursorCounter;
     private boolean enableBackgroundDrawing = true;
     private boolean canLoseFocus = true;
