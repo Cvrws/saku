@@ -76,7 +76,6 @@ public final class ModuleManager {
         // World
         this.put(Scaffold.class, new Scaffold());
         this.put(FastBreak.class, new FastBreak());
-        this.put(AntiBot.class, new AntiBot());
         this.put(FastPlace.class, new FastPlace());
         this.put(LegitScaffold.class, new LegitScaffold());
         this.put(SafeWalk.class, new SafeWalk());

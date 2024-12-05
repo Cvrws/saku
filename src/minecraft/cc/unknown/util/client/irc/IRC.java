@@ -2,7 +2,7 @@ package cc.unknown.util.client.irc;
 
 import static cc.unknown.util.client.StreamerUtil.blue;
 import static cc.unknown.util.client.StreamerUtil.darkAqua;
-import static cc.unknown.util.client.StreamerUtil.lightPurple;
+import static cc.unknown.util.client.StreamerUtil.pink;
 import static cc.unknown.util.client.StreamerUtil.red;
 import static cc.unknown.util.client.StreamerUtil.reset;
 
@@ -57,7 +57,7 @@ public class IRC extends ListenerAdapter {
 	    	String extUser = extractUsername(content);
 	    	String extContent = extractMessage(content);
 	    	
-	    	PlayerUtil.display(lightPurple + "[Sakura] " + darkAqua + extUser + ": " + reset + extContent);
+	    	PlayerUtil.display(pink + "[Sakura] " + darkAqua + extUser + ": " + reset + extContent);
 	    } else {
 	    	PlayerUtil.display(blue + "[Discord] " + red + username + ": " + reset + content);
 	    }

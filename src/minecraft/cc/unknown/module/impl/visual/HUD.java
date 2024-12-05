@@ -7,11 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.render.NotificationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.input.ModuleToggleEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
@@ -21,7 +19,6 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.visual.api.ModuleComponent;
-import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.geometry.Vector2f;
@@ -46,7 +43,6 @@ public final class HUD extends Module {
     public final BooleanValue noRenderVisuals = new BooleanValue("No Render Visuals", this, true);
     private final BooleanValue lowercase = new BooleanValue("Lowercase", this, false);
     private final NumberValue alphaBackground = new NumberValue("Alpha BackGround", this, 180, 0, 255, 1);
-    private final BooleanValue toggleNotifications = new BooleanValue("Toggle Notifications", this, false);
     
     private List<ModuleComponent> activeModuleComponents = new ArrayList<>();
     private List<ModuleComponent> allModuleComponents = new ArrayList<>();
@@ -64,13 +60,6 @@ public final class HUD extends Module {
         .peek(module -> module.setTranslatedName(module.getModule().getName()))
         .forEach(allModuleComponents::add);
 	}
-    
-    @EventLink
-    public final Listener<ModuleToggleEvent> onModuleToggle = event -> {
-        if (toggleNotifications.getValue()) {
-            NotificationComponent.post("Toggled", "Toggled " + event.getModule().getName() + " " + (event.getModule().isEnabled() ? "on" : "off"), 900);
-        }
-    };
 
     @EventLink
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {

@@ -1,11 +1,7 @@
 package cc.unknown.module.impl.ghost;
 
-import java.security.SecureRandom;
-import java.util.List;
 import java.util.Random;
 
-import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.BotComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
@@ -14,14 +10,11 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.player.RotationUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
-import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,7 +47,6 @@ public final class AimAssist extends Module {
 	private final BooleanValue ignoreTeammates = new BooleanValue("Ignore Teams", this, false);
 	private final BooleanValue scoreboardCheckTeam = new BooleanValue("Scoreboard Check Team", this, false, () -> !ignoreTeammates.getValue());
 	private final BooleanValue checkArmorColor = new BooleanValue("Check Armor Color", this, false, () -> !ignoreTeammates.getValue());
-	private final BooleanValue ignoreBots = new BooleanValue("Ignore Bots", this, false);
 	private final BooleanValue aimAtInvisibleEnemies = new BooleanValue("Aim at Invisible Targets", this, false);
 	private final BooleanValue lineOfSightCheck = new BooleanValue("Line of Sight Check", this, true);
 	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !lineOfSightCheck.getValue());
@@ -111,7 +103,6 @@ public final class AimAssist extends Module {
 	            if (getInstance().getEnemyManager().isEnemy(player)) continue;
 	            if (player.getName().contains("[NPC]")) continue;
 	            if (getInstance().getFriendManager().isFriend(player) && ignoreFriendlyEntities.getValue()) continue;
-	            if (getComponent(BotComponent.class).contains(player) && ignoreBots.getValue()) continue;
 	            if (ignoreTeammates.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
 	            if (playerPos.distanceTo(player) > distance.getValue().doubleValue()) continue;
 	            if (lineOfSightCheck.getValue() && !mc.player.canEntityBeSeen(player)) continue;

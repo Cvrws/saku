@@ -23,7 +23,6 @@ public class AdaptiveMap<K, V> extends HashMap<K, V> implements Serializable {
         return collection;
     }
 
-    // Removes all values from both the hashmap and the list
     public void removeValue(V value) {
         for (Map.Entry<K, V> entry : this.entrySet()) {
             if (entry.getValue().equals(value)) {

@@ -3,7 +3,7 @@ package cc.unknown.command.impl;
 import java.util.HashMap;
 
 import cc.unknown.command.Command;
-import cc.unknown.component.impl.universocraft.GameComponent;
+import cc.unknown.component.impl.player.GameComponent;
 import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;

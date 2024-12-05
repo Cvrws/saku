@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 import cc.unknown.component.impl.player.RotationComponent;
 import cc.unknown.component.impl.player.Slot;
 import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
-import cc.unknown.component.impl.render.NotificationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
@@ -58,7 +57,6 @@ public class Breaker extends Module {
     public final BooleanValue movementCorrection = new BooleanValue("Movement Correction", this, false);
     public final BooleanValue whitelistFriendlyBed = new BooleanValue("Whitelist Friendly Bed", this, false);
 
-    public final BooleanValue hitCheck = new BooleanValue("Aura Check", this, false);
     private final NumberValue fastBreakNormal = new NumberValue("FastBreak", this, 0, 0, 1, 0.1);
     private final NumberValue fastBreakBed = new NumberValue("FastBreak bed", this, 0, 0, 1, 0.1);
     private final NumberValue airMultipalyer = new NumberValue("Air Multiplier", this, 1, 0, 3, 0.1);
@@ -98,7 +96,6 @@ public class Breaker extends Module {
         if (mc.player.getDistance(event.getPosX(), event.getPosY(), event.getPosZ()) > 30) {
             if (notify) {
                 notify = false;
-                NotificationComponent.post("Breaker","Whitelisted bed");
             }
             teleport = new Vec3(event.getPosX(), event.getPosY(), event.getPosZ());
         }

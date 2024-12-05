@@ -24,7 +24,7 @@ public class StreamerUtil {
 	public ChatFormatting darkGreen = ChatFormatting.DARK_GREEN;
 	public ChatFormatting darkRed = ChatFormatting.DARK_RED;
 
-	public ChatFormatting lightPurple = ChatFormatting.LIGHT_PURPLE;
+	public ChatFormatting pink = ChatFormatting.LIGHT_PURPLE;
 	
    	public String usu = " ?§r§{0,3}§8§8\\[§r§f§fUsu§r§8§8\\]| ?§8\\[§fUsu§8\\]";
    	public String jup = " ?§r§{0,3}§8§8\\[§r§b§bJup§r§8§8\\]| ?§8\\[§bJup§8\\]";

@@ -18,7 +18,7 @@ public class ParticleDistanceComponent extends Component {
         	
         	final double distance = mc.player.getDistanceSq(wrapper.getXCoordinate(), wrapper.getYCoordinate(), wrapper.getZCoordinate());
         	
-        	if (distance >= 36) {
+        	if (distance >= 26) {
         		event.setCancelled();
 	        }
         }

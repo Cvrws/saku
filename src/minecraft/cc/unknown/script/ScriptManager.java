@@ -17,8 +17,6 @@ import javax.script.SimpleBindings;
 
 import org.apache.commons.io.FileUtils;
 
-import cc.unknown.Sakura;
-import cc.unknown.component.impl.render.NotificationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.WorldChangeEvent;
@@ -141,10 +139,7 @@ public final class ScriptManager implements Accessor {
             } catch (final ScriptException ex) {
                 ex.printStackTrace();
 
-                NotificationComponent.post(
-                        "Script \"" + script.getName() + "\" unloaded incorrectly",
-                        "More details have been printed in a stacktrace."
-                );
+                PlayerUtil.display("Script \"" + script.getName() + "\" unloaded incorrectly");
             }
         });
 

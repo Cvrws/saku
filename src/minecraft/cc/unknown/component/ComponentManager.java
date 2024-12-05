@@ -10,8 +10,6 @@ import cc.unknown.component.impl.hud.*;
 import cc.unknown.component.impl.patches.*;
 import cc.unknown.component.impl.performance.*;
 import cc.unknown.component.impl.player.*;
-import cc.unknown.component.impl.render.*;
-import cc.unknown.component.impl.universocraft.*;
 import cc.unknown.component.impl.viamcp.*;
 
 public final class ComponentManager {
@@ -22,7 +20,6 @@ public final class ComponentManager {
         // event
     	this.add(new EntityKillEventComponent());
         this.add(new EntityTickComponent());
-        this.add(new MouseEventComponent());
         
         // hud
         this.add(new DragComponent());
@@ -34,21 +31,12 @@ public final class ComponentManager {
         this.add(new ParticleDistanceComponent());
         
         // player
-        this.add(new GUIDetectionComponent());
         this.add(new LastConnectionComponent());
         this.add(new RotationComponent());
-        this.add(new SelectorDetectionComponent());
         this.add(new Slot());
         this.add(new SecurityComponent());
-        this.add(new BotComponent());
         this.add(new FallDistanceComponent());
         this.add(new TargetComponent());
-        
-        // render
-        this.add(new NotificationComponent());
-        this.add(new ProjectionComponent());
-
-        // universocraft
         this.add(new GameComponent());
 
         // viamcp

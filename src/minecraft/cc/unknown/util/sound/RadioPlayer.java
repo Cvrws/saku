@@ -1,4 +1,4 @@
-package cc.unknown.util.sound.radio;
+package cc.unknown.util.sound;
 
 import java.net.URL;
 import java.security.KeyManagementException;

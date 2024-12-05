@@ -6,10 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.lwjgl.opengl.GL11;
-
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.BotComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
@@ -20,7 +17,6 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 import lombok.AllArgsConstructor;
@@ -44,7 +40,6 @@ import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.BlockWall;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityAnimal;
@@ -194,9 +189,6 @@ public class TeleportAura extends Module {
 
 		if ((mc.player.isEntityAlive()) && !(entity instanceof EntityPlayerSP)) {
 			if (mc.player.getDistanceToEntity(entity) <= range) {
-				if (getComponent(BotComponent.class).contains(entity)) {
-					return false;
-				}
 				if (entity.isPlayerSleeping()) {
 					return false;
 				}

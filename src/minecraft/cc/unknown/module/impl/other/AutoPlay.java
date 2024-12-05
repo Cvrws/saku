@@ -2,13 +2,13 @@ package cc.unknown.module.impl.other;
 
 import java.util.Arrays;
 
-import cc.unknown.component.impl.render.NotificationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.StreamerUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.SubMode;
@@ -46,7 +46,7 @@ public final class AutoPlay extends Module {
 	            
 	            if (!command.isEmpty()) {
 	                PlayerUtil.send(command);
-	                NotificationComponent.post("Auto Play", "Joined a new game", 7000);
+	                PlayerUtil.display(StreamerUtil.pink + "[AutoPlay] Joined a new game");
 	            }
 	        }
 	    }

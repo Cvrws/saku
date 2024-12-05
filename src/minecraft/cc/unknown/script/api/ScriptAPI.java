@@ -9,10 +9,8 @@ import javax.script.ScriptException;
 
 import cc.unknown.Sakura;
 import cc.unknown.command.Command;
-import cc.unknown.component.impl.player.BotComponent;
 import cc.unknown.component.impl.player.RotationComponent;
 import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
-import cc.unknown.component.impl.render.NotificationComponent;
 import cc.unknown.module.Module;
 import cc.unknown.script.api.wrapper.impl.ScriptBlockPos;
 import cc.unknown.script.api.wrapper.impl.ScriptCommand;
@@ -140,14 +138,6 @@ public class ScriptAPI {
     	PlayerUtil.display(message);
     }
 
-    public void displayInfoNotification(final String title, final String message) {
-        NotificationComponent.post(title, message);
-    }
-
-    public void displayInfoNotification(final String title, final String message, final int time) {
-        NotificationComponent.post(title, message, time);
-    }
-
     public long getSystemMillis() {
         return System.currentTimeMillis();
     }
@@ -162,10 +152,6 @@ public class ScriptAPI {
 
     public int getFPS() {
         return Minecraft.getDebugFPS();
-    }
-
-    public boolean isBot(int entityID){
-        return Sakura.instance.getComponentManager().get(BotComponent.class).contains(Minecraft.getMinecraft().world.getEntityByID(entityID));
     }
 
     public boolean isFriend(String name){

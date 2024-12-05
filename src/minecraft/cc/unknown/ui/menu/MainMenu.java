@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import cc.unknown.Sakura;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
 import cc.unknown.module.impl.movement.Sprint;
@@ -13,7 +12,6 @@ import cc.unknown.ui.menu.api.Button;
 import cc.unknown.ui.menu.api.RainSystem;
 import cc.unknown.util.client.user.UserUtil;
 import cc.unknown.util.render.font.Font;
-import cc.unknown.util.sound.SoundUtil;
 import lombok.SneakyThrows;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;

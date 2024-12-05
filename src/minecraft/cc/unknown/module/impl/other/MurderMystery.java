@@ -3,13 +3,10 @@ package cc.unknown.module.impl.other;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import cc.unknown.component.impl.render.NotificationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.other.WorldChangeEvent;
-import cc.unknown.event.impl.player.PreMotionEvent;
-import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
@@ -23,10 +20,7 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatFormatting;
-import net.minecraft.util.MathHelper;
 
 @ModuleInfo(aliases = "Murder Mystery", description = "Caja de herramientas para Murder Mystery", category = Category.OTHER)
 public final class MurderMystery extends Module {
@@ -37,8 +31,6 @@ public final class MurderMystery extends Module {
 	private final BooleanValue drawBow = new BooleanValue("Draw bow esp", this, false);
 	private final BooleanValue drawMurder = new BooleanValue("Draw murder esp", this, false);
 	private final BooleanValue drawDetective = new BooleanValue("Draw detective esp", this, false);
-
-	private final BooleanValue notification = new BooleanValue("Notification", this, false);
 
 	private final ArrayList<EntityPlayer> murderers = new ArrayList<>();
 	private final ArrayList<EntityPlayer> detectives = new ArrayList<>();
@@ -102,12 +94,8 @@ public final class MurderMystery extends Module {
 	}
 
 	private void sendNotification(String message, ChatFormatting color, String symbol) {
-		if (notification.getValue()) {
-			NotificationComponent.post("Murder Mystery", message, 1000);
-		} else {
-			PlayerUtil.display(ChatFormatting.YELLOW + "[" + color + symbol + ChatFormatting.YELLOW + "] " + color
-					+ message + ChatFormatting.RESET);
-		}
+		PlayerUtil.display(ChatFormatting.YELLOW + "[" + color + symbol + ChatFormatting.YELLOW + "] " + color + message + ChatFormatting.RESET);
+		
 	}
 
 	private boolean isMurder(String itemName) {

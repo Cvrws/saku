@@ -2,19 +2,14 @@ package cc.unknown.module.impl.visual;
 
 import java.awt.Color;
 
-import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.BotComponent;
-import cc.unknown.component.impl.player.TargetComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.ui.ClickGui;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -24,7 +19,7 @@ public final class Tracers extends Module {
     @EventLink
     public final Listener<Render3DEvent> onRender3D = event -> {
         for (final Entity player : mc.world.playerEntities) {
-            if (player == mc.player || player.isDead || getComponent(BotComponent.class).contains(player)) {
+            if (player == mc.player || player.isDead) {
                 continue;
             }
             

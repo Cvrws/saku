@@ -20,7 +20,6 @@ public final class CommandManager {
 
     public void init() {
         this.add(new Bind());
-        this.add(new Clip());
         this.add(new Config());
         this.add(new Transaction());
         this.add(new Friend());

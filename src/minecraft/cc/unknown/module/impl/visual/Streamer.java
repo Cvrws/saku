@@ -51,7 +51,7 @@ public final class Streamer extends Module {
         ranks.put("Nep", blue);
         ranks.put("Mer", darkGreen);
         ranks.put("Sat", darkPurple);
-        ranks.put("Str", lightPurple);
+        ranks.put("Str", pink);
         ranks.put("Ayu", yellow);
         ranks.put("Bui", green);
         ranks.put("Mod", darkAqua);

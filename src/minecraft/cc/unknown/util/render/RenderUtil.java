@@ -2,12 +2,9 @@ package cc.unknown.util.render;
 
 import java.awt.Color;
 
-import javax.vecmath.Vector4d;
-
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.render.ProjectionComponent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.shader.Shaders;
@@ -17,11 +14,8 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -152,34 +146,6 @@ public final class RenderUtil implements Accessor {
 
     public void begin(final int glMode) {
         GL11.glBegin(glMode);
-    }
-
-    public void gradientCentered(double x, double y, final double width, final double height, final Color topColor, final Color bottomColor) {
-        x -= width / 2;
-        y -= height / 2;
-        verticalGradient(x, y, width, height, topColor, bottomColor);
-    }
-
-    public void horizontalGradient(final double x, final double y, final double width, final double height, final Color leftColor, final Color rightColor) {
-        start();
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        GL11.glBegin(GL11.GL_QUADS);
-
-        ColorUtil.glColor(leftColor);
-        GL11.glVertex2d(x, y);
-        GL11.glVertex2d(x, y + height);
-
-        ColorUtil.glColor(rightColor);
-        GL11.glVertex2d(x + width, y + height);
-        GL11.glVertex2d(x + width, y);
-
-        GL11.glEnd();
-        GL11.glShadeModel(GL11.GL_FLAT);
-        stop();
-    }
-
-    public void horizontalCenteredGradient(final double x, final double y, final double width, final double height, final Color leftColor, final Color rightColor) {
-        horizontalGradient(x - width / 2, y - height / 2, width, height, leftColor, rightColor);
     }
 
     public void image(final ResourceLocation imageLocation, final float x, final float y, final float width, final float height, final Color color) {

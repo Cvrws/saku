@@ -1,4 +1,4 @@
-package cc.unknown.component.impl.universocraft;
+package cc.unknown.component.impl.player;
 
 import java.util.List;
 

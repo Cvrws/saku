@@ -3,7 +3,6 @@ package cc.unknown.module.impl.latency;
 import java.util.ArrayList;
 import java.util.List;
 
-import cc.unknown.component.impl.render.NotificationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.DisconnectionEvent;
@@ -16,8 +15,6 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.value.impl.NumberValue;
-import io.netty.util.concurrent.GenericFutureListener;
-import net.minecraft.network.NetworkManager.InboundHandlerTuplePacketListener;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 
@@ -31,11 +28,6 @@ public class PerfectCriticals extends Module {
 	private StopWatch stopWatch = new StopWatch();
 	private boolean onAir = false;
 	private boolean hitGround = false;
-	
-	@Override
-	public void onEnable() {
-		NotificationComponent.post("Perfect Criticals", "Esto funciona mejor con menos ping.", 2500);
-	}
 	
 	@Override
 	public void onDisable() {
