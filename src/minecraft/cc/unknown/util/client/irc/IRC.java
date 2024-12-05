@@ -12,7 +12,7 @@ import cc.unknown.util.security.HardwareUtil;
 import cc.unknown.util.security.aes.AesUtil;
 import cc.unknown.util.security.blacklist.BlackListUtil;
 import cc.unknown.util.security.hook.WebhookUtil;
-import cc.unknown.util.security.remote.RemoteUtil;
+import cc.unknown.util.security.remote.SocketUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -35,7 +35,7 @@ public class IRC extends ListenerAdapter {
 	@SneakyThrows
 	public synchronized void init() {
         if (jda == null || jda.getStatus() == JDA.Status.SHUTDOWN || jda.getStatus() == JDA.Status.FAILED_TO_LOGIN) {
-            jda = JDABuilder.createDefault(AesUtil.decrypt(RemoteUtil.tokenRemote)).enableIntents(GatewayIntent.MESSAGE_CONTENT).addEventListeners(new IRC()).build();
+            jda = JDABuilder.createDefault(AesUtil.decrypt(SocketUtil.tokenRemote)).enableIntents(GatewayIntent.MESSAGE_CONTENT).addEventListeners(new IRC()).build();
             jda.awaitReady();
         }
 	}

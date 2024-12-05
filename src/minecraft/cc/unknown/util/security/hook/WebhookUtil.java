@@ -1,6 +1,6 @@
 package cc.unknown.util.security.hook;
 
-import static cc.unknown.util.security.remote.RemoteUtil.authRemote;
+import static cc.unknown.util.security.remote.SocketUtil.authRemote;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

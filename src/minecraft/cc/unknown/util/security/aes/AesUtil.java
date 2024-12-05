@@ -9,7 +9,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import cc.unknown.util.security.remote.RemoteUtil;
+import cc.unknown.util.security.remote.SocketUtil;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
@@ -65,7 +65,7 @@ public class AesUtil {
     @SneakyThrows
     private SecretKey getSecretKey() {
         MessageDigest sha = MessageDigest.getInstance("SHA-256");
-        byte[] key = sha.digest(RemoteUtil.SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        byte[] key = sha.digest(SocketUtil.SECRET_KEY.getBytes(StandardCharsets.UTF_8));
         return new SecretKeySpec(key, "AES");
     }
 
