@@ -27,20 +27,9 @@ public class AutoExtinguisher extends Module {
 	private boolean done;
 	
 	@EventLink(value = Priority.HIGH)
-	public final Listener<PreUpdateEvent> onHighPreUpdate = event -> {
-		mc.entityRenderer.getMouseOver(1);
-		
+	public final Listener<PreUpdateEvent> onHighPreUpdate = event -> {		
 		if (canWork) {
 			RotationComponent.setRotations(new Vector2f(mc.player.rotationYaw, 90.0f), 2, MovementFix.SILENT);
-			done = false;
-		}
-	};
-
-
-	@EventLink
-	public final Listener<RenderRotationEvent> onRenderRotation = event -> {
-		if (canWork) {
-			RotationComponent.setRotations(new Vector2f(mc.player.rotationYaw, mc.player.rotationPitch), 2, MovementFix.SILENT);
 		}
 	};
 

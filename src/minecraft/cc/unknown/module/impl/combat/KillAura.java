@@ -38,6 +38,7 @@ import cc.unknown.value.impl.ListValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
+import de.florianmichael.viamcp.fixes.AttackOrder;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityFireball;
@@ -83,6 +84,8 @@ public final class KillAura extends Module {
 			.setDefault("Distance");
 
 	public final NumberValue range = new NumberValue("Range", this, 3, 3, 6, 0.1);
+	private final BooleanValue swingInRange = new BooleanValue("Swing in Range", this, false);
+	private final NumberValue swingRange = new NumberValue("Swing Range", this, 3, 3, 6, 0.1, () -> !swingInRange.getValue());
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 10, 15, 1, 20, 1);
 	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 1.5, 2, 0.1);
 
@@ -101,6 +104,7 @@ public final class KillAura extends Module {
 	private final DescValue advanced = new DescValue("Advanced:", this);
 	private final BooleanValue attackWhilstScaffolding = new BooleanValue("Attack whilst Scaffolding", this, false);
 	private final BooleanValue noSwing = new BooleanValue("No swing", this, false);
+
 	private final BooleanValue autoDisable = new BooleanValue("Auto disable", this, false);
 	public final BooleanValue smoothRotation = new BooleanValue("Smooth Rotation", this, false);
 	public final BooleanValue teams = new BooleanValue("Ignore Teammates", this, false);
@@ -350,14 +354,16 @@ public final class KillAura extends Module {
 			final long clicks = (long) (this.cps.getValue().longValue() * randomization.getValue().doubleValue());
 			this.nextSwing = 1000 / clicks;
 
-			if (Math.sin(nextSwing) + 1 > Math.random() || attackStopWatch.finished(this.nextSwing + 500)
-					|| Math.random() > 0.5) {
+			if (Math.sin(nextSwing) + 1 > Math.random() || attackStopWatch.finished(this.nextSwing + 500) || Math.random() > 0.5) {
 				if (this.allowAttack) {
 					final double range = this.range.getValue().doubleValue();
-					final Vec3 rotationVector = mc.player.getVectorForRotation(RotationComponent.rotations.getY(),
-							RotationComponent.rotations.getX());
+					final Vec3 rotationVector = mc.player.getVectorForRotation(RotationComponent.rotations.getY(), RotationComponent.rotations.getX());
 					MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationComponent.rotations, range);
 
+					/*if (swingInRange.getValue() && mc.player.getDistanceToEntity(this.target) < 6 || RotationUtil.getDistanceToEntityBox(this.target) <= 6) {
+			            mc.clickMouseEvent();
+					}*/
+					
 					if (throughWalls.getValue()) {
 						Vec3 eyes = mc.player.getPositionEyes(1);
 						movingObjectPosition = target.getEntityBoundingBox().expand(0.1, 0.1, 0.1)
@@ -509,8 +515,8 @@ public final class KillAura extends Module {
 			mc.player.swingItem();
 		}
 
-		mc.playerController.attackEntity(mc.player, target);
-
+		AttackOrder.sendLegitFixedKillAuraAttack(mc.player, target);
+		
 		this.clickStopWatch.reset();
 		this.hitTicks = 0;
 	}

@@ -33,7 +33,7 @@ public class AntiFireBall extends Module {
                 if (this.rotate.getValue()) {
                     RotationComponent.setRotations(RotationUtil.calculate(entity), rotationSpeed.getValue().intValue(), MovementFix.SILENT);
                 }
-                mc.clickMouse();
+                mc.clickMouseEvent();
                 break;
             }
         }

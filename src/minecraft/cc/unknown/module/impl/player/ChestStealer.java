@@ -60,36 +60,36 @@ public class ChestStealer extends Module {
 	@EventLink
 	public final Listener<TickEvent> onTick = event -> {
 		if (mc.currentScreen instanceof GuiChest) {
-			if (this.startDelayTime.reached((long) (getRandomStartDelay()))) {
+			if (startDelayTime.reached((long) (getRandomStartDelay()))) {
 				ArrayList<Integer> itemPos = new ArrayList<>();
 				GuiChest chest = (GuiChest) mc.currentScreen;
 
 				for (int i = 0; i < chest.inventorySlots.inventorySlots.size() - 36; ++i) {
 					ItemStack itemStack = chest.inventorySlots.getSlot(i).getStack();
 					if (itemStack != null) {
-						if (this.isBestChestItem(itemStack) && this.isBestItem(itemStack)) {
+						if (isBestChestItem(itemStack) && isBestItem(itemStack)) {
 							itemPos.add(i);
 						}
 					}
 				}
 
-				if (this.delayTime.reached((long) (getRandomDelay()))) {
+				if (delayTime.reached((long) (getRandomDelay()))) {
 					boolean b = false;
 					for (Integer integer : itemPos) {
-						this.stealItem(integer);
-						this.lastItemPos = integer;
+						stealItem(integer);
+						lastItemPos = integer;
 						b = true;
-						if (this.delay.getValue().doubleValue() != 0.0) {
+						if (delay.getValue().doubleValue() != 0.0) {
 							break;
 						}
 					}
 
-					if (!b && this.autoClose.getValue()) {
-						this.startDelayTime.reset();
+					if (!b && autoClose.getValue()) {
+						startDelayTime.reset();
 						mc.player.closeScreen();
 					}
-				} else if (this.lastItemPos != Integer.MIN_VALUE) {
-					mc.playerController.windowClick(chest.inventorySlots.windowId, this.lastItemPos, 0, 1, mc.player);
+				} else if (lastItemPos != Integer.MIN_VALUE) {
+					mc.playerController.windowClick(chest.inventorySlots.windowId, lastItemPos, 0, 1, mc.player);
 
 					mc.mouseHelper.mouseXYChange();
 					Mouse.setCursorPosition(Display.getWidth() / 3, Display.getHeight() / 2);
@@ -97,8 +97,8 @@ public class ChestStealer extends Module {
 				}
 			}
 		} else {
-			this.startDelayTime.reset();
-			this.lastItemPos = Integer.MIN_VALUE;
+			startDelayTime.reset();
+			lastItemPos = Integer.MIN_VALUE;
 		}
 
 	};
@@ -110,11 +110,7 @@ public class ChestStealer extends Module {
 
 		try {
 			chest.forceShift = true;
-		
-			chest.mouseClickMove(slot1.xDisplayPosition + 2 + chest.guiLeft, slot1.yDisplayPosition + 2 + chest.guiTop,
-					0, 0);
-			
-
+			chest.mouseClickMove(slot1.xDisplayPosition + 2 + chest.guiLeft, slot1.yDisplayPosition + 2 + chest.guiTop, 0, 0);
 			chest.allowUserInput = true;
 			chest.handleInput();
 			chest.handleMouseInput();
@@ -122,20 +118,16 @@ public class ChestStealer extends Module {
 			var5.printStackTrace();
 		}
 
-		this.delayTime.reset();
+		delayTime.reset();
 	}
 
 	private int calculateDistance(int slot1, int slot2) {
-
 		int rowLength = 9;
-
 		int row1 = slot1 / rowLength;
 		int col1 = slot1 % rowLength;
 		int row2 = slot2 / rowLength;
 		int col2 = slot2 % rowLength;
-
 		int distance = (int) Math.sqrt(Math.pow(row1 - row2, 2) + Math.pow(col1 - col2, 2));
-
 		return distance;
 	}
 
@@ -152,10 +144,7 @@ public class ChestStealer extends Module {
 	}
 
 	public boolean isBestChestItem(ItemStack itemStack) {
-		if (itemStack.getItem() instanceof ItemSword || itemStack.getItem() instanceof ItemBow
-				|| itemStack.getItem() instanceof ItemArmor || itemStack.getItem() instanceof ItemAxe
-				|| itemStack.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemSpade
-				|| itemStack.getItem() instanceof ItemFishingRod) {
+		if (itemStack.getItem() instanceof ItemSword || itemStack.getItem() instanceof ItemBow || itemStack.getItem() instanceof ItemArmor || itemStack.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemSpade || itemStack.getItem() instanceof ItemFishingRod) {
 			ItemStack bestItem = null;
 			GuiChest chest = (GuiChest) mc.currentScreen;
 
@@ -163,25 +152,22 @@ public class ChestStealer extends Module {
 				ItemStack chestItem = chest.inventorySlots.getSlot(i).getStack();
 				if (chestItem != null) {
 					if (itemStack.getItem() instanceof ItemSword && chestItem.getItem() instanceof ItemSword) {
-						if (this.getDamageSword(itemStack) < this.getDamageSword(chestItem)) {
+						if (getDamageSword(itemStack) < getDamageSword(chestItem)) {
 							return false;
 						}
 					} else if (itemStack.getItem() instanceof ItemBow && chestItem.getItem() instanceof ItemBow) {
-						if (this.getDamageBow(itemStack) < this.getDamageBow(chestItem)) {
+						if (getDamageBow(itemStack) < getDamageBow(chestItem)) {
 							return false;
 						}
 					} else if (itemStack.getItem() instanceof ItemArmor && chestItem.getItem() instanceof ItemArmor) {
-						if (((ItemArmor) itemStack.getItem()).armorType == ((ItemArmor) chestItem.getItem()).armorType
-								&& this.getDamageReduceAmount(itemStack) < this.getDamageReduceAmount(chestItem)) {
+						if (((ItemArmor) itemStack.getItem()).armorType == ((ItemArmor) chestItem.getItem()).armorType && getDamageReduceAmount(itemStack) < getDamageReduceAmount(chestItem)) {
 							return false;
 						}
-					} else if (itemStack.getItem() instanceof ItemFishingRod
-							&& chestItem.getItem() instanceof ItemFishingRod) {
-						if (this.getBestRod(itemStack) < this.getBestRod(chestItem)) {
+					} else if (itemStack.getItem() instanceof ItemFishingRod && chestItem.getItem() instanceof ItemFishingRod) {
+						if (getBestRod(itemStack) < getBestRod(chestItem)) {
 							return false;
 						}
-					} else if (itemStack.getItem() instanceof ItemTool && chestItem.getItem() instanceof ItemTool
-							&& this.getToolSpeed(itemStack) < this.getToolSpeed(chestItem)) {
+					} else if (itemStack.getItem() instanceof ItemAxe && chestItem.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemPickaxe && chestItem.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemSpade && chestItem.getItem() instanceof ItemSpade && getToolSpeed(itemStack) < getToolSpeed(chestItem)) {
 						return false;
 					}
 				}
@@ -192,36 +178,27 @@ public class ChestStealer extends Module {
 	}
 
 	public boolean isBestItem(ItemStack itemStack) {
-		if (itemStack.getItem() instanceof ItemSword || itemStack.getItem() instanceof ItemBow
-				|| itemStack.getItem() instanceof ItemArmor || itemStack.getItem() instanceof ItemAxe
-				|| itemStack.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemSpade
-				|| itemStack.getItem() instanceof ItemFishingRod) {
+		if (itemStack.getItem() instanceof ItemSword || itemStack.getItem() instanceof ItemBow || itemStack.getItem() instanceof ItemArmor || itemStack.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemSpade || itemStack.getItem() instanceof ItemFishingRod) {
 			for (int i = 0; i < mc.player.inventoryContainer.inventorySlots.size(); ++i) {
 				ItemStack inventoryStack = mc.player.inventoryContainer.getSlot(i).getStack();
 				if (inventoryStack != null) {
 					if (itemStack.getItem() instanceof ItemSword && inventoryStack.getItem() instanceof ItemSword) {
-						if (this.getDamageSword(itemStack) <= this.getDamageSword(inventoryStack)) {
+						if (getDamageSword(itemStack) <= getDamageSword(inventoryStack)) {
 							return false;
 						}
 					} else if (itemStack.getItem() instanceof ItemBow && inventoryStack.getItem() instanceof ItemBow) {
-						if (this.getDamageBow(itemStack) <= this.getDamageBow(inventoryStack)) {
+						if (getDamageBow(itemStack) <= getDamageBow(inventoryStack)) {
 							return false;
 						}
-					} else if (itemStack.getItem() instanceof ItemArmor
-							&& inventoryStack.getItem() instanceof ItemArmor) {
-						if (((ItemArmor) itemStack.getItem()).armorType == ((ItemArmor) inventoryStack
-								.getItem()).armorType
-								&& this.getDamageReduceAmount(itemStack) <= this
-										.getDamageReduceAmount(inventoryStack)) {
+					} else if (itemStack.getItem() instanceof ItemArmor && inventoryStack.getItem() instanceof ItemArmor) {
+						if (((ItemArmor) itemStack.getItem()).armorType == ((ItemArmor) inventoryStack.getItem()).armorType && getDamageReduceAmount(itemStack) <= getDamageReduceAmount(inventoryStack)) {
 							return false;
 						}
-					} else if (itemStack.getItem() instanceof ItemFishingRod
-							&& inventoryStack.getItem() instanceof ItemFishingRod) {
-						if (this.getBestRod(itemStack) <= this.getBestRod(inventoryStack)) {
+					} else if (itemStack.getItem() instanceof ItemFishingRod && inventoryStack.getItem() instanceof ItemFishingRod) {
+						if (getBestRod(itemStack) <= getBestRod(inventoryStack)) {
 							return false;
 						}
-					} else if (itemStack.getItem() instanceof ItemTool && inventoryStack.getItem() instanceof ItemTool
-							&& this.getToolSpeed(itemStack) <= this.getToolSpeed(inventoryStack)) {
+					} else if (itemStack.getItem() instanceof ItemPickaxe && inventoryStack.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemAxe && inventoryStack.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemSpade && inventoryStack.getItem() instanceof ItemSpade && getToolSpeed(itemStack) <= getToolSpeed(inventoryStack)) {
 						return false;
 					}
 				}
@@ -234,8 +211,7 @@ public class ChestStealer extends Module {
 	private double getDamageSword(ItemStack itemStack) {
 		double damage = 0.0;
 		if (itemStack.getItem() instanceof ItemSword) {
-			damage += (double) (((ItemSword) itemStack.getItem()).getMaxDamage()
-					+ (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, itemStack) * 1.25F);
+			damage += (double) (((ItemSword) itemStack.getItem()).getMaxDamage() + (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, itemStack) * 1.25F);
 			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.fireAspect.effectId, itemStack) / 11.0;
 			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.knockback.effectId, itemStack) / 11.0;
 			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, itemStack) / 11.0;
@@ -263,17 +239,11 @@ public class ChestStealer extends Module {
 		double damage = 0.0;
 		if (itemStack.getItem() instanceof ItemTool) {
 			if (itemStack.getItem() instanceof ItemAxe) {
-				damage += (double) (itemStack.getItem().getStrVsBlock(itemStack,
-						new Block(Material.wood, MapColor.woodColor))
-						+ (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack));
+				damage += (double) (itemStack.getItem().getStrVsBlock(itemStack, new Block(Material.wood, MapColor.woodColor)) + (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack));
 			} else if (itemStack.getItem() instanceof ItemPickaxe) {
-				damage += (double) (itemStack.getItem().getStrVsBlock(itemStack,
-						new Block(Material.rock, MapColor.stoneColor))
-						+ (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack));
+				damage += (double) (itemStack.getItem().getStrVsBlock(itemStack, new Block(Material.rock, MapColor.stoneColor)) + (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack));
 			} else if (itemStack.getItem() instanceof ItemSpade) {
-				damage += (double) (itemStack.getItem().getStrVsBlock(itemStack,
-						new Block(Material.sand, MapColor.sandColor))
-						+ (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack));
+				damage += (double) (itemStack.getItem().getStrVsBlock(itemStack, new Block(Material.sand, MapColor.sandColor)) + (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack));
 			}
 
 			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, itemStack) / 11.0;
