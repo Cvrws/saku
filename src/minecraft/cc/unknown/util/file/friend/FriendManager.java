@@ -26,7 +26,7 @@ public class FriendManager {
     }
 
     public FriendFile getFriendFile() {
-        return new FriendFile(getFile(), FileType.ACCOUNT);
+        return new FriendFile(getFile(), FileType.FRIEND);
     }
 
     public boolean load() {

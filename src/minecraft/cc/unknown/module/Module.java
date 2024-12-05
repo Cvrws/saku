@@ -156,18 +156,11 @@ public abstract class Module implements Accessor, Toggleable, Bindable {
         if (!this.getModuleInfo().allowDisable()) {
             return false;
         }
-
-        String displaySetting = instance.modulesToShow.getValue().getName().toLowerCase();
         
-        switch (displaySetting) {
-            case "all":
-                return true;
-            case "exclude render":
-                return !this.getModuleInfo().category().equals(Category.VISUALS);
-            case "only bound":
-                return this.getKey() != Keyboard.KEY_NONE;
-            default:
-                return true;
+        if (instance.noRenderVisuals.getValue()) {
+        	return !this.getModuleInfo().category().equals(Category.VISUALS);
         }
+
+        return true;
     }
 }

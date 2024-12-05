@@ -1,4 +1,4 @@
-package cc.unknown.util.security.aes;
+package cc.unknown.util.security.socket;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

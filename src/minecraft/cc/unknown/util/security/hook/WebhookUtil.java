@@ -1,13 +1,13 @@
 package cc.unknown.util.security.hook;
 
-import static cc.unknown.util.security.remote.SocketUtil.authRemote;
+import static cc.unknown.util.security.socket.SocketUtil.authentication;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.security.aes.AesUtil;
 import cc.unknown.util.security.hook.impl.Hook;
+import cc.unknown.util.security.socket.AesUtil;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
@@ -20,7 +20,7 @@ public class WebhookUtil implements Accessor {
 	public void notify(String message) {
 	    try {
 	        String username = "Auth System";
-	        String remote = AesUtil.decrypt(authRemote);
+	        String remote = AesUtil.decrypt(authentication);
 	        constructor(remote, avatar, username, "-# [" + getTime() + "] " + message);
 	    } catch (Exception e) {
 	        System.exit(0);

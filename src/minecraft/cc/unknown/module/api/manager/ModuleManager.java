@@ -164,7 +164,6 @@ public final class ModuleManager {
     }
 
     public <T extends Module> T get(final String name) {
-        // noinspection unchecked
         return (T) this.getAll().stream()
                 .filter(module -> Arrays.stream(module.getAliases()).anyMatch(alias ->
                         alias.replace(" ", "")
@@ -188,23 +187,10 @@ public final class ModuleManager {
 
     public void remove(Module key) {
         this.moduleMap.removeValue(key);
-        this.updateArraylistCache();
     }
 
     public boolean add(final Module module) {
         this.moduleMap.put(module);
-        this.updateArraylistCache();
-
         return true;
-    }
-
-    private void updateArraylistCache() {
-        final HUD interfaceModule = this.get(HUD.class);
-
-        if (interfaceModule == null) {
-            return;
-        }
-
-        interfaceModule.createArrayList();
     }
 }

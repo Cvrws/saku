@@ -1,4 +1,4 @@
-package cc.unknown.util.security.blacklist;
+package cc.unknown.util.client;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

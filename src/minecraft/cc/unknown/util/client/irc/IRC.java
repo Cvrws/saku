@@ -9,10 +9,9 @@ import static cc.unknown.util.client.StreamerUtil.reset;
 import cc.unknown.util.client.user.UserUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.security.HardwareUtil;
-import cc.unknown.util.security.aes.AesUtil;
-import cc.unknown.util.security.blacklist.BlackListUtil;
 import cc.unknown.util.security.hook.WebhookUtil;
-import cc.unknown.util.security.remote.SocketUtil;
+import cc.unknown.util.security.socket.AesUtil;
+import cc.unknown.util.security.socket.SocketUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -35,7 +34,7 @@ public class IRC extends ListenerAdapter {
 	@SneakyThrows
 	public synchronized void init() {
         if (jda == null || jda.getStatus() == JDA.Status.SHUTDOWN || jda.getStatus() == JDA.Status.FAILED_TO_LOGIN) {
-            jda = JDABuilder.createDefault(AesUtil.decrypt(SocketUtil.tokenRemote)).enableIntents(GatewayIntent.MESSAGE_CONTENT).addEventListeners(new IRC()).build();
+            jda = JDABuilder.createDefault(AesUtil.decrypt(SocketUtil.ircBridge)).enableIntents(GatewayIntent.MESSAGE_CONTENT).addEventListeners(new IRC()).build();
             jda.awaitReady();
         }
 	}

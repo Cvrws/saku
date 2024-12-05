@@ -36,22 +36,15 @@ import cc.unknown.value.impl.SubMode;
 @ModuleInfo(aliases = "HUD", description = "Renderiza los modulos del cliente.", category = Category.VISUALS, autoEnabled = true)
 public final class HUD extends Module {
 	
-	private final ModeValue colorMode = new ModeValue("ArrayList Style Color", this)
+	private final ModeValue colorMode = new ModeValue("Style Color", this)
         .add(new SubMode("Static"))
         .add(new SubMode("Fade"))
         .add(new SubMode("Breathe"))
         .setDefault("Fade");
-	
-    public final ModeValue modulesToShow = new ModeValue("Modules to Show", this)
-        .add(new SubMode("All"))
-        .add(new SubMode("Exclude render"))
-        .add(new SubMode("Only bound"))
-        .setDefault("Exclude render");
         
     private final BooleanValue dropShadow = new BooleanValue("Drop Shadow", this, true);
+    public final BooleanValue noRenderVisuals = new BooleanValue("No Render Visuals", this, true);
     private final BooleanValue lowercase = new BooleanValue("Lowercase", this, false);
-    private final BooleanValue arrayAnimation = new BooleanValue("ArrayList Animation", this, true);
-    private final BooleanValue removeSpaces = new BooleanValue("No Spaces", this, false);
     private final NumberValue alphaBackground = new NumberValue("Alpha BackGround", this, 180, 0, 255, 1);
     private final BooleanValue toggleNotifications = new BooleanValue("Toggle Notifications", this, false);
     
@@ -66,11 +59,10 @@ public final class HUD extends Module {
 	public void onEnable() {
         allModuleComponents.clear();
         Sakura.instance.getModuleManager().getAll().stream()
-                .sorted(Comparator.comparingDouble(module -> -widthComparator.width(module.getName())))
-                .map(ModuleComponent::new)
-                .forEach(allModuleComponents::add);
-
-        updateTranslations();
+        .sorted(Comparator.comparingDouble(module -> -widthComparator.width(module.getName())))
+        .map(ModuleComponent::new)
+        .peek(module -> module.setTranslatedName(module.getModule().getName()))
+        .forEach(allModuleComponents::add);
 	}
     
     @EventLink
@@ -81,14 +73,11 @@ public final class HUD extends Module {
     };
 
     @EventLink
-    public final Listener<PreUpdateEvent> onPreUpdate = event -> {;
-    	if (stopwatch.finished(15000)) {
-    		updateTranslations();
-    		stopwatch.reset();
-    	}
-
-    	stopwatch.reset();
-    	sortArrayList();
+    public final Listener<PreUpdateEvent> onPreUpdate = event -> {
+    	activeModuleComponents = allModuleComponents.stream()
+    	.filter(module -> module.getModule().shouldDisplay(this))
+    	.sorted(Comparator.comparingDouble(module -> -(module.getNameWidth())))
+    	.collect(Collectors.toList());
     };
     
     @EventLink
@@ -108,7 +97,9 @@ public final class HUD extends Module {
                 color = ColorUtil.mixColors(color, this.getTheme().getSecondColor(), this.getTheme().getBlendFactor(new Vector2d(0, 0)));
         	}
                 
-        	setVarious(module, color, name);
+        	module.setColor(color);
+        	module.setNameWidth(font.width(name));
+        	module.setDisplayName(name);
         }
     };
 
@@ -132,11 +123,6 @@ public final class HUD extends Module {
         	setRenderRectangle(module, x, y, widthOffset);
             drawText(module, x, y - .7f, finalColor.getRGB());
         }
-
-        if (stopwatch.finished(150 * 50)) {
-        	stopwatch.reset();
-        	stopwatch.reset();
-        }
         
         final float screenWidth = event.getScaledResolution().getScaledWidth();
         final Vector2f position = new Vector2f(0, 0);
@@ -155,45 +141,9 @@ public final class HUD extends Module {
             module.targetPosition.x -= offsetX;
             module.targetPosition.y += offsetY;
             
-            if (arrayAnimation.getValue()) {
-            	if (Math.abs(module.getPosition().getX() - module.targetPosition.x) > 0.5 || Math.abs(module.getPosition().getY() - module.targetPosition.y) > 0.5) {
-                    module.position.x = MathUtil.lerp(module.position.x, module.targetPosition.x, 1.5E-2F * stopwatch.getElapsedTime());
-                    module.position.y = MathUtil.lerp(module.position.y, module.targetPosition.y, 1.5E-2F * stopwatch.getElapsedTime());
-                }
-            } else {
-                module.position = module.targetPosition;
-            }
+            module.position = module.targetPosition;
         }
-
-        stopwatch.reset();
     };
-    
-    public void createArrayList() {
-        allModuleComponents.clear();
-        Sakura.instance.getModuleManager().getAll().stream()
-                .sorted(Comparator.comparingDouble(module -> -widthComparator.width(module.getName())))
-                .map(module -> new ModuleComponent(module))
-                .forEach(allModuleComponents::add);
-
-        updateTranslations();
-    }
-
-    private void updateTranslations() {
-        allModuleComponents.forEach(module -> 
-        module.setTranslatedName(module.getModule().getName())
-        );
-    }
-
-    private void sortArrayList() {
-        activeModuleComponents = allModuleComponents.stream()
-                .filter(module -> module.getModule().shouldDisplay(this))
-                .sorted(Comparator.comparingDouble(module -> -(module.getNameWidth())))
-                .collect(Collectors.toList());
-    }
-    
-    private String removeNonAlphabetCharacters(String input) {
-        return input.replaceAll("[^a-zA-Z]", "");
-    }
 
     private void drawText(ModuleComponent component, double x, double y, int hex) {
         if (dropShadow.getValue()) {
@@ -204,20 +154,10 @@ public final class HUD extends Module {
     }
     
     private String getName(ModuleComponent module) {
-    	return (lowercase.getValue() ? module.getTranslatedName().toLowerCase() : module.getTranslatedName()).replace(removeSpaces.getValue() ? " " : "", "");
+    	return (lowercase.getValue() ? module.getTranslatedName().toLowerCase() : module.getTranslatedName()).replace(" ", "");
     }
 
-    private Color getColor() {
-    	return new Color(0, 0, 0, alphaBackground.getValue().intValue());
-    }
-    
     private void setRenderRectangle(ModuleComponent module, double x, double y, double widthOffset) {
-    	RenderUtil.rectangle(x - widthOffset, y - 3f, module.nameWidth + 3 + widthOffset, moduleSpacing, getColor());
-    }
-    
-    private void setVarious(ModuleComponent module, Color color, String name) {
-    	module.setColor(color);
-    	module.setNameWidth(font.width(name));
-    	module.setDisplayName(name);
+    	RenderUtil.rectangle(x - widthOffset, y - 3f, module.nameWidth + 3 + widthOffset, moduleSpacing, new Color(0, 0, 0, alphaBackground.getValue().intValue()));
     }
 }

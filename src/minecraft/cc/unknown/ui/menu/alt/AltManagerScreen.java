@@ -15,7 +15,7 @@ import cc.unknown.ui.menu.api.Button;
 import cc.unknown.ui.menu.api.TextField;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.account.Account;
-import cc.unknown.util.account.impl.MicrosoftAccount;
+import cc.unknown.util.account.auth.MicrosoftAccount;
 import cc.unknown.util.account.name.UsernameGenerator;
 import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.BackgroundUtil;

@@ -22,7 +22,7 @@ public class EnemyManager {
     }
 
     public EnemyFile getEnemyFile() {
-        return new EnemyFile(getFile(), FileType.ACCOUNT);
+        return new EnemyFile(getFile(), FileType.ENEMY);
     }
 
     public boolean load() {

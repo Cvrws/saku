@@ -1,4 +1,4 @@
-package cc.unknown.util.account.impl;
+package cc.unknown.util.account.auth;
 
 import java.util.function.Consumer;
 
@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 
 import cc.unknown.util.account.Account;
 import cc.unknown.util.account.AccountType;
-import cc.unknown.util.account.auth.MicrosoftLogin;
 import lombok.Getter;
 import lombok.Setter;
 
