@@ -2,19 +2,18 @@ package cc.unknown.util.packet.custom;
 
 import java.io.IOException;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Getter
 public abstract class RawPacket implements Packet {
 
-    @Getter
     private final int packetID;
-    @Getter
     private final EnumConnectionState direction;
 
     @Override

@@ -23,7 +23,6 @@ import cc.unknown.event.impl.render.RenderItemEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.module.impl.combat.aura.esp.RingESP;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.geometry.Vector2f;
@@ -98,10 +97,6 @@ public final class KillAura extends Module {
 
 	private final BooleanValue rayCast = new BooleanValue("Ray cast", this, false);
 	private final BooleanValue throughWalls = new BooleanValue("Through Walls", this, false, () -> !rayCast.getValue());
-
-	public final ModeValue espMode = new ModeValue("Target ESP", this)
-			.add(new RingESP("Ring", this))
-			.setDefault("Ring");
 
 	private final DescValue advanced = new DescValue("Advanced:", this);
 	private final BooleanValue attackWhilstScaffolding = new BooleanValue("Attack whilst Scaffolding", this, false);

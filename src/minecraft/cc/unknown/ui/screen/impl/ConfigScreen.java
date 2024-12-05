@@ -95,12 +95,6 @@ public final class ConfigScreen implements Screen, Accessor {
 	        }
         }
 
-        double padding = 7;
-        double scrollX = clickGUI.getPosition().getX() + clickGUI.getScale().getX() - 4;
-        double scrollY = clickGUI.getPosition().getY() + padding;
-
-        scrollUtil.renderScrollBar(new Vector2d(scrollX, scrollY), getClickGUI().scale.y - padding * 2);
-
         scrollUtil.setMax(-(currentY - scrollUtil.getScroll() - clickGUI.position.y) + clickGUI.scale.y - 7);
     }
 

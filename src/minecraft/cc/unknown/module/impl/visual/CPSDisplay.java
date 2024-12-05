@@ -38,7 +38,7 @@ public final class CPSDisplay extends Module {
 		final double textX = position.x + 3.0F;
 		final double textY = position.y + scale.y / 2.0F - Fonts.ROBOTO.get(20, Weight.LIGHT).height() / 4.0F;
 		
-        RenderUtil.roundedRect(textX + cpsWidth + 29, textY + 15, textX - 5, textY - 10, 0, getTheme().getBackgroundShade().getRGB());
+        RenderUtil.roundedRect(textX + cpsWidth + 24, textY + 11, textX - 2, textY - 4, 0, getTheme().getBackgroundShade().getRGB());
 		
 		Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(titleString, textX, textY, getTheme().getFirstColor().getRGB());
 		Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(cpsString, textX + titleWidth, textY, Color.WHITE.getRGB());

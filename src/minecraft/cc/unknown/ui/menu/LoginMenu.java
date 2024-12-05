@@ -18,7 +18,7 @@ import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.render.animation.Easing;
 import cc.unknown.util.render.font.Font;
 import cc.unknown.util.security.HardwareUtil;
-import cc.unknown.util.security.hook.WebhookUtil;
+import cc.unknown.util.security.hook.AuthkUtil;
 import cc.unknown.util.security.socket.AesUtil;
 import lombok.SneakyThrows;
 import net.minecraft.client.gui.GuiButton;
@@ -124,7 +124,7 @@ public final class LoginMenu extends GuiScreen {
     private void handleNewUser(String username, String systemUuid) {
         String dataToEncrypt = username + "::" + systemUuid;
         String encryptedKey = AesUtil.encrypt(dataToEncrypt);
-        WebhookUtil.notify("`New User: " + username + " - Key: " + encryptedKey + "`");
+        AuthkUtil.notify("`New User: " + username + " - Key: " + encryptedKey + "`");
         status = "New user created successfully.";
         System.out.println(encryptedKey);
     }
@@ -134,7 +134,7 @@ public final class LoginMenu extends GuiScreen {
         String[] parts = decryptedKey.split("::");
 
         if (parts.length != 2) {
-            WebhookUtil.notify("`Decrypted key format is invalid.`");
+            AuthkUtil.notify("`Decrypted key format is invalid.`");
             status = "Invalid key format.";
             return;
         }
@@ -155,7 +155,7 @@ public final class LoginMenu extends GuiScreen {
         UserUtil.setUser(decryptedUsername);
         getModule(Sprint.class).logged = true;
         mc.displayGuiScreen(new MainMenu());
-        WebhookUtil.notify("`Login Success - User: " + UserUtil.getUser() + "`");
+        AuthkUtil.notify("`Login Success - User: " + UserUtil.getUser() + "`");
         status = "Login successful!";
     }
 
@@ -169,21 +169,21 @@ public final class LoginMenu extends GuiScreen {
         } else {
         	status = "The key has been locked for security.";
             BlackListUtil.add(key);
-            WebhookUtil.notify("`Key added to blacklist due to multiple invalid username attempts.`");
+            AuthkUtil.notify("`Key added to blacklist due to multiple invalid username attempts.`");
             loginAttempts.remove(key);
         }
 
-        WebhookUtil.notify("`Invalid Username: " + username + " - Key: " + key + " - User Key: " + decryptedUsername + "`");
+        AuthkUtil.notify("`Invalid Username: " + username + " - Key: " + key + " - User Key: " + decryptedUsername + "`");
     }
 
     private void blacklistKey(String key, String message) {
-        WebhookUtil.notify("`" + message + "`");
+        AuthkUtil.notify("`" + message + "`");
         BlackListUtil.add(key);
-        WebhookUtil.notify("`Key added to blacklist.`");
+        AuthkUtil.notify("`Key added to blacklist.`");
     }
 
     private void setStatusAndNotify(String statusMessage, String webhookMessage) {
     	status = statusMessage;
-        WebhookUtil.notify("`" + webhookMessage + "`");
+        AuthkUtil.notify("`" + webhookMessage + "`");
     }
 }

@@ -125,7 +125,7 @@ public class ClickGui extends GuiScreen implements Accessor {
             return;
         }
         
-        scale = new Vector2f(400, 300);
+        scale = new Vector2f(390, 300);
 
         final Minecraft mc = Minecraft.getMinecraft();
 

@@ -52,7 +52,7 @@ public final class Ambience extends Module {
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
 		mc.world.setWorldTime(
-				(time.getValue().intValue() + (System.currentTimeMillis() * speed.getValue().intValue())));
+				(long) (time.getValue().intValue() + (System.currentTimeMillis() * speed.getValue().intValue())));
 	};
 
 	@EventLink

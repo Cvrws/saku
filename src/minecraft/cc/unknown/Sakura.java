@@ -26,7 +26,7 @@ public enum Sakura {
     instance;
 
     public static final String NAME = "Sakura";
-    public static final String VERSION_FULL = "5.3";
+    public static final String VERSION_FULL = "5.4";
 
     private EventBus<Event> eventBus;
     private ModuleManager moduleManager;

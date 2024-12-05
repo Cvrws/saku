@@ -69,13 +69,6 @@ public class ScriptScreen implements Screen, Accessor {
             module.draw(new Vector2d(clickGUI.position.x + clickGUI.sidebar.sidebarWidth + 8, position.y), mouseX, mouseY, partialTicks);
             position.y += module.scale.y + 7;
         }
-
-        double padding = 7;
-        double scrollX = clickGUI.getPosition().getX() + clickGUI.getScale().getX() - 4;
-        double scrollY = clickGUI.getPosition().getY() + padding;
-
-        scrollUtil.renderScrollBar(new Vector2d(scrollX, scrollY), getClickGUI().scale.y - padding * 2);
-
         scrollUtil.setMax(-(position.y - scrollUtil.getScroll() - clickGUI.position.y) + clickGUI.scale.y - 7);
     }
 

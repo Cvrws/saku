@@ -33,12 +33,6 @@ public class ThemeScreen implements Screen, Accessor {
         final double rows = Math.ceil(visibleThemes.size() / 3D);
         scrollUtil.setMax(-57 * Math.max(0, (rows - 3)));
 
-        double padding = 7;
-        double scrollX = getClickGUI().getPosition().getX() + getClickGUI().getScale().getX() - 4;
-        double scrollY = getClickGUI().getPosition().getY() + padding;
-
-        scrollUtil.renderScrollBar(new Vector2d(scrollX, scrollY), getClickGUI().scale.y - padding * 2);
-
         final Vector2f position = getClickGUI().getPosition();
         final Vector2f scale = getClickGUI().getScale();
         final double sidebar = getClickGUI().getSidebar().sidebarWidth;
@@ -47,7 +41,6 @@ public class ThemeScreen implements Screen, Accessor {
         final double themeWidth = (scale.getX() - sidebar - 29) / 3D;
         final double colorWidth = (scale.getX() - sidebar - 43) / 5D;
 
-        // Draw themes
         for (int i = 0; i < this.visibleThemes.size(); i++) {
             ThemeComponent theme = this.visibleThemes.get(i);
 

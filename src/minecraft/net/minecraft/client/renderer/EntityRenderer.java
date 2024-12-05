@@ -27,7 +27,7 @@ import cc.unknown.Sakura;
 import cc.unknown.event.impl.other.RotationEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
-import cc.unknown.event.impl.render.RenderGUIEvent;
+import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.impl.visual.Ambience;
 import cc.unknown.module.impl.visual.FreeLook;
@@ -1304,7 +1304,9 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 				    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				    GlStateManager.disableLighting();
 				    GlStateManager.enableAlpha();
-
+				    
+				    Sakura.instance.getEventBus().handle(new Render2DEvent(mc.scaledResolution, partialTicks));
+				    
 				    if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo) {
 				        Config.drawFps();
 				    }
@@ -1336,7 +1338,6 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 								Integer.valueOf(k1), Integer.valueOf(l1), Float.valueOf(partialTicks) });
 					} else {
 						this.mc.currentScreen.drawScreen(k1, l1, partialTicks);
-						Sakura.instance.getEventBus().handle(new RenderGUIEvent());
 					}
 				} catch (Throwable throwable) {
 					CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Rendering screen");

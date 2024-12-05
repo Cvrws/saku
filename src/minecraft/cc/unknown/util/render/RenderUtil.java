@@ -346,4 +346,23 @@ public final class RenderUtil implements Accessor {
         mc.fontRendererObj.draw(unformattedText, x, y - 1, 0);
         mc.fontRendererObj.draw(text, x, y, color);
     }
+    
+    public void renderHitbox(AxisAlignedBB bb, int type) {
+        double[][] vertices = {
+            {bb.minX, bb.minY, bb.maxZ, bb.maxX, bb.minY, bb.maxZ, bb.maxX, bb.minY, bb.minZ, bb.minX, bb.minY, bb.minZ},
+            {bb.minX, bb.maxY, bb.maxZ, bb.maxX, bb.maxY, bb.maxZ, bb.maxX, bb.maxY, bb.minZ, bb.minX, bb.maxY, bb.minZ},
+            {bb.minX, bb.minY, bb.minZ, bb.minX, bb.minY, bb.maxZ, bb.minX, bb.maxY, bb.maxZ, bb.minX, bb.maxY, bb.minZ},
+            {bb.maxX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.maxZ, bb.maxX, bb.maxY, bb.maxZ, bb.maxX, bb.maxY, bb.minZ},
+            {bb.minX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.minZ, bb.minX, bb.maxY, bb.minZ},
+            {bb.minX, bb.minY, bb.maxZ, bb.maxX, bb.minY, bb.maxZ, bb.maxX, bb.maxY, bb.maxZ, bb.minX, bb.maxY, bb.maxZ}
+        };
+
+        for (double[] face : vertices) {
+            GL11.glBegin(type);
+            for (int i = 0; i < face.length; i += 3) {
+                GL11.glVertex3d(face[i], face[i + 1], face[i + 2]);
+            }
+            GL11.glEnd();
+        }
+    }
 }

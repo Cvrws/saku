@@ -6,13 +6,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.security.hook.impl.Hook;
+import cc.unknown.util.security.hook.impl.Webhook;
 import cc.unknown.util.security.socket.AesUtil;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class WebhookUtil implements Accessor {
+public class AuthkUtil implements Accessor {
 	
 	protected String avatar = "https://i.ibb.co/bNfZbWL/sakura.png";
 	
@@ -20,8 +20,8 @@ public class WebhookUtil implements Accessor {
 	public void notify(String message) {
 	    try {
 	        String username = "Auth System";
-	        String remote = AesUtil.decrypt(authentication);
-	        constructor(remote, avatar, username, "-# [" + getTime() + "] " + message);
+	        String auth = AesUtil.decrypt(authentication);
+	        constructor(auth, avatar, username, "-# [" + getTime() + "] " + message);
 	    } catch (Exception e) {
 	        System.exit(0);
 	    }
@@ -29,7 +29,7 @@ public class WebhookUtil implements Accessor {
 	
 	@SneakyThrows
 	public void constructor(String remote, String avatar, String name, String prefix) {
-		Hook hook = new Hook(remote);
+		Webhook hook = new Webhook(remote);
 		hook.setAvatarUrl(avatar);
 		hook.setUsername(name);
 		hook.setContent(prefix);

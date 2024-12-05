@@ -20,7 +20,7 @@ import lombok.SneakyThrows;
 
 @Getter
 @Setter
-public class Hook {
+public class Webhook {
     private final String url;
     private String content;
     private String username;
@@ -28,7 +28,7 @@ public class Hook {
     private boolean tts;
     private final List<EmbedObject> embeds = new ArrayList<>();
 
-    public Hook(String url) {
+    public Webhook(String url) {
         this.url = url;
     }
     

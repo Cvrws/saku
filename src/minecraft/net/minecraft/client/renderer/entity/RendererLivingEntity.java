@@ -14,6 +14,7 @@ import cc.unknown.Sakura;
 import cc.unknown.event.impl.render.PostRenderLivingEntityEvent;
 import cc.unknown.event.impl.render.PreRenderLivingEntityEvent;
 import cc.unknown.event.impl.render.RenderLabelEvent;
+import cc.unknown.event.impl.render.RenderRotationEvent;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -237,15 +238,16 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 			this.mainModel.isChild = entity.isChild();
 
 			try {
+	            RenderRotationEvent event = new RenderRotationEvent(entity.rotationYaw, entity.rotationPitch);
+	            Sakura.instance.getEventBus().handle(event);
+	            
 				float f = this.interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
-				final float f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead,
-						partialTicks);
+				final float f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
 				float f2 = f1 - f;
 
 				if (this.mainModel.isRiding && entity.ridingEntity instanceof EntityLivingBase) {
 					final EntityLivingBase entitylivingbase = (EntityLivingBase) entity.ridingEntity;
-					f = this.interpolateRotation(entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset,
-							partialTicks);
+					f = this.interpolateRotation(entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, partialTicks);
 					f2 = f1 - f;
 					float f3 = MathHelper.wrapAngleTo180_float(f2);
 

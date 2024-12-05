@@ -46,16 +46,15 @@ public final class HUD extends Module {
     
     private List<ModuleComponent> activeModuleComponents = new ArrayList<>();
     private List<ModuleComponent> allModuleComponents = new ArrayList<>();
-    private Font widthComparator = Fonts.ROBOTO.get(20, Weight.LIGHT);
+    private Font font = Fonts.MINECRAFT.get(20, Weight.LIGHT);
     private final StopWatch stopwatch = new StopWatch();
-    private Font font = Fonts.ROBOTO.get(18, Weight.LIGHT);
     private float moduleSpacing = 12, edgeOffset;
     
 	@Override
 	public void onEnable() {
         allModuleComponents.clear();
         Sakura.instance.getModuleManager().getAll().stream()
-        .sorted(Comparator.comparingDouble(module -> -widthComparator.width(module.getName())))
+        .sorted(Comparator.comparingDouble(module -> -font.width(module.getName())))
         .map(ModuleComponent::new)
         .peek(module -> module.setTranslatedName(module.getModule().getName()))
         .forEach(allModuleComponents::add);
@@ -71,8 +70,17 @@ public final class HUD extends Module {
     
     @EventLink
     public final Listener<TickEvent> onTick = event -> {
-    	Font minecraft = Fonts.MINECRAFT.get();
-    	if (!font.equals(minecraft)) font = minecraft;
+
+    };
+
+    @EventLink(value = Priority.LOW)
+    public final Listener<Render2DEvent> onRender2D = event -> {        
+        moduleSpacing = font.height() + 2;
+        edgeOffset = 10;
+
+        float sx = event.getScaledResolution().getScaledWidth();
+        float sy = event.getScaledResolution().getScaledHeight() - font.height() - 1;
+        double widthOffset = 3.5;
         
         for (final ModuleComponent module : activeModuleComponents) {
         	String name = getName(module);
@@ -90,19 +98,6 @@ public final class HUD extends Module {
         	module.setNameWidth(font.width(name));
         	module.setDisplayName(name);
         }
-    };
-
-    @EventLink(value = Priority.LOW)
-    public final Listener<Render2DEvent> onRender2D = event -> {
-        boolean minecraft = font == Fonts.MINECRAFT.get();
-        
-        moduleSpacing = font.height() + 2;
-        widthComparator = font;
-        edgeOffset = 10;
-
-        float sx = event.getScaledResolution().getScaledWidth();
-        float sy = event.getScaledResolution().getScaledHeight() - font.height() - 1;
-        double widthOffset = 3.5;
 
         for (final ModuleComponent module : activeModuleComponents) {
             double x = module.getPosition().getX();

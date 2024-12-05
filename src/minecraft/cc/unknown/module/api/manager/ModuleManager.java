@@ -69,8 +69,6 @@ public final class ModuleManager {
         this.put(Clipper.class, new Clipper());
         this.put(Parkour.class, new Parkour());
         this.put(Stuck.class, new Stuck());
-        this.put(NoWeb.class, new NoWeb());
-        this.put(TargetStrafe.class, new TargetStrafe());
         this.put(Spider.class, new Spider());
         
         // World
@@ -129,6 +127,7 @@ public final class ModuleManager {
         this.put(FreeLook.class, new FreeLook());
         this.put(FullBright.class, new FullBright());
         this.put(HurtCamera.class, new HurtCamera());
+        this.put(TargetESP.class, new TargetESP());
         this.put(PingDisplay.class, new PingDisplay());
         this.put(ArmorDisplay.class, new ArmorDisplay());
         this.put(HUD.class, new HUD());
@@ -141,7 +140,6 @@ public final class ModuleManager {
         this.put(NameTags.class, new NameTags());
         this.put(NoCameraClip.class, new NoCameraClip());
         this.put(ExtraSensoryPerception.class, new ExtraSensoryPerception());
-        this.put(ScoreBoard.class, new ScoreBoard());
         this.put(Streamer.class, new Streamer());
         this.put(MusicPlayer.class, new MusicPlayer());
         this.put(Tracers.class, new Tracers());

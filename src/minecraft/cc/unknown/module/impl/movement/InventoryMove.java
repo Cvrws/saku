@@ -33,17 +33,15 @@ import net.minecraft.network.play.client.C16PacketClientStatus;
 		"Inv Move" }, description = "Te permite moverte con el inventario abierto", category = Category.MOVEMENT)
 public class InventoryMove extends Module {
 
-	private final ModeValue mode = new ModeValue("Bypass Mode", this).add(new SubMode("Normal"))
-			.add(new SubMode("Buffer Abuse")).add(new SubMode("Cancel")).add(new SubMode("Watchdog"))
+	private final ModeValue mode = new ModeValue("Bypass Mode", this)
+			.add(new SubMode("Normal"))
+			.add(new SubMode("Buffer Abuse"))
 			.setDefault("Normal");
 
-	private final NumberValue clicksSetting = new NumberValue("Clicks", this, 3, 2, 10, 1,
-			() -> !mode.is("Buffer Abuse"));
+	private final NumberValue clicksSetting = new NumberValue("Clicks", this, 3, 2, 10, 1, () -> !mode.is("Buffer Abuse"));
 	private final NumberValue amount = new NumberValue("Amount", this, 5, 1, 10, 1, () -> !mode.is("Buffer Abuse"));
 
-	private final KeyBinding[] AFFECTED_BINDINGS = new KeyBinding[] { mc.gameSettings.keyBindForward,
-			mc.gameSettings.keyBindBack, mc.gameSettings.keyBindRight, mc.gameSettings.keyBindLeft,
-			mc.gameSettings.keyBindJump };
+	private final KeyBinding[] AFFECTED_BINDINGS = new KeyBinding[] { mc.gameSettings.keyBindForward, mc.gameSettings.keyBindBack, mc.gameSettings.keyBindRight, mc.gameSettings.keyBindLeft, mc.gameSettings.keyBindJump };
 	private final ConcurrentLinkedQueue<Packet<?>> packets = new ConcurrentLinkedQueue<>();
 	private boolean done, sent;
 	private int clicks;
@@ -82,14 +80,6 @@ public class InventoryMove extends Module {
 				this.sent = false;
 			}
 		}
-
-		if (mode.is("watchdog")) {
-			if (mc.currentScreen instanceof GuiChat || mc.currentScreen instanceof GuiChest
-					|| mc.currentScreen == this.getClickGUI() || mc.currentScreen instanceof GuiInventory) {
-				MoveUtil.stop();
-			}
-		}
-
 	};
 
 	@EventLink
@@ -122,27 +112,6 @@ public class InventoryMove extends Module {
 					return;
 				}
 				this.clicks++;
-			}
-		}
-		if (mode.is("cancel")) {
-			if (p instanceof C16PacketClientStatus) {
-				final C16PacketClientStatus wrapper = (C16PacketClientStatus) p;
-
-				if (wrapper.getStatus() == C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT) {
-					event.setCancelled();
-				}
-			}
-
-			if (p instanceof C0BPacketEntityAction) {
-				final C0BPacketEntityAction wrapper = (C0BPacketEntityAction) p;
-
-				if (wrapper.getAction() == C0BPacketEntityAction.Action.OPEN_INVENTORY) {
-					event.setCancelled();
-				}
-			}
-
-			if (p instanceof C0DPacketCloseWindow) {
-				event.setCancelled();
 			}
 		}
 	};

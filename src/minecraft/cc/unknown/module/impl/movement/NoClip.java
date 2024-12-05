@@ -74,9 +74,7 @@ public class NoClip extends Module {
 
         RotationComponent.setRotations(new Vector2f(mc.player.rotationYaw, 90), 2, MovementFix.SILENT);
 
-        if (RotationComponent.rotations.y >= 89 &&
-                mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK &&
-                mc.player.posY == mc.objectMouseOver.getBlockPos().up().getY()) {
+        if (RotationComponent.rotations.y >= 89 && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && mc.player.posY == mc.objectMouseOver.getBlockPos().up().getY()) {
 
             mc.playerController.onPlayerRightClick(mc.player, mc.world, getComponent(Slot.class).getItemStack(),  mc.objectMouseOver.getBlockPos(), mc.objectMouseOver.sideHit, mc.objectMouseOver.hitVec);
 

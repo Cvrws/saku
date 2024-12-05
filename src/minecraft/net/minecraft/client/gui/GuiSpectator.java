@@ -1,7 +1,5 @@
 package net.minecraft.client.gui;
 
-import cc.unknown.Sakura;
-import cc.unknown.event.impl.render.Render2DEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.spectator.ISpectatorMenuObject;
 import net.minecraft.client.gui.spectator.ISpectatorMenuRecipient;

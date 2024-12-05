@@ -1,9 +1,13 @@
 package net.minecraft.client.gui;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 
-import cc.unknown.Sakura;
-import cc.unknown.event.impl.render.Render2DEvent;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -27,6 +31,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
@@ -120,9 +125,6 @@ public class GuiIngame extends Gui {
 		} else {
 			this.renderTooltip(scaledresolution, partialTicks);
 		}
-		
-        Render2DEvent render2DEvent = new Render2DEvent(scaledresolution, partialTicks);
-        Sakura.instance.getEventBus().handle(render2DEvent);
 
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		this.mc.getTextureManager().bindTexture(icons);
@@ -203,8 +205,8 @@ public class GuiIngame extends Gui {
 					l = MathHelper.func_181758_c(f2 / 50.0F, 0.7F, 0.6F) & 16777215;
 				}
 
-				this.getFontRenderer().draw(this.recordPlaying,
-						-this.getFontRenderer().width(this.recordPlaying) / 2, -4, l + (l1 << 24 & -16777216));
+				this.getFontRenderer().draw(this.recordPlaying, -this.getFontRenderer().width(this.recordPlaying) / 2,
+						-4, l + (l1 << 24 & -16777216));
 				GlStateManager.disableBlend();
 				GlStateManager.popMatrix();
 			}
@@ -237,14 +239,12 @@ public class GuiIngame extends Gui {
 				GlStateManager.scale(4.0F, 4.0F, 4.0F);
 				int j2 = i2 << 24 & -16777216;
 				this.getFontRenderer().draw(this.displayedTitle,
-						(float) (-this.getFontRenderer().width(this.displayedTitle) / 2), -10.0F,
-						16777215 | j2, true);
+						(float) (-this.getFontRenderer().width(this.displayedTitle) / 2), -10.0F, 16777215 | j2, true);
 				GlStateManager.popMatrix();
 				GlStateManager.pushMatrix();
 				GlStateManager.scale(2.0F, 2.0F, 2.0F);
 				this.getFontRenderer().draw(this.displayedSubTitle,
-						(float) (-this.getFontRenderer().width(this.displayedSubTitle) / 2), 5.0F,
-						16777215 | j2, true);
+						(float) (-this.getFontRenderer().width(this.displayedSubTitle) / 2), 5.0F, 16777215 | j2, true);
 				GlStateManager.popMatrix();
 				GlStateManager.disableBlend();
 				GlStateManager.popMatrix();
@@ -269,7 +269,7 @@ public class GuiIngame extends Gui {
 				: scoreboard.getObjectiveInDisplaySlot(1);
 
 		if (scoreobjective1 != null) {
-			//this.renderScoreboard(scoreobjective1, scaledresolution);
+			this.renderScoreboard(scoreobjective1, scaledresolution);
 		}
 
 		GlStateManager.enableBlend();
@@ -294,6 +294,58 @@ public class GuiIngame extends Gui {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.disableLighting();
 		GlStateManager.enableAlpha();
+	}
+
+	private void renderScoreboard(ScoreObjective objective, ScaledResolution scaledRes) {
+		Scoreboard scoreboard = objective.getScoreboard();
+		Collection<Score> collection = scoreboard.getSortedScores(objective);
+		List<Score> list = Lists.newArrayList(Iterables.filter(collection, new Predicate<Score>() {
+			@Override
+			public boolean apply(Score t) {
+				return t.getPlayerName() != null && !t.getPlayerName().startsWith("#");
+			}
+		}));
+
+		if (list.size() > 15) {
+			collection = Lists.newArrayList(Iterables.skip(list, collection.size() - 15));
+		} else {
+			collection = list;
+		}
+
+		int i = this.getFontRenderer().width(objective.getDisplayName());
+
+		for (Score score : collection) {
+			ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(score.getPlayerName());
+			String s = ScorePlayerTeam.formatPlayerName(scoreplayerteam, score.getPlayerName()) + ": "
+					+ ChatFormatting.RED + score.getScorePoints();
+			i = Math.max(i, this.getFontRenderer().width(s));
+		}
+
+		int i1 = collection.size() * this.getFontRenderer().FONT_HEIGHT;
+		int j1 = scaledRes.getScaledHeight() / 2 + i1 / 3;
+		int k1 = 3;
+		int l1 = scaledRes.getScaledWidth() - i - k1;
+		int j = 0;
+
+		for (Score score1 : collection) {
+			++j;
+			ScorePlayerTeam scoreplayerteam1 = scoreboard.getPlayersTeam(score1.getPlayerName());
+			String s1 = ScorePlayerTeam.formatPlayerName(scoreplayerteam1, score1.getPlayerName());
+			String s2 = ChatFormatting.RED + "" + score1.getScorePoints();
+			int k = j1 - j * this.getFontRenderer().FONT_HEIGHT;
+			int l = scaledRes.getScaledWidth() - k1 + 2;
+			drawRect(l1 - 2, k, l, k + this.getFontRenderer().FONT_HEIGHT, 1342177280);
+			this.getFontRenderer().draw(s1, l1, k, 553648127);
+			this.getFontRenderer().draw(s2, l - this.getFontRenderer().width(s2), k, 553648127);
+
+			if (j == collection.size()) {
+				String s3 = objective.getDisplayName();
+				drawRect(l1 - 2, k - this.getFontRenderer().FONT_HEIGHT - 1, l, k - 1, 1610612736);
+				drawRect(l1 - 2, k - 1, l, k, 1342177280);
+				this.getFontRenderer().draw(s3, l1 + i / 2 - this.getFontRenderer().width(s3) / 2,
+						k - this.getFontRenderer().FONT_HEIGHT, 553648127);
+			}
+		}
 	}
 
 	protected void renderTooltip(ScaledResolution sr, float partialTicks) {
@@ -323,7 +375,7 @@ public class GuiIngame extends Gui {
 			GlStateManager.disableRescaleNormal();
 			GlStateManager.disableBlend();
 		}
-		
+
 	}
 
 	public void renderHorseJumpBar(ScaledResolution scaledRes, int x) {
@@ -417,8 +469,6 @@ public class GuiIngame extends Gui {
 		this.mc.mcProfiler.endSection();
 	}
 
-
-
 	protected boolean showCrosshair() {
 		if (this.mc.gameSettings.showDebugInfo && !this.mc.player.hasReducedDebug()
 				&& !this.mc.gameSettings.reducedDebugInfo) {
@@ -443,56 +493,46 @@ public class GuiIngame extends Gui {
 		}
 	}
 
-	/*private void renderScoreboard(ScoreObjective objective, ScaledResolution scaledRes) {
-		Scoreboard scoreboard = objective.getScoreboard();
-		Collection<Score> collection = scoreboard.getSortedScores(objective);
-		List<Score> list = Lists.newArrayList(Iterables.filter(collection, new Predicate<Score>() {
-			public boolean apply(Score p_apply_1_) {
-				return p_apply_1_.getPlayerName() != null && !p_apply_1_.getPlayerName().startsWith("#");
-			}
-		}));
-
-		if (list.size() > 15) {
-			collection = Lists.newArrayList(Iterables.skip(list, collection.size() - 15));
-		} else {
-			collection = list;
-		}
-
-		int i = this.getFontRenderer().width(objective.getDisplayName());
-
-		for (Score score : collection) {
-			ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(score.getPlayerName());
-			String s = ScorePlayerTeam.formatPlayerName(scoreplayerteam, score.getPlayerName()) + ": "
-					+ ChatFormatting.RED + score.getScorePoints();
-			i = Math.max(i, this.getFontRenderer().width(s));
-		}
-
-		int i1 = collection.size() * this.getFontRenderer().FONT_HEIGHT;
-		int j1 = scaledRes.getScaledHeight() / 2 + i1 / 3;
-		int k1 = 3;
-		int l1 = scaledRes.getScaledWidth() - i - k1;
-		int j = 0;
-
-		for (Score score1 : collection) {
-			++j;
-			ScorePlayerTeam scoreplayerteam1 = scoreboard.getPlayersTeam(score1.getPlayerName());
-			String s1 = ScorePlayerTeam.formatPlayerName(scoreplayerteam1, score1.getPlayerName());
-			String s2 = ChatFormatting.RED + "" + score1.getScorePoints();
-			int k = j1 - j * this.getFontRenderer().FONT_HEIGHT;
-			int l = scaledRes.getScaledWidth() - k1 + 2;
-			drawRect(l1 - 2, k, l, k + this.getFontRenderer().FONT_HEIGHT, 1342177280);
-			this.getFontRenderer().draw(s1, l1, k, 553648127);
-			this.getFontRenderer().draw(s2, l - this.getFontRenderer().width(s2), k, 553648127);
-
-			if (j == collection.size()) {
-				String s3 = objective.getDisplayName();
-				drawRect(l1 - 2, k - this.getFontRenderer().FONT_HEIGHT - 1, l, k - 1, 1610612736);
-				drawRect(l1 - 2, k - 1, l, k, 1342177280);
-				this.getFontRenderer().draw(s3, l1 + i / 2 - this.getFontRenderer().width(s3) / 2,
-						k - this.getFontRenderer().FONT_HEIGHT, 553648127);
-			}
-		}
-	}*/
+	/*
+	 * private void renderScoreboard(ScoreObjective objective, ScaledResolution
+	 * scaledRes) { Scoreboard scoreboard = objective.getScoreboard();
+	 * Collection<Score> collection = scoreboard.getSortedScores(objective);
+	 * List<Score> list = Lists.newArrayList(Iterables.filter(collection, new
+	 * Predicate<Score>() { public boolean apply(Score p_apply_1_) { return
+	 * p_apply_1_.getPlayerName() != null &&
+	 * !p_apply_1_.getPlayerName().startsWith("#"); } }));
+	 * 
+	 * if (list.size() > 15) { collection = Lists.newArrayList(Iterables.skip(list,
+	 * collection.size() - 15)); } else { collection = list; }
+	 * 
+	 * int i = this.getFontRenderer().width(objective.getDisplayName());
+	 * 
+	 * for (Score score : collection) { ScorePlayerTeam scoreplayerteam =
+	 * scoreboard.getPlayersTeam(score.getPlayerName()); String s =
+	 * ScorePlayerTeam.formatPlayerName(scoreplayerteam, score.getPlayerName()) +
+	 * ": " + ChatFormatting.RED + score.getScorePoints(); i = Math.max(i,
+	 * this.getFontRenderer().width(s)); }
+	 * 
+	 * int i1 = collection.size() * this.getFontRenderer().FONT_HEIGHT; int j1 =
+	 * scaledRes.getScaledHeight() / 2 + i1 / 3; int k1 = 3; int l1 =
+	 * scaledRes.getScaledWidth() - i - k1; int j = 0;
+	 * 
+	 * for (Score score1 : collection) { ++j; ScorePlayerTeam scoreplayerteam1 =
+	 * scoreboard.getPlayersTeam(score1.getPlayerName()); String s1 =
+	 * ScorePlayerTeam.formatPlayerName(scoreplayerteam1, score1.getPlayerName());
+	 * String s2 = ChatFormatting.RED + "" + score1.getScorePoints(); int k = j1 - j
+	 * * this.getFontRenderer().FONT_HEIGHT; int l = scaledRes.getScaledWidth() - k1
+	 * + 2; drawRect(l1 - 2, k, l, k + this.getFontRenderer().FONT_HEIGHT,
+	 * 1342177280); this.getFontRenderer().draw(s1, l1, k, 553648127);
+	 * this.getFontRenderer().draw(s2, l - this.getFontRenderer().width(s2), k,
+	 * 553648127);
+	 * 
+	 * if (j == collection.size()) { String s3 = objective.getDisplayName();
+	 * drawRect(l1 - 2, k - this.getFontRenderer().FONT_HEIGHT - 1, l, k - 1,
+	 * 1610612736); drawRect(l1 - 2, k - 1, l, k, 1342177280);
+	 * this.getFontRenderer().draw(s3, l1 + i / 2 - this.getFontRenderer().width(s3)
+	 * / 2, k - this.getFontRenderer().FONT_HEIGHT, 553648127); } } }
+	 */
 
 	private void renderPlayerStats(ScaledResolution scaledRes) {
 		if (this.mc.getRenderViewEntity() instanceof EntityPlayer) {

@@ -30,7 +30,6 @@ public class ScrollUtil implements Accessor {
     }
 
     public void onRender(boolean update) {
-        //Sets target scroll every tick, this way scrolling will only change if there's less than 1 frame per tick
         if (stopWatch2.finished(50)) {
             final float wheel = update ? Mouse.getDWheel() * (reverse ? -1 : 1) : 0;
             double stretch = 30;
@@ -40,30 +39,13 @@ public class ScrollUtil implements Accessor {
             stopWatch2.reset();
         }
 
-        //Moving render scroll towards target
         for (int i = 0; i < stopwatch.getElapsedTime(); ++i) {
             scroll = MathUtil.lerp(scroll, target, 1E-2F);
         }
 
         animating = Math.abs(scroll - target) > 0.5;
 
-        //resetting stopwatch
         stopwatch.reset();
-    }
-
-    public void renderScrollBar(Vector2d position, double maxHeight) {
-        double percentage = (reverse ? (getMax() - getScroll()) : getScroll()) / getMax();
-        double scrollBarHeight = maxHeight - ((getMax() / (getMax() - maxHeight)) * maxHeight);
-
-        scrollingIsAllowed = scrollBarHeight < maxHeight;
-        if (!scrollingIsAllowed) return;
-
-        double scrollX = position.x;
-        double scrollY = position.y + maxHeight * percentage - scrollBarHeight * percentage;
-        Color color = ColorUtil.withAlpha(Color.WHITE, 60);
-
-        RenderUtil.roundedRectangle(scrollX, scrollY, 1, scrollBarHeight, 0.5f,
-                color);
     }
 
     public void reset() {
