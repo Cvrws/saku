@@ -59,11 +59,9 @@ public class AutoClicker extends Module {
 	@EventLink
 	public final Listener<TickEvent> onTick = event -> {
 		mc.leftClickCounter = 0;
-		if (button.is("Left") && mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && mc.world.getBlockState(mc.objectMouseOver.getBlockPos()).getBlock().getMaterial() != Material.air) return;
-
 		attackTicks++;
 		HitSelect hitSelect = Sakura.instance.getModuleManager().get(HitSelect.class);
-
+		
 		if (hitSelect != null && stopWatch.finished(nextSwing)
 				&& (!hitSelect.isEnabled() || ((hitSelect.isEnabled() && attackTicks >= 10)
 						|| (mc.player != null && mc.player.hurtTime > 0 && stopWatch.finished(nextSwing))))
@@ -134,10 +132,8 @@ public class AutoClicker extends Module {
 	};
 
 	private void handleLeftClick() {
-		if (ticksDown > 1 && !mc.gameSettings.keyBindUseItem.isKeyDown()
-				&& (!breakBlocks.getValue() || mc.objectMouseOver == null
-						|| mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)) {
-			mc.clickMouse();
+		if (ticksDown > 1 && !mc.gameSettings.keyBindUseItem.isKeyDown() && (!breakBlocks.getValue() || mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)) {
+			mc.clickMouseEvent();
 		} else if (!breakBlocks.getValue()) {
 			mc.playerController.curBlockDamageMP = 0;
 		}
@@ -167,8 +163,7 @@ public class AutoClicker extends Module {
 			guiClicker.setAccessible(true);
 
 			mouseDownTicks++;
-			if (mouseDownTicks > clickDuration.getValue().intValue()
-					&& Math.random() > randomizationFactor.getValue().intValue()) {
+			if (mouseDownTicks > clickDuration.getValue().intValue() && Math.random() > randomizationFactor.getValue().intValue()) {
 				guiClicker.invoke(gui, mouseX, mouseY, 0);
 				mouseDownTicks = 0;
 			} else {

@@ -1,5 +1,6 @@
 package cc.unknown.util.player;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Predicates;
@@ -16,6 +17,7 @@ import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.optifine.reflect.Reflector;
 
 @UtilityClass
 public final class RayCastUtil implements Accessor {

@@ -28,7 +28,6 @@ public final class Velocity extends Module {
 	public final ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Simple"))
 			.add(new SubMode("Legit"))
-			.add(new SubMode("Reset"))
 			.add(new SubMode("Polar"))
 			.setDefault("Simple");
 
@@ -47,13 +46,6 @@ public final class Velocity extends Module {
 		reduced = false;
 	}
 	
-	@EventLink
-	public final Listener<PreLivingUpdateEvent> onPreLiving = event -> {
-		if (mode.is("Reset")) {
-			
-		}
-	};
-
 	@EventLink
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
 	    if (shouldSkipUpdate()) return;

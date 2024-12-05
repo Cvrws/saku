@@ -90,6 +90,10 @@ public class AltManagerScreen extends GuiScreen implements Accessor {
         if (typedChar == '\r') {
             this.actionPerformed(this.buttonList.get(1));
         }
+        
+        if (keyCode == 1) {
+        	mc.displayGuiScreen(new MainMenu());
+        }
     }
     
     @Override

@@ -55,6 +55,8 @@ public class MicrosoftLogin {
     		    "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe " + url,
     		    "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe " + url,
     		    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe " + url,
+    		    "C:\\Users\\" + System.getenv("user.name") + "\\AppData\\Local\\Programs\\Opera GX\\opera.exe " + url,
+    		    "C:\\Users\\" + System.getenv("user.name") + "\\AppData\\Local\\Programs\\Opera\\opera.exe " + url,
     		    "open -na \"Google Chrome\" --args \"" + url + "\""
     	};
     	

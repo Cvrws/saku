@@ -27,7 +27,7 @@ public final class ModuleManager {
         this.put(KillAura.class, new KillAura());
         this.put(Velocity.class, new Velocity());
         this.put(Criticals.class, new Criticals());
-        this.put(TickRange.class, new TickRange());
+        this.put(TickBase.class, new TickBase());
         this.put(HitBox.class, new HitBox());
         this.put(STap.class, new STap());
         this.put(Regen.class, new Regen());
@@ -48,7 +48,6 @@ public final class ModuleManager {
         this.put(PingSpoof.class, new PingSpoof());
         this.put(Clumsy.class, new Clumsy());
         this.put(PerfectCriticals.class, new PerfectCriticals());
-        this.put(LagRange.class, new LagRange());
         
         // Exploit
         this.put(Disabler.class, new Disabler());

@@ -29,12 +29,17 @@ public final class Clumsy extends Module {
 	private StopWatch stopWatch = new StopWatch();
 
 	@Override
+	public void onEnable() {
+		packets.clear();
+	}
+	
+	@Override
 	public void onDisable() {
 		this.releasePackets();
 	}
 
 	@EventLink
-	public final Listener<PacketSendEvent> onPacketSend = event -> {		
+	public final Listener<PacketSendEvent> onPacketSend = event -> {
 		if (this.isEnabled() && mc.player != null) {
 			packets.add(event.getPacket());
 			event.setCancelled(true);
@@ -52,7 +57,7 @@ public final class Clumsy extends Module {
 	};
 	
 	private void handleDelay() {
-        if (this.isEnabled() && mc.player != null) {
+        if (mc.player != null) {
         	if (stopWatch.reached(client.getValue().intValue(), client.getSecondValue().intValue())) {
         	    while (!packets.isEmpty()) {
         			PacketUtil.sendNoEvent(packets.get(0));

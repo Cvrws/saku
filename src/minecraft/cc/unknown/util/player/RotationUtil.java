@@ -260,4 +260,32 @@ public class RotationUtil implements Accessor {
         }
         return vecRotation3d.distanceTo(eyes);
     }
+    
+    public double getDistanceToEntityBoxFromPosition(double posX, double posY, double posZ, Entity entity) {
+        Vec3 eyes = mc.player.getPositionEyes(1.0F);
+        Vec3 pos = getBestHitVec(entity);
+        double xDist = Math.abs(pos.xCoord - posX);
+        double yDist = Math.abs(pos.yCoord - posY + (double)mc.player.getEyeHeight());
+        double zDist = Math.abs(pos.zCoord - posZ);
+        return Math.sqrt(Math.pow(xDist, 2.0D) + Math.pow(yDist, 2.0D) + Math.pow(zDist, 2.0D));
+     }
+    
+    public double getDistanceToEntityBox(Entity entity) {
+        Vec3 eyes = mc.player.getPositionEyes(1.0F);
+        Vec3 pos = getBestHitVec(entity);
+        double xDist = Math.abs(pos.xCoord - eyes.xCoord);
+        double yDist = Math.abs(pos.yCoord - eyes.yCoord);
+        double zDist = Math.abs(pos.zCoord - eyes.zCoord);
+        return Math.sqrt(Math.pow(xDist, 2.0D) + Math.pow(yDist, 2.0D) + Math.pow(zDist, 2.0D));
+    }
+    
+    public Vec3 getBestHitVec(Entity entity) {
+        Vec3 positionEyes = mc.player.getPositionEyes(1.0F);
+        float f11 = entity.getCollisionBorderSize();
+        AxisAlignedBB entityBoundingBox = entity.getEntityBoundingBox().expand((double)f11, (double)f11, (double)f11);
+        double ex = MathHelper.clamp_double(positionEyes.xCoord, entityBoundingBox.minX, entityBoundingBox.maxX);
+        double ey = MathHelper.clamp_double(positionEyes.yCoord, entityBoundingBox.minY, entityBoundingBox.maxY);
+        double ez = MathHelper.clamp_double(positionEyes.zCoord, entityBoundingBox.minZ, entityBoundingBox.maxZ);
+        return new Vec3(ex, ey - 0.4D, ez);
+    }
 }

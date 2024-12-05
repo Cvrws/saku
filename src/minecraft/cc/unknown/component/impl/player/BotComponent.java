@@ -2,17 +2,11 @@ package cc.unknown.component.impl.player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import cc.unknown.component.impl.Component;
-import cc.unknown.component.impl.render.NotificationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.WorldChangeEvent;
-import cc.unknown.event.impl.player.PreMotionEvent;
-import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.player.PingerCallable;
 import net.minecraft.entity.Entity;
 
 public final class BotComponent extends Component {

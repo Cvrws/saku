@@ -68,7 +68,7 @@ import cc.unknown.event.impl.other.GameEvent;
 import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
-import cc.unknown.module.impl.combat.TickRange;
+import cc.unknown.module.impl.combat.TickBase;
 import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.visual.FreeLook;
@@ -1454,9 +1454,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 				if (clickEvent.isCancelled())
 					return;
 
-				if (this.objectMouseOver != null
-						&& this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY
-						&& objectMouseOver.entityHit instanceof EntityLivingBase) {
+				if (this.objectMouseOver != null && this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY && objectMouseOver.entityHit instanceof EntityLivingBase) {
 					final AttackEvent event = new AttackEvent((EntityLivingBase) this.objectMouseOver.entityHit);
 					Sakura.instance.getEventBus().handle(event);
 
@@ -1489,6 +1487,63 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 						break;
 					}
 
+				default:
+					if (this.playerController.isNotCreative()) {
+						this.leftClickCounter = 10;
+					}
+				}
+			}
+		}
+	}
+	
+	public void clickMouseEvent() {
+		clickMouseEvent(true, true);
+	}
+	
+	public void clickMouseEvent(boolean swing, boolean events) {
+		Sakura.instance.getEventBus().handle(new MouseEvent(0));
+		CPSHelper.registerClick(CPSHelper.MouseButton.LEFT);
+		
+		if (this.leftClickCounter <= 0) {
+			if (events) {
+				ClickEvent clickEvent = new ClickEvent();
+				Sakura.instance.getEventBus().handle(clickEvent);
+				if (clickEvent.isCancelled())
+					return;
+				
+				if (this.objectMouseOver != null && this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY && objectMouseOver.entityHit instanceof EntityLivingBase) {
+					final AttackEvent event = new AttackEvent((EntityLivingBase) this.objectMouseOver.entityHit);
+					Sakura.instance.getEventBus().handle(event);
+					
+					if (event.isCancelled())
+						return;
+				}
+			}
+			
+			if (swing) {
+				AttackOrder.sendConditionalSwing(this.objectMouseOver);
+			}
+			
+			if (this.objectMouseOver == null) {
+				logger.error("Null returned as 'hitResult', this shouldn't happen!");
+				
+				if (this.playerController.isNotCreative()) {
+					this.leftClickCounter = 10;
+				}
+			} else {
+				switch (this.objectMouseOver.typeOfHit) {
+				case ENTITY:
+					AttackOrder.sendFixedAttackEvent(this.player, this.objectMouseOver.entityHit);
+					break;
+					
+				case BLOCK:
+					final BlockPos blockpos = this.objectMouseOver.getBlockPos();
+					
+					if (this.world.getBlockState(blockpos).getBlock().getMaterial() != Material.air) {
+						this.playerController.clickBlock(blockpos, this.objectMouseOver.sideHit);
+						break;
+					}
+					
 				default:
 					if (this.playerController.isNotCreative()) {
 						this.leftClickCounter = 10;
@@ -2015,9 +2070,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			this.player.inventory.currentItem = oldSlot;
 		}
 
-		TickRange furro = Sakura.instance.getModuleManager().get(TickRange.class);
-		boolean pause = furro.publicFreeze && furro.isEnabled();
-
 		if (this.world != null) {
 			if (this.player != null) {
 				++this.joinPlayerCounter;
@@ -2030,19 +2082,19 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 			this.mcProfiler.endStartSection("gameRenderer");
 
-			if (!this.isGamePaused && !pause) {
+			if (!this.isGamePaused) {
 				this.entityRenderer.updateRenderer();
 			}
 
 			this.mcProfiler.endStartSection("levelRenderer");
 
-			if (!this.isGamePaused && !pause) {
+			if (!this.isGamePaused) {
 				this.renderGlobal.updateClouds();
 			}
 
 			this.mcProfiler.endStartSection("level");
 
-			if (!this.isGamePaused && !pause) {
+			if (!this.isGamePaused) {
 				if (this.world.getLastLightningBolt() > 0) {
 					this.world.setLastLightningBolt(this.world.getLastLightningBolt() - 1);
 				}
@@ -2080,7 +2132,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 			this.mcProfiler.endStartSection("animateTick");
 
-			if (!this.isGamePaused && !pause && this.world != null) {
+			if (!this.isGamePaused && this.world != null) {
 				this.world.doVoidFogParticles(MathHelper.floor_double(this.player.posX),
 						MathHelper.floor_double(this.player.posY), MathHelper.floor_double(this.player.posZ));
 			}

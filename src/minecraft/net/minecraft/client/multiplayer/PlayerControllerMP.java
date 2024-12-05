@@ -3,7 +3,9 @@ package net.minecraft.client.multiplayer;
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.Slot;
 import cc.unknown.event.impl.other.BlockDamageEvent;
+import cc.unknown.event.impl.player.HitEvent;
 import cc.unknown.util.Accessor;
+import cc.unknown.util.packet.PacketUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -450,6 +452,28 @@ public class PlayerControllerMP implements Accessor {
             playerIn.attackTargetEntityWithCurrentItem(targetEntity);
         }
     }
+    
+    public void attackEntityEvent(EntityPlayer playerIn, Entity targetEntity) {
+    	HitEvent event = new HitEvent(false);
+        Sakura.instance.getEventBus().handle(event);
+        if (event.isForced()) {
+           int i = this.mc.player.inventory.currentItem;
+           if (i != this.currentPlayerItem) {
+              this.currentPlayerItem = i;
+              PacketUtil.sendNoEvent(new C09PacketHeldItemChange(this.currentPlayerItem));
+           }
+
+           PacketUtil.sendNoEvent(new C02PacketUseEntity(targetEntity, C02PacketUseEntity.Action.ATTACK));
+        } else {
+           this.syncCurrentPlayItem();
+           this.netClientHandler.addToSendQueue(new C02PacketUseEntity(targetEntity, C02PacketUseEntity.Action.ATTACK));
+        }
+
+        if (this.currentGameType != WorldSettings.GameType.SPECTATOR && !event.isCancelled()) {
+           playerIn.attackTargetEntityWithCurrentItem(targetEntity);
+        }
+
+     }
 
     /**
      * Send packet to server - player is interacting with another entity (left click)
