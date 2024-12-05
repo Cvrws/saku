@@ -49,12 +49,13 @@ public final class PingDisplay extends Module {
 
         lastPing = ping;
 
-        RenderUtil.roundedRectangle(position.x, position.y, scale.x + 6, scale.y - 1, 6, getTheme().getBackgroundShade());
-
         this.position.setScale(new Vector2d(scale.x + 6, scale.y - 1));
 
         final double textX = position.x + 3.0F;
         final double textY = position.y + scale.y / 2.0F - Fonts.ROBOTO.get(20, Weight.LIGHT).height() / 4.0F;
+
+        RenderUtil.roundedRect(textX + titleWidth + 24, textY + 15, textX - 5, textY - 10, 0, getTheme().getBackgroundShade().getRGB());
+        
         Fonts.MINECRAFT.get(20, Weight.BOLD).drawWithShadow(titleString, textX, textY, color.getRGB());
         Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(pingString, textX + titleWidth, textY, Color.WHITE.getRGB());
     };

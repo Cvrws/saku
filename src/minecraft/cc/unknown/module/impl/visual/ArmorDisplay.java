@@ -64,6 +64,7 @@ public final class ArmorDisplay extends Module {
 				final RenderItem itemRenderer = mc.getRenderItem();
 				itemRenderer.renderItemAndEffectIntoGUI(item, xPosition - (i * 16), yPosition);
 				itemRenderer.renderItemOverlayIntoGUI(mc.fontRendererObj, item, xPosition - (i * 16), yPosition, null);
+				
 				RenderHelper.disableStandardItemLighting();
 
 				GlStateManager.disableDepth();

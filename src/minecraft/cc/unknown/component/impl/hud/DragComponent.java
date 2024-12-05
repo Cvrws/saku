@@ -128,7 +128,7 @@ public class DragComponent extends Component {
                                     closest = distance;
                                     selectedValue.targetPosition.y = snap.position + y;
                                     selected = snap;
-                                    RenderUtil.rectangle(0, selected.position, scaledResolution.getScaledWidth(), 0.5, color);
+                                    //RenderUtil.rectangle(0, selected.position, scaledResolution.getScaledWidth(), 0.5, color);
                                 }
                             }
                             break;
@@ -146,7 +146,7 @@ public class DragComponent extends Component {
                                     closest = distance;
                                     selectedValue.targetPosition.x = snap.position + x;
                                     selected = snap;
-                                    RenderUtil.rectangle(selected.position, 0, 0.5, scaledResolution.getScaledHeight(), color);
+                                    //RenderUtil.rectangle(selected.position, 0, 0.5, scaledResolution.getScaledHeight(), color);
                                 }
                             }
                             break;

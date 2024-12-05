@@ -903,8 +903,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		GlStateManager.disableDepth();
 		GlStateManager.enableTexture2D();
 
-		RenderUtil.color(Color.WHITE);
-		RenderUtil.rectangle(0, 0, sr.getScaledWidth(), sr.getScaledHeight(), Color.BLACK);
 
 		GlStateManager.disableLighting();
 		GlStateManager.disableFog();

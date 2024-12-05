@@ -65,7 +65,7 @@ public final class LoginMenu extends GuiScreen {
         int backgroundX = (width / 2) - (backgroundWidth / 2);
         int backgroundY = (int) ((height / 2 - 55 + animation.getValue()) - (backgroundHeight / 2));
 
-        RenderUtil.drawRoundedRect2(backgroundX, backgroundY + animation.getValue(), backgroundX + backgroundWidth, backgroundY + backgroundHeight + animation.getValue(), 6.0, new Color(0, 0, 0, 150).getRGB());
+        RenderUtil.roundedRect(backgroundX, backgroundY + animation.getValue(), backgroundX + backgroundWidth, backgroundY + backgroundHeight + animation.getValue(), 6.0, new Color(0, 0, 0, 150).getRGB());
         FONT_RENDERER.drawCentered(status, width / 2, height / 2 - 58 + animation.getValue(), Color.WHITE.getRGB());
         this.buttonList.forEach(button -> button.drawButton(mc, mouseX, mouseY));
         GlStateManager.popMatrix();

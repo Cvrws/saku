@@ -774,36 +774,34 @@ public class Chunk {
 	}
 
 	public void getEntitiesWithinAABBForEntity(Entity entityIn, AxisAlignedBB aabb, List<Entity> listToFill, Predicate<? super Entity> p_177414_4_) {
-		int i = MathHelper.floor_double((aabb.minY - 2.0D) / 16.0D);
-		int j = MathHelper.floor_double((aabb.maxY + 2.0D) / 16.0D);
-		i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
-		j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
+	    int i = MathHelper.floor_double((aabb.minY - 2.0D) / 16.0D);
+	    int j = MathHelper.floor_double((aabb.maxY + 2.0D) / 16.0D);
+	    i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
+	    j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
+	    // nigga null pointer
+	    for (int k = i; k <= j; ++k) {
+	        if (this.entityLists[k] != null && !this.entityLists[k].isEmpty()) {
+	            for (Entity entity : this.entityLists[k]) {
+	                if (entity != null && entity.getEntityBoundingBox() != null && entity.getEntityBoundingBox().intersectsWith(aabb) && entity != entityIn) { // Verifica `entity` y su `BoundingBox`
+	                    if (p_177414_4_ == null || p_177414_4_.apply(entity)) {
+	                        listToFill.add(entity);
+	                    }
 
-		for (int k = i; k <= j; ++k) {
-			if (!this.entityLists[k].isEmpty()) {
-				for (Entity entity : this.entityLists[k]) {
-					if (entity.getEntityBoundingBox().intersectsWith(aabb) && entity != entityIn) {
-						if (p_177414_4_ == null || p_177414_4_.apply(entity)) {
-							listToFill.add(entity);
-						}
-
-						Entity[] aentity = entity.getParts();
-
-						if (aentity != null) {
-							for (int l = 0; l < aentity.length; ++l) {
-								entity = aentity[l];
-
-								if (entity != entityIn && entity.getEntityBoundingBox().intersectsWith(aabb)
-										&& (p_177414_4_ == null || p_177414_4_.apply(entity))) {
-									listToFill.add(entity);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+	                    Entity[] aentity = entity.getParts();
+	                    if (aentity != null) {
+	                        for (Entity part : aentity) {
+	                            if (part != null && part != entityIn && part.getEntityBoundingBox() != null && part.getEntityBoundingBox().intersectsWith(aabb)
+	                                    && (p_177414_4_ == null || p_177414_4_.apply(part))) {
+	                                listToFill.add(part);
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	    }
 	}
+
 
 	public <T extends Entity> void getEntitiesOfTypeWithinAAAB(Class<? extends T> entityClass, AxisAlignedBB aabb, List<T> listToFill, Predicate<? super T> p_177430_4_) {
 		int i = MathHelper.floor_double((aabb.minY - 2.0D) / 16.0D);

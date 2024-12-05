@@ -15,6 +15,7 @@ import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.DragValue;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 
 @ModuleInfo(aliases = "FPS Display", description = "Muestra tus frames por segundo", category = Category.VISUALS)
 public final class FPSDisplay extends Module {
@@ -30,21 +31,23 @@ public final class FPSDisplay extends Module {
 		
         final String titleString = "FPS ";
         final String fpsString = Minecraft.getDebugFPS() + "";
-        final float titleWidth = Fonts.MINECRAFT.get(20, Weight.BOLD).width(titleString);
+        final float titleWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(titleString);
+        final float fpsWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(fpsString);
 
         if (Minecraft.getDebugFPS() != lastFPS) {
             scale.x = titleWidth + Fonts.ROBOTO.get(20, Weight.LIGHT).width(fpsString);
         }
 
         lastFPS = Minecraft.getDebugFPS();
-
-        RenderUtil.roundedRectangle(position.x, position.y, scale.x + 6, scale.y - 1, 6, getTheme().getBackgroundShade());
-
         this.position.setScale(new Vector2d(scale.x + 6, scale.y - 1));
 
         final double textX = position.x + 3.0F;
         final double textY = position.y + scale.y / 2.0F - Fonts.ROBOTO.get(20, Weight.LIGHT).height() / 4.0F;
-        Fonts.MINECRAFT.get(20, Weight.BOLD).drawWithShadow(titleString, textX, textY, getTheme().getFirstColor().getRGB());
+        
+        RenderUtil.roundedRect(textX + fpsWidth + 29, textY + 15, textX - 5, textY - 10, 0, getTheme().getBackgroundShade().getRGB());
+
+        Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(titleString, textX, textY, getTheme().getFirstColor().getRGB());
         Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(fpsString, textX + titleWidth, textY, Color.WHITE.getRGB());
+
     };
 }

@@ -1529,7 +1529,6 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 			}
 		}
 
-//	        threadPool.execute(() -> {
 		this.processingLoadedTiles = false;
 
 		if (!this.tileEntitiesToBeRemoved.isEmpty()) {
@@ -1558,10 +1557,8 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 
 			this.addedTileEntityList.clear();
 		}
-//	        });
 
 		this.theProfiler.endSection();
-		// this.theProfiler.endSection();
 	}
 
 	public boolean addTileEntity(final TileEntity tile) {
@@ -2594,22 +2591,24 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 	}
 
 	public List<Entity> getEntitiesInAABBexcluding(Entity entityIn, AxisAlignedBB boundingBox, Predicate<? super Entity> predicate) {
-		List<Entity> list = Lists.<Entity>newArrayList();
-		int i = MathHelper.floor_double((boundingBox.minX - 2.0D) / 16.0D);
-		int j = MathHelper.floor_double((boundingBox.maxX + 2.0D) / 16.0D);
-		int k = MathHelper.floor_double((boundingBox.minZ - 2.0D) / 16.0D);
-		int l = MathHelper.floor_double((boundingBox.maxZ + 2.0D) / 16.0D);
+	    List<Entity> list = Lists.newArrayList();
+	    int i = MathHelper.floor_double((boundingBox.minX - 2.0D) / 16.0D);
+	    int j = MathHelper.floor_double((boundingBox.maxX + 2.0D) / 16.0D);
+	    int k = MathHelper.floor_double((boundingBox.minZ - 2.0D) / 16.0D);
+	    int l = MathHelper.floor_double((boundingBox.maxZ + 2.0D) / 16.0D);
 
-		for (int i1 = i; i1 <= j; ++i1) {
-			for (int j1 = k; j1 <= l; ++j1) {
-				if (this.isChunkLoaded(i1, j1, true)) {
-					this.getChunkFromChunkCoords(i1, j1).getEntitiesWithinAABBForEntity(entityIn, boundingBox, list,
-							predicate);
-				}
-			}
-		}
+	    for (int i1 = i; i1 <= j; ++i1) {
+	        for (int j1 = k; j1 <= l; ++j1) {
+	            if (this.isChunkLoaded(i1, j1, true)) {
+	                Chunk chunk = this.getChunkFromChunkCoords(i1, j1);
+	                if (chunk != null) {
+	                    chunk.getEntitiesWithinAABBForEntity(entityIn, boundingBox, list, predicate);
+	                }
+	            }
+	        }
+	    }
 
-		return list;
+	    return list;
 	}
 
 	public <T extends Entity> List<T> getEntities(final Class<? extends T> entityType,

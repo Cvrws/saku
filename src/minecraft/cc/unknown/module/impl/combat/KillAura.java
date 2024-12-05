@@ -39,6 +39,7 @@ import cc.unknown.value.impl.ListValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.item.EnumAction;
@@ -155,7 +156,9 @@ public final class KillAura extends Module {
 			blocking = false;
 		}
 
-		if (mc.currentScreen == null) {
+		if (mc.currentScreen instanceof GuiContainer) {
+			this.unblock();
+			target = null;
 			return;
 		}
 
@@ -269,7 +272,9 @@ public final class KillAura extends Module {
 			expandRange = (int) (3 + Math.random() * 0.5);
 		}
 
-		if (mc.currentScreen == null) {
+		if (mc.currentScreen instanceof GuiContainer) {
+			allowAttack = false;
+			target = null;
 			return;
 		}
 

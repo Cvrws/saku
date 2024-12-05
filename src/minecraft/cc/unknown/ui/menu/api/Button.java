@@ -38,7 +38,7 @@ public class Button extends GuiButton {
 	public void drawButton(final Minecraft mc, final int mouseX, final int mouseY) {
 		final boolean isOverButton = mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
 		final int color = isOverButton ? new Color(255, 255, 255).getRGB() : new Color(200, 200, 200).getRGB();
-		RenderUtil.drawRoundedRect2(x - size, y - size, x + width + size, y + height + size, 6.0, new Color(1, 1, 1, 150).getRGB());
+		RenderUtil.roundedRect(x - size, y - size, x + width + size, y + height + size, 6.0, new Color(1, 1, 1, 150).getRGB());
 		int textWidth = font.width(text);
 		int textHeight = (int) font.height();
 		float centeredX = x + (width / 2.0f) - (textWidth / 2.0f);

@@ -69,7 +69,7 @@ public final class NameTags extends Module {
         }
         
         if (background.getValue()) {
-            RenderUtil.rectangle(-nameWidth / 2 - 2, -2.0F, nameWidth + 4, mc.fontRendererObj.FONT_HEIGHT + 2, new Color(0, 0, 0, 150));        	
+        	RenderUtil.roundedRect(-nameWidth / 2 - 4, -4.0F, nameWidth - 20, mc.fontRendererObj.FONT_HEIGHT + 1, 6, getTheme().getBackgroundShade().getRGB());
         }
         
 		GL11.glColor4d(1.0D, 1.0D, 1.0D, 1.0D);

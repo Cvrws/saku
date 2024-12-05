@@ -28,36 +28,8 @@ public class RenderAPI extends API implements Accessor {
         return new Color(clamped[0], clamped[1], clamped[2], clamped.length >= 4 ? clamped[3] : 255);
     }
 
-    public void rectangle(final double x, final double y, final double width, final double height, final int[] rgba) throws ScriptException {
-        try {
-            RenderUtil.rectangle(x, y, width, height, intArrayToColor(rgba));
-        } catch (Exception e) {
-            throw new ScriptException("Not enough elements in the array!");
-        }
-    }
-
-    public void rectangle(final double x, final double y, final double width, final double height) {
-        RenderUtil.rectangle(x, y, width, height);
-    }
-
-    public void rainbowRectangle(final double x, final double y, final double width, final double height) {
-        RenderUtil.rainbowRectangle(x, y, width, height);
-    }
-
     public void roundedRectangle(final double x, final double y, final double width, final double height, final double radius, final int[] color) {
         RenderUtil.roundedRectangle(x, y, width, height, radius, intArrayToColor(color));
-    }
-
-    public void centeredRectangle(final double x, final double y, final double width, final double height, final int[] rgba) throws ScriptException {
-        try {
-            RenderUtil.rectangle(x - width / 2, y - height / 2, width, height, intArrayToColor(rgba));
-        } catch (Exception e) {
-            throw new ScriptException("Not enough elements in the array!");
-        }
-    }
-
-    public void centeredRectangle(final double x, final double y, final double width, final double height) {
-        RenderUtil.rectangle(x - width / 2, y - height / 2, width, height);
     }
 
     public void drawLine3D(double x, double y, double z, double x1, double y1, double z1, final int[] color, final float width) {
