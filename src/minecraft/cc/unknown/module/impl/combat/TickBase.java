@@ -175,7 +175,7 @@ public class TickBase extends Module {
     }
     
     public boolean isHurtTime() {
-        return this.getModule(AimAssist.class).target.hurtTime <= 2;
+        return getModule(AimAssist.class).target.hurtTime <= 2 || getModule(KillAura.class).target.hurtTime <= 2;
      }
     
     public Entity raycast(double range, final Vector2f rotation) {

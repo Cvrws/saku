@@ -144,10 +144,7 @@ public final class ModuleManager {
         this.put(Tracers.class, new Tracers());
         this.put(UnlimitedChat.class, new UnlimitedChat());
 
-        // Automatic initializations
         this.getAll().stream().filter(module -> module.getModuleInfo().autoEnabled()).forEach(module -> module.setEnabled(true));
-
-        // Has to be a listener to handle the key presses
         Sakura.instance.getEventBus().register(this);
     }
 
@@ -160,11 +157,7 @@ public final class ModuleManager {
     }
 
     public <T extends Module> T get(final String name) {
-        return (T) this.getAll().stream()
-                .filter(module -> Arrays.stream(module.getAliases()).anyMatch(alias ->
-                        alias.replace(" ", "")
-                                .equalsIgnoreCase(name.replace(" ", ""))))
-                .findAny().orElse(null);
+        return (T) this.getAll().stream().filter(module -> Arrays.stream(module.getAliases()).anyMatch(alias -> alias.replace(" ", "").equalsIgnoreCase(name.replace(" ", "")))).findAny().orElse(null);
     }
 
     public void put(Class clazz, Module module) {
