@@ -21,7 +21,7 @@ import cc.unknown.value.impl.BooleanValue;
 @ModuleInfo(aliases = "Sprint", description = "Corre automáticamente", category = Category.MOVEMENT)
 public class Sprint extends Module {
 
-	private final BooleanValue legit = new BooleanValue("Legit", this, true);
+	public final BooleanValue legit = new BooleanValue("Legit", this, true);
 	private final BooleanValue omniLegit = new BooleanValue("Omni Legit", this, false, () -> !legit.getValue());
 	
     public boolean logged = false;

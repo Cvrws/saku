@@ -13,6 +13,7 @@ import org.lwjgl.input.Mouse;
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.RotationComponent;
 import cc.unknown.module.impl.ghost.AutoClicker;
+import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.geometry.Vector2f;
@@ -22,7 +23,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.settings.KeyBinding;
@@ -38,6 +38,7 @@ import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.C01PacketChatMessage;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -661,5 +662,78 @@ public class PlayerUtil implements Accessor {
         if (mc.player != null) {
             PacketUtil.send(new C01PacketChatMessage(message.toString()));
         }
+    }
+    
+    public static double[] getPredictedPos(float forward, float strafe, double motionX, double motionY, double motionZ, double posX, double posY, double posZ, boolean isJumping) {
+       strafe *= 0.98F;
+       forward *= 0.98F;
+       float f4 = 0.91F;
+       boolean isSprinting = mc.player.isSprinting();
+       if (isJumping && mc.player.onGround && mc.player.jumpTicks == 0) {
+          motionY = mc.player.getJumpUpwardsMotion();
+          if (mc.player.isPotionActive(Potion.jump)) {
+             motionY += (float)(mc.player.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F;
+          }
+
+          if (isSprinting) {
+             float f = mc.player.rotationYaw * (float) (Math.PI / 180.0);
+             motionX -= MathHelper.sin(f) * 0.2F;
+             motionZ += MathHelper.cos(f) * 0.2F;
+          }
+       }
+
+       if (mc.player.onGround) {
+          f4 = mc.player.worldObj.getBlockState(new BlockPos(MathHelper.floor_double(posX), MathHelper.floor_double(posY) - 1, MathHelper.floor_double(posZ))).getBlock().slipperiness * 0.91F;
+       }
+
+       float f3 = 0.16277136F / (f4 * f4 * f4);
+       float friction;
+       if (mc.player.onGround) {
+          friction = mc.player.getAIMoveSpeed() * f3;
+          if (mc.player == mc.player && Sakura.instance.getModuleManager().get(Sprint.class).isEnabled() && !Sakura.instance.getModuleManager().get(Sprint.class).legit.getValue()) {
+             friction = 0.12999998F;
+          }
+       } else {
+          friction = mc.player.jumpMovementFactor;
+       }
+
+       float f = strafe * strafe + forward * forward;
+       if (f >= 1.0E-4F) {
+          f = MathHelper.sqrt_float(f);
+          if (f < 1.0F) {
+             f = 1.0F;
+          }
+
+          f = friction / f;
+          strafe *= f;
+          forward *= f;
+          float f1 = MathHelper.sin(mc.player.rotationYaw * (float) Math.PI / 180.0F);
+          float f2 = MathHelper.cos(mc.player.rotationYaw * (float) Math.PI / 180.0F);
+          motionX += strafe * f2 - forward * f1;
+          motionZ += forward * f2 + strafe * f1;
+       }
+
+       posX += motionX;
+       posY += motionY;
+       posZ += motionZ;
+       f4 = 0.91F;
+       if (mc.player.onGround) {
+          f4 = mc.player.worldObj.getBlockState(new BlockPos(MathHelper.floor_double(posX), MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1, MathHelper.floor_double(posZ))).getBlock().slipperiness * 0.91F;
+       }
+
+       if (mc.player.worldObj.isRemote && (!mc.player.worldObj.isBlockLoaded(new BlockPos((int)posX, 0, (int)posZ)) || !mc.player.worldObj.getChunkFromBlockCoords(new BlockPos((int)posX, 0, (int)posZ)).isLoaded())) {
+          if (posY > 0.0) {
+             motionY = -0.1;
+          } else {
+             motionY = 0.0;
+          }
+       } else {
+          motionY -= 0.08;
+       }
+
+       motionY *= 0.98F;
+       motionX *= f4;
+       motionZ *= f4;
+       return new double[]{posX, posY, posZ, motionX, motionY, motionZ};
     }
 }

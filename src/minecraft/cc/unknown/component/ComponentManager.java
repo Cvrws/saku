@@ -35,7 +35,6 @@ public final class ComponentManager {
         this.add(new RotationComponent());
         this.add(new Slot());
         this.add(new SecurityComponent());
-        this.add(new FallDistanceComponent());
         this.add(new TargetComponent());
         this.add(new GameComponent());
 

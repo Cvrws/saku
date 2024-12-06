@@ -84,8 +84,8 @@ public final class KillAura extends Module {
 			.setDefault("Distance");
 
 	public final NumberValue range = new NumberValue("Range", this, 3, 3, 6, 0.1);
-	private final BooleanValue swingInRange = new BooleanValue("Swing in Range", this, false);
-	private final NumberValue swingRange = new NumberValue("Swing Range", this, 3, 3, 6, 0.1, () -> !swingInRange.getValue());
+	/*private final BooleanValue swingInRange = new BooleanValue("Swing in Range", this, false);
+	private final NumberValue swingRange = new NumberValue("Swing Range", this, 3, 3, 6, 0.1, () -> !swingInRange.getValue());*/
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 10, 15, 1, 20, 1);
 	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 1.5, 2, 0.1);
 

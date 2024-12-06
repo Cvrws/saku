@@ -1376,7 +1376,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
         return false;
     }
 
-    protected float getJumpUpwardsMotion() {
+    public float getJumpUpwardsMotion() {
         return 0.42F;
     }
 

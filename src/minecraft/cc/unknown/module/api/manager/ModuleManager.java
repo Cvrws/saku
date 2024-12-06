@@ -80,7 +80,6 @@ public final class ModuleManager {
         this.put(Spammer.class, new Spammer());
         this.put(Breaker.class, new Breaker());
 
-
         // Other
         this.put(AntiAFK.class, new AntiAFK());
         this.put(AutoPlay.class, new AutoPlay());
