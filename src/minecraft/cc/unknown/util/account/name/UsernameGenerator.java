@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 
 import cc.unknown.util.Accessor;
 import io.netty.util.internal.ThreadLocalRandom;
-import net.minecraft.client.Minecraft;
+import lombok.experimental.UtilityClass;
 import net.minecraft.util.ResourceLocation;
 
+@UtilityClass
 public class UsernameGenerator implements Accessor {
 
-	// this shit is better
-    public static String[] retrieve() {
+    public String[] retrieve() {
         try {
             InputStream stream = mc.getResourceManager().getResource(new ResourceLocation("sakura/altmanager/usernames.txt")).getInputStream();
             if (stream == null) {
@@ -36,11 +36,11 @@ public class UsernameGenerator implements Accessor {
         return null;
     }
     
-    public static String generate() {
+    public String generate() {
         return generate(1)[0];
     }
 
-    public static String[] generate(int amount) {
+    public String[] generate(int amount) {
         String[] usernames = retrieve();
         if (usernames == null) {
             return null;
@@ -67,7 +67,7 @@ public class UsernameGenerator implements Accessor {
         return generated;
     }
 
-    private static String applyPattern(String prefix, String suffix) {
+    private String applyPattern(String prefix, String suffix) {
         int pattern = (int) (Math.random() * 4);
         switch (pattern) {
             case 0: {
@@ -94,7 +94,7 @@ public class UsernameGenerator implements Accessor {
         }
     }
 
-    private static String applyPattern(String username) {
+    private String applyPattern(String username) {
         double numberChance = 0.125;
         double upperChance = 0.25;
 
@@ -121,7 +121,7 @@ public class UsernameGenerator implements Accessor {
         return new String(chars);
     }
 
-    private static char getReplacement(char c) {
+    private char getReplacement(char c) {
         if (c == 'a') {
             return '4';
         } else if (c == 'e') {
@@ -137,8 +137,12 @@ public class UsernameGenerator implements Accessor {
         }
     }
     
-    public static boolean validate(String name) {
-        if (name.length() < 3 || name.length() > 16) {
+    public boolean validate(String name) {
+        return validate(name, 3, 16);
+    }
+
+    public boolean validate(String name, int min, int max) {
+        if (name.length() < min || name.length() > max) {
             return false;
         }
 

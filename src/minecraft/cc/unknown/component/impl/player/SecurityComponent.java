@@ -11,7 +11,7 @@ import cc.unknown.component.impl.Component;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
-import cc.unknown.module.impl.exploit.AntiCrash;
+import cc.unknown.module.impl.other.AntiCrash;
 import cc.unknown.util.packet.PacketUtil;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C19PacketResourcePackStatus;

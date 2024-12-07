@@ -13,6 +13,7 @@ import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.network.play.client.C03PacketPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
 @ModuleInfo(aliases = "Criticals", description = "Consigue un golpe crítico cada vez que atacas", category = Category.COMBAT)
@@ -22,6 +23,7 @@ public final class Criticals extends Module {
             .add(new SubMode("Packet"))
             .add(new SubMode("Verus"))
             .add(new SubMode("Balance"))
+            .add(new SubMode("Legit"))
             .setDefault("Balance");
     
     private final NumberValue delay = new NumberValue("Delay", this, 500, 0, 1000, 1, () -> mode.is("balance"));
@@ -83,6 +85,13 @@ public final class Criticals extends Module {
             case "balance":
             	attacked = true;
                 break;
+                
+            case "Legit":
+        		if(mc.world.getBlockState(new BlockPos(mc.player.posX, mc.player.posY + 1, mc.player.posZ)).getBlock().isCollidable()) {
+        			if(mc.player.onGround && mc.player.jumpMovementFactor == 0.125)
+        				mc.player.jump();
+        		}
+        		break;
         }
     };
 

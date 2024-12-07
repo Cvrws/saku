@@ -1,4 +1,4 @@
-package cc.unknown.util.client.user;
+package cc.unknown.util.client.irc;
 
 import lombok.experimental.UtilityClass;
 
@@ -14,11 +14,11 @@ public class UserUtil {
         return user.substring(0, 1).toUpperCase() + user.substring(1);
     }
 
-    public void setUser(String usser) {
-        if (usser == null || usser.isEmpty()) {
+    public void setUser(String name) {
+        if (name == null || name.isEmpty()) {
             user = "";
         } else {
-            user = usser.substring(0, 1).toUpperCase() + usser.substring(1);
+            user = name.substring(0, 1).toUpperCase() + name.substring(1);
         }
     }
 }

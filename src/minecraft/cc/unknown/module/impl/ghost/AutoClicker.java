@@ -21,8 +21,8 @@ import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 
 @ModuleInfo(aliases = "Auto Clicker", description = "Clickea automáticamente", category = Category.GHOST)
@@ -43,7 +43,7 @@ public class AutoClicker extends Module {
 			.add(new SubMode("Both"))
 			.setDefault("Left");
 
-	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 8, 14, 1, 20, 0.1);
+	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 8, 14, 1, 20, 1);
 
 	private final BooleanValue breakBlocks = new BooleanValue("Break Blocks", this, true, () -> !isButtonClick());
 	private final BooleanValue guiClicker = new BooleanValue("Gui Clicker", this, false, () -> !isButtonClick());
@@ -123,7 +123,6 @@ public class AutoClicker extends Module {
 	@EventLink
 	public final Listener<AttackEvent> onAttack = event -> {
 		attackTicks = 0;
-		mc.leftClickCounter = 0;
 	};
 
 	@EventLink

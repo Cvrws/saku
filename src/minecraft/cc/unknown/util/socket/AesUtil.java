@@ -1,21 +1,18 @@
-package cc.unknown.util.security.socket;
+package cc.unknown.util.socket;
 
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class AesUtil {
-
-    private final String PRIVATE_SECRET_KEY = "5q7inZ34T0LiadFjaZWexQryC0G8Fr";
 
 	@SneakyThrows
     public String encrypt(String data) {
@@ -53,26 +50,37 @@ public class AesUtil {
     }
 
     @SneakyThrows
-    private byte[] generateIV(SecretKey secretKey) {
-        byte[] iv = new byte[16]; 
-        MessageDigest sha = MessageDigest.getInstance("SHA-256");
-        byte[] keyBytes = sha.digest(secretKey.getEncoded());
-        System.arraycopy(keyBytes, 0, iv, 0, iv.length);
-        return iv;
+    private byte[] generateIV(Object secretKey) {
+        Class<?> c = Class.forName("java.security.MessageDigest");
+        Method x = c.getMethod("getInstance", String.class);
+        Object z = x.invoke(null, "SHA-256");
+        Method v = c.getMethod("digest", byte[].class);
+        byte[] b = (byte[]) v.invoke(z, secretKey.getClass().getMethod("getEncoded").invoke(secretKey));
+        byte[] n = new byte[16];
+        System.arraycopy(b, 0, n, 0, Math.min(b.length, 16));
+        return n;
     }
 
     @SneakyThrows
     private SecretKey getSecretKey() {
-        MessageDigest sha = MessageDigest.getInstance("SHA-256");
-        byte[] key = sha.digest(SocketUtil.key.getBytes(StandardCharsets.UTF_8));
-        return new SecretKeySpec(key, "AES");
+        Class<?> c = Class.forName("java.security.MessageDigest");
+        Method x = c.getMethod("getInstance", String.class);
+        Object b = x.invoke(null, "SHA-256");
+        Method v = c.getMethod("digest", byte[].class);
+        byte[] n = (byte[]) v.invoke(b, SocketUtil.key.getBytes(StandardCharsets.UTF_8));
+        Class<?> m = Class.forName("javax.crypto.spec.SecretKeySpec");
+        return (SecretKey) m.getConstructor(byte[].class, String.class).newInstance(n, "AES");
     }
 
     @SneakyThrows
     private SecretKey getSecretKey2() {
-        MessageDigest sha = MessageDigest.getInstance("SHA-256");
-        byte[] key = sha.digest(PRIVATE_SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-        return new SecretKeySpec(key, "AES");
+        Class<?> q = Class.forName("java.security.MessageDigest");
+        Method w = q.getMethod("getInstance", String.class);
+        Object h = w.invoke(null, "SHA-256");
+        Method e = q.getMethod("digest", byte[].class);
+        byte[] r = (byte[]) e.invoke(h, "5q7inZ34T0LiadFjaZWexQryC0G8Fr".getBytes(StandardCharsets.UTF_8));
+        Class<?> t = Class.forName("javax.crypto.spec.SecretKeySpec");
+        return (SecretKey) t.getConstructor(byte[].class, String.class).newInstance(r, "AES");
     }
 
 }

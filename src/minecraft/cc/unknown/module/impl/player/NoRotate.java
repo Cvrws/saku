@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.exploit;
+package cc.unknown.module.impl.player;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -12,7 +12,7 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C03PacketPlayer;
 
-@ModuleInfo(aliases = "No Rotate", description = "Evita que los servidores modifiquen tu fov.", category = Category.EXPLOIT)
+@ModuleInfo(aliases = "No Rotate", description = "Evita que los servidores modifiquen tu fov.", category = Category.PLAYER)
 public class NoRotate extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", this)

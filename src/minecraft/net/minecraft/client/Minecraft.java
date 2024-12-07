@@ -650,14 +650,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 		Sakura.instance.init();
 		
-		if (Sakura.instance != null && Sakura.instance.getModuleManager() != null) {
-		    Sprint sprint = Sakura.instance.getModuleManager().get(Sprint.class);
-
-		    if (sprint != null && !sprint.logged) {
-		    	this.displayGuiScreen(new LoginMenu());
-		    }
-		}
-		
+		this.displayGuiScreen(new LoginMenu());
 		this.renderGlobal.makeEntityOutlineShader();
 
 	}

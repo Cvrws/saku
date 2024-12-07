@@ -78,16 +78,6 @@ public class MathUtil {
 				Math.abs(number2 - 360) - Math.abs(number1 - 0)));
 	}
 
-	public double nextSecureInt(int origin, int bound) {
-		if (origin == bound) {
-			return (double) origin;
-		} else {
-			SecureRandom secureRandom = new SecureRandom();
-			int difference = bound - origin;
-			return (double) (origin + secureRandom.nextInt(difference));
-		}
-	}
-
 	public double nextSecureDouble(double origin, double bound) {
 		if (origin == bound) {
 			return origin;
@@ -95,16 +85,6 @@ public class MathUtil {
 			SecureRandom secureRandom = new SecureRandom();
 			double difference = bound - origin;
 			return origin + secureRandom.nextDouble() * difference;
-		}
-	}
-
-	public float nextSecureFloat(double origin, double bound) {
-		if (origin == bound) {
-			return (float) origin;
-		} else {
-			SecureRandom secureRandom = new SecureRandom();
-			float difference = (float) (bound - origin);
-			return (float) (origin + (double) (secureRandom.nextFloat() * difference));
 		}
 	}
 	

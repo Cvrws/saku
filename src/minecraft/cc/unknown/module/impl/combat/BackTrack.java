@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.latency;
+package cc.unknown.module.impl.combat;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -22,8 +22,8 @@ import net.minecraft.network.NetworkManager.InboundHandlerTuplePacketListener;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S14PacketEntity;
 
-@ModuleInfo(aliases = "Clumsy", description = "Empeora significativamente tu latencia.", category = Category.LATENCY)
-public final class Clumsy extends Module {
+@ModuleInfo(aliases = "Back Track", description = "Utiliza la latencia para atacar desde más lejos", category = Category.COMBAT)
+public final class BackTrack extends Module {
 	private final BoundsNumberValue client = new BoundsNumberValue("Delay", this, 100, 200, 0, 500, 1);
 	private final List<Packet<?>> packets = new CopyOnWriteArrayList<>();
 	private StopWatch stopWatch = new StopWatch();

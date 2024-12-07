@@ -16,7 +16,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.irc.IRC;
 import cc.unknown.value.impl.StringValue;
 
-@ModuleInfo(aliases = {"Internet Relay Chat", "irc"}, description = "Habla con otros Sakura users", category = Category.OTHER)
+@ModuleInfo(aliases = {"Irc", "Internet Relay Chat"}, description = "Habla con otros Sakura users", category = Category.OTHER)
 public final class InternetRelayChat extends Module {
 
     private final List<String> blockWords = Arrays.asList("/", ".", "@here", "@everyone");

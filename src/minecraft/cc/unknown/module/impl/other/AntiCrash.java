@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.exploit;
+package cc.unknown.module.impl.other;
 
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
@@ -6,7 +6,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.value.impl.BooleanValue;
 import lombok.Getter;
 
-@ModuleInfo(aliases = "Anti Crash", description = "Evita cualquier ataque dirigido al cliente.", category = Category.EXPLOIT)
+@ModuleInfo(aliases = "Anti Crash", description = "Evita cualquier ataque dirigido al cliente.", category = Category.OTHER)
 public class AntiCrash extends Module {
 
 	private final BooleanValue 

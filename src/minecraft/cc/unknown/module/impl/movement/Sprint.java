@@ -24,9 +24,6 @@ public class Sprint extends Module {
 	public final BooleanValue legit = new BooleanValue("Legit", this, true);
 	private final BooleanValue omniLegit = new BooleanValue("Omni Legit", this, false, () -> !legit.getValue());
 	
-    public boolean logged = false;
-    public int sleek = -1;
-	
     private float forward = 0;
     private float strafe = 0;
 

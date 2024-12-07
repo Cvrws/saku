@@ -6,9 +6,7 @@ import java.util.Arrays;
 import cc.unknown.Sakura;
 import cc.unknown.module.Module;
 import cc.unknown.module.impl.combat.*;
-import cc.unknown.module.impl.exploit.*;
 import cc.unknown.module.impl.ghost.*;
-import cc.unknown.module.impl.latency.*;
 import cc.unknown.module.impl.movement.*;
 import cc.unknown.module.impl.other.*;
 import cc.unknown.module.impl.player.*;
@@ -22,7 +20,7 @@ public final class ModuleManager {
     
     public void init() {
         moduleMap = new AdaptiveMap<>();
-                
+
         // Combat
         this.put(KillAura.class, new KillAura());
         this.put(Velocity.class, new Velocity());
@@ -35,7 +33,6 @@ public final class ModuleManager {
         this.put(TeleportAura.class, new TeleportAura());
         
         // Ghost
-        this.put(AutoBlock.class, new AutoBlock());
         this.put(AimAssist.class, new AimAssist());
         this.put(HitSelect.class, new HitSelect());
         this.put(AutoClicker.class, new AutoClicker());
@@ -44,22 +41,15 @@ public final class ModuleManager {
         this.put(WTap.class, new WTap());
         
         // Latency
-        this.put(BackTrack.class, new BackTrack());
         this.put(PingSpoof.class, new PingSpoof());
-        this.put(Clumsy.class, new Clumsy());
+        this.put(BackTrack.class, new BackTrack());
         this.put(PerfectCriticals.class, new PerfectCriticals());
         
-        // Exploit
-        this.put(Disabler.class, new Disabler());
-        this.put(CancelPackets.class, new CancelPackets());
-        this.put(NoRotate.class, new NoRotate());
-        this.put(AntiCrash.class, new AntiCrash());
-
         // Movement
         this.put(Flight.class, new Flight());
         this.put(InventoryMove.class, new InventoryMove());
         this.put(NoClip.class, new NoClip());
-        this.put(AutoExtinguisher.class, new AutoExtinguisher());
+        this.put(AntiFire.class, new AntiFire());
         this.put(NoSlow.class, new NoSlow());
         this.put(NoJumpDelay.class, new NoJumpDelay());
         this.put(Speed.class, new Speed());
@@ -78,9 +68,11 @@ public final class ModuleManager {
         this.put(LegitScaffold.class, new LegitScaffold());
         this.put(SafeWalk.class, new SafeWalk());
         this.put(Spammer.class, new Spammer());
+        this.put(CancelPackets.class, new CancelPackets());
         this.put(Breaker.class, new Breaker());
 
         // Other
+        this.put(AntiCrash.class, new AntiCrash());
         this.put(AntiAFK.class, new AntiAFK());
         this.put(AutoPlay.class, new AutoPlay());
         this.put(AutoRefill.class, new AutoRefill());
@@ -100,6 +92,7 @@ public final class ModuleManager {
         this.put(AntiFireBall.class, new AntiFireBall());
         this.put(AntiVoid.class, new AntiVoid());
         this.put(AutoPot.class, new AutoPot());
+        this.put(NoRotate.class, new NoRotate());
         this.put(FakeHackers.class, new FakeHackers());
         this.put(AutoArmor.class, new AutoArmor());
         this.put(NoPlaceDelay.class, new NoPlaceDelay());

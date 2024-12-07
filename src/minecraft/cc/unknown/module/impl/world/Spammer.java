@@ -12,6 +12,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
+import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.StringValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.Minecraft;
@@ -186,12 +187,7 @@ public final class Spammer extends Module {
             ContainerChest chest = (ContainerChest) ((GuiChest) mc.currentScreen).inventorySlots;
             for (int i = 0; i < chest.getLowerChestInventory().getSizeInventory(); i++) {
                 ItemStack stackInSlot = chest.getLowerChestInventory().getStackInSlot(i);
-                if (stackInSlot != null && stackInSlot.hasDisplayName() && stackInSlot.getDisplayName().contains(targetString[0])
-                        || mode.is("TNT Tag") && stackInSlot != null && stackInSlot.hasDisplayName() && stackInSlot.getDisplayName().contains("TNTTag 1")
-                        || mode.is("EggWars") && stackInSlot != null && stackInSlot.hasDisplayName() && stackInSlot.getDisplayName().contains("EggWars 1")
-                        || mode.is("Speed Builders") && stackInSlot != null && stackInSlot.hasDisplayName() && stackInSlot.getDisplayName().contains("SpeedBuilders 1")
-                        || mode.is("EDLB") && stackInSlot != null && stackInSlot.hasDisplayName() && stackInSlot.getDisplayName().contains("Escapa de la Bestia 1")
-                        || mode.is("BedWars") && stackInSlot != null && stackInSlot.hasDisplayName() && stackInSlot.getDisplayName().contains("BedWars 8")) {
+                if (stackInSlot != null && stackInSlot.hasDisplayName() && stackInSlot.getDisplayName().contains(targetString[0])) {
                     sendPacket(new C0EPacketClickWindow(chest.windowId, i, 0, 1, stackInSlot, (short) 0));
                 }
             }

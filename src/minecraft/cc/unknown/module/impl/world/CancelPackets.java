@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.exploit;
+package cc.unknown.module.impl.world;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,11 +7,9 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.event.impl.netty.PacketSendEvent;
-import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.util.packet.process.IncomingPackets;
 import cc.unknown.util.packet.process.OutgoingPackets;
 import cc.unknown.value.impl.BooleanValue;
@@ -21,7 +19,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.INetHandlerPlayServer;
 
-@ModuleInfo(aliases = "Cancel Packets", description = ">:3c", category = Category.EXPLOIT)
+@ModuleInfo(aliases = "Cancel Packets", description = ">:3c", category = Category.WORLD)
 public class CancelPackets extends Module {
     
     private final ModeValue mode = new ModeValue("Mode", this)

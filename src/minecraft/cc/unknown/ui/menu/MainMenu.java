@@ -10,7 +10,7 @@ import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.ui.menu.alt.AltManagerScreen;
 import cc.unknown.ui.menu.api.Button;
 import cc.unknown.ui.menu.api.RainSystem;
-import cc.unknown.util.client.user.UserUtil;
+import cc.unknown.util.client.irc.UserUtil;
 import cc.unknown.util.render.font.Font;
 import lombok.SneakyThrows;
 import net.minecraft.client.gui.GuiButton;
@@ -79,10 +79,6 @@ public class MainMenu extends GuiMainMenu {
 
         String title = "§fSakura Client";
         String name = String.format("§fLogged in as §7%s", UserUtil.getUser());
-
-        if(getModule(Sprint.class).logged) {
-        	getModule(Sprint.class).sleek = 1;
-        }
 
         fontRenderer.drawWithShadow(title, 2.0f, height - 10, -1);
         fontRenderer.drawWithShadow(name, width - fontRenderer.width(name) - 2, height - 10, -1);

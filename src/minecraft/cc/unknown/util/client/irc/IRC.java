@@ -6,12 +6,9 @@ import static cc.unknown.util.client.StreamerUtil.pink;
 import static cc.unknown.util.client.StreamerUtil.red;
 import static cc.unknown.util.client.StreamerUtil.reset;
 
-import cc.unknown.util.client.user.UserUtil;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.security.HardwareUtil;
-import cc.unknown.util.security.hook.AuthkUtil;
-import cc.unknown.util.security.socket.AesUtil;
-import cc.unknown.util.security.socket.SocketUtil;
+import cc.unknown.util.socket.AesUtil;
+import cc.unknown.util.socket.SocketUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;

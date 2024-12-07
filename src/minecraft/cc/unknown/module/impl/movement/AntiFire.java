@@ -19,8 +19,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-@ModuleInfo(aliases = "Auto Extinguisher", description = "Extinguishes the flame", category = Category.MOVEMENT)
-public class AutoExtinguisher extends Module {
+@ModuleInfo(aliases = "Anti Fire", description = "Extinguishes the flame", category = Category.MOVEMENT)
+public class AntiFire extends Module {
 
 	private StopWatch timer = new StopWatch();
 	private boolean canWork;
