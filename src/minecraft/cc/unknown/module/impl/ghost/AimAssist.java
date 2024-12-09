@@ -117,8 +117,8 @@ public final class AimAssist extends Module {
 	    }
 	
 	    if (validTargets == 1) {
-	        maxAngle.setValue(targetFov);
-	    } else maxAngle.setValue(fov);
+	        maxAngle.setValue(180);
+	    }
 	
 	    target = potentialTarget;
 	    return target;

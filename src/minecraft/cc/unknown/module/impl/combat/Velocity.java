@@ -1,9 +1,5 @@
 package cc.unknown.module.impl.combat;
 
-import java.util.concurrent.ThreadLocalRandom;
-
-import org.lwjgl.input.Keyboard;
-
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.MoveInputEvent;
@@ -14,6 +10,7 @@ import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
@@ -52,9 +49,9 @@ public final class Velocity extends Module {
 	    if (shouldSkipUpdate()) return;
 
 	    double chanceValue = chance.getValue().doubleValue();
-	    double randomFactor = getRandomFactor(chanceValue);
+	    double randomFactor = MathUtil.getRandomFactor(chanceValue);
 
-	    if (!shouldPerformAction(chanceValue, randomFactor)) return;
+	    if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
 
 		switch (mode.getValue().getName()) {
 		case "Polar Drunk":
@@ -76,9 +73,9 @@ public final class Velocity extends Module {
 		if (shouldSkipUpdate()) return;
 		
 		double chanceValue = chance.getValue().doubleValue();
-		double randomFactor = getRandomFactor(chanceValue);
+		double randomFactor = MathUtil.getRandomFactor(chanceValue);
 		
-		if (!shouldPerformAction(chanceValue, randomFactor)) return;
+		if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
 		
 		switch (mode.getValue().getName()) {
 		case "Polar Drunk":
@@ -95,9 +92,9 @@ public final class Velocity extends Module {
 		if (shouldSkipUpdate()) return;
 		
 		double chanceValue = chance.getValue().doubleValue();
-		double randomFactor = getRandomFactor(chanceValue);
+		double randomFactor = MathUtil.getRandomFactor(chanceValue);
 		
-		if (!shouldPerformAction(chanceValue, randomFactor)) return;
+		if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
 		
 		switch (mode.getValue().getName()) {
 		case "Polar Drunk":
@@ -180,13 +177,4 @@ public final class Velocity extends Module {
 	private boolean shouldSkipUpdate() {
 	    return onSwing.getValue() && !mc.player.isSwingInProgress;
 	}
-
-	private double getRandomFactor(double chanceValue) {
-	    return Math.abs(Math.sin(System.nanoTime() * Double.doubleToLongBits(chanceValue))) * 100.0;
-	}
-
-	private boolean shouldPerformAction(double chanceValue, double randomFactor) {
-	    return chanceValue >= 100.0D || ThreadLocalRandom.current().nextDouble(100.0D + randomFactor) < chanceValue;
-	}
-
 }

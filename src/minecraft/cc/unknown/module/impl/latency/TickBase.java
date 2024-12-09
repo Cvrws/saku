@@ -18,6 +18,7 @@ import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.combat.KillAura;
 import cc.unknown.module.impl.ghost.AimAssist;
 import cc.unknown.module.impl.world.LegitScaffold;
 import cc.unknown.module.impl.world.Scaffold;
@@ -175,7 +176,7 @@ public class TickBase extends Module {
     }
     
     public boolean isHurtTime() {
-        return getModule(AimAssist.class).target.hurtTime <= 2;
+        return (getModule(AimAssist.class).target.hurtTime <= 2 && getModule(AimAssist.class).isEnabled()) || (getModule(KillAura.class).target.hurtTime <= 2 && getModule(KillAura.class).isEnabled());
      }
     
     public Entity raycast(double range, final Vector2f rotation) {

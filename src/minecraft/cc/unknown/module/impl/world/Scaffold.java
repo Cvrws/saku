@@ -496,8 +496,7 @@ public class Scaffold extends Module {
 				    float staticYaw = (yaw - 180) - (yaw % 90) + 45;
 				    float staticPitch = 75;
 
-				    boolean straight = (Math.min(Math.abs(yaw % 90), Math.abs(90 - yaw) % 90) < Math
-				            .min(Math.abs(yaw + 45) % 90, Math.abs(90 - (yaw + 45)) % 90));
+				    boolean straight = (Math.min(Math.abs(yaw % 90), Math.abs(90 - yaw) % 90) < Math.min(Math.abs(yaw + 45) % 90, Math.abs(90 - (yaw + 45)) % 90));
 
 				    if (straight && RayCastUtil.rayCast(new Vector2f(staticYaw + 90, staticPitch), 30).typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && RayCastUtil.rayCast(new Vector2f(staticYaw, staticPitch), 3).typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) {
 				        staticYaw += 90;

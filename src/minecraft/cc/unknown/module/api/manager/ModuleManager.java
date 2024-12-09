@@ -116,7 +116,6 @@ public final class ModuleManager {
         this.put(Ambience.class, new Ambience());
         this.put(Animations.class, new Animations());
         this.put(ChestESP.class, new ChestESP());
-        this.put(RichPresence.class, new RichPresence());
         this.put(ClickGUI.class, new ClickGUI());
         this.put(CPSDisplay.class, new CPSDisplay());
         this.put(FPSDisplay.class, new FPSDisplay());

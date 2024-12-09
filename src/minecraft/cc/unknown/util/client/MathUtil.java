@@ -88,9 +88,27 @@ public class MathUtil {
 		}
 	}
 	
+	public int nextSecureInt(int origin, int bound) {
+		if (origin == bound) {
+			return origin;
+		} else {
+			SecureRandom secureRandom = new SecureRandom();
+			int difference = bound - origin;
+			return origin + secureRandom.nextInt() * difference;
+		}
+	}
+	
 	public long getSafeRandom(long min, long max) {
 		double randomPercent = ThreadLocalRandom.current().nextDouble(0.7, 1.3);
 		long delay = (long) (randomPercent * ThreadLocalRandom.current().nextLong(min, max + 1));
 		return delay;
+	}
+	
+	public double getRandomFactor(double chanceValue) {
+	    return Math.abs(Math.sin(System.nanoTime() * Double.doubleToLongBits(chanceValue))) * 100.0;
+	}
+
+	public boolean shouldPerformAction(double chanceValue, double randomFactor) {
+	    return chanceValue >= 100.0D || ThreadLocalRandom.current().nextDouble(100.0D + randomFactor) < chanceValue;
 	}
 }
