@@ -6,7 +6,14 @@ import java.util.Arrays;
 import cc.unknown.Sakura;
 import cc.unknown.module.Module;
 import cc.unknown.module.impl.combat.*;
+import cc.unknown.module.impl.exploit.CancelPackets;
+import cc.unknown.module.impl.exploit.ChatBypass;
+import cc.unknown.module.impl.exploit.NoGuiClose;
 import cc.unknown.module.impl.ghost.*;
+import cc.unknown.module.impl.latency.BackTrack;
+import cc.unknown.module.impl.latency.PerfectCriticals;
+import cc.unknown.module.impl.latency.PingSpoof;
+import cc.unknown.module.impl.latency.TickBase;
 import cc.unknown.module.impl.movement.*;
 import cc.unknown.module.impl.other.*;
 import cc.unknown.module.impl.player.*;
@@ -90,7 +97,6 @@ public final class ModuleManager {
 
         // Player
         this.put(AntiFireBall.class, new AntiFireBall());
-        this.put(AntiVoid.class, new AntiVoid());
         this.put(AutoPot.class, new AutoPot());
         this.put(NoRotate.class, new NoRotate());
         this.put(FakeHackers.class, new FakeHackers());
@@ -103,7 +109,6 @@ public final class ModuleManager {
         this.put(NoClickDelay.class, new NoClickDelay());
         this.put(FastUse.class, new FastUse());
         this.put(InventoryManager.class, new InventoryManager());
-        this.put(NoFall.class, new NoFall());
         this.put(Timer.class, new Timer());
         this.put(ChestStealer.class, new ChestStealer());
 

@@ -8,11 +8,45 @@ import java.util.Map;
 import org.lwjgl.input.Keyboard;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.packet.PacketUtil;
 import lombok.experimental.UtilityClass;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
+import net.minecraft.block.BlockAnvil;
+import net.minecraft.block.BlockBed;
+import net.minecraft.block.BlockBrewingStand;
+import net.minecraft.block.BlockButton;
+import net.minecraft.block.BlockCactus;
+import net.minecraft.block.BlockCarpet;
+import net.minecraft.block.BlockChest;
+import net.minecraft.block.BlockClay;
+import net.minecraft.block.BlockDispenser;
+import net.minecraft.block.BlockDropper;
+import net.minecraft.block.BlockEnchantmentTable;
+import net.minecraft.block.BlockEnderChest;
+import net.minecraft.block.BlockFence;
+import net.minecraft.block.BlockFenceGate;
+import net.minecraft.block.BlockFlower;
+import net.minecraft.block.BlockFlowerPot;
+import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.BlockGravel;
+import net.minecraft.block.BlockHopper;
+import net.minecraft.block.BlockLadder;
+import net.minecraft.block.BlockLever;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockPane;
+import net.minecraft.block.BlockRedstoneTorch;
+import net.minecraft.block.BlockSand;
+import net.minecraft.block.BlockSign;
+import net.minecraft.block.BlockSkull;
+import net.minecraft.block.BlockSlab;
+import net.minecraft.block.BlockSoulSand;
+import net.minecraft.block.BlockStainedGlassPane;
+import net.minecraft.block.BlockTNT;
+import net.minecraft.block.BlockTallGrass;
+import net.minecraft.block.BlockTorch;
+import net.minecraft.block.BlockTripWire;
+import net.minecraft.block.BlockTripWireHook;
+import net.minecraft.block.BlockWeb;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.enchantment.Enchantment;
@@ -773,4 +807,17 @@ public class InventoryUtil implements Accessor {
 	        isInventoryOpen = false;
 	    }
 	}
+	
+    public boolean canBePlaced(ItemBlock itemBlock) {
+        Block block = itemBlock.getBlock();
+        if (block == null) {
+            return false;
+        }
+        return !isInteractable(block) && !(block instanceof BlockTNT) && !(block instanceof BlockSlab) && !(block instanceof BlockWeb) && !(block instanceof BlockLever) && !(block instanceof BlockButton) && !(block instanceof BlockSkull) && !(block instanceof BlockLiquid) && !(block instanceof BlockCactus) && !(block instanceof BlockCarpet) && !(block instanceof BlockTripWire) && !(block instanceof BlockTripWireHook) && !(block instanceof BlockTallGrass) && !(block instanceof BlockFlower) && !(block instanceof BlockFlowerPot) && !(block instanceof BlockSign) && !(block instanceof BlockLadder) && !(block instanceof BlockTorch) && !(block instanceof BlockRedstoneTorch) && !(block instanceof BlockFence) && !(block instanceof BlockPane) && !(block instanceof BlockStainedGlassPane) && !(block instanceof BlockGravel) && !(block instanceof BlockClay) && !(block instanceof BlockSand) && !(block instanceof BlockSoulSand);
+    }
+    
+    private boolean isInteractable(Block block) {
+        return block instanceof BlockFurnace || block instanceof BlockFenceGate || block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockEnchantmentTable || block instanceof BlockBrewingStand || block instanceof BlockBed || block instanceof BlockDropper || block instanceof BlockDispenser || block instanceof BlockHopper || block instanceof BlockAnvil || block == Blocks.crafting_table;
+    }
+
 }

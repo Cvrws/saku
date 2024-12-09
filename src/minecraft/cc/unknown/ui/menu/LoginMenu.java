@@ -89,7 +89,7 @@ public final class LoginMenu extends GuiScreen {
         if (button.id == 1) {
             Optional.of(username)
                 .filter(u -> !u.isEmpty())
-                .filter(u -> UsernameGenerator.validate(u, 4, 10))
+                .filter(u -> UsernameGenerator.validate(u, 4, 25))
                 //.filter(u -> !blacklist.contains(u.toLowerCase()))
                 .ifPresent(validUsername -> {
                     UserUtil.setUser(validUsername);

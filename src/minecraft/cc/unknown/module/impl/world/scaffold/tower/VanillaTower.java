@@ -17,7 +17,6 @@ public class VanillaTower extends Mode<Scaffold> {
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (mc.gameSettings.keyBindJump.isKeyDown() && PlayerUtil.blockNear(2)) {
 			mc.player.motionY = 0.42F;
-
 		}
 	};
 }

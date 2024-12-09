@@ -1,14 +1,14 @@
 package cc.unknown.module.impl.player;
 
+import cc.unknown.component.impl.player.RotationComponent;
+import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.input.MoveInputEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.player.MoveUtil;
-import cc.unknown.value.impl.BooleanValue;
+import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.value.impl.NumberValue;
 
 @ModuleInfo(aliases = "Derp", description = "Makes you look like a derp", category = Category.PLAYER)
@@ -30,5 +30,7 @@ public class Derp extends Module {
         
         mc.player.renderYawOffset = yaw;
         mc.player.rotationYawHead = yaw;
+        
+        RotationComponent.setRotations(new Vector2f(mc.player.rotationYaw, mc.player.rotationPitch), constantSpeed.getValue().intValue(), MovementFix.SILENT);
     };
 }

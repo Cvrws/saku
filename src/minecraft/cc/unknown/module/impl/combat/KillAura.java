@@ -306,15 +306,12 @@ public final class KillAura extends Module {
         if (rotationSpeed != 0) RotationComponent.setRotations(targetRotations, rotationSpeed,
                 movementCorrection.getValue() == MovementFix.OFF ? MovementFix.OFF : movementCorrection.getValue(),
                 rotations -> {
-                    MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(rotations, range.getValue().floatValue(), -0.1f);
+                    MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(rotations, range.getValue().floatValue(), -0.8f);
 
                     return movingObjectPosition != null && movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY;
                 });
 	};
 
-	// We attack on an event after all others, because other modules may have
-	// overridden the rotations
-	// this way we won't attack if a module has overriden the killaura's rotations
 	@EventLink()
 	public final Listener<PreUpdateEvent> onMediumPriorityPreUpdate = event -> {
 		if (target == null || mc.player.isDead) {

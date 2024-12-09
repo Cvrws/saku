@@ -68,7 +68,7 @@ import cc.unknown.event.impl.other.GameEvent;
 import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
-import cc.unknown.module.impl.combat.TickBase;
+import cc.unknown.module.impl.latency.TickBase;
 import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.visual.FreeLook;

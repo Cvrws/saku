@@ -5,6 +5,8 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class AesUtil {
+	
+	// code war crimes
 
 	@SneakyThrows
     public String encrypt(String data) {

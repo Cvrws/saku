@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.combat;
+package cc.unknown.module.impl.latency;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -43,7 +43,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.optifine.reflect.Reflector;
 
-@ModuleInfo(aliases = "Tick Base", description = "Congela el juego para acercarte a tu objetivo", category = Category.COMBAT)
+@ModuleInfo(aliases = "Tick Base", description = "Congela el juego para acercarte a tu objetivo", category = Category.LATENCY)
 public class TickBase extends Module {
 
 	private final ModeValue mode = new ModeValue("Mode", this)

@@ -25,17 +25,14 @@ import cc.unknown.module.impl.world.scaffold.down.NormalDownward;
 import cc.unknown.module.impl.world.scaffold.sprint.BypassSprint;
 import cc.unknown.module.impl.world.scaffold.sprint.DisabledSprint;
 import cc.unknown.module.impl.world.scaffold.sprint.LegitSprint;
-import cc.unknown.module.impl.world.scaffold.sprint.MatrixSprint;
-import cc.unknown.module.impl.world.scaffold.tower.MMCTower;
-import cc.unknown.module.impl.world.scaffold.tower.NCPTower;
-import cc.unknown.module.impl.world.scaffold.tower.NormalTower;
-import cc.unknown.module.impl.world.scaffold.tower.PolarTower;
+import cc.unknown.module.impl.world.scaffold.sprint.NormalSprint;
 import cc.unknown.module.impl.world.scaffold.tower.VanillaTower;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.geometry.Vector3d;
 import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.util.player.EnumFacingOffset;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
@@ -43,22 +40,20 @@ import cc.unknown.util.player.RotationUtil;
 import cc.unknown.util.player.SlotUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
+import cc.unknown.value.impl.DescValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.StringValue;
 import cc.unknown.value.impl.SubMode;
-import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import net.minecraft.block.BlockAir;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
-import net.minecraft.network.play.client.C09PacketHeldItemChange;
 import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
@@ -67,10 +62,8 @@ import net.minecraft.util.Vec3i;
 		"scaff", "auto bridge" }, description = "Construye mientras caminas", category = Category.WORLD)
 public class Scaffold extends Module {
 
-	public final ModeValue mode = new ModeValue("Rotation Mode", this)
+	public final ModeValue rotationMode = new ModeValue("Rotation Mode", this)
 			.add(new SubMode("Normal"))
-			.add(new SubMode("Godbridge"))
-			.add(new SubMode("Breesily"))
 			.add(new SubMode("Snap"))
 			.add(new SubMode("Telly"))
 			.add(new SubMode("Legit"))
@@ -83,29 +76,25 @@ public class Scaffold extends Module {
 			.setDefault("Strict");
 
 	public final ModeValue sprint = new ModeValue("Sprint", this)
-			.add(new SubMode("Normal"))
+			.add(new NormalSprint("Normal", this))
 			.add(new DisabledSprint("Disabled", this))
 			.add(new LegitSprint("Legit", this))
-			.add(new BypassSprint("Bypass", this))
-			.add(new MatrixSprint("Matrix", this))
+			.add(new BypassSprint("Cancel", this))
 			.setDefault("Normal");
 
 	public final ModeValue tower = new ModeValue("Tower", this)
+			.add(new SubMode("Polar"))
 			.add(new SubMode("Disabled"))
 			.add(new VanillaTower("Vanilla", this))
-			.add(new NormalTower("Normal", this))
-			.add(new MMCTower("MMC", this))
-			.add(new NCPTower("NCP", this))
-			.add(new PolarTower("Polar", this))
 			.setDefault("Disabled");
 
-	public final ModeValue sameYValue = new ModeValue("Same Y", this)
+	public final ModeValue sameYValue = new ModeValue("Same Y", this, () -> !rotationMode.is("Snap") && !rotationMode.is("Normal") && !rotationMode.is("Telly"))
 			.add(new SubMode("Off"))
 			.add(new SubMode("On"))
 			.add(new SubMode("Auto Jump"))
 			.setDefault("Off");
 	
-    private final StringValue macroKey = new StringValue("Macro Key:", this, "Y");
+    private final StringValue macroKey = new StringValue("Macro Key:", this, "Y", () -> !rotationMode.is("Snap") && !rotationMode.is("Normal"));
 
 	public final ModeValue downwards = new ModeValue("Downwards (Press Sneak)", this)
 			.add(new SubMode("Off"))
@@ -125,18 +114,20 @@ public class Scaffold extends Module {
 	public final BoundsNumberValue sneakEvery = new BoundsNumberValue("Sneak every x blocks", this, 1, 1, 1, 10, 1, () -> !sneak.getValue());
 	public final NumberValue sneakingSpeed = new NumberValue("Sneaking Speed", this, 0.2, 0.2, 1, 0.05, () -> !sneak.getValue());
 
-	private final BooleanValue advanced = new BooleanValue("Advanced", this, false);
+	private final DescValue advanced = new DescValue("Advanced:", this);
+	private final BooleanValue grim = new BooleanValue("Snap for grim", this, false, () -> !rotationMode.is("Snap"));
+	private final BooleanValue useBiggestStack = new BooleanValue("Use Biggest Stack", this, true);
 
-	public final ModeValue yawOffset = new ModeValue("Yaw Offset", this, () -> !advanced.getValue())
+	public final ModeValue yawOffset = new ModeValue("Yaw Offset", this)
 			.add(new SubMode("0"))
 			.add(new SubMode("45"))
 			.add(new SubMode("-45"))
 			.setDefault("0");
 	
-	private final NumberValue blockToClutch = new NumberValue("Blocks To Clutch", this, 5, 4, 10, 1, () -> !advanced.getValue());
-	private final NumberValue yawOffsetRandomization = new NumberValue("Yaw Offset Randomization", this, 5, 5, 360, 5, () -> !advanced.getValue());
+	private final NumberValue blockToClutch = new NumberValue("Blocks To Clutch", this, 5, 4, 10, 1);
+	private final NumberValue yawOffsetRandomization = new NumberValue("Yaw Offset Randomization", this, 5, 5, 360, 5);
 
-	public final BooleanValue ignoreSpeed = new BooleanValue("Ignore Speed Effect", this, false, () -> !advanced.getValue());
+	public final BooleanValue ignoreSpeed = new BooleanValue("Ignore Speed Effect", this, false);
 	private Vec3 targetBlock;
 	private EnumFacingOffset enumFacing;
 	public Vec3i offset = new Vec3i(0, 0, 0);
@@ -154,11 +145,9 @@ public class Scaffold extends Module {
 	private int pause;
 	public int recursions, recursion;
 	public double startY;
-	private int slot;
+	private int lastSlot;
 	private boolean canPlace;
 	private boolean sameY;
-	private int directionalChange;
-	private int blockCount;
 
 	@Override
 	public void onEnable() {
@@ -170,7 +159,7 @@ public class Scaffold extends Module {
 
 		startY = Math.floor(mc.player.posY);
 		targetBlock = null;
-		slot = mc.player.inventory.currentItem;
+		lastSlot = -1;
 		this.sneakingTicks = 0;
 		recursions = 0;
 		placements = 0;
@@ -178,13 +167,17 @@ public class Scaffold extends Module {
 
 	@Override
 	public void onDisable() {
-        if (slot != mc.player.inventory.currentItem)
-            PacketUtil.sendNoEvent(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
+        if (lastSlot != -1) {
+            getComponent(Slot.class).setSlot(lastSlot);
+            lastSlot = -1;
+        }
 		resetBinds();
 	}
 
 	@EventLink
 	public final Listener<KeyboardInputEvent> onKeyboard = event -> {
+		if (rotationMode.is("Telly")) return;
+		
 	    try {
 	        String keyFieldName = "KEY_" + macroKey.getValue().toUpperCase();
 	        
@@ -208,7 +201,22 @@ public class Scaffold extends Module {
 	
 	@EventLink
 	public final Listener<PreStrafeEvent> onStrafe = event -> {
-		this.runMode();
+		if (tower.is("Polar")) {
+	        if (!mc.gameSettings.keyBindJump.isKeyDown()) {
+	            return;
+	        }
+
+	        if(mc.player.onGround) {
+	            mc.player.jump();
+	            mc.player.motionY = 0.39;
+	        }
+		}
+		
+		if (rotationMode.is("Telly")) {
+			if (mc.player.onGround && MoveUtil.isMoving()) {
+				mc.player.jump();
+			}
+		}
 
 		if (!Objects.equals(yawOffset.getValue().getName(), "0") && !movementCorrection.getValue()) {
 			MoveUtil.useDiagonalSpeed();
@@ -271,22 +279,22 @@ public class Scaffold extends Module {
 				}
 			}
 
-			// Same Y
 			sameY = ((!this.sameYValue.is("Off") || this.getModule(Speed.class).isEnabled()) && !mc.gameSettings.keyBindJump.isKeyDown()) && MoveUtil.isMoving();
 
-			// Getting ItemSlot
-	        
-	        if (slot == -1) {
-	        	slot = getComponent(Slot.class).getItemIndex();
+	        if (lastSlot == -1) {
+	        	lastSlot = getComponent(Slot.class).getItemIndex();
 	        }
 	        
-	        if (getComponent(Slot.class).getItemStack() == null || !(getComponent(Slot.class).getItemStack().getItem() instanceof ItemBlock)) {
+	        int slot = getComponent(Slot.class).getItemIndex();
+	        
+	        if (useBiggestStack.getValue()) {
+	        	slot = getSlot();
+	        } else if (getComponent(Slot.class).getItemStack() == null || !(getComponent(Slot.class).getItemStack().getItem() instanceof ItemBlock) || !InventoryUtil.canBePlaced((ItemBlock) getComponent(Slot.class).getItemStack().getItem())) {
 	        	slot = getSlot();
 	        }
 	        
-	        getComponent(Slot.class).setSlotDelayed(slot, mc.player.offGroundTicks > 5 || ticksOnAir > 0 || sprint.is("Normal"));
-	        
-			// Used to detect when to place a block, if over air, allow placement of blocks
+	        getComponent(Slot.class).setSlot(slot);
+	        	        
 			if (doesNotContainBlock(1) && (!sameY || (doesNotContainBlock(2) && doesNotContainBlock(3) && doesNotContainBlock(4)))) {
 				ticksOnAir++;
 			} else {
@@ -298,7 +306,6 @@ public class Scaffold extends Module {
 			if (recursion == 0)
 				this.calculateSneaking();
 
-			// Gets block to place
 			targetBlock = PlayerUtil.getPlacePossibility(blockToClutch.getValue().intValue(), offset.getX(), offset.getY(), offset.getZ(),
 					sameY ? (int) Math.floor(startY) : null);
 
@@ -306,7 +313,6 @@ public class Scaffold extends Module {
 				return;
 			}
 			
-			// Gets EnumFacing
 			enumFacing = PlayerUtil.getEnumFacing(targetBlock, offset.getY() < 0);
 
 			if (enumFacing == null) {
@@ -437,7 +443,7 @@ public class Scaffold extends Module {
 		MovementFix movementFix = this.movementCorrection.getValue() ? MovementFix.SILENT : MovementFix.OFF;
 
 		/* Calculating target rotations */
-		switch (mode.getValue().getName()) {
+		switch (rotationMode.getValue().getName()) {
 		case "Normal":
 			mc.entityRenderer.getMouseOver(1);
 
@@ -458,7 +464,10 @@ public class Scaffold extends Module {
 		            RotationComponent.rotations, enumFacing.getEnumFacing(), blockFace, rayCast.is("Normal"));
 
 		        if (!isAirTick)
-		            targetYaw = (float) Math.toDegrees(MoveUtil.direction(mc.player.rotationYaw, forward, strafe)) - yawOffset;
+		        	
+		        	if (grim.getValue()) {
+			            targetYaw += (float) ((Math.random() - 0.5) * 0.2);		        		
+		        	} else targetYaw = (float) Math.toDegrees(MoveUtil.direction(mc.player.rotationYaw, forward, strafe)) - yawOffset;
 		        
 
 		        if (PlayerUtil.isOverAir()) {
@@ -478,86 +487,19 @@ public class Scaffold extends Module {
 		    }
 		    break;
 
-		case "Breesily":
-			if (canPlace) {
-				if (enumFacing.getEnumFacing() == EnumFacing.UP) {
-					targetPitch = 90;
-				} else {
-					double staticYaw = (float) (Math.toDegrees(Math.atan2(enumFacing.getOffset().zCoord, enumFacing.getOffset().xCoord)) % 360) - 90;
-					double staticPitch = 80;
-
-					targetYaw = (float) staticYaw + yawDrift;
-					targetPitch = (float) staticPitch + pitchDrift;
-				}
-			} else if (Math.random() > 0.99 || targetPitch % 90 == 0) {
-				yawDrift = (float) (Math.random() - 0.5);
-				pitchDrift = (float) (Math.random() - 0.5);
-			}
-
-			if (mc.gameSettings.keyBindForward.isKeyDown() && !mc.gameSettings.keyBindJump.isKeyDown()) {
-				double offset = 0;
-				double speed = 0;
-
-				switch (mc.player.getHorizontalFacing()) {
-				case NORTH:
-					offset = mc.player.posX - Math.floor(mc.player.posX);
-					speed = mc.player.motionZ;
-					break;
-
-				case EAST:
-					offset = mc.player.posZ - Math.floor(mc.player.posZ);
-					speed = mc.player.motionX;
-					break;
-
-				case SOUTH:
-					offset = 1 - (mc.player.posX - Math.floor(mc.player.posX));
-					speed = mc.player.motionZ;
-					break;
-
-				case WEST:
-					offset = 1 - (mc.player.posZ - Math.floor(mc.player.posZ));
-					speed = mc.player.motionX;
-					break;
-				default:
-					break;
-				}
-
-				speed = Math.abs(speed);
-
-				float smoothFactor = 0.5f;
-				float targetOffset = 0.5f;
-
-				offset += (targetOffset - offset) * smoothFactor;
-
-				if (speed < 0.1 && Math.abs(offset - 0.5) < 0.4 && placeDelay.getSecondValue().intValue() <= 1) {
-				} else if (offset < 0.5 + ((Math.random() - 0.5) / 10)) {
-				    mc.gameSettings.keyBindLeft.setPressed(false);
-				    mc.gameSettings.keyBindRight.setPressed(true);
-				} else {
-				    mc.gameSettings.keyBindRight.setPressed(false);
-				    mc.gameSettings.keyBindLeft.setPressed(true);
-				}
-			}
-
-			break;
-
 		case "Legit":
 		    if (canPlace && !mc.gameSettings.keyBindPickBlock.isKeyDown()) {
 		        if (mc.objectMouseOver.sideHit != enumFacing.getEnumFacing()
 		                || !mc.objectMouseOver.getBlockPos().equals(blockFace)) {
-		     
+
 				    float yaw = (mc.player.rotationYaw + 10000000) % 360;
 				    float staticYaw = (yaw - 180) - (yaw % 90) + 45;
-				    float staticPitch = 79;
+				    float staticPitch = 75;
 
 				    boolean straight = (Math.min(Math.abs(yaw % 90), Math.abs(90 - yaw) % 90) < Math
 				            .min(Math.abs(yaw + 45) % 90, Math.abs(90 - (yaw + 45)) % 90));
 
-				    if (straight
-				            && RayCastUtil.rayCast(new Vector2f(staticYaw + 90, staticPitch),
-				                    3).typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK
-				            && RayCastUtil.rayCast(new Vector2f(staticYaw, staticPitch),
-				                    3).typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) {
+				    if (straight && RayCastUtil.rayCast(new Vector2f(staticYaw + 90, staticPitch), 30).typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && RayCastUtil.rayCast(new Vector2f(staticYaw, staticPitch), 3).typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) {
 				        staticYaw += 90;
 				    }
 
@@ -597,61 +539,10 @@ public class Scaffold extends Module {
 				}
 			}
 			break;
-
-		case "Godbridge":
-			if (getComponent(Slot.class).getItem() instanceof ItemBlock && canPlace) {
-				mc.rightClickMouse();
-			}
-
-			targetYaw = (mc.player.rotationYaw - mc.player.rotationYaw % 90) - 180
-					+ 45 * (mc.player.rotationYaw > 0 ? 1 : -1);
-			targetPitch = 76.4f;
-
-			movementFix = MovementFix.STRICT;
-
-			double spacing = 0.15;
-			boolean edgeX = Math.abs(mc.player.posX % 1) > 1 - spacing || Math.abs(mc.player.posX % 1) < spacing;
-			boolean edgeZ = Math.abs(mc.player.posZ % 1) > 1 - spacing || Math.abs(mc.player.posZ % 1) < spacing;
-
-			mc.gameSettings.keyBindRight.setPressed((edgeX && edgeZ) || (Keyboard.isKeyDown(mc.gameSettings.keyBindLeft.getKeyCode())));
-			mc.gameSettings.keyBindBack.setPressed(Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode()));
-			mc.gameSettings.keyBindForward.setPressed(Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode()));
-			mc.gameSettings.keyBindLeft.setPressed(Keyboard.isKeyDown(mc.gameSettings.keyBindRight.getKeyCode()));
-
-			directionalChange++;
-			if (Math.abs(
-					MathHelper.wrapAngleTo180_double(targetYaw - RotationComponent.lastServerRotations.getX())) > 10) {
-				directionalChange = (int) (Math.random() * 4);
-				yawDrift = (float) (Math.random() - 0.5) / 10f;
-				pitchDrift = (float) (Math.random() - 0.5) / 10f;
-			}
-
-			if (Math.random() > 0.99) {
-				yawDrift = (float) (Math.random() - 0.5) / 10f;
-				pitchDrift = (float) (Math.random() - 0.5) / 10f;
-			}
-
-			if (directionalChange <= 10) {
-				mc.gameSettings.keyBindSneak.setPressed(true);
-			} else if (directionalChange == 11) {
-				mc.gameSettings.keyBindSneak.setPressed(false);
-			}
-
-			targetYaw += yawDrift;
-			targetPitch += pitchDrift;
-			break;
 		}
 
 		if (rotationSpeed != 0 && blockFace != null && enumFacing != null) {
 			RotationComponent.setRotations(new Vector2f(targetYaw, targetPitch), rotationSpeed, movementFix);
-		}
-	}
-
-	public void runMode() {
-		if (this.mode.is("Telly")) {
-			if (mc.player.onGround && MoveUtil.isMoving()) {
-				mc.player.jump();
-			}
 		}
 	}
 
@@ -714,11 +605,10 @@ public class Scaffold extends Module {
 			PacketUtil.send(new C0APacketAnimation());
 		}
 	}
-
+	
 	public void getRotations(final int yawOffset) {
 		EntityPlayer player = mc.player;
-		double difference = player.posY + player.getEyeHeight() - targetBlock.yCoord - 0.5
-				- (Math.random() - 0.5) * 0.1;
+		double difference = player.posY + player.getEyeHeight() - targetBlock.yCoord - 0.5 - (Math.random() - 0.5) * 0.1;
 
 		MovingObjectPosition movingObjectPosition = null;		
 		for (int offset = -180 + yawOffset; offset <= 180; offset += yawOffsetRandomization.getValue().intValue()) {

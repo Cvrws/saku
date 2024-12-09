@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.world;
+package cc.unknown.module.impl.latency;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -23,7 +23,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C00PacketKeepAlive;
 import net.minecraft.network.play.server.S00PacketKeepAlive;
 
-@ModuleInfo(aliases = "Ping Spoof", description = "Simula un estado de conexión muy alto", category = Category.WORLD)
+@ModuleInfo(aliases = "Ping Spoof", description = "Simula un estado de conexión muy alto", category = Category.LATENCY)
 public class PingSpoof extends Module {
 	
 	private final NumberValue delay = new NumberValue("Delay", this, 150, 50, 2000, 50);

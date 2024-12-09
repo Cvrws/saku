@@ -67,9 +67,6 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
     private BaseAttributeMap attributeMap;
     private final CombatTracker _combatTracker = new CombatTracker(this);
     private final Map<Integer, PotionEffect> activePotionsMap = Maps.newHashMap();
-    public int realPosX;
-    public int realPosY;
-    public int realPosZ;
 
     /**
      * The equipment this mob was previously wearing, used for syncing.

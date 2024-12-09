@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.combat;
+package cc.unknown.module.impl.latency;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -22,7 +22,7 @@ import net.minecraft.network.NetworkManager.InboundHandlerTuplePacketListener;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S14PacketEntity;
 
-@ModuleInfo(aliases = "Back Track", description = "Utiliza la latencia para atacar desde más lejos", category = Category.COMBAT)
+@ModuleInfo(aliases = "Back Track", description = "Utiliza la latencia para atacar desde más lejos", category = Category.LATENCY)
 public final class BackTrack extends Module {
 	private final BoundsNumberValue client = new BoundsNumberValue("Delay", this, 100, 200, 0, 500, 1);
 	private final List<Packet<?>> packets = new CopyOnWriteArrayList<>();
