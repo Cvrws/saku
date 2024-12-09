@@ -43,7 +43,7 @@ public class AutoClicker extends Module {
 			.add(new SubMode("Both"))
 			.setDefault("Left");
 
-	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 8, 14, 1, 20, 1);
+	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 8, 14, 1, 40, 1);
 
 	private final BooleanValue breakBlocks = new BooleanValue("Break Blocks", this, true, () -> !isButtonClick());
 	private final BooleanValue guiClicker = new BooleanValue("Gui Clicker", this, false, () -> !isButtonClick());

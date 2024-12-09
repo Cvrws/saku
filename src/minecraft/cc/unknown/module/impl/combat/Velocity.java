@@ -26,8 +26,7 @@ public final class Velocity extends Module {
 			.add(new SubMode("Simple"))
 			.add(new SubMode("Legit"))
 			.add(new SubMode("Polar"))
-			.add(new SubMode("Polar Drunk"))
-			.setDefault("Simple");
+			.setDefault("Polar");
 
 	public final NumberValue horizontal = new NumberValue("Horizontal", this, 0, 0, 100, 1, () -> !mode.is("Simple"));
 	public final NumberValue vertical = new NumberValue("Vertical", this, 0, 0, 100, 1, () -> !mode.is("Simple"));
@@ -54,50 +53,7 @@ public final class Velocity extends Module {
 	    if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
 
 		switch (mode.getValue().getName()) {
-		case "Polar Drunk":
-			if (mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null && mc.player.hurtTime == 9 && !mc.player.isBurning()) {
-				reduced = true;
-			} else
-				reduced = false;
-			break;
 		case "Polar":
-			if (mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null && mc.player.hurtTime == 9 && !mc.player.isBurning()) {
-				reduced = true;
-			} else
-				reduced = false;
-			break;
-		}
-	};
-	@EventLink
-	public final Listener<PreLivingUpdateEvent> onPreLiving = event -> {
-		if (shouldSkipUpdate()) return;
-		
-		double chanceValue = chance.getValue().doubleValue();
-		double randomFactor = MathUtil.getRandomFactor(chanceValue);
-		
-		if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
-		
-		switch (mode.getValue().getName()) {
-		case "Polar Drunk":
-			if (mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null && mc.player.hurtTime == 9 && !mc.player.isBurning()) {
-				reduced = true;
-			} else
-				reduced = false;
-			break;
-		}
-	};
-	
-	@EventLink
-	public final Listener<PostUpdateEvent> onPostUpdate = event -> {
-		if (shouldSkipUpdate()) return;
-		
-		double chanceValue = chance.getValue().doubleValue();
-		double randomFactor = MathUtil.getRandomFactor(chanceValue);
-		
-		if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
-		
-		switch (mode.getValue().getName()) {
-		case "Polar Drunk":
 			if (mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null && mc.player.hurtTime == 9 && !mc.player.isBurning()) {
 				reduced = true;
 			} else
@@ -113,10 +69,6 @@ public final class Velocity extends Module {
 		}
 		
 		if (reduced && mode.is("Polar")) {
-			event.setJump(true);
-		}
-		
-		if (reduced && mode.is("Polar Drunk")) {
 			event.setJump(true);
 		}
 	};
@@ -151,11 +103,6 @@ public final class Velocity extends Module {
 					event.setPacket(wrapper);
 					break;
 				case "Polar":
-					if (reduced) {
-						mc.player.jump();
-					}
-					break;
-				case "Polar Drunk":
 					if (reduced) {
 						mc.player.jump();
 					}
