@@ -27,7 +27,7 @@ public final class Script extends Command {
         if (args.length > 3) {
             script = scriptManager.getScript(args[2]);
             if (script == null) {
-            	PlayerUtil.display("File not found", args[2]);
+            	error("File not found " + args[2]);
                 return;
             }
         } else script = null;
@@ -56,19 +56,19 @@ public final class Script extends Command {
                         File dirToOpen = new File(String.valueOf(ScriptManager.SCRIPT_DIRECTORY));
                         desktop.open(dirToOpen);
                     } catch (IllegalArgumentException | IOException exception) {
-                    	PlayerUtil.display("Script directory not found");
+                    	error("Script directory not found");
                     }
                     break;
             }
 
-            PlayerUtil.display(
+            success(
                     "Successfully " + action + "ed "
                             + (script == null ? "all scripts" : "\"" + script.getName() + "\"")
                             + "."
             );
         } catch (final Exception ex) {
             ex.printStackTrace();
-            PlayerUtil.display("Failed to " + action + " a script. Stacktrace printed.");
+            error("Failed to " + action + " a script. Stacktrace printed.");
         }
     }
 }

@@ -22,6 +22,6 @@ public final class Help extends Command {
     public void execute(final String[] args) {
     	String prefix = yellow + "[" + red + "*" + yellow + "]" + reset + " ";
         getInstance().getCommandManager().getCommandList()
-                .forEach(command -> PlayerUtil.display(prefix + StringUtils.capitalize(command.getExpressions()[0]) + " " + Arrays.toString(command.getExpressions()) + ": " + gray + command.getDescription()));
+                .forEach(command -> success(prefix + StringUtils.capitalize(command.getExpressions()[0]) + " " + Arrays.toString(command.getExpressions()) + ": " + gray + command.getDescription()));
     }
 }

@@ -15,7 +15,7 @@ public final class Target extends Command {
 	        String action = args[1].toLowerCase();
 	        switch (action) {
 	            case "list":
-	            	PlayerUtil.display(getTargetList());
+	            	success(getTargetList());
 	                break;
 	            case "clear":
 	            	getInstance().getEnemyManager().removeEnemy();
@@ -31,12 +31,12 @@ public final class Target extends Command {
 	        switch (action) {
 	            case "add":
 	                getInstance().getEnemyManager().addEnemy(target);
-	                PlayerUtil.display(String.format("Added %s to target list", target));
+	                success(String.format("Added %s to target list", target));
 	                break;
 
 	            case "remove":
 	                getInstance().getEnemyManager().removeEnemy(target);
-	                PlayerUtil.display(String.format("Removed %s from target list", target));
+	                success(String.format("Removed %s from target list", target));
 	                break;
 	        }
 	    } else {
