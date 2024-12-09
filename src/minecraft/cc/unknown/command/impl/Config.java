@@ -37,7 +37,7 @@ public final class Config extends Command {
                         if (config != null) {
                             CompletableFuture.runAsync(() -> {
                                 if (config.read()) {
-                                	PlayerUtil.display("Loaded %s config file!", name);
+                                	success("Loaded " + name + " config file!");
                                 }
                             });
                         }
@@ -61,9 +61,9 @@ public final class Config extends Command {
                             ConfigFile configToRemove = configManager.get(name);
                             if (configToRemove != null && configToRemove.getFile().delete()) {
                                 configManager.update();
-                                PlayerUtil.display("Removed config file: %s", name);
+                                success("Removed config file: " + name);
                             } else {
-                            	PlayerUtil.display("Failed to remove config file: %s", name);
+                            	success("Failed to remove config file: " + name);
                             }
                         });
                         break;
@@ -103,7 +103,7 @@ public final class Config extends Command {
                             desktop.open(dirToOpen);
                             success("Opened config folder");
                         } catch (IllegalArgumentException | IOException iae) {
-                        	PlayerUtil.display("Config file not found!");
+                        	error("Config file not found!");
                         }
                         break;
                 }

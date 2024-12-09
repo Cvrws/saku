@@ -35,8 +35,8 @@ public final class Transaction extends Command {
         
         if (packet instanceof S32PacketConfirmTransaction) {
             final S32PacketConfirmTransaction wrapper = (S32PacketConfirmTransaction) packet;
-            PlayerUtil.display(red + " Transaction " + reset + 
-                " (ID: %s) (WindowID: %s)", wrapper.actionNumber, wrapper.windowId);
+            success(String.format(red + " Transaction " + reset + 
+                " (ID: %s) (WindowID: %s)", wrapper.actionNumber, wrapper.windowId));
         }
     };
 }

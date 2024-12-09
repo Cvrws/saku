@@ -1,5 +1,9 @@
 package cc.unknown.command;
 
+import static cc.unknown.util.client.StreamerUtil.red;
+import static cc.unknown.util.client.StreamerUtil.reset;
+import static cc.unknown.util.client.StreamerUtil.yellow;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,11 +62,11 @@ public final class CommandManager {
         try {
             this.commandList.stream()
                     .filter(command ->
-                            Arrays.stream(command.getExpressions())
-                                    .anyMatch(expression ->
-                                            expression.equalsIgnoreCase(args[0])))
+                    Arrays.stream(command.getExpressions())
+                    .anyMatch(expression ->
+                    expression.equalsIgnoreCase(args[0])))
                     .forEach(command -> {
-                        commandFound.set(true);
+                    	commandFound.set(true);
                         command.execute(args);
                     });
         } catch (final Exception ex) {
@@ -70,7 +74,8 @@ public final class CommandManager {
         }
 
         if (!commandFound.get()) {
-        	PlayerUtil.display("Unknown command! Try .help if you're lost");
+        	String error = "Unknown command! Try .help if you're lost";
+        	PlayerUtil.display(yellow + "[" + red + "%" + yellow + "] " + reset + error); 
         }
 
         event.setCancelled();

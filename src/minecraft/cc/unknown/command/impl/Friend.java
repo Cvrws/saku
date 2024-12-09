@@ -15,7 +15,7 @@ public final class Friend extends Command {
 	        String action = args[1].toLowerCase();
 	        switch (action) {
 	            case "list":
-	            	PlayerUtil.display(getFriendList());
+	            	success(getFriendList());
 	                break;
 	            case "clear":
 	            	getInstance().getFriendManager().removeFriends();
@@ -31,12 +31,12 @@ public final class Friend extends Command {
 	        switch (action) {
 	            case "add":
 	                getInstance().getFriendManager().addFriend(target);
-	                PlayerUtil.display(String.format("Added %s to friends list", target));
+	                success(String.format("Added %s to friends list", target));
 	                break;
 
 	            case "remove":
 	                getInstance().getFriendManager().removeFriend(target);
-	                PlayerUtil.display(String.format("Removed %s from friends list", target));
+	                success(String.format("Removed %s from friends list", target));
 	                break;
 	        }
 	    } else {
