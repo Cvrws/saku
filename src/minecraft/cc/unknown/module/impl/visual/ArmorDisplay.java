@@ -64,28 +64,7 @@ public final class ArmorDisplay extends Module {
 				final RenderItem itemRenderer = mc.getRenderItem();
 				itemRenderer.renderItemAndEffectIntoGUI(item, xPosition - (i * 16), yPosition);
 				itemRenderer.renderItemOverlayIntoGUI(mc.fontRendererObj, item, xPosition - (i * 16), yPosition, null);
-				
 				RenderHelper.disableStandardItemLighting();
-
-				GlStateManager.disableDepth();
-				GlStateManager.pushMatrix();
-				GlStateManager.scale(0.5F, 0.5F, 0.0F);
-
-				int j = 0;
-				for (final Map.Entry<Integer, Integer> entry : EnchantmentHelper.getEnchantments(item).entrySet()) {
-					final EnchantmentProperty enchantmentProperty = EnchantmentProperty.enchantment.get(entry.getKey());
-					if (enchantmentProperty == null) {
-						continue;
-					}
-					final int level = entry.getValue();
-					final TextFormatting levelColor = EnchantmentProperty.getLevelColor(level, enchantmentProperty.getMaxLevel());
-					final String text = TextFormatting.translate(String.format("&r%s%s%d&r", enchantmentProperty.getShortName(), levelColor, level));
-					RenderUtil.drawShadedString(text, (xPosition - (i * 16)) * 2, (yPosition + (j * 4)) * 2, -1);
-					++j;
-				}
-
-				GlStateManager.popMatrix();
-				GlStateManager.enableDepth();
 			}
 		}
 	};

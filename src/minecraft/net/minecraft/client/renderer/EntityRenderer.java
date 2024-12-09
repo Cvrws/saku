@@ -1249,13 +1249,13 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 	             this.smoothCamPartialTicks = partialTicks;
 	             f2 = this.smoothCamFilterX * f4;
 	             f3 = this.smoothCamFilterY * f4;
-	             this.mc.player.setAngles(f2, f3 * (float)i);
 	          } else {
 	             this.smoothCamYaw = 0.0F;
 	             this.smoothCamPitch = 0.0F;
-	             this.mc.player.setAngles(f2, f3 * (float)i);
 	          }
 			
+             this.mc.player.setAngles(f2, f3 * (float)i);
+
 	         RotationEvent event = new RotationEvent();
 	         Sakura.instance.getEventBus().handle(event);
 		}
@@ -1689,7 +1689,6 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 				Shaders.beginLitParticles();
 			}
 
-//            effectrenderer.renderLitParticles(entity, partialTicks);
 			RenderHelper.disableStandardItemLighting();
 			this.setupFog(0, partialTicks);
 			this.mc.mcProfiler.endStartSection("particles");

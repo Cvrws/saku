@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.event.impl.render.RenderLabelEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
@@ -18,6 +19,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemArmor;
@@ -32,13 +34,12 @@ public final class NameTags extends Module {
 	private final BoundsNumberValue distance = new BoundsNumberValue("Distance", this, 2, 6, 1, 7, 0.1);
 	private final NumberValue scale = new NumberValue("Scale", this, 4.5, 0.1, 10, 0.1);
 	private final BooleanValue selfTag = new BooleanValue("Self Tag", this, true);
-	private final BooleanValue durability = new BooleanValue("Durability", this, false);
 	private final BooleanValue background = new BooleanValue("Background", this, false);
 	private final BooleanValue armor = new BooleanValue("Armor", this, false);
 	private final BooleanValue checkInvis = new BooleanValue("Show Invisibles", this, false);
 
 	@EventLink
-	public final Listener<RenderLabelEvent> onRender2D = event -> {
+	public final Listener<RenderLabelEvent> onRenderLabel = event -> {
         if (event.getTarget() instanceof EntityPlayer && ((EntityPlayer)event.getTarget()).deathTime == 0 && (checkInvis.getValue() || !((EntityPlayer)event.getTarget()).isInvisible())) {
             EntityPlayer player = (EntityPlayer) event.getTarget();
             String name = player.getDisplayName().getFormattedText();
@@ -54,71 +55,80 @@ public final class NameTags extends Module {
 	};
 	
 	private void renderNewTag(RenderLabelEvent event, EntityPlayer player, String name) {
-		float nameWidth = mc.fontRendererObj.width(name);
-        double scaleRatio = (double) (getSize(player) / 10.0F * scale.getValue().doubleValue()) * 1.5D;
-        float scale = 0.02666667F;
-        
+	    float nameWidth = mc.fontRendererObj.width(name);
+	    double scaleRatio;
+	    float scale = 0.02666667F;
+	    
+	    if (player == mc.player) {
+	        scaleRatio = 1.0D;
+	    } else {
+	        scaleRatio = (double) (getSize(player) / 10.0F * this.scale.getValue().doubleValue()) * 1.5D;
+	    }
+	    
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) event.getX() + 0.0F, (float) event.getY() + player.height + 0.5F, (float) event.getZ());
         GlStateManager.rotate(-mc.getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(mc.getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
         GlStateManager.scale(-scale * scaleRatio, -scale * scaleRatio, scale * scaleRatio);
-        		
-        if (player.isSneaking()) {
-            GlStateManager.translate(0.0F, 9.374999F, 0.0F);
-        }
-        
-        if (background.getValue()) {
-        	RenderUtil.roundedRect(-nameWidth / 2 - 4, -4.0F, nameWidth - 20, mc.fontRendererObj.FONT_HEIGHT + 1, 6, getTheme().getBackgroundShade().getRGB());
-        }
-        
+	        		
+	    if (player.isSneaking() || mc.player.isSneaking()) {
+	        GlStateManager.translate(0.0F, 9.374999F, 0.0F);
+	    }
+	    
 		GL11.glColor4d(1.0D, 1.0D, 1.0D, 1.0D);
 		if (armor.getValue()) {
 			renderArmor(player);
 		}
+	    
+	    if (background.getValue()) {
+	        float backgroundWidth = nameWidth + 12;
+	        float backgroundHeight = mc.fontRendererObj.FONT_HEIGHT + 2;
+	        RenderUtil.roundedRect(-backgroundWidth / 2 + 1 , -4.0F, backgroundWidth / 2 - 3, backgroundHeight, 6, getTheme().getBackgroundShade().getRGB());
+	    }
 
         GlStateManager.disableLighting();
         GlStateManager.depthMask(false);
         GlStateManager.disableDepth();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        mc.fontRendererObj.drawWithShadow(name, -nameWidth / 2, 0, -1);
+        mc.fontRendererObj.draw(name, -nameWidth / 2, 0, -1);
 		
         GlStateManager.enableDepth();
         GlStateManager.depthMask(true);
         GlStateManager.enableLighting();
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
+        
+		RenderHelper.disableStandardItemLighting();
+		mc.entityRenderer.disableLightmap();
 	}
 	
 	private void renderItem(final ItemStack stack, final int x, final int y) {
-		GlStateManager.pushMatrix();
-		GlStateManager.depthMask(true);
-		GlStateManager.clear(256);
-		RenderHelper.enableStandardItemLighting();
-		mc.getRenderItem().zLevel = -150.0F;
-		GlStateManager.disableDepth();
-		GlStateManager.disableTexture2D();
-		GlStateManager.enableBlend();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableTexture2D();
-		GlStateManager.enableLighting();
-		GlStateManager.enableDepth();
-		mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
-		mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, stack, x, y);
-		mc.getRenderItem().zLevel = 0.0F;
-		RenderHelper.disableStandardItemLighting();
-		GlStateManager.disableCull();
-		GlStateManager.enableAlpha();
-		GlStateManager.disableBlend();
-		GlStateManager.disableLighting();
-		GlStateManager.scale(0.5D, 0.5D, 0.5D);
-		GlStateManager.disableDepth();
-		renderEnchantText(stack, x, y);
-		GlStateManager.enableDepth();
-		GlStateManager.scale(2.0F, 2.0F, 2.0F);
-		GlStateManager.popMatrix();
-    }
+	    GlStateManager.pushMatrix();
+
+	    try {
+	        GlStateManager.enableBlend();
+	        GlStateManager.enableAlpha();
+	        RenderHelper.enableStandardItemLighting();
+	        mc.getRenderItem().zLevel = -150.0F;
+
+	        GlStateManager.disableDepth();
+	        mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
+	        mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, stack, x, y);
+	        mc.getRenderItem().zLevel = 0.0F;
+	        RenderHelper.disableStandardItemLighting();
+
+	        renderEnchantText(stack, x, y);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        GlStateManager.disableBlend();
+	        GlStateManager.disableAlpha();
+	        GlStateManager.enableDepth();
+	        GlStateManager.popMatrix();
+	    }
+	}
 	
 	private void renderArmor(EntityPlayer player) {
 		ItemStack[] armor = player.inventory.armorInventory;
@@ -151,7 +161,8 @@ public final class NameTags extends Module {
 			}
 		}
 
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderHelper.disableStandardItemLighting();
+		mc.entityRenderer.disableLightmap();
 	}
 	
 	private void renderEnchantText(ItemStack stack, int x, int y) {
@@ -169,10 +180,6 @@ public final class NameTags extends Module {
 				int thornsLvl = EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, stack);
 				int remainingDurability = stack.getMaxDamage() - stack.getItemDamage();
 				
-				if (durability.getValue()) {
-					mc.fontRendererObj.drawWithShadow(String.valueOf(remainingDurability), (float) (x * 2), (float) y, 16777215);
-				}
-
 			    String[] enchantments = {"prot" + protection, "proj" + projectileProtection, "bp" + blastProtectionLvL, "frp" + fireProtection, "th" + thornsLvl, "unb" + unbreakingLvl};
 			    
 			    for (String enchantment : enchantments) {

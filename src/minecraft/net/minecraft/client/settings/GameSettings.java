@@ -79,10 +79,6 @@ public class GameSettings {
     private static final String[] GUISCALES = new String[]{"options.guiScale.auto", "options.guiScale.small", "options.guiScale.normal", "options.guiScale.large"};
     private static final String[] PARTICLES = new String[]{"options.particles.all", "options.particles.decreased", "options.particles.minimal"};
     private static final String[] AMBIENT_OCCLUSIONS = new String[]{"options.ao.off", "options.ao.min", "options.ao.max"};
-    private static final String[] STREAM_COMPRESSIONS = new String[]{"options.stream.compression.low", "options.stream.compression.medium", "options.stream.compression.high"};
-    private static final String[] STREAM_CHAT_MODES = new String[]{"options.stream.chat.enabled.streaming", "options.stream.chat.enabled.always", "options.stream.chat.enabled.never"};
-    private static final String[] STREAM_CHAT_FILTER_MODES = new String[]{"options.stream.chat.userFilter.all", "options.stream.chat.userFilter.subs", "options.stream.chat.userFilter.mods"};
-    private static final String[] STREAM_MIC_MODES = new String[]{"options.stream.mic_toggle.mute", "options.stream.mic_toggle.talk"};
     private static final String[] field_181149_aW = new String[]{"options.off", "options.graphics.fast", "options.graphics.fancy"};
     public float mouseSensitivity = 0.5F;
     public boolean invertMouse;
@@ -138,17 +134,6 @@ public class GameSettings {
     public boolean showInventoryAchievementHint = true;
     public int mipmapLevels = 4;
     private final Map<SoundCategory, Float> mapSoundLevels = Maps.newEnumMap(SoundCategory.class);
-    public float streamBytesPerPixel = 0.5F;
-    public float streamMicVolume = 1.0F;
-    public float streamGameVolume = 1.0F;
-    public float streamKbps = 0.5412844F;
-    public float streamFps = 0.31690142F;
-    public int streamCompression = 1;
-    public boolean streamSendMetadata = true;
-    public String streamPreferredServer = "";
-    public int streamChatEnabled = 0;
-    public int streamChatUserFilter = 0;
-    public int streamMicToggleBehavior = 0;
     public boolean field_181150_U = true;
     public boolean field_181151_V = true;
     public boolean field_183509_X = true;
@@ -952,51 +937,6 @@ public class GameSettings {
                                     this.mipmapLevels = Integer.parseInt(astring[1]);
                                     break;
 
-                                case "streamBytesPerPixel":
-                                    this.streamBytesPerPixel = this.parseFloat(astring[1]);
-                                    break;
-
-                                case "streamMicVolume":
-                                    this.streamMicVolume = this.parseFloat(astring[1]);
-                                    break;
-
-                                case "streamSystemVolume":
-                                    this.streamGameVolume = this.parseFloat(astring[1]);
-                                    break;
-
-                                case "streamKbps":
-                                    this.streamKbps = this.parseFloat(astring[1]);
-                                    break;
-
-                                case "streamFps":
-                                    this.streamFps = this.parseFloat(astring[1]);
-                                    break;
-
-                                case "streamCompression":
-                                    this.streamCompression = Integer.parseInt(astring[1]);
-                                    break;
-
-                                case "streamSendMetadata":
-                                    this.streamSendMetadata = astring[1].equals("true");
-                                    break;
-
-                                case "streamPreferredServer":
-                                    if (astring.length >= 2)
-                                        this.streamPreferredServer = s.substring(s.indexOf(58) + 1);
-                                    break;
-
-                                case "streamChatEnabled":
-                                    this.streamChatEnabled = Integer.parseInt(astring[1]);
-                                    break;
-
-                                case "streamChatUserFilter":
-                                    this.streamChatUserFilter = Integer.parseInt(astring[1]);
-                                    break;
-
-                                case "streamMicToggleBehavior":
-                                    this.streamMicToggleBehavior = Integer.parseInt(astring[1]);
-                                    break;
-
                                 case "forceUnicodeFont":
                                     this.forceUnicodeFont = astring[1].equals("true");
                                     break;
@@ -1137,17 +1077,6 @@ public class GameSettings {
             printwriter.println("chatWidth:" + this.chatWidth);
             printwriter.println("showInventoryAchievementHint:" + this.showInventoryAchievementHint);
             printwriter.println("mipmapLevels:" + this.mipmapLevels);
-            printwriter.println("streamBytesPerPixel:" + this.streamBytesPerPixel);
-            printwriter.println("streamMicVolume:" + this.streamMicVolume);
-            printwriter.println("streamSystemVolume:" + this.streamGameVolume);
-            printwriter.println("streamKbps:" + this.streamKbps);
-            printwriter.println("streamFps:" + this.streamFps);
-            printwriter.println("streamCompression:" + this.streamCompression);
-            printwriter.println("streamSendMetadata:" + this.streamSendMetadata);
-            printwriter.println("streamPreferredServer:" + this.streamPreferredServer);
-            printwriter.println("streamChatEnabled:" + this.streamChatEnabled);
-            printwriter.println("streamChatUserFilter:" + this.streamChatUserFilter);
-            printwriter.println("streamMicToggleBehavior:" + this.streamMicToggleBehavior);
             printwriter.println("forceUnicodeFont:" + this.forceUnicodeFont);
             printwriter.println("allowBlockAlternatives:" + this.allowBlockAlternatives);
             printwriter.println("reducedDebugInfo:" + this.reducedDebugInfo);

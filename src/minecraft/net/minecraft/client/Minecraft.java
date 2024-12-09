@@ -1931,9 +1931,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 							}
 
 							if (this.gameSettings.keyBindTogglePerspective.isPressed()) {
-
-								// Don't allow the user to change their persecuting when in Freelook
-								// This eliminates a really awful flickering effect when you do so
 								if (!Sakura.instance.getModuleManager().get(FreeLook.class).isEnabled()) {
 									++this.gameSettings.thirdPersonView;
 

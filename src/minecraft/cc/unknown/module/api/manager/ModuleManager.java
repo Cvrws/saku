@@ -128,6 +128,7 @@ public final class ModuleManager {
         this.put(ArmorDisplay.class, new ArmorDisplay());
         this.put(HUD.class, new HUD());
         this.put(PacketDisplay.class, new PacketDisplay());
+        this.put(KeepTabList.class, new KeepTabList());
         this.put(Invisibles.class, new Invisibles());
         this.put(Trajectories.class, new Trajectories());
         this.put(ItemESP.class, new ItemESP());

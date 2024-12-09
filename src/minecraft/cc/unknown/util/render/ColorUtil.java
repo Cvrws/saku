@@ -23,6 +23,10 @@ public final class ColorUtil {
         final float b = (hex & 0xFF) / 255.0F;
         GL11.glColor4f(r, g, b, a);
     }
+    
+	public void glColor(final float red, final float green, final float blue, final float alpha) {
+	    GL11.glColor4f(red, green, blue, alpha);
+	}
 
     public void glColor(final Color color) {
         GL11.glColor4f(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, color.getAlpha() / 255.0F);

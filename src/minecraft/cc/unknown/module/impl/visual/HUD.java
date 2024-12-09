@@ -29,6 +29,7 @@ import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
+import net.minecraft.client.renderer.RenderGlobal;
 
 @ModuleInfo(aliases = "HUD", description = "Renderiza los modulos del cliente.", category = Category.VISUALS, autoEnabled = true)
 public final class HUD extends Module {

@@ -32,7 +32,6 @@ public class WTap extends Module {
 	private NumberValue hurtTime = new NumberValue("HurtTime", this, 10, 1, 10, 10, () -> !mode.is("Advanced"));
 	private BoundsNumberValue ticksUntilBlock = new BoundsNumberValue("Ticks Until Block", this, 0, 2, 0, 5, 1, () -> !mode.is("Advanced"));
 	private BoundsNumberValue reSprintTicks = new BoundsNumberValue("ReSprint Ticks", this, 0, 2, 0, 5, 1, () -> !mode.is("Advanced"));
-	private NumberValue minEnemyRotDiffToIgnore = new NumberValue("Rotation Diff From Enemy To Ignore", this, 180, 0, 180, 1, () -> !mode.is("Advanced"));
 	private BoundsNumberValue hits = new BoundsNumberValue("Hits", this, 1, 2, 0, 10, 1, () -> !isTwo());
 	private BooleanValue debug = new BooleanValue("Debug", this, false, () -> !isTwo());
 	private BooleanValue onlyGround = new BooleanValue("Only Ground", this, false);
@@ -42,11 +41,11 @@ public class WTap extends Module {
     private final StopWatch stopWatch = new StopWatch();
     private int ticks;
     
-    private int blockInputTicks = MathUtil.nextSecureInt(ticksUntilBlock.getValue().intValue(), ticksUntilBlock.getSecondValue().intValue());
+    private int blockInputTicks = 0;
     private int blockTicksElapsed = 0;
     private boolean startWaiting = false;
     private boolean blockInput = false;
-    private int allowInputTicks = MathUtil.nextSecureInt(reSprintTicks.getValue().intValue(), reSprintTicks.getSecondValue().intValue());
+    private int allowInputTicks = 0;
     private int ticksElapsed = 0;
     
     @EventLink
@@ -90,27 +89,6 @@ public class WTap extends Module {
     		break;
     	}
     };
-    
-    @EventLink
-    public final Listener<PreLivingUpdateEvent> onPreLiving = event -> {
-    	if (mode.is("Advanced")) {
-            if (blockInput) {
-                if (ticksElapsed++ >= allowInputTicks) {
-                    blockInput = false;
-                    ticksElapsed = 0;
-                }
-            } else {
-                if (startWaiting) {
-                    blockInput = blockTicksElapsed++ >= blockInputTicks;
-
-                    if (blockInput) {
-                        startWaiting = false;
-                        blockTicksElapsed = 0;
-                    }
-                }
-            }
-    	}
-    };
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreUpdate = event -> {
@@ -135,6 +113,24 @@ public class WTap extends Module {
                 break;
 	        }
 	    }
+	    
+    	if (mode.is("Advanced")) {
+            if (blockInput) {
+                if (ticksElapsed++ >= allowInputTicks) {
+                    blockInput = false;
+                    ticksElapsed = 0;
+                }
+            } else {
+                if (startWaiting) {
+                    blockInput = blockTicksElapsed++ >= blockInputTicks;
+
+                    if (blockInput) {
+                        startWaiting = false;
+                        blockTicksElapsed = 0;
+                    }
+                }
+            }
+    	}
 
 	    if (ticks > 0) {
 	        ticks--;
