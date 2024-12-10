@@ -15,13 +15,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import org.apache.hc.core5.http.NameValuePair;
-import org.apache.hc.core5.net.URLEncodedUtils;
-
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import cc.unknown.util.socket.NetworkUtil;
+import cc.unknown.util.structure.NameValuePair;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -200,10 +199,11 @@ public class MicrosoftLogin {
 
             if ("GET".equalsIgnoreCase(method)) {
                 URI requestURI = (URI) getRequestURI.invoke(httpExchange);
-                List<NameValuePair> query = URLEncodedUtils.parse(requestURI, StandardCharsets.UTF_8);
+            	String queryString = requestURI.getQuery();
+            	List<NameValuePair> queryParameters = NetworkUtil.parse(queryString, StandardCharsets.UTF_8);
 
                 boolean ok = false;
-                for (NameValuePair pair : query) {
+                for (NameValuePair pair : queryParameters) {
                     if ("code".equals(pair.getName())) {
                         handleCode(pair.getValue());
                         ok = true;
