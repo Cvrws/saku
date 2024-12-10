@@ -4,8 +4,9 @@ import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -20,12 +21,10 @@ import org.apache.hc.core5.net.URLEncodedUtils;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -48,7 +47,7 @@ public class MicrosoftLogin {
     private final String CLIENT_ID = "ba89e6e0-8490-4a26-8746-f389a0d3ccc7", CLIENT_SECRET = "hlQ8Q~33jTRilP4yE-UtuOt9wG.ZFLqq6pErIa2B";
     private final int PORT = 8247;
 
-    private HttpServer server;
+    private Object httpServer;
     private Consumer<String> callback;
 
     private void browse(final String url) {
@@ -140,76 +139,131 @@ public class MicrosoftLogin {
         return new LoginData(mcRes.access_token, refreshToken, profileRes.id, profileRes.name);
     }
 
-    private void startServer() {
-        if (server != null) return;
-
+    public void startServer() {
         try {
-            server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+            Class<?> httpServerClass = Class.forName("com.sun.net.httpserver.HttpServer");
+            Method createMethod = httpServerClass.getDeclaredMethod("create", InetSocketAddress.class, int.class);
+            httpServer = createMethod.invoke(null, new InetSocketAddress(PORT), 0);
 
-            server.createContext("/", new Handler());
-            server.setExecutor(executor);
-            server.start();
-        } catch (final IOException e) {
+            Class<?> httpHandlerClass = Class.forName("com.sun.net.httpserver.HttpHandler");
+            Method createContextMethod = httpServerClass.getMethod("createContext", String.class, httpHandlerClass);
+
+            Object handler = Proxy.newProxyInstance(
+                    httpHandlerClass.getClassLoader(),
+                    new Class<?>[]{httpHandlerClass},
+                    (proxy, method, args) -> {
+                        if ("handle".equals(method.getName())) {
+                            handleRequest(args[0]);
+                        }
+                        return null;
+                    });
+
+            createContextMethod.invoke(httpServer, "/", handler);
+
+            Method startMethod = httpServerClass.getMethod("start");
+            startMethod.invoke(httpServer);
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void stopServer() {
-        if (server == null) return;
+    @SneakyThrows
+    public void stopServer() {
 
-        server.stop(0);
-        server = null;
-
-        callback = null;
+    	if (httpServer != null) {
+    		Method stopMethod = httpServer.getClass().getMethod("stop", int.class);
+    		stopMethod.invoke(httpServer, 0);
+    	}
     }
+    
+    private void handleRequest(Object httpExchange) {
+        try {
+            Class<?> exchangeClass = httpExchange.getClass();
 
-    private class Handler implements HttpHandler {
-        @Override
-        public void handle(final HttpExchange req) throws IOException {
-            if (req.getRequestMethod().equals("GET")) {
-                // Login
-            	URI requestURI = req.getRequestURI();
-            	final List<NameValuePair> query = URLEncodedUtils.parse(requestURI, StandardCharsets.UTF_8);
-            	
+            Method getRequestMethod = exchangeClass.getDeclaredMethod("getRequestMethod");
+            getRequestMethod.setAccessible(true);
+
+            Method getRequestURI = exchangeClass.getDeclaredMethod("getRequestURI");
+            getRequestURI.setAccessible(true);
+
+            Method getResponseHeaders = exchangeClass.getDeclaredMethod("getResponseHeaders");
+            getResponseHeaders.setAccessible(true);
+
+            Method sendResponseHeaders = exchangeClass.getDeclaredMethod("sendResponseHeaders", int.class, long.class);
+            sendResponseHeaders.setAccessible(true);
+
+            Method getResponseBody = exchangeClass.getDeclaredMethod("getResponseBody");
+            getResponseBody.setAccessible(true);
+
+            String method = (String) getRequestMethod.invoke(httpExchange);
+
+            if ("GET".equalsIgnoreCase(method)) {
+                URI requestURI = (URI) getRequestURI.invoke(httpExchange);
+                List<NameValuePair> query = URLEncodedUtils.parse(requestURI, StandardCharsets.UTF_8);
+
                 boolean ok = false;
-
-                for (final NameValuePair pair : query) {
-                    if (pair.getName().equals("code")) {
+                for (NameValuePair pair : query) {
+                    if ("code".equals(pair.getName())) {
                         handleCode(pair.getValue());
-
                         ok = true;
                         break;
                     }
                 }
 
-                if (!ok) writeText(req, "Cannot authenticate.");
-                else writeText(req, "<html>You may now close this page, if you didn't specify an account then clear your cookies to select an individual one.</html>");
+                if (!ok) {
+                    writeText(httpExchange, "Cannot authenticate.");
+                } else {
+                    writeText(httpExchange, "<html>You may now close this page, if you didn't specify an account then clear your cookies to select an individual one.</html>");
+                }
             }
 
-            stopServer();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
-        private void handleCode(final String code) {
-            //System.out.println(code);
-            final String response = Browser.postExternal("https://login.live.com/oauth20_token.srf",
-                    "client_id=" + CLIENT_ID + "&code=" + code + "&client_secret=" + CLIENT_SECRET + "&grant_type=authorization_code&redirect_uri=http://localhost:" + PORT, false);
-            final AuthTokenResponse res = gson.fromJson(
-                    response,
-                    AuthTokenResponse.class);
+    private void writeText(Object httpExchange, String text) {
+        try {
+            Class<?> exchangeClass = httpExchange.getClass();
 
-            if (res == null) callback.accept(null);
-            else callback.accept(res.refresh_token);
-        }
+            Method getResponseHeaders = exchangeClass.getDeclaredMethod("getResponseHeaders");
+            getResponseHeaders.setAccessible(true);
 
-        private void writeText(final HttpExchange req, final String text) throws IOException {
-            final OutputStream out = req.getResponseBody();
+            Method sendResponseHeaders = exchangeClass.getDeclaredMethod("sendResponseHeaders", int.class, long.class);
+            sendResponseHeaders.setAccessible(true);
 
-            req.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
-            req.sendResponseHeaders(200, text.length());
+            Method getResponseBody = exchangeClass.getDeclaredMethod("getResponseBody");
+            getResponseBody.setAccessible(true);
 
+            Object headers = getResponseHeaders.invoke(httpExchange);
+            Method addHeader = headers.getClass().getMethod("add", String.class, String.class);
+            addHeader.invoke(headers, "Content-Type", "text/html; charset=utf-8");
+
+            sendResponseHeaders.invoke(httpExchange, 200, (long) text.length());
+
+            OutputStream out = (OutputStream) getResponseBody.invoke(httpExchange);
             out.write(text.getBytes(StandardCharsets.UTF_8));
             out.flush();
             out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void handleCode(final String code) {
+        try {
+            String response = Browser.postExternal(
+                    "https://login.live.com/oauth20_token.srf",
+                    "client_id=" + CLIENT_ID + "&code=" + code + "&client_secret=" + CLIENT_SECRET + "&grant_type=authorization_code&redirect_uri=http://localhost:" + PORT,
+                    false
+            );
+
+            AuthTokenResponse res = gson.fromJson(response, AuthTokenResponse.class);
+            if (res == null) callback.accept(null);
+            else callback.accept(res.refresh_token);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
