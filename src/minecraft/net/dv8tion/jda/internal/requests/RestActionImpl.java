@@ -16,43 +16,40 @@
 
 package net.dv8tion.jda.internal.requests;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.RateLimitedException;
-import net.dv8tion.jda.api.requests.*;
+import net.dv8tion.jda.api.requests.Request;
+import net.dv8tion.jda.api.requests.Response;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.RestFuture;
+import net.dv8tion.jda.api.requests.Route;
 import net.dv8tion.jda.api.utils.AttachedFile;
 import net.dv8tion.jda.api.utils.data.DataArray;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.JDAImpl;
 import net.dv8tion.jda.internal.utils.Checks;
-import net.dv8tion.jda.internal.utils.JDALogger;
 import okhttp3.RequestBody;
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
-import org.slf4j.Logger;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.concurrent.*;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 
 public class RestActionImpl<T> implements RestAction<T>
 {
-    public static final Logger LOG = JDALogger.getLog(RestAction.class);
-
     private static Consumer<Object> DEFAULT_SUCCESS = o -> {};
     private static Consumer<? super Throwable> DEFAULT_FAILURE = t ->
     {
-        if (t instanceof CancellationException || t instanceof TimeoutException)
-            LOG.debug(t.getMessage());
-        else if (LOG.isDebugEnabled() || !(t instanceof ErrorResponseException))
-            LOG.error("RestAction queue returned failure", t);
-        else if (t.getCause() != null)
-            LOG.error("RestAction queue returned failure: [{}] {}", t.getClass().getSimpleName(), t.getMessage(), t.getCause());
-        else
-            LOG.error("RestAction queue returned failure: [{}] {}", t.getClass().getSimpleName(), t.getMessage());
+
     };
 
     protected static boolean passContext = true;

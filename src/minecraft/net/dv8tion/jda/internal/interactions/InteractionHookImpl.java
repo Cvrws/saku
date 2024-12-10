@@ -104,8 +104,6 @@ public class InteractionHookImpl extends AbstractWebhookClient<Message> implemen
                 this.exception = exception;
                 if (!readyCallbacks.isEmpty()) // only log this if we even tried any responses
                 {
-                    if (exception instanceof TimeoutException)
-                        JDALogger.getLog(InteractionHook.class).warn("Up to {} Interaction Followup Messages Timed out! Did you forget to acknowledge the interaction?", readyCallbacks.size());
                     readyCallbacks.forEach(callback -> callback.fail(exception));
                 }
             }

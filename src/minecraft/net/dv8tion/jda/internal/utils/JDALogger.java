@@ -16,10 +16,6 @@
 
 package net.dv8tion.jda.internal.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.NOPLogger;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.invoke.MethodHandle;
@@ -87,9 +83,7 @@ public class JDALogger
         fallbackLoggerConstructor = constructor;
     }
 
-    private static final Map<String, Logger> LOGS = new HashMap<>();
 
-    private JDALogger() {}
 
     /**
      * Disables the automatic fallback logger that JDA uses when no SLF4J implementation is found.
@@ -100,77 +94,6 @@ public class JDALogger
     public static void setFallbackLoggerEnabled(boolean enabled)
     {
         disableFallback = !enabled;
-    }
-
-    /**
-     * Will get the {@link org.slf4j.Logger} with the given log-name
-     * or create and cache a fallback logger if there is no SLF4J implementation present.
-     * <p>
-     * The fallback logger uses a constant logging configuration and prints directly to {@link System#err}.
-     *
-     * @param  name
-     *         The name of the Logger
-     *
-     * @return Logger with given log name
-     */
-    public static Logger getLog(String name)
-    {
-        synchronized (LOGS)
-        {
-            if (SLF4J_ENABLED || disableFallback)
-                return LoggerFactory.getLogger(name);
-            return newFallbackLogger(name);
-        }
-    }
-
-    /**
-     * Will get the {@link org.slf4j.Logger} for the given Class
-     * or create and cache a fallback logger if there is no SLF4J implementation present.
-     * <p>
-     * The fallback logger uses a constant logging configuration and prints directly to {@link System#err}.
-     *
-     * @param  clazz
-     *         The class used for the Logger name
-     *
-     * @return Logger for given Class
-     */
-    public static Logger getLog(Class<?> clazz)
-    {
-        synchronized (LOGS)
-        {
-            if (SLF4J_ENABLED || disableFallback)
-                return LoggerFactory.getLogger(clazz);
-            return newFallbackLogger(clazz.getSimpleName());
-        }
-    }
-
-    private static void printFallbackWarning()
-    {
-    }
-
-    private static Logger newFallbackLogger(String name)
-    {
-        if (disableFallback || fallbackLoggerConstructor == null)
-            return NOPLogger.NOP_LOGGER;
-
-        try
-        {
-            synchronized (LOGS)
-            {
-                if (LOGS.containsKey(name))
-                    return LOGS.get(name);
-                Logger logger = (Logger) fallbackLoggerConstructor.invoke(name);
-                boolean isFirstFallback = LOGS.isEmpty();
-                LOGS.put(name, logger);
-                if (isFirstFallback)
-                    printFallbackWarning();
-                return logger;
-            }
-        }
-        catch (Throwable e)
-        {
-            throw new IllegalStateException("Failed to initialize fallback logger", e);
-        }
     }
 
     /**

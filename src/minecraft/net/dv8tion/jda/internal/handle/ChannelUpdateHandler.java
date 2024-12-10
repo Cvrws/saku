@@ -84,7 +84,6 @@ public class ChannelUpdateHandler extends SocketHandler
         ChannelType type = ChannelType.fromId(content.getInt("type"));
         if (type == ChannelType.GROUP)
         {
-            WebSocketClient.LOG.warn("Ignoring CHANNEL_UPDATE for a group which we don't support");
             return null;
         }
         if (!content.isNull("guild_id"))
@@ -101,7 +100,6 @@ public class ChannelUpdateHandler extends SocketHandler
         if (channel == null)
         {
             getJDA().getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
-            EventCache.LOG.debug("CHANNEL_UPDATE attempted to update a channel that does not exist. JSON: {}", content);
             return null;
         }
 
@@ -172,8 +170,6 @@ public class ChannelUpdateHandler extends SocketHandler
             case STAGE:
             case CATEGORY:
                 break;
-            default:
-                WebSocketClient.LOG.debug("CHANNEL_UPDATE provided an unrecognized channel type JSON: {}", content);
         }
 
         DataArray permOverwrites = content.getArray("permission_overwrites");
@@ -207,7 +203,6 @@ public class ChannelUpdateHandler extends SocketHandler
 
         if (!expectedTypes.contains(oldType) || !expectedTypes.contains(newChannelType))
         {
-            WebSocketClient.LOG.warn("Unexpected channel type change {}->{}, discarding from cache.", channel.getType().getId(), content.getInt("type"));
             guild.uncacheChannel(channel, false);
             return null;
         }
@@ -225,7 +220,6 @@ public class ChannelUpdateHandler extends SocketHandler
             else
             {
                 // Change introduced dangling thread channels (with no parent)
-                WebSocketClient.LOG.error("ThreadContainer channel transitioned into type that is not ThreadContainer? {} -> {}", channel.getType(), newChannel.getType());
             }
         }
 
@@ -288,7 +282,6 @@ public class ChannelUpdateHandler extends SocketHandler
         {
             if (type != 1)
             {
-                EntityBuilder.LOG.debug("Ignoring unknown invite of type '{}'. JSON: {}", type, override);
                 return false;
             }
             else if (!api.isCacheFlagSet(CacheFlag.MEMBER_OVERRIDES) && overrideId != api.getSelfUser().getIdLong())

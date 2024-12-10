@@ -28,8 +28,6 @@ import net.dv8tion.jda.api.utils.data.etf.ExTermEncoder;
 import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.Helpers;
 import org.jetbrains.annotations.Contract;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,7 +52,6 @@ import java.util.stream.Stream;
  */
 public class DataArray implements Iterable<Object>, SerializableArray
 {
-    private static final Logger log = LoggerFactory.getLogger(DataObject.class);
     private static final ObjectMapper mapper;
     private static final SimpleModule module;
     private static final CollectionType listType;
@@ -203,7 +200,6 @@ public class DataArray implements Iterable<Object>, SerializableArray
         }
         catch (Exception ex)
         {
-            log.error("Failed to parse ETF data {}", Arrays.toString(data), ex);
             throw new ParsingException(ex);
         }
     }
@@ -280,7 +276,6 @@ public class DataArray implements Iterable<Object>, SerializableArray
         }
         catch (ClassCastException ex)
         {
-            log.error("Unable to extract child data", ex);
         }
         if (child == null)
             throw valueError(index, "DataObject");
@@ -309,7 +304,6 @@ public class DataArray implements Iterable<Object>, SerializableArray
         }
         catch (ClassCastException ex)
         {
-            log.error("Unable to extract child data", ex);
         }
         if (child == null)
             throw valueError(index, "DataArray");

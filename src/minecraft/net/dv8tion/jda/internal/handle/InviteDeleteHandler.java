@@ -38,7 +38,6 @@ public class InviteDeleteHandler extends SocketHandler
         Guild guild = getJDA().getGuildById(guildId);
         if (guild == null)
         {
-            EventCache.LOG.debug("Caching INVITE_DELETE for unknown guild {}", guildId);
             getJDA().getEventCache().cache(EventCache.Type.GUILD, guildId, responseNumber, allContent, this::handle);
             return null;
         }
@@ -46,7 +45,6 @@ public class InviteDeleteHandler extends SocketHandler
         GuildChannel channel = guild.getGuildChannelById(channelId);
         if (channel == null)
         {
-            EventCache.LOG.debug("Caching INVITE_DELETE for unknown channel {} in guild {}", channelId, guildId);
             getJDA().getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
             return null;
         }

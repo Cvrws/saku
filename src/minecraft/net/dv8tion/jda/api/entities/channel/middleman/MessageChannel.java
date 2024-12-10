@@ -2363,7 +2363,6 @@ public interface MessageChannel extends Channel, Formattable
                 }
                 catch (ParsingException | NullPointerException e)
                 {
-                    JDALogger.getLog(getClass()).error("Failed to parse pinned message", e);
                 }
             }
 

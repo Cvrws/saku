@@ -76,7 +76,6 @@ public class ConcurrentSessionController extends SessionControllerAdapter implem
         Worker worker = workers[i];
         if (worker == null)
         {
-            log.debug("Creating new worker handle for shard pool {}", i);
             workers[i] = worker = new Worker(i);
         }
         return worker;
@@ -98,7 +97,6 @@ public class ConcurrentSessionController extends SessionControllerAdapter implem
             if (thread == null)
             {
                 thread = new Thread(this, "ConcurrentSessionController-Worker-" + id);
-                log.debug("Running worker");
                 thread.start();
             }
         }
@@ -112,14 +110,12 @@ public class ConcurrentSessionController extends SessionControllerAdapter implem
 
         public void enqueue(SessionConnectNode node)
         {
-            log.trace("Appending node to queue {}", node.getShardInfo());
             queue.add(node);
             start();
         }
 
         public void dequeue(SessionConnectNode node)
         {
-            log.trace("Removing node from queue {}", node.getShardInfo());
             queue.remove(node);
         }
 
@@ -137,7 +133,6 @@ public class ConcurrentSessionController extends SessionControllerAdapter implem
             }
             catch (InterruptedException ex)
             {
-                log.error("Worker failed to process queue", ex);
             }
             finally
             {
@@ -151,7 +146,6 @@ public class ConcurrentSessionController extends SessionControllerAdapter implem
             try
             {
                 node = queue.remove();
-                log.debug("Running connect node for shard {}", node.getShardInfo());
                 node.run(false); // we don't use isLast anymore because it can be a problem with many reconnecting shards
             }
             catch (NoSuchElementException ignored) {/* This means the node was removed before we started it */}
@@ -162,15 +156,7 @@ public class ConcurrentSessionController extends SessionControllerAdapter implem
             }
             catch (IllegalStateException | ErrorResponseException e)
             {
-                if (Helpers.hasCause(e, OpeningHandshakeException.class))
-                    log.error("Failed opening handshake, appending to queue. Message: {}", e.getMessage());
-                else if (e instanceof ErrorResponseException && e.getCause() instanceof IOException) { /* This is already logged by the Requester */ }
-                else if (Helpers.hasCause(e, UnknownHostException.class))
-                    log.error("DNS resolution failed: {}", e.getMessage());
-                else if (e.getCause() != null && !JDA.Status.RECONNECT_QUEUED.name().equals(e.getCause().getMessage()))
-                    log.error("Failed to establish connection for a node, appending to queue", e);
-                else
-                    log.error("Unexpected exception when running connect node", e);
+
                 if (node != null)
                     queue.add(node);
             }

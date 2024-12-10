@@ -16,26 +16,16 @@
 
 package net.dv8tion.jda.api.managers;
 
-import net.dv8tion.jda.annotations.Incubating;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.audio.AudioReceiveHandler;
-import net.dv8tion.jda.api.audio.AudioSendHandler;
-import net.dv8tion.jda.api.audio.SpeakingMode;
-import net.dv8tion.jda.api.audio.hooks.ConnectionListener;
-import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
-import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.JDALogger;
-import org.slf4j.Logger;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
 
 
 /**
@@ -47,7 +37,6 @@ import java.util.EnumSet;
 public interface AudioManager
 {
     long DEFAULT_CONNECTION_TIMEOUT = 10000;
-    Logger LOG = JDALogger.getLog(AudioManager.class);
 
     /**
      * Starts the process to create an audio connection with an {@link net.dv8tion.jda.api.entities.channel.middleman.AudioChannel AudioChannel}
@@ -83,63 +72,6 @@ public interface AudioManager
      * <br>If this is called when JDA doesn't have an audio connection, nothing happens.
      */
     void closeAudioConnection();
-
-    /**
-     * The {@link SpeakingMode} that should be used when sending audio via
-     * the provided {@link AudioSendHandler} from {@link #setSendingHandler(AudioSendHandler)}.
-     * By default this will use {@link SpeakingMode#VOICE}.
-     * <br>Example: {@code EnumSet.of(SpeakingMode.PRIORITY_SPEAKER, SpeakingMode.VOICE)}
-     *
-     * @param  mode
-     *         The speaking modes
-     *
-     * @throws IllegalArgumentException
-     *         If the provided collection is null or empty
-     *
-     * @incubating Discord has not officially confirmed that this feature will be available to bots
-     *
-     * @see    #getSpeakingMode()
-     * @see    #setSpeakingMode(SpeakingMode...)
-     */
-    @Incubating
-    void setSpeakingMode(@Nonnull Collection<SpeakingMode> mode);
-
-    /**
-     * The {@link SpeakingMode} that should be used when sending audio via
-     * the provided {@link AudioSendHandler} from {@link #setSendingHandler(AudioSendHandler)}.
-     * By default this will use {@link SpeakingMode#VOICE}.
-     *
-     * @param  mode
-     *         The speaking modes
-     *
-     * @throws IllegalArgumentException
-     *         If the provided array is null or empty
-     *
-     * @incubating Discord has not officially confirmed that this feature will be available to bots
-     *
-     * @see    #getSpeakingMode()
-     */
-    @Incubating
-    default void setSpeakingMode(@Nonnull SpeakingMode... mode)
-    {
-        Checks.notNull(mode, "Speaking Mode");
-        setSpeakingMode(Arrays.asList(mode));
-    }
-
-    /**
-     * The {@link SpeakingMode} that should be used when sending audio via
-     * the provided {@link AudioSendHandler} from {@link #setSendingHandler(AudioSendHandler)}.
-     * By default this will use {@link SpeakingMode#VOICE}.
-     *
-     * @return The current speaking mode, represented in an {@link EnumSet}
-     *
-     * @incubating Discord has not officially confirmed that this feature will be available to bots
-     *
-     * @see    #setSpeakingMode(Collection)
-     */
-    @Nonnull
-    @Incubating
-    EnumSet<SpeakingMode> getSpeakingMode();
 
     /**
      * Gets the {@link net.dv8tion.jda.api.JDA JDA} instance that this AudioManager is a part of.
@@ -195,92 +127,7 @@ public interface AudioManager
      */
     long getConnectTimeout();
 
-    /**
-     * Sets the {@link net.dv8tion.jda.api.audio.AudioSendHandler}
-     * that the manager will use to provide audio data to an audio connection.
-     * <br>The handler provided here will persist between audio connection connect and disconnects.
-     * Furthermore, you don't need to have an audio connection to set a handler.
-     * When JDA sets up a new audio connection it will use the handler provided here.
-     * <br>Setting this to null will remove the audio handler.
-     *
-     * <p>JDA recommends <a href="https://github.com/sedmelluq/lavaplayer" target="_blank">LavaPlayer</a>
-     * as an {@link net.dv8tion.jda.api.audio.AudioSendHandler AudioSendHandler}.
-     * It provides a <a href="https://github.com/sedmelluq/lavaplayer/tree/master/demo-jda" target="_blank">demo</a> targeted at JDA users.
-     *
-     * @param handler
-     *        The {@link net.dv8tion.jda.api.audio.AudioSendHandler AudioSendHandler} used to provide audio data.
-     */
-    void setSendingHandler(@Nullable AudioSendHandler handler);
 
-    /**
-     * The currently set {@link net.dv8tion.jda.api.audio.AudioSendHandler AudioSendHandler}. If there is
-     * no sender currently set, this method will return {@code null}.
-     *
-     * @return The currently active {@link net.dv8tion.jda.api.audio.AudioSendHandler AudioSendHandler} or {@code null}.
-     */
-    @Nullable
-    AudioSendHandler getSendingHandler();
-
-    /**
-     * Sets the {@link net.dv8tion.jda.api.audio.AudioReceiveHandler AudioReceiveHandler}
-     * that the manager will use to process audio data received from an audio connection.
-     *
-     * <p>The handler provided here will persist between audio connection connect and disconnects.
-     * Furthermore, you don't need to have an audio connection to set a handler.
-     * When JDA sets up a new audio connection it will use the handler provided here.
-     * <br>Setting this to null will remove the audio handler.
-     *
-     * @param handler
-     *        The {@link net.dv8tion.jda.api.audio.AudioReceiveHandler AudioReceiveHandler} used to process
-     *        received audio data.
-     */
-    void setReceivingHandler(@Nullable AudioReceiveHandler handler);
-
-    /**
-     * The currently set {@link net.dv8tion.jda.api.audio.AudioReceiveHandler AudioReceiveHandler}.
-     * If there is no receiver currently set, this method will return {@code null}.
-     *
-     * @return The currently active {@link net.dv8tion.jda.api.audio.AudioReceiveHandler AudioReceiveHandler} or {@code null}.
-     */
-    @Nullable
-    AudioReceiveHandler getReceivingHandler();
-
-    /**
-     * Sets the {@link net.dv8tion.jda.api.audio.hooks.ConnectionListener ConnectionListener} for this AudioManager.
-     * It will be informed about meta data of any audio connection established through this AudioManager.
-     * Further information can be found in the {@link net.dv8tion.jda.api.audio.hooks.ConnectionListener ConnectionListener} documentation!
-     *
-     * @param listener
-     *        A {@link net.dv8tion.jda.api.audio.hooks.ConnectionListener ConnectionListener} instance
-     */
-    void setConnectionListener(@Nullable ConnectionListener listener);
-
-    /**
-     * The currently set {@link net.dv8tion.jda.api.audio.hooks.ConnectionListener ConnectionListener}
-     * or {@code null} if no {@link net.dv8tion.jda.api.audio.hooks.ConnectionListener ConnectionListener} has been {@link #setConnectionListener(ConnectionListener) set}.
-     *
-     * @return The current {@link net.dv8tion.jda.api.audio.hooks.ConnectionListener ConnectionListener} instance
-     *         for this AudioManager.
-     */
-    @Nullable
-    ConnectionListener getConnectionListener();
-
-    /**
-     * The current {@link net.dv8tion.jda.api.audio.hooks.ConnectionStatus ConnectionStatus}.
-     * <br>This status indicates represents the connection status of an audio connection.
-     *
-     * @return The current {@link net.dv8tion.jda.api.audio.hooks.ConnectionStatus ConnectionStatus}.
-     */
-    @Nonnull
-    ConnectionStatus getConnectionStatus();
-
-    /**
-     * Sets whether audio connections from this AudioManager
-     * should automatically reconnect or not. Default {@code true}
-     *
-     * @param shouldReconnect
-     *        Whether audio connections from this AudioManager should automatically reconnect
-     */
     void setAutoReconnect(boolean shouldReconnect);
 
     /**

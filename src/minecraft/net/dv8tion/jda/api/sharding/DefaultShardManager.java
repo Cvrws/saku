@@ -15,6 +15,30 @@
  */
 package net.dv8tion.jda.api.sharding;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.function.IntFunction;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import gnu.trove.set.TIntSet;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -22,7 +46,11 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
-import net.dv8tion.jda.api.requests.*;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.RestConfig;
+import net.dv8tion.jda.api.requests.RestRateLimiter;
+import net.dv8tion.jda.api.requests.Route;
+import net.dv8tion.jda.api.requests.SequentialRestRateLimiter;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MiscUtil;
 import net.dv8tion.jda.api.utils.SessionController;
@@ -34,32 +62,20 @@ import net.dv8tion.jda.internal.managers.PresenceImpl;
 import net.dv8tion.jda.internal.requests.RestActionImpl;
 import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.IOUtil;
-import net.dv8tion.jda.internal.utils.JDALogger;
 import net.dv8tion.jda.internal.utils.UnlockHook;
 import net.dv8tion.jda.internal.utils.cache.ShardCacheViewImpl;
 import net.dv8tion.jda.internal.utils.config.AuthorizationConfig;
 import net.dv8tion.jda.internal.utils.config.MetaConfig;
 import net.dv8tion.jda.internal.utils.config.SessionConfig;
 import net.dv8tion.jda.internal.utils.config.ThreadingConfig;
-import net.dv8tion.jda.internal.utils.config.sharding.*;
+import net.dv8tion.jda.internal.utils.config.sharding.EventConfig;
+import net.dv8tion.jda.internal.utils.config.sharding.PresenceProviderConfig;
+import net.dv8tion.jda.internal.utils.config.sharding.ShardingConfig;
+import net.dv8tion.jda.internal.utils.config.sharding.ShardingMetaConfig;
+import net.dv8tion.jda.internal.utils.config.sharding.ShardingSessionConfig;
+import net.dv8tion.jda.internal.utils.config.sharding.ThreadingProviderConfig;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
-import org.slf4j.Logger;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Queue;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
-import java.util.function.IntFunction;
 
 /**
  * JDA's default {@link net.dv8tion.jda.api.sharding.ShardManager ShardManager} implementation.
@@ -70,7 +86,6 @@ import java.util.function.IntFunction;
  */
 public class DefaultShardManager implements ShardManager
 {
-    public static final Logger LOG = JDALogger.getLog(ShardManager.class);
     public static final ThreadFactory DEFAULT_THREAD_FACTORY = r ->
     {
         final Thread t = new Thread(r, "DefaultShardManager");
@@ -455,23 +470,18 @@ public class DefaultShardManager implements ShardManager
         }
         catch (CompletionException e)
         {
-            if (e.getCause() instanceof InterruptedException)
-                LOG.debug("The worker thread was interrupted");
-            else
-                LOG.error("Caught an exception in queue processing thread", e);
+
             return;
         }
         catch (InvalidTokenException e)
         {
             // this can only happen if the token has been changed
             // in this case the ShardManager will just shutdown itself as there currently is no way of hot-swapping the token on a running JDA instance.
-            LOG.warn("The token has been invalidated and the ShardManager will shutdown!", e);
             this.shutdown();
             return;
         }
         catch (final Exception e)
         {
-            LOG.error("Caught an exception in the queue processing thread", e);
             return;
         }
 
@@ -553,9 +563,6 @@ public class DefaultShardManager implements ShardManager
         if (eventConfig.getEventManagerProvider() != null)
             jda.setEventManager(this.eventConfig.getEventManagerProvider().apply(shardId));
 
-        if (this.sessionConfig.getAudioSendFactory() != null)
-            jda.setAudioSendFactory(this.sessionConfig.getAudioSendFactory());
-
         jda.addEventListener(this.eventConfig.getListeners().toArray());
         this.eventConfig.getListenerProviders().forEach(provider -> jda.addEventListener(provider.apply(shardId)));
 
@@ -575,8 +582,6 @@ public class DefaultShardManager implements ShardManager
             this.gatewayURL = gateway.getUrl();
             if (this.gatewayURL == null)
                 throw new IllegalStateException("Acquired null gateway url from SessionController");
-            else
-                LOG.info("Login Successful!");
         }
 
         final JDA.ShardInfo shardInfo = new JDA.ShardInfo(shardId, getShardsTotal());
@@ -642,8 +647,6 @@ public class DefaultShardManager implements ShardManager
     {
         if (getShardsTotal() != -1)
             return;
-
-        LOG.debug("Fetching shard total using temporary rate-limiter");
 
         CompletableFuture<Integer> future = new CompletableFuture<>();
         ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor(task -> {
@@ -756,7 +759,6 @@ public class DefaultShardManager implements ShardManager
             {
                 RestConfig config = restConfigProvider.apply(0);
                 String url = config.getBaseUrl() + getRoute().getCompiledRoute();
-                LOG.debug("Requesting shard total with url {}", url);
 
                 okhttp3.Request.Builder builder = new okhttp3.Request.Builder()
                         .get()
@@ -774,7 +776,6 @@ public class DefaultShardManager implements ShardManager
 
                 try
                 {
-                    LOG.debug("Received response with code {}", response.code());
                     InputStream body = IOUtil.getBody(response);
 
                     if (response.isSuccessful())
@@ -797,7 +798,6 @@ public class DefaultShardManager implements ShardManager
                     else if (response.code() >= 500)
                     {
                         int backoff = 1 << failedAttempts;
-                        LOG.warn("Failed to retrieve recommended shard total. Code: {} ... retrying in {}s", response.code(), backoff);
                         response = response.newBuilder()
                                 .headers(response.headers()
                                     .newBuilder()

@@ -138,7 +138,6 @@ public class AuditLogPaginationActionImpl
             }
             catch (ParsingException | NullPointerException e)
             {
-                LOG.warn("Encountered exception in AuditLogPagination", e);
             }
         }
 

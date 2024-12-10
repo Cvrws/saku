@@ -16,6 +16,14 @@
 
 package net.dv8tion.jda.api.audit;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.ISnowflake;
@@ -27,14 +35,6 @@ import net.dv8tion.jda.internal.entities.UserImpl;
 import net.dv8tion.jda.internal.entities.WebhookImpl;
 import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.EntityString;
-import org.jetbrains.annotations.Unmodifiable;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Single entry for an {@link net.dv8tion.jda.api.requests.restaction.pagination.AuditLogPaginationAction AuditLogPaginationAction}.
@@ -241,7 +241,7 @@ public class AuditLogEntry implements ISnowflake
      * @return Possibly-empty, never-null immutable list of {@link AuditLogChange AuditLogChanges}
      */
     @Nonnull
-    @Unmodifiable
+    
     public List<AuditLogChange> getChangesForKeys(@Nonnull AuditLogKey... keys)
     {
         Checks.notNull(keys, "Keys");
@@ -331,7 +331,7 @@ public class AuditLogEntry implements ISnowflake
      * @return Unmodifiable list of representative values
      */
     @Nonnull
-    @Unmodifiable
+    
     public List<Object> getOptions(@Nonnull AuditLogOption... options)
     {
         Checks.notNull(options, "Options");

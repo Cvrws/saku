@@ -15,20 +15,23 @@
  */
 package net.dv8tion.jda.api.hooks;
 
-import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.internal.JDAImpl;
-import net.dv8tion.jda.internal.utils.ClassWalker;
-import net.dv8tion.jda.internal.utils.JDALogger;
-import org.jetbrains.annotations.Unmodifiable;
-import org.slf4j.Logger;
-
-import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.annotation.Nonnull;
+
+import org.jetbrains.annotations.Unmodifiable;
+
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.internal.utils.ClassWalker;
 
 /**
  * Implementation for {@link net.dv8tion.jda.api.hooks.IEventManager IEventManager}
@@ -54,7 +57,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class AnnotatedEventManager implements IEventManager
 {
-    private static final Logger LOGGER = JDALogger.getLog(AnnotatedEventManager.class);
     private final Set<Object> listeners = ConcurrentHashMap.newKeySet();
     private final Map<Class<?>, Map<Object, List<Method>>> methods = new ConcurrentHashMap<>();
 
@@ -115,11 +117,9 @@ public class AnnotatedEventManager implements IEventManager
                     }
                     catch (IllegalAccessException | InvocationTargetException e1)
                     {
-                        JDAImpl.LOG.error("Couldn't access annotated EventListener method", e1);
                     }
                     catch (Throwable throwable)
                     {
-                        JDAImpl.LOG.error("One of the EventListeners had an uncaught exception", throwable);
                         if (throwable instanceof Error)
                             throw (Error) throwable;
                     }
@@ -153,7 +153,6 @@ public class AnnotatedEventManager implements IEventManager
             final Class<?>[] parameterTypes = m.getParameterTypes();
             if (parameterTypes.length != 1 || !GenericEvent.class.isAssignableFrom(parameterTypes[0]))
             {
-                LOGGER.warn("Method '{}' annotated with @{} must have at most 1 parameter, which implements GenericEvent", m, SubscribeEvent.class.getSimpleName());
                 continue;
             }
 

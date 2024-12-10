@@ -35,6 +35,7 @@ public final class NameTags extends Module {
 	private final NumberValue scale = new NumberValue("Scale", this, 4.5, 0.1, 10, 0.1);
 	private final BooleanValue selfTag = new BooleanValue("Self Tag", this, true);
 	private final BooleanValue background = new BooleanValue("Background", this, false);
+	private final NumberValue alphaBackground = new NumberValue("Alpha Background", this, 110, 0, 255, 1, () -> !background.getValue());
 	private final BooleanValue armor = new BooleanValue("Armor", this, false);
 	private final BooleanValue checkInvis = new BooleanValue("Show Invisibles", this, false);
 
@@ -83,7 +84,7 @@ public final class NameTags extends Module {
 	    if (background.getValue()) {
 	        float backgroundWidth = nameWidth + 12;
 	        float backgroundHeight = mc.fontRendererObj.FONT_HEIGHT + 2;
-	        RenderUtil.roundedRect(-backgroundWidth / 2 + 1 , -4.0F, backgroundWidth / 2 - 3, backgroundHeight, 6, getTheme().getBackgroundShade().getRGB());
+	        RenderUtil.roundedRect(-backgroundWidth / 2 + 1 , -4.0F, backgroundWidth / 2 - 3, backgroundHeight, 6, new Color(0, 0, 0, alphaBackground.getValue().intValue()).getRGB());
 	    }
 
         GlStateManager.disableLighting();
@@ -166,7 +167,7 @@ public final class NameTags extends Module {
 	}
 	
 	private void renderEnchantText(ItemStack stack, int x, int y) {
-		int newY = y - 24;
+		int newY = y - 10;
 		int unbreakingLvl = EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, stack);
 		
 		if (stack.getEnchantmentTagList() != null && stack.getEnchantmentTagList().tagCount() >= 6) {

@@ -84,7 +84,6 @@ public class ThreadMemberPaginationActionImpl
             }
             catch (ParsingException | NullPointerException e)
             {
-                LOG.warn("Encountered an exception in ThreadMemberPaginationAction", e);
             }
         }
 

@@ -67,7 +67,6 @@ public interface IWebhookContainerMixin<T extends IWebhookContainerMixin<T>> ext
                 }
                 catch (UncheckedIOException | NullPointerException e)
                 {
-                    JDAImpl.LOG.error("Error while creating websocket from json", e);
                 }
             }
 

@@ -39,7 +39,6 @@ public class AutoModExecutionHandler extends SocketHandler
         if (guild == null)
         {
             api.getEventCache().cache(EventCache.Type.GUILD, guildId, responseNumber, allContent, this::handle);
-            EventCache.LOG.debug("Received a AUTO_MODERATION_ACTION_EXECUTION for a guild that is not yet cached. JSON: {}", content);
             return null;
         }
 

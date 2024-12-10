@@ -16,15 +16,56 @@
 
 package net.dv8tion.jda.api;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.regex.Matcher;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.dv8tion.jda.annotations.Incubating;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.ApplicationInfo;
+import net.dv8tion.jda.api.entities.Entitlement;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.RoleConnectionMetadata;
+import net.dv8tion.jda.api.entities.ScheduledEvent;
+import net.dv8tion.jda.api.entities.SelfUser;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.attribute.IGuildChannelContainer;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
-import net.dv8tion.jda.api.entities.sticker.*;
+import net.dv8tion.jda.api.entities.sticker.GuildSticker;
+import net.dv8tion.jda.api.entities.sticker.RichSticker;
+import net.dv8tion.jda.api.entities.sticker.StandardSticker;
+import net.dv8tion.jda.api.entities.sticker.Sticker;
+import net.dv8tion.jda.api.entities.sticker.StickerItem;
+import net.dv8tion.jda.api.entities.sticker.StickerPack;
+import net.dv8tion.jda.api.entities.sticker.StickerSnowflake;
+import net.dv8tion.jda.api.entities.sticker.StickerUnion;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.hooks.IEventManager;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -36,7 +77,13 @@ import net.dv8tion.jda.api.managers.Presence;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.Route;
-import net.dv8tion.jda.api.requests.restaction.*;
+import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
+import net.dv8tion.jda.api.requests.restaction.CacheRestAction;
+import net.dv8tion.jda.api.requests.restaction.CommandCreateAction;
+import net.dv8tion.jda.api.requests.restaction.CommandEditAction;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.api.requests.restaction.GuildAction;
+import net.dv8tion.jda.api.requests.restaction.TestEntitlementCreateAction;
 import net.dv8tion.jda.api.requests.restaction.pagination.EntitlementPaginationAction;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MiscUtil;
@@ -51,23 +98,6 @@ import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.EntityString;
 import net.dv8tion.jda.internal.utils.Helpers;
 import okhttp3.OkHttpClient;
-import org.jetbrains.annotations.Unmodifiable;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.Duration;
-import java.util.List;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.regex.Matcher;
 
 /**
  * The core of JDA. Acts as a registry system of JDA. All parts of the API can be accessed starting from this class.
@@ -976,7 +1006,6 @@ public interface JDA extends IGuildChannelContainer<Channel>
      * @return Immutable list of all created AudioManager instances
      */
     @Nonnull
-    @Unmodifiable
     default List<AudioManager> getAudioManagers()
     {
         return getAudioManagerCache().asList();
@@ -1010,7 +1039,6 @@ public interface JDA extends IGuildChannelContainer<Channel>
      * @return Immutable list of all {@link net.dv8tion.jda.api.entities.User Users} that are visible to JDA.
      */
     @Nonnull
-    @Unmodifiable
     default List<User> getUsers()
     {
         return getUserCache().asList();
@@ -1145,7 +1173,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      */
     @Nonnull
     @Incubating
-    @Unmodifiable
+    
     default List<User> getUsersByName(@Nonnull String name, boolean ignoreCase)
     {
         return getUserCache().getElementsByName(name, ignoreCase);
@@ -1162,7 +1190,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      * @see    Guild#isMember(UserSnowflake)
      */
     @Nonnull
-    @Unmodifiable
+    
     List<Guild> getMutualGuilds(@Nonnull User... users);
 
     /**
@@ -1174,7 +1202,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      * @return Immutable list of all {@link Guild Guild} instances which have all {@link net.dv8tion.jda.api.entities.User Users} in them.
      */
     @Nonnull
-    @Unmodifiable
+    
     List<Guild> getMutualGuilds(@Nonnull Collection<User> users);
 
     /**
@@ -1265,7 +1293,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      * @return Possibly-empty immutable list of all the {@link Guild Guilds} that this account is connected to.
      */
     @Nonnull
-    @Unmodifiable
+    
     default List<Guild> getGuilds()
     {
         return getGuildCache().asList();
@@ -1316,7 +1344,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      * @return Possibly-empty immutable list of all the {@link Guild Guilds} that all have the same name as the provided name.
      */
     @Nonnull
-    @Unmodifiable
+    
     default List<Guild> getGuildsByName(@Nonnull String name, boolean ignoreCase)
     {
         return getGuildCache().getElementsByName(name, ignoreCase);
@@ -1368,7 +1396,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      * @return Immutable List of all visible Roles
      */
     @Nonnull
-    @Unmodifiable
+    
     default List<Role> getRoles()
     {
         return getRoleCache().asList();
@@ -1422,7 +1450,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      * @return Immutable List of all Roles matching the parameters provided.
      */
     @Nonnull
-    @Unmodifiable
+    
     default List<Role> getRolesByName(@Nonnull String name, boolean ignoreCase)
     {
         return getRoleCache().getElementsByName(name, ignoreCase);
@@ -1453,7 +1481,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      * @return Possibly-empty immutable list of all known {@link ScheduledEvent ScheduledEvents}.
      */
     @Nonnull
-    @Unmodifiable
+    
     default List<ScheduledEvent> getScheduledEvents()
     {
         return getScheduledEventCache().asList();
@@ -1516,7 +1544,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      *         same name as the provided name.
      */
     @Nonnull
-    @Unmodifiable
+    
     default List<ScheduledEvent> getScheduledEventsByName(@Nonnull String name, boolean ignoreCase)
     {
         return getScheduledEventCache().getElementsByName(name, ignoreCase);
@@ -1542,7 +1570,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      * @return Possibly-empty list of all {@link PrivateChannel PrivateChannels}.
      */
     @Nonnull
-    @Unmodifiable
+    
     default List<PrivateChannel> getPrivateChannels()
     {
         return getPrivateChannelCache().asList();
@@ -1678,7 +1706,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      * @return An immutable list of Custom Emojis (which may or may not be available to usage).
      */
     @Nonnull
-    @Unmodifiable
+    
     default List<RichCustomEmoji> getEmojis()
     {
         return getEmojiCache().asList();
@@ -1741,7 +1769,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      *         name as the provided name.
      */
     @Nonnull
-    @Unmodifiable
+    
     default List<RichCustomEmoji> getEmojisByName(@Nonnull String name, boolean ignoreCase)
     {
         return getEmojiCache().getElementsByName(name, ignoreCase);
@@ -1780,7 +1808,7 @@ public interface JDA extends IGuildChannelContainer<Channel>
      */
     @Nonnull
     @CheckReturnValue
-    RestAction<@Unmodifiable List<StickerPack>> retrieveNitroStickerPacks();
+    RestAction< List<StickerPack>> retrieveNitroStickerPacks();
 
     /**
      * The EventManager used by this JDA instance.

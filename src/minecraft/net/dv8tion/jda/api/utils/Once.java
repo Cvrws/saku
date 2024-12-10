@@ -24,7 +24,6 @@ import net.dv8tion.jda.api.utils.concurrent.Task;
 import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.JDALogger;
 import net.dv8tion.jda.internal.utils.concurrent.task.GatewayTask;
-import org.slf4j.Logger;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -45,8 +44,6 @@ import java.util.function.Predicate;
  */
 public class Once<E extends GenericEvent> implements EventListener
 {
-    private static final Logger LOG = JDALogger.getLog(Once.class);
-
     private final JDA jda;
     private final Class<E> eventType;
     private final List<Predicate<? super E>> filters;
@@ -105,7 +102,6 @@ public class Once<E extends GenericEvent> implements EventListener
                 }
                 catch (Throwable e)
                 {
-                    LOG.error("An error occurred while running the timeout callback", e);
                     if (e instanceof Error)
                         throw (Error) e;
                 }

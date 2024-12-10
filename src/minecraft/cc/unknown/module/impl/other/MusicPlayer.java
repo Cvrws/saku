@@ -139,14 +139,14 @@ public class MusicPlayer extends Module {
         if (musicFiles != null && !musicFiles.isEmpty()) {
             File currentFile = musicFiles.remove(new Random().nextInt(musicFiles.size()));
             String fileName = currentFile.getName();
-            if (fileName.endsWith(".mp3")) {
-                song = fileName.replace(".mp3", "");
-            }
+            String songName = fileName.replace(".mp3", "");
+            
+            songName = songName.substring(0, 1).toUpperCase() + songName.substring(1).toLowerCase();
 
-            setMessage("Playing " + song.toLowerCase());
+            setMessage("Playing " + songName);
             playLocal(currentFile);
         } else {
-        	setMessage("No more songs to play.");
+            setMessage("No more songs to play.");
         }
     }
     

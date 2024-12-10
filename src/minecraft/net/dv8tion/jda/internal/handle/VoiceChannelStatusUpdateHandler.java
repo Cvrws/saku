@@ -40,7 +40,6 @@ public class VoiceChannelStatusUpdateHandler extends SocketHandler
 
         if (channel == null)
         {
-            EventCache.LOG.debug("Caching VOICE_CHANNEL_STATUS_UPDATE for uncached channel. ID: {}", id);
             getJDA().getEventCache().cache(EventCache.Type.CHANNEL, id, responseNumber, allContent, this::handle);
             return null;
         }

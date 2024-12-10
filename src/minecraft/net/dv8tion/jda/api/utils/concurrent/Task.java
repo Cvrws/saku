@@ -16,13 +16,13 @@
 
 package net.dv8tion.jda.api.utils.concurrent;
 
-import net.dv8tion.jda.internal.utils.Checks;
-import org.jetbrains.annotations.Blocking;
-
-import javax.annotation.Nonnull;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
+
+import net.dv8tion.jda.internal.utils.Checks;
 
 /**
  * Represents an asynchronous task.
@@ -130,7 +130,6 @@ public interface Task<T>
      * @return The result value
      */
     @Nonnull
-    @Blocking
     T get();
 
     /**

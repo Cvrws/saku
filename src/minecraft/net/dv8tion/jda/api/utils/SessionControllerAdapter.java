@@ -26,7 +26,6 @@ import net.dv8tion.jda.api.requests.Route;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.requests.RestActionImpl;
 import net.dv8tion.jda.internal.utils.JDALogger;
-import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.util.Queue;
@@ -40,7 +39,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class SessionControllerAdapter implements SessionController
 {
-    protected static final Logger log = JDALogger.getLog(SessionControllerAdapter.class);
     protected final Object lock = new Object();
     protected Queue<SessionConnectNode> connectQueue;
     protected RestRateLimiter.GlobalRateLimit globalRatelimit;
@@ -154,7 +152,6 @@ public class SessionControllerAdapter implements SessionController
 
         protected void handleFailure(Thread thread, Throwable exception)
         {
-            log.error("Worker has failed with throwable!", exception);
         }
 
         @Override
@@ -171,7 +168,6 @@ public class SessionControllerAdapter implements SessionController
             }
             catch (InterruptedException ex)
             {
-                log.error("Unable to backoff", ex);
             }
             processQueue();
             synchronized (lock)
@@ -201,17 +197,10 @@ public class SessionControllerAdapter implements SessionController
                 catch (IllegalStateException e)
                 {
                     Throwable t = e.getCause();
-                    if (t instanceof OpeningHandshakeException)
-                        log.error("Failed opening handshake, appending to queue. Message: {}", e.getMessage());
-                    else if (t != null && !JDA.Status.RECONNECT_QUEUED.name().equals(t.getMessage()))
-                        log.error("Failed to establish connection for a node, appending to queue", e);
-                    else
-                        log.error("Unexpected exception when running connect node", e);
                     appendSession(node);
                 }
                 catch (InterruptedException e)
                 {
-                    log.error("Failed to run node", e);
                     appendSession(node);
                     return; // caller should start a new thread
                 }

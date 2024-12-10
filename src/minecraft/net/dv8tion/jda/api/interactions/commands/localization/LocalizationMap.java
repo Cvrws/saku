@@ -21,7 +21,6 @@ import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.api.utils.data.SerializableData;
 import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.JDALogger;
-import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,7 +35,6 @@ import java.util.function.Consumer;
  */
 public class LocalizationMap implements SerializableData
 {
-    public static final Logger LOG = JDALogger.getLog(LocalizationMap.class);
 
     protected final Map<DiscordLocale, String> map = new HashMap<>();
     private final Consumer<String> checkConsumer;

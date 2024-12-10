@@ -53,7 +53,6 @@ public class ThreadMembersUpdateHandler extends SocketHandler
         if (thread == null)
         {
             getJDA().getEventCache().cache(EventCache.Type.CHANNEL, threadId, responseNumber, allContent, this::handle);
-            EventCache.LOG.debug("THREAD_MEMBERS_UPDATE attempted to update a thread that does not exist. JSON: {}", content);
             return null;
         }
 

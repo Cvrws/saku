@@ -47,7 +47,6 @@ public class MessageUpdateHandler extends SocketHandler
             if (guild == null)
             {
                 api.getEventCache().cache(EventCache.Type.GUILD, guildId, responseNumber, allContent, this::handle);
-                EventCache.LOG.debug("Received message for a guild that JDA does not currently have cached");
                 return null;
             }
         }
@@ -63,7 +62,6 @@ public class MessageUpdateHandler extends SocketHandler
                 MessageType type = MessageType.fromId(content.getInt("type"));
                 if (!type.isSystem())
                     return handleMessage(content, guild);
-                WebSocketClient.LOG.debug("JDA received a message update for an unexpected message type. Type: {} JSON: {}", type, content);
                 return null;
             }
         }
@@ -93,20 +91,17 @@ public class MessageUpdateHandler extends SocketHandler
                         GuildChannel actual = guild.getGuildChannelById(channelId);
                         if (actual != null)
                         {
-                            WebSocketClient.LOG.debug("Dropping MESSAGE_UPDATE for unexpected channel of type {}", actual.getType());
                             return null;
                         }
                     }
 
                     getJDA().getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
-                    EventCache.LOG.debug("Received a message update for a channel that JDA does not currently have cached");
                     return null;
                 }
                 case EntityBuilder.MISSING_USER:
                 {
                     final long authorId = content.getObject("author").getLong("id");
                     getJDA().getEventCache().cache(EventCache.Type.USER, authorId, responseNumber, allContent, this::handle);
-                    EventCache.LOG.debug("Received a message update for a user that JDA does not currently have cached");
                     return null;
                 }
                 default:

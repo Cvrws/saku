@@ -51,7 +51,6 @@ public class ThreadListSyncHandler extends SocketHandler
             {
                 if (!EntityBuilder.MISSING_CHANNEL.equals(ex.getMessage()))
                     throw ex;
-                EntityBuilder.LOG.debug("Discarding thread on sync because of missing parent channel cache. JSON: {}", threadJson);
             }
         }
 

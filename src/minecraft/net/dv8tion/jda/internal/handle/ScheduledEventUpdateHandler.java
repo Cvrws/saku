@@ -49,7 +49,6 @@ public class ScheduledEventUpdateHandler extends SocketHandler
         GuildImpl guild = (GuildImpl) getJDA().getGuildById(guildId);
         if (guild == null)
         {
-            EventCache.LOG.debug("Caching SCHEDULED_EVENT_UPDATE for uncached guild with id {}", guildId);
             getJDA().getEventCache().cache(EventCache.Type.GUILD, guildId, responseNumber, allContent, this::handle);
             return null;
         }

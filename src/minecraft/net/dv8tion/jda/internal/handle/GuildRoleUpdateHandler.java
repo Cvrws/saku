@@ -44,7 +44,6 @@ public class GuildRoleUpdateHandler extends SocketHandler
         if (guild == null)
         {
             getJDA().getEventCache().cache(EventCache.Type.GUILD, guildId, responseNumber, allContent, this::handle);
-            EventCache.LOG.debug("Received a Role Update for a Guild that is not yet cached: {}", content);
             return null;
         }
 
@@ -53,7 +52,6 @@ public class GuildRoleUpdateHandler extends SocketHandler
         if (role == null)
         {
             getJDA().getEventCache().cache(EventCache.Type.ROLE, roleId, responseNumber, allContent, this::handle);
-            EventCache.LOG.debug("Received a Role Update for Role that is not yet cached: {}", content);
             return null;
         }
 

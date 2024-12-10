@@ -45,7 +45,6 @@ public class AutoModRuleHandler extends SocketHandler
         if (guild == null)
         {
             api.getEventCache().cache(EventCache.Type.GUILD, guildId, responseNumber, allContent, this::handle);
-            EventCache.LOG.debug("Received a AUTO_MODERATION_RULE_{} for a guild that is not yet cached. JSON: {}", type, content);
             return null;
         }
 

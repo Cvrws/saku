@@ -23,7 +23,6 @@ import okhttp3.Dispatcher;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okio.Okio;
-import org.slf4j.Logger;
 
 import java.io.*;
 import java.net.URI;
@@ -38,7 +37,6 @@ import java.util.zip.ZipException;
 
 public class IOUtil
 {
-    private static final Logger log = JDALogger.getLog(IOUtil.class);
 
     public static void silentClose(AutoCloseable closeable)
     {
@@ -283,8 +281,6 @@ public class IOUtil
         catch (ZipException | EOFException ex)
         {
             data.reset(); // reset to get full content
-            log.error("Failed to read gzip content for response. Headers: {}\nContent: '{}'",
-                response.headers(), JDALogger.getLazyString(() -> new String(readFully(data))), ex);
             return null;
         }
         return data;

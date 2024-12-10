@@ -18,7 +18,6 @@ package net.dv8tion.jda.api.utils;
 
 import net.dv8tion.jda.api.utils.cache.CacheView;
 import net.dv8tion.jda.internal.utils.JDALogger;
-import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -51,7 +50,6 @@ import java.util.concurrent.locks.Lock;
  */
 public class LockIterator<T> implements ClosableIterator<T>
 {
-    private final static Logger log = JDALogger.getLog(ClosableIterator.class);
     private final Iterator<? extends T> it;
     private Lock lock;
 
@@ -95,7 +93,6 @@ public class LockIterator<T> implements ClosableIterator<T>
     {
         if (lock != null)
         {
-            log.error("Finalizing without closing, performing force close on lock");
             close();
         }
     }

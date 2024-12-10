@@ -70,10 +70,7 @@ public class InterfacedEventManager implements IEventManager
     {
         if (!(listener instanceof EventListener))
         {
-            //noinspection ConstantConditions
-            JDALogger.getLog(getClass()).warn(
-                    "Trying to remove a listener that does not implement EventListener: {}",
-                    listener == null ? "null" : listener.getClass().getName());
+
         }
 
         //noinspection SuspiciousMethodCalls
@@ -99,7 +96,6 @@ public class InterfacedEventManager implements IEventManager
             }
             catch (Throwable throwable)
             {
-                JDAImpl.LOG.error("One of the EventListeners had an uncaught exception", throwable);
                 if (throwable instanceof Error)
                     throw (Error) throwable;
             }

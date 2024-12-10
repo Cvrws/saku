@@ -80,8 +80,6 @@ public class BanPaginationActionImpl
             }
             catch (Exception t)
             {
-                LOG.error("Got an unexpected error while decoding ban index {} for guild {}:\nData: {}",
-                          i, guild.getId(), object, t);
             }
         }
 

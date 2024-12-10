@@ -40,7 +40,6 @@ public class GuildAuditLogEntryCreateHandler extends SocketHandler
         if (guild == null)
         {
             getJDA().getEventCache().cache(EventCache.Type.GUILD, id, responseNumber, allContent, this::handle);
-            EventCache.LOG.debug("Received Guild Audit Log Create event for a Guild not yet cached. GuildId: {}", id);
             return null;
         }
 

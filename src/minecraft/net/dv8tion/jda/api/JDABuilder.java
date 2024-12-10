@@ -15,8 +15,27 @@
  */
 package net.dv8tion.jda.api;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.neovisionaries.ws.client.WebSocketFactory;
-import net.dv8tion.jda.api.audio.factory.IAudioSendFactory;
+
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -26,7 +45,11 @@ import net.dv8tion.jda.api.hooks.VoiceDispatchInterceptor;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.RestConfig;
-import net.dv8tion.jda.api.utils.*;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.Compression;
+import net.dv8tion.jda.api.utils.ConcurrentSessionController;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.SessionController;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.JDAImpl;
 import net.dv8tion.jda.internal.managers.PresenceImpl;
@@ -38,13 +61,6 @@ import net.dv8tion.jda.internal.utils.config.SessionConfig;
 import net.dv8tion.jda.internal.utils.config.ThreadingConfig;
 import net.dv8tion.jda.internal.utils.config.flags.ConfigFlag;
 import okhttp3.OkHttpClient;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 /**
  * Used to create new {@link net.dv8tion.jda.api.JDA} instances. This is also useful for making sure all of
@@ -82,7 +98,6 @@ public class JDABuilder
     protected WebSocketFactory wsFactory = null;
     protected String token = null;
     protected IEventManager eventManager = null;
-    protected IAudioSendFactory audioSendFactory = null;
     protected JDA.ShardInfo shardInfo = null;
     protected Compression compression = Compression.ZLIB;
     protected Activity activity = null;
@@ -1246,24 +1261,6 @@ public class JDABuilder
     }
 
     /**
-     * Changes the factory used to create {@link net.dv8tion.jda.api.audio.factory.IAudioSendSystem IAudioSendSystem}
-     * objects which handle the sending loop for audio packets.
-     * <br>By default, JDA uses {@link net.dv8tion.jda.api.audio.factory.DefaultSendFactory DefaultSendFactory}.
-     *
-     * @param  factory
-     *         The new {@link net.dv8tion.jda.api.audio.factory.IAudioSendFactory IAudioSendFactory} to be used
-     *         when creating new {@link net.dv8tion.jda.api.audio.factory.IAudioSendSystem} objects.
-     *
-     * @return The JDABuilder instance. Useful for chaining.
-     */
-    @Nonnull
-    public JDABuilder setAudioSendFactory(@Nullable IAudioSendFactory factory)
-    {
-        this.audioSendFactory = factory;
-        return this;
-    }
-
-    /**
      * Sets whether or not we should mark our session as afk
      * <br>This value can be changed at any time in the {@link net.dv8tion.jda.api.managers.Presence Presence} from a JDA instance.
      *
@@ -1835,9 +1832,6 @@ public class JDABuilder
         if (eventManager != null)
             jda.setEventManager(eventManager);
 
-        if (audioSendFactory != null)
-            jda.setAudioSendFactory(audioSendFactory);
-
         jda.addEventListener(listeners.toArray());
         jda.setStatus(JDA.Status.INITIALIZED);  //This is already set by JDA internally, but this is to make sure the listeners catch it.
 
@@ -1865,21 +1859,14 @@ public class JDABuilder
         if (!membersIntent && memberCachePolicy == MemberCachePolicy.ALL)
             throw new IllegalStateException("Cannot use MemberCachePolicy.ALL without GatewayIntent.GUILD_MEMBERS enabled!");
         else if (!membersIntent && chunkingFilter != ChunkingFilter.NONE)
-            JDAImpl.LOG.warn("Member chunking is disabled due to missing GUILD_MEMBERS intent.");
 
         if (!automaticallyDisabled.isEmpty())
         {
-            JDAImpl.LOG.warn("Automatically disabled CacheFlags due to missing intents");
             // List each missing intent
-            automaticallyDisabled.stream()
-                .map(it -> "Disabled CacheFlag." + it + " (missing GatewayIntent." + it.getRequiredIntent() + ")")
-                .forEach(JDAImpl.LOG::warn);
+   
 
             // Tell user how to disable this warning
-            JDAImpl.LOG.warn("You can manually disable these flags to remove this warning by using disableCache({}) on your JDABuilder",
-                automaticallyDisabled.stream()
-                    .map(it -> "CacheFlag." + it)
-                    .collect(Collectors.joining(", ")));
+
             // Only print this warning once
             automaticallyDisabled.clear();
         }

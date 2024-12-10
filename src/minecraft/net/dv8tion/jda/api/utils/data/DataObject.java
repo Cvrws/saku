@@ -33,8 +33,6 @@ import net.dv8tion.jda.api.utils.data.etf.ExTermEncoder;
 import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.Helpers;
 import org.jetbrains.annotations.Contract;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,7 +54,6 @@ import java.util.function.UnaryOperator;
  */
 public class DataObject implements SerializableData
 {
-    private static final Logger log = LoggerFactory.getLogger(DataObject.class);
     private static final ObjectMapper mapper;
     private static final SimpleModule module;
     private static final MapType mapType;
@@ -218,7 +215,6 @@ public class DataObject implements SerializableData
         }
         catch (Exception ex)
         {
-            log.error("Failed to parse ETF data {}", Arrays.toString(data), ex);
             throw new ParsingException(ex);
         }
     }
@@ -305,7 +301,6 @@ public class DataObject implements SerializableData
         }
         catch (ClassCastException ex)
         {
-            log.error("Unable to extract child data", ex);
         }
         return child == null ? Optional.empty() : Optional.of(new DataObject(child));
     }
@@ -349,7 +344,6 @@ public class DataObject implements SerializableData
         }
         catch (ClassCastException ex)
         {
-            log.error("Unable to extract child data", ex);
         }
         return child == null ? Optional.empty() : Optional.of(new DataArray(child));
     }

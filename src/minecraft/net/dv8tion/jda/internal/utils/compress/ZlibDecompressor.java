@@ -115,7 +115,6 @@ public class ZlibDecompressor implements Decompressor
         if (!isFlush(data))
         {
             //There is no flush suffix so this is not the end of the message
-            LOG.debug("Received incomplete data, writing to buffer. Length: {}", data.length);
             buffer(data);
             return null; // signal failure to decompress
         }
@@ -123,14 +122,12 @@ public class ZlibDecompressor implements Decompressor
         {
             //This has a flush suffix and we have an incomplete package buffered
             //concatenate the package with the new data and decompress it below
-            LOG.debug("Received final part of incomplete data");
             buffer(data);
             byte[] arr = flushBuffer.array();
             data = new byte[flushBuffer.position()];
             System.arraycopy(arr, 0, data, 0, data.length);
             flushBuffer = null;
         }
-        LOG.trace("Decompressing data {}", lazy(data));
         //Get the compressed message and inflate it
         //We use the same buffer here to optimize gc use
         ByteArrayOutputStream buffer = getDecompressBuffer();

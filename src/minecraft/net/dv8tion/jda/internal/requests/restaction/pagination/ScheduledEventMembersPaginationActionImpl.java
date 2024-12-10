@@ -71,7 +71,6 @@ public class ScheduledEventMembersPaginationActionImpl extends PaginationActionI
             }
             catch (ParsingException | NullPointerException e)
             {
-                LOG.warn("Encountered an exception in ScheduledEventPagination", e);
             }
         }
 

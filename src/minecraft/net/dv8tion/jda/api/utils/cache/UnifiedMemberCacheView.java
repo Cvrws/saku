@@ -16,15 +16,15 @@
 
 package net.dv8tion.jda.api.utils.cache;
 
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.utils.MiscUtil;
-import org.jetbrains.annotations.Unmodifiable;
+import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
+
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.utils.MiscUtil;
 
 /**
  * {@link net.dv8tion.jda.api.utils.cache.CacheView CacheView} implementation
@@ -81,7 +81,7 @@ public interface UnifiedMemberCacheView extends CacheView<Member>
      * @return Immutable list of members with the given username
      */
     @Nonnull
-    @Unmodifiable
+    
     List<Member> getElementsByUsername(@Nonnull String name, boolean ignoreCase);
 
     /**
@@ -97,7 +97,7 @@ public interface UnifiedMemberCacheView extends CacheView<Member>
      * @return Immutable list of members with the given username
      */
     @Nonnull
-    @Unmodifiable
+    
     default List<Member> getElementsByUsername(@Nonnull String name)
     {
         return getElementsByUsername(name, false);
@@ -117,7 +117,7 @@ public interface UnifiedMemberCacheView extends CacheView<Member>
      * @return Immutable list of members with the given nickname
      */
     @Nonnull
-    @Unmodifiable
+    
     List<Member> getElementsByNickname(@Nullable String name, boolean ignoreCase);
 
     /**
@@ -132,7 +132,7 @@ public interface UnifiedMemberCacheView extends CacheView<Member>
      * @return Immutable list of members with the given nickname
      */
     @Nonnull
-    @Unmodifiable
+    
     default List<Member> getElementsByNickname(@Nullable String name)
     {
         return getElementsByNickname(name, false);
@@ -151,7 +151,7 @@ public interface UnifiedMemberCacheView extends CacheView<Member>
      * @return Immutable list of members with the given roles
      */
     @Nonnull
-    @Unmodifiable
+    
     List<Member> getElementsWithRoles(@Nonnull Role... roles);
 
     /**
@@ -167,6 +167,6 @@ public interface UnifiedMemberCacheView extends CacheView<Member>
      * @return Immutable list of members with the given roles
      */
     @Nonnull
-    @Unmodifiable
+    
     List<Member> getElementsWithRoles(@Nonnull Collection<Role> roles);
 }

@@ -16,6 +16,33 @@
 
 package net.dv8tion.jda.internal.entities;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
+
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import net.dv8tion.jda.api.JDA;
@@ -23,17 +50,59 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.ApplicationInfo;
+import net.dv8tion.jda.api.entities.ApplicationTeam;
+import net.dv8tion.jda.api.entities.ClientType;
+import net.dv8tion.jda.api.entities.EmbedType;
+import net.dv8tion.jda.api.entities.Entitlement;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Guild.ExplicitContentLevel;
 import net.dv8tion.jda.api.entities.Guild.NotificationLevel;
 import net.dv8tion.jda.api.entities.Guild.Timeout;
 import net.dv8tion.jda.api.entities.Guild.VerificationLevel;
-import net.dv8tion.jda.api.entities.MessageEmbed.*;
+import net.dv8tion.jda.api.entities.GuildWelcomeScreen;
+import net.dv8tion.jda.api.entities.Invite;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Mentions;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageActivity;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.MessageEmbed.AuthorInfo;
+import net.dv8tion.jda.api.entities.MessageEmbed.Field;
+import net.dv8tion.jda.api.entities.MessageEmbed.Footer;
+import net.dv8tion.jda.api.entities.MessageEmbed.ImageInfo;
+import net.dv8tion.jda.api.entities.MessageEmbed.Provider;
+import net.dv8tion.jda.api.entities.MessageEmbed.Thumbnail;
+import net.dv8tion.jda.api.entities.MessageEmbed.VideoInfo;
+import net.dv8tion.jda.api.entities.MessageReaction;
+import net.dv8tion.jda.api.entities.MessageReference;
+import net.dv8tion.jda.api.entities.MessageType;
+import net.dv8tion.jda.api.entities.PermissionOverride;
+import net.dv8tion.jda.api.entities.RichPresence;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.RoleIcon;
+import net.dv8tion.jda.api.entities.ScheduledEvent;
+import net.dv8tion.jda.api.entities.SelfUser;
+import net.dv8tion.jda.api.entities.StageInstance;
+import net.dv8tion.jda.api.entities.TeamMember;
+import net.dv8tion.jda.api.entities.ThreadMember;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.Webhook;
+import net.dv8tion.jda.api.entities.WebhookType;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.attribute.IThreadContainer;
 import net.dv8tion.jda.api.entities.channel.attribute.IWebhookContainer;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.MediaChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
@@ -43,15 +112,29 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
-import net.dv8tion.jda.api.entities.sticker.*;
+import net.dv8tion.jda.api.entities.sticker.GuildSticker;
+import net.dv8tion.jda.api.entities.sticker.RichSticker;
+import net.dv8tion.jda.api.entities.sticker.StandardSticker;
+import net.dv8tion.jda.api.entities.sticker.Sticker;
+import net.dv8tion.jda.api.entities.sticker.StickerItem;
+import net.dv8tion.jda.api.entities.sticker.StickerPack;
 import net.dv8tion.jda.api.entities.templates.Template;
 import net.dv8tion.jda.api.entities.templates.TemplateChannel;
 import net.dv8tion.jda.api.entities.templates.TemplateGuild;
 import net.dv8tion.jda.api.entities.templates.TemplateRole;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
-import net.dv8tion.jda.api.events.guild.member.update.*;
-import net.dv8tion.jda.api.events.user.update.*;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateAvatarEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateBoostTimeEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateFlagsEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdatePendingEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateTimeOutEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateDiscriminatorEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateFlagsEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateGlobalNameEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.exceptions.ParsingException;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -60,7 +143,15 @@ import net.dv8tion.jda.api.utils.cache.CacheView;
 import net.dv8tion.jda.api.utils.data.DataArray;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.JDAImpl;
-import net.dv8tion.jda.internal.entities.channel.concrete.*;
+import net.dv8tion.jda.internal.entities.channel.concrete.CategoryImpl;
+import net.dv8tion.jda.internal.entities.channel.concrete.ForumChannelImpl;
+import net.dv8tion.jda.internal.entities.channel.concrete.MediaChannelImpl;
+import net.dv8tion.jda.internal.entities.channel.concrete.NewsChannelImpl;
+import net.dv8tion.jda.internal.entities.channel.concrete.PrivateChannelImpl;
+import net.dv8tion.jda.internal.entities.channel.concrete.StageChannelImpl;
+import net.dv8tion.jda.internal.entities.channel.concrete.TextChannelImpl;
+import net.dv8tion.jda.internal.entities.channel.concrete.ThreadChannelImpl;
+import net.dv8tion.jda.internal.entities.channel.concrete.VoiceChannelImpl;
 import net.dv8tion.jda.internal.entities.channel.mixin.attribute.IPermissionContainerMixin;
 import net.dv8tion.jda.internal.entities.channel.mixin.attribute.IPostContainerMixin;
 import net.dv8tion.jda.internal.entities.channel.mixin.middleman.AudioChannelMixin;
@@ -68,35 +159,21 @@ import net.dv8tion.jda.internal.entities.emoji.CustomEmojiImpl;
 import net.dv8tion.jda.internal.entities.emoji.RichCustomEmojiImpl;
 import net.dv8tion.jda.internal.entities.emoji.UnicodeEmojiImpl;
 import net.dv8tion.jda.internal.entities.messages.MessagePollImpl;
-import net.dv8tion.jda.internal.entities.sticker.*;
+import net.dv8tion.jda.internal.entities.sticker.GuildStickerImpl;
+import net.dv8tion.jda.internal.entities.sticker.RichStickerImpl;
+import net.dv8tion.jda.internal.entities.sticker.StandardStickerImpl;
+import net.dv8tion.jda.internal.entities.sticker.StickerItemImpl;
+import net.dv8tion.jda.internal.entities.sticker.StickerPackImpl;
 import net.dv8tion.jda.internal.handle.EventCache;
 import net.dv8tion.jda.internal.utils.Helpers;
-import net.dv8tion.jda.internal.utils.JDALogger;
 import net.dv8tion.jda.internal.utils.UnlockHook;
 import net.dv8tion.jda.internal.utils.cache.ChannelCacheViewImpl;
 import net.dv8tion.jda.internal.utils.cache.MemberCacheViewImpl;
 import net.dv8tion.jda.internal.utils.cache.SnowflakeCacheViewImpl;
 import net.dv8tion.jda.internal.utils.cache.SortedSnowflakeCacheViewImpl;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
-import org.slf4j.Logger;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 public class EntityBuilder
 {
-    public static final Logger LOG = JDALogger.getLog(EntityBuilder.class);
     public static final String MISSING_CHANNEL = "MISSING_CHANNEL";
     public static final String MISSING_USER = "MISSING_USER";
     public static final String UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE";
@@ -191,7 +268,6 @@ public class EntityBuilder
                 DataObject object = array.getObject(i);
                 if (object.isNull("id"))
                 {
-                    LOG.error("Received GUILD_CREATE with an emoji with a null ID. JSON: {}", object);
                     continue;
                 }
                 final long emojiId = object.getLong("id");
@@ -211,14 +287,12 @@ public class EntityBuilder
             {
                 if (object.isNull("id"))
                 {
-                    LOG.error("Received GUILD_CREATE with a scheduled event with a null ID. JSON: {}", object);
                     continue;
                 }
                 createScheduledEvent(guildObj, object);
             }
             catch (ParsingException exception)
             {
-                LOG.error("Received GUILD_CREATE with a scheduled event that failed to parse. JSON: {}", object, exception);
             }
         }
     }
@@ -236,14 +310,12 @@ public class EntityBuilder
                 DataObject object = array.getObject(i);
                 if (object.isNull("id"))
                 {
-                    LOG.error("Received GUILD_CREATE with a sticker with a null ID. GuildId: {} JSON: {}",
-                              guildObj.getId(), object);
+
                     continue;
                 }
                 if (object.getInt("type", -1) != Sticker.Type.GUILD.getId())
                 {
-                    LOG.error("Received GUILD_CREATE with sticker that had an unexpected type. GuildId: {} Type: {} JSON: {}",
-                              guildObj.getId(), object.getInt("type", -1), object);
+
                     continue;
                 }
 
@@ -359,18 +431,8 @@ public class EntityBuilder
         }
 
         if (guildObj.getOwner() == null)
-            LOG.debug("Finished setup for guild with a null owner. GuildId: {} OwnerId: {}", guildId, guildJson.opt("owner_id").orElse(null));
         if (guildObj.getMember(api.getSelfUser()) == null)
         {
-            LOG.error("Guild is missing a SelfMember. GuildId: {}", guildId);
-            LOG.debug("Guild is missing a SelfMember. GuildId: {} JSON: \n{}", guildId, guildJson);
-            // This is actually a gateway request
-            guildObj.retrieveMembersByIds(api.getSelfUser().getIdLong()).onSuccess(m -> {
-                if (m.isEmpty())
-                    LOG.warn("Was unable to recover SelfMember for guild with id {}. This guild might be corrupted!", guildId);
-                else
-                    LOG.debug("Successfully recovered SelfMember for guild with id {}.", guildId);
-            });
         }
 
         for (int i = 0; i < threadArray.length(); i++)
@@ -382,10 +444,7 @@ public class EntityBuilder
             }
             catch (Exception ex)
             {
-                if (MISSING_CHANNEL.equals(ex.getMessage()))
-                    LOG.debug("Discarding thread without cached parent channel. JSON: {}", threadJson);
-                else
-                    LOG.warn("Failed to create thread channel for guild with id {}.\nJSON: {}", guildId, threadJson, ex);
+
             }
         }
 
@@ -424,7 +483,6 @@ public class EntityBuilder
         case MEDIA:
             return createMediaChannel(guildObj, channelData, guildObj.getIdLong());
         default:
-            LOG.debug("Cannot create channel for type " + channelData.getInt("type"));
             return null;
         }
     }
@@ -547,7 +605,6 @@ public class EntityBuilder
         {
             if (membersView.remove(member.getIdLong()) == null)
                 return false;
-            LOG.trace("Unloading member {}", member);
             if (user.getMutualGuilds().isEmpty())
             {
                 // we no longer share any guilds/channels with this user so remove it from cache
@@ -571,7 +628,6 @@ public class EntityBuilder
             return true;
         }
 
-        LOG.trace("Loading member {}", member);
 
         if (getJDA().getUserById(user.getIdLong()) == null)
         {
@@ -672,9 +728,6 @@ public class EntityBuilder
         AudioChannel audioChannel = (AudioChannel) guild.getGuildChannelById(channelId);
         if (audioChannel != null)
             ((AudioChannelMixin<?>) audioChannel).getConnectedMembersMap().put(member.getIdLong(), member);
-        else
-            LOG.error("Received a GuildVoiceState with a channel ID for a non-existent channel! ChannelId: {} GuildId: {} UserId: {}",
-                      channelId, guild.getId(), user.getId());
 
         String requestToSpeak = voiceStateJson.getString("request_to_speak_timestamp", null);
         OffsetDateTime timestamp = null;
@@ -879,11 +932,7 @@ public class EntityBuilder
                 }
                 catch (Exception ex)
                 {
-                    String userId = member.getId();
-                    if (LOG.isDebugEnabled())
-                        LOG.warn("Encountered exception trying to parse a presence! UserId: {} JSON: {}", userId, activityArray, ex);
-                    else
-                        LOG.warn("Encountered exception trying to parse a presence! UserId: {} Message: {} Enable debug for details", userId, ex.getMessage());
+
                 }
             }
         }
@@ -1595,12 +1644,10 @@ public class EntityBuilder
             catch (NoSuchElementException e)
             {
                 //Caused by Discord not properly clearing PermissionOverrides when a Member leaves a Guild.
-                LOG.debug("{}. Ignoring PermissionOverride.", e.getMessage());
             }
             catch (IllegalArgumentException e)
             {
                 //Missing handling for a type
-                LOG.warn("{}. Ignoring PermissionOverride.", e.getMessage());
             }
         }
     }
@@ -1814,14 +1861,7 @@ public class EntityBuilder
             }
             catch (IllegalArgumentException ex)
             {
-                // We can just discard the message for some trivial cases
-                if (UNKNOWN_MESSAGE_TYPE.equals(ex.getMessage()))
-                    LOG.debug("Received referenced message with unknown type. Type: {}", referenceJson.getInt("type", -1));
-                else if (MISSING_CHANNEL.equals(ex.getMessage()))
-                    LOG.debug("Received referenced message with unknown channel. channel_id: {} Type: {}",
-                        referenceJson.getUnsignedLong("channel_id", 0), referenceJson.getInt("type", -1));
-                else
-                    throw ex;
+
             }
         }
 
@@ -1896,7 +1936,6 @@ public class EntityBuilder
         }
         if (activityType == MessageActivity.ActivityType.UNKNOWN)
         {
-            LOG.debug("Received an unknown ActivityType, Activity: {}", activityData);
         }
 
         return new MessageActivity(activityType, partyId, application);
@@ -2149,7 +2188,6 @@ public class EntityBuilder
             }
             catch (ParsingException | ClassCastException ex)
             {
-                LOG.error("Sticker contained in pack {} ({}) could not be parsed. JSON: {}", name, id, object);
             }
         }
 

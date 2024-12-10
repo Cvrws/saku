@@ -41,7 +41,6 @@ public class ScheduledEventDeleteHandler extends SocketHandler
         GuildImpl guild = (GuildImpl) getJDA().getGuildById(guildId);
         if (guild == null)
         {
-            EventCache.LOG.debug("SCHEDULED_EVENT_DELETE was received for a Guild that is not yet cached: {}", content);
             return null;
         }
 

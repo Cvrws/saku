@@ -16,20 +16,68 @@
 
 package net.dv8tion.jda.internal.entities;
 
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.Region;
-import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.BulkBanResponse;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
+import net.dv8tion.jda.api.entities.GuildWelcomeScreen;
+import net.dv8tion.jda.api.entities.ISnowflake;
+import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.entities.Invite;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.ScheduledEvent;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.api.entities.VanityInvite;
+import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.automod.AutoModRule;
 import net.dv8tion.jda.api.entities.automod.build.AutoModRuleData;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.attribute.ICategorizableChannel;
 import net.dv8tion.jda.api.entities.channel.attribute.IThreadContainer;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.MediaChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.unions.DefaultGuildChannelUnion;
@@ -47,17 +95,33 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.PrivilegeConfig;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.privileges.IntegrationPrivilege;
-import net.dv8tion.jda.api.managers.*;
+import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.managers.AutoModRuleManager;
+import net.dv8tion.jda.api.managers.GuildManager;
+import net.dv8tion.jda.api.managers.GuildStickerManager;
+import net.dv8tion.jda.api.managers.GuildWelcomeScreenManager;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.Route;
-import net.dv8tion.jda.api.requests.restaction.*;
+import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
+import net.dv8tion.jda.api.requests.restaction.CacheRestAction;
+import net.dv8tion.jda.api.requests.restaction.ChannelAction;
+import net.dv8tion.jda.api.requests.restaction.CommandCreateAction;
+import net.dv8tion.jda.api.requests.restaction.CommandEditAction;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.api.requests.restaction.MemberAction;
+import net.dv8tion.jda.api.requests.restaction.RoleAction;
+import net.dv8tion.jda.api.requests.restaction.ScheduledEventAction;
 import net.dv8tion.jda.api.requests.restaction.order.CategoryOrderAction;
 import net.dv8tion.jda.api.requests.restaction.order.ChannelOrderAction;
 import net.dv8tion.jda.api.requests.restaction.order.RoleOrderAction;
 import net.dv8tion.jda.api.requests.restaction.pagination.AuditLogPaginationAction;
 import net.dv8tion.jda.api.utils.FileUpload;
-import net.dv8tion.jda.api.utils.cache.*;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.api.utils.cache.CacheView;
+import net.dv8tion.jda.api.utils.cache.MemberCacheView;
+import net.dv8tion.jda.api.utils.cache.SnowflakeCacheView;
+import net.dv8tion.jda.api.utils.cache.SortedSnowflakeCacheView;
 import net.dv8tion.jda.api.utils.concurrent.Task;
 import net.dv8tion.jda.api.utils.data.DataArray;
 import net.dv8tion.jda.api.utils.data.DataObject;
@@ -66,9 +130,25 @@ import net.dv8tion.jda.internal.entities.automod.AutoModRuleImpl;
 import net.dv8tion.jda.internal.handle.EventCache;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import net.dv8tion.jda.internal.interactions.command.CommandImpl;
-import net.dv8tion.jda.internal.managers.*;
-import net.dv8tion.jda.internal.requests.*;
-import net.dv8tion.jda.internal.requests.restaction.*;
+import net.dv8tion.jda.internal.managers.AudioManagerImpl;
+import net.dv8tion.jda.internal.managers.AutoModRuleManagerImpl;
+import net.dv8tion.jda.internal.managers.GuildManagerImpl;
+import net.dv8tion.jda.internal.managers.GuildStickerManagerImpl;
+import net.dv8tion.jda.internal.managers.GuildWelcomeScreenManagerImpl;
+import net.dv8tion.jda.internal.requests.CompletedRestAction;
+import net.dv8tion.jda.internal.requests.DeferredRestAction;
+import net.dv8tion.jda.internal.requests.MemberChunkManager;
+import net.dv8tion.jda.internal.requests.Requester;
+import net.dv8tion.jda.internal.requests.RestActionImpl;
+import net.dv8tion.jda.internal.requests.WebSocketClient;
+import net.dv8tion.jda.internal.requests.restaction.AuditableRestActionImpl;
+import net.dv8tion.jda.internal.requests.restaction.ChannelActionImpl;
+import net.dv8tion.jda.internal.requests.restaction.CommandCreateActionImpl;
+import net.dv8tion.jda.internal.requests.restaction.CommandEditActionImpl;
+import net.dv8tion.jda.internal.requests.restaction.CommandListUpdateActionImpl;
+import net.dv8tion.jda.internal.requests.restaction.MemberActionImpl;
+import net.dv8tion.jda.internal.requests.restaction.RoleActionImpl;
+import net.dv8tion.jda.internal.requests.restaction.ScheduledEventActionImpl;
 import net.dv8tion.jda.internal.requests.restaction.order.CategoryOrderActionImpl;
 import net.dv8tion.jda.internal.requests.restaction.order.ChannelOrderActionImpl;
 import net.dv8tion.jda.internal.requests.restaction.order.RoleOrderActionImpl;
@@ -78,24 +158,15 @@ import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.EntityString;
 import net.dv8tion.jda.internal.utils.Helpers;
 import net.dv8tion.jda.internal.utils.UnlockHook;
-import net.dv8tion.jda.internal.utils.cache.*;
+import net.dv8tion.jda.internal.utils.cache.AbstractCacheView;
+import net.dv8tion.jda.internal.utils.cache.ChannelCacheViewImpl;
+import net.dv8tion.jda.internal.utils.cache.MemberCacheViewImpl;
+import net.dv8tion.jda.internal.utils.cache.SnowflakeCacheViewImpl;
+import net.dv8tion.jda.internal.utils.cache.SortedChannelCacheViewImpl;
+import net.dv8tion.jda.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 import net.dv8tion.jda.internal.utils.concurrent.task.GatewayTask;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.temporal.TemporalAccessor;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GuildImpl implements Guild
 {
@@ -160,11 +231,8 @@ public class GuildImpl implements Guild
         }
 
         // Clear audio connection
-        getJDA().getClient().removeAudioConnection(id);
         final AbstractCacheView<AudioManager> audioManagerView = getJDA().getAudioManagersView();
-        final AudioManagerImpl manager = (AudioManagerImpl) audioManagerView.get(id); //read-lock access/release
-        if (manager != null)
-            manager.closeAudioConnection(ConnectionStatus.DISCONNECTED_REMOVED_FROM_GUILD); //connection-lock access/release
+        final AudioManagerImpl manager = (AudioManagerImpl) audioManagerView.get(id); //read-lock access/release //connection-lock access/release
         audioManagerView.remove(id); //write-lock access/release
 
         //cleaning up all users that we do not share a guild with anymore
@@ -356,7 +424,6 @@ public class GuildImpl implements Guild
                 }
                 catch (ParsingException exception)
                 {
-                    EntityBuilder.LOG.error("Failed to parse AutoModRule", exception);
                 }
             }
             return Collections.unmodifiableList(rules);
@@ -655,7 +722,6 @@ public class GuildImpl implements Guild
                 }
                 catch (Exception e)
                 {
-                    JDAImpl.LOG.error("Error creating webhook from json", e);
                 }
             }
 
@@ -926,7 +992,6 @@ public class GuildImpl implements Guild
                 }
                 catch (ParsingException | ClassCastException ex)
                 {
-                    EntityBuilder.LOG.error("Failed to parse sticker for JSON: {}", object, ex);
                 }
             }
 
@@ -1198,7 +1263,6 @@ public class GuildImpl implements Guild
         boolean includePresences = getJDA().isIntent(GatewayIntent.GUILD_PRESENCES);
         MemberChunkManager.ChunkRequest handler = chunkManager.chunkGuild(this, includePresences, (last, list) -> list.forEach(callback));
         handler.exceptionally(ex -> {
-            WebSocketClient.LOG.error("Encountered exception trying to handle member chunk response", ex);
             return null;
         });
         return new GatewayTask<>(handler, () -> handler.cancel(false)).onSetTimeout(handler::setTimeout);
@@ -1244,7 +1308,6 @@ public class GuildImpl implements Guild
         });
 
         handle.exceptionally(ex -> {
-            WebSocketClient.LOG.error("Encountered exception trying to handle member chunk response", ex);
             result.completeExceptionally(ex);
             return null;
         });
@@ -1271,7 +1334,6 @@ public class GuildImpl implements Guild
         });
 
         handle.exceptionally(ex -> {
-            WebSocketClient.LOG.error("Encountered exception trying to handle member chunk response", ex);
             result.completeExceptionally(ex);
             return null;
         });
@@ -1321,10 +1383,7 @@ public class GuildImpl implements Guild
                 }
                 catch (Exception e)
                 {
-                    if (EntityBuilder.MISSING_CHANNEL.equals(e.getMessage()))
-                        EntityBuilder.LOG.debug("Discarding thread without cached parent channel. JSON: {}", threadObj);
-                    else
-                        EntityBuilder.LOG.warn("Failed to create thread channel. JSON: {}", threadObj, e);
+
                 }
             }
 
@@ -1378,7 +1437,6 @@ public class GuildImpl implements Guild
                 }
                 catch (Exception e)
                 {
-                    JDAImpl.LOG.error("Error creating template from json", e);
                 }
             }
             return Collections.unmodifiableList(templates);

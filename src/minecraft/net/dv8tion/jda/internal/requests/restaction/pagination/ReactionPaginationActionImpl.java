@@ -106,7 +106,6 @@ public class ReactionPaginationActionImpl
             }
             catch (ParsingException | NullPointerException e)
             {
-                LOG.warn("Encountered exception in ReactionPagination", e);
             }
         }
 

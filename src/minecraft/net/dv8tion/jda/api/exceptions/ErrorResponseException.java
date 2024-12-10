@@ -195,7 +195,6 @@ public class ErrorResponseException extends RuntimeException
         }
         catch (Exception e)
         {
-            JDALogger.getLog(ErrorResponseException.class).error("Failed to parse parts of error response. Body: {}", response.getString(), e);
         }
 
         return new ErrorResponseException(errorResponse, response, code, meaning, schemaErrors);

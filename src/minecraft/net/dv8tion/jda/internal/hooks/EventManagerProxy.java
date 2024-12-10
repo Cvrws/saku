@@ -71,12 +71,10 @@ public class EventManagerProxy implements IEventManager
         }
         catch (RejectedExecutionException ex)
         {
-            JDAImpl.LOG.warn("Event-Pool rejected event execution! Running on handling thread instead...");
             handleInternally(event);
         }
         catch (Exception ex)
         {
-            JDAImpl.LOG.error("Encountered exception trying to schedule event", ex);
         }
     }
 
@@ -89,7 +87,6 @@ public class EventManagerProxy implements IEventManager
         }
         catch (RuntimeException e)
         {
-            JDAImpl.LOG.error("The EventManager.handle() call had an uncaught exception", e);
         }
     }
 

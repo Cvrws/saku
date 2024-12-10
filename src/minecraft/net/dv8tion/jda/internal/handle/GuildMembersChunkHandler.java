@@ -44,8 +44,6 @@ public class GuildMembersChunkHandler extends SocketHandler
         {
             if (api.getClient().getChunkManager().handleChunk(guildId, content))
                 return null;
-            WebSocketClient.LOG.debug("Received member chunk for guild that is already in cache. GuildId: {} Count: {} Index: {}/{}",
-                    guildId, members.length(), content.getInt("chunk_index"), content.getInt("chunk_count"));
             // Chunk handling
             EntityBuilder builder = getJDA().getEntityBuilder();
             TLongObjectMap<DataObject> presences = content.optArray("presences").map(it ->

@@ -42,7 +42,6 @@ public class MessageCreateHandler extends SocketHandler
         MessageType type = MessageType.fromId(content.getInt("type"));
         if (type == MessageType.UNKNOWN)
         {
-            WebSocketClient.LOG.debug("JDA received a message of unknown type. Type: {}  JSON: {}", type, content);
             return null;
         }
 
@@ -62,7 +61,6 @@ public class MessageCreateHandler extends SocketHandler
             if (guild == null)
             {
                 api.getEventCache().cache(EventCache.Type.GUILD, guildId, responseNumber, allContent, this::handle);
-                EventCache.LOG.debug("Received message for a guild that JDA does not currently have cached");
                 return null;
             }
         }
@@ -88,25 +86,21 @@ public class MessageCreateHandler extends SocketHandler
                         GuildChannel actual = guild.getGuildChannelById(channelId);
                         if (actual != null)
                         {
-                            WebSocketClient.LOG.debug("Dropping MESSAGE_CREATE for unexpected channel of type {}", actual.getType());
                             return null;
                         }
                     }
 
                     jda.getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
-                    EventCache.LOG.debug("Received a message for a channel that JDA does not currently have cached");
                     return null;
                 }
                 case EntityBuilder.MISSING_USER:
                 {
                     final long authorId = content.getObject("author").getLong("id");
                     jda.getEventCache().cache(EventCache.Type.USER, authorId, responseNumber, allContent, this::handle);
-                    EventCache.LOG.debug("Received a message for a user that JDA does not currently have cached");
                     return null;
                 }
                 case EntityBuilder.UNKNOWN_MESSAGE_TYPE:
                 {
-                    WebSocketClient.LOG.debug("Ignoring message with unknown type: {}", content);
                     return null;
                 }
                 default:

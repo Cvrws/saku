@@ -72,7 +72,6 @@ public class MessageReactionHandler extends SocketHandler
 
         if (emojiId == null && emojiName == null)
         {
-            WebSocketClient.LOG.debug("Received a reaction {} with no name nor id. json: {}", add ? "add" : "remove", content);
             return null;
         }
         final long guildId = content.getUnsignedLong("guild_id", 0);
@@ -102,7 +101,6 @@ public class MessageReactionHandler extends SocketHandler
             }
             if (member == null && add && guild.isLoaded())
             {
-                WebSocketClient.LOG.debug("Dropping reaction event for unknown member {}", content);
                 return null;
             }
         }
@@ -119,8 +117,6 @@ public class MessageReactionHandler extends SocketHandler
             if (add && guild != null)
             {
                 api.getEventCache().cache(EventCache.Type.USER, userId, responseNumber, allContent, this::handle);
-                EventCache.LOG.debug("Received a reaction for a user that JDA does not currently have cached. " +
-                        "UserID: {} ChannelId: {} MessageId: {}", userId, channelId, messageId);
                 return null;
             }
         }
@@ -134,7 +130,6 @@ public class MessageReactionHandler extends SocketHandler
                 GuildChannel actual = guild.getGuildChannelById(channelId);
                 if (actual != null)
                 {
-                    WebSocketClient.LOG.debug("Dropping MESSAGE_REACTION event for unexpected channel of type {}", actual.getType());
                     return null;
                 }
             }
@@ -142,7 +137,6 @@ public class MessageReactionHandler extends SocketHandler
             if (guildId != 0)
             {
                 api.getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
-                EventCache.LOG.debug("Received a reaction for a channel that JDA does not currently have cached");
                 return null;
             }
 

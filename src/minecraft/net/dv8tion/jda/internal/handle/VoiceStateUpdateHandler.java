@@ -50,7 +50,6 @@ public class VoiceStateUpdateHandler extends SocketHandler
 
         if (content.isNull("member"))
         {
-            WebSocketClient.LOG.debug("Discarding VOICE_STATE_UPDATE with missing member. JSON: {}", content);
             return null;
         }
 
@@ -84,7 +83,6 @@ public class VoiceStateUpdateHandler extends SocketHandler
         if (guild == null)
         {
             getJDA().getEventCache().cache(EventCache.Type.GUILD, guildId, responseNumber, allContent, this::handle);
-            EventCache.LOG.debug("Received a VOICE_STATE_UPDATE for a Guild that has yet to be cached. JSON: {}", content);
             return;
         }
 
@@ -96,7 +94,6 @@ public class VoiceStateUpdateHandler extends SocketHandler
         if (channel == null && (channelId != null))
         {
             getJDA().getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
-            EventCache.LOG.debug("Received VOICE_STATE_UPDATE for an AudioChannel that has yet to be cached. JSON: {}", content);
             return;
         }
 

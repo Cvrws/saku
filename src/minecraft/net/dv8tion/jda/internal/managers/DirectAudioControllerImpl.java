@@ -47,7 +47,6 @@ public class DirectAudioControllerImpl implements DirectAudioController
         Checks.notNull(channel, "Audio Channel");
         JDAImpl jda = getJDA();
         WebSocketClient client = jda.getClient();
-        client.queueAudioConnect(channel);
     }
 
     @Override
@@ -56,7 +55,6 @@ public class DirectAudioControllerImpl implements DirectAudioController
         Checks.notNull(guild, "Guild");
         JDAImpl jda = getJDA();
         WebSocketClient client = jda.getClient();
-        client.queueAudioDisconnect(guild);
     }
 
     @Override
@@ -65,7 +63,6 @@ public class DirectAudioControllerImpl implements DirectAudioController
         Checks.notNull(channel, "Audio Channel");
         JDAImpl jda = getJDA();
         WebSocketClient client = jda.getClient();
-        client.queueAudioReconnect(channel);
     }
 
     /**
@@ -92,6 +89,5 @@ public class DirectAudioControllerImpl implements DirectAudioController
         Checks.notNull(guild, "Guild");
         JDAImpl jda = getJDA();
         WebSocketClient client = jda.getClient();
-        client.updateAudioConnection(guild.getIdLong(), channel);
     }
 }

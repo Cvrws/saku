@@ -57,7 +57,6 @@ public class InteractionCreateHandler extends SocketHandler
         int version = content.getInt("version", 1);
         if (version != 1)
         {
-            WebSocketClient.LOG.debug("Received interaction with version {}. This version is currently unsupported by this version of JDA. Consider updating!", version);
             return null;
         }
 
@@ -73,7 +72,6 @@ public class InteractionCreateHandler extends SocketHandler
         ChannelType channelType = ChannelType.fromId(channelJson.getInt("type"));
         if (!channelType.isMessage() || channelType == ChannelType.GROUP)
         {
-            WebSocketClient.LOG.debug("Discarding INTERACTION_CREATE event from unexpected channel type. Channel: {}", channelJson);
             return null;
         }
 

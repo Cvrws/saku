@@ -21,7 +21,6 @@ import gnu.trove.map.hash.TLongObjectHashMap;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.utils.CacheConsumer;
 import net.dv8tion.jda.internal.utils.JDALogger;
-import org.slf4j.Logger;
 
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -30,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class EventCache
 {
-    public static final Logger LOG = JDALogger.getLog(EventCache.class);
     /** Sequence difference after which events will be removed from cache */
     public static final long TIMEOUT_AMOUNT = 100;
     private final EnumMap<Type, TLongObjectMap<List<CacheNode>>> eventCache = new EnumMap<>(Type.class);
@@ -59,7 +57,6 @@ public class EventCache
                     if (remove)
                     {
                         count.incrementAndGet();
-                        LOG.trace("Removing type {}/{} from event cache with payload {}", type, triggerId, node.event);
                     }
                     return remove;
                 });
@@ -68,8 +65,6 @@ public class EventCache
             }
         });
         int amount = count.get();
-        if (amount > 0)
-            LOG.debug("Removed {} events from cache that were too old to be recycled", amount);
     }
 
     public synchronized void cache(Type type, long triggerId, long responseTotal, DataObject event, CacheConsumer handler)
@@ -96,8 +91,7 @@ public class EventCache
         List<CacheNode> items = typeCache.remove(triggerId);
         if (items != null && !items.isEmpty())
         {
-            EventCache.LOG.debug("Replaying {} events from the EventCache for type {} with id: {}",
-                items.size(), type, triggerId);
+
             for (CacheNode item : items)
                 item.execute();
         }
@@ -122,9 +116,6 @@ public class EventCache
         if (typeCache == null)
             return;
 
-        List<CacheNode> events = typeCache.remove(id);
-        if (events != null)
-            LOG.debug("Clearing cache for type {} with ID {} (Size: {})", type, id, events.size());
     }
 
     public enum Type

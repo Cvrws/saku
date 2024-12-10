@@ -26,7 +26,7 @@ import net.minecraft.client.renderer.GlStateManager;
 public final class LoginMenu extends GuiScreen {
     
     private TextField usernameBox;
-    private String status = "Esto es importante para el irc xd";
+    private String status = "Ingresa tu nombre de usuario";
     private Animation animation;
     private final Font FONT_RENDERER = Fonts.ROBOTO.get(20, Weight.LIGHT);
     //private final Set<String> blacklist = new HashSet<>(Arrays.asList("Cv", "Cvr", "Cvrwed", "Kioshi", "Val"));

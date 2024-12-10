@@ -21,7 +21,6 @@ import net.dv8tion.jda.api.utils.concurrent.Task;
 import net.dv8tion.jda.internal.requests.WebSocketClient;
 import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.JDALogger;
-import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
@@ -31,7 +30,6 @@ import java.util.function.LongConsumer;
 
 public class GatewayTask<T> implements Task<T>
 {
-    private static final Logger log = JDALogger.getLog(Task.class);
     private final Runnable onCancel;
     private final CompletableFuture<T> future;
     private LongConsumer setTimeout;
@@ -59,7 +57,6 @@ public class GatewayTask<T> implements Task<T>
     public Task<T> onError(@Nonnull Consumer<? super Throwable> callback)
     {
         Checks.notNull(callback, "Callback");
-        Consumer<Throwable> failureHandler = ContextException.here((error) -> log.error("Task Failure callback threw error", error));
         future.exceptionally(error -> {
             try
             {
@@ -67,7 +64,6 @@ public class GatewayTask<T> implements Task<T>
             }
             catch (Throwable e)
             {
-                failureHandler.accept(e);
                 if (e instanceof Error)
                     throw e;
             }
@@ -81,7 +77,6 @@ public class GatewayTask<T> implements Task<T>
     public Task<T> onSuccess(@Nonnull Consumer<? super T> callback)
     {
         Checks.notNull(callback, "Callback");
-        Consumer<Throwable> failureHandler = ContextException.here((error) -> log.error("Task Success callback threw error", error));
         future.thenAccept(result -> {
             try
             {
@@ -89,7 +84,6 @@ public class GatewayTask<T> implements Task<T>
             }
             catch (Throwable error)
             {
-                failureHandler.accept(error);
                 if (error instanceof Error)
                     throw error;
             }

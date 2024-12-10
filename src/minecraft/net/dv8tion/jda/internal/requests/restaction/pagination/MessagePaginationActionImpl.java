@@ -81,14 +81,10 @@ public class MessagePaginationActionImpl
             }
             catch (ParsingException | NullPointerException e)
             {
-                LOG.warn("Encountered an exception in MessagePagination", e);
             }
             catch (IllegalArgumentException e)
             {
-                if (EntityBuilder.UNKNOWN_MESSAGE_TYPE.equals(e.getMessage()))
-                    LOG.warn("Skipping unknown message type during pagination", e);
-                else
-                    LOG.warn("Unexpected issue trying to parse message during pagination", e);
+
             }
         }
 

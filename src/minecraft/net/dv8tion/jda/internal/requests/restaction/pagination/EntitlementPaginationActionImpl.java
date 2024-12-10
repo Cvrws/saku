@@ -160,7 +160,6 @@ public class EntitlementPaginationActionImpl
             }
             catch(ParsingException | NullPointerException e)
             {
-                LOG.warn("Encountered an exception in EntitlementPaginationAction", e);
             }
         }
 

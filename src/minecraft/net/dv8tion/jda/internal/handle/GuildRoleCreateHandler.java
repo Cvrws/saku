@@ -40,7 +40,6 @@ public class GuildRoleCreateHandler extends SocketHandler
         if (guild == null)
         {
             getJDA().getEventCache().cache(EventCache.Type.GUILD, guildId, responseNumber, allContent, this::handle);
-            EventCache.LOG.debug("GUILD_ROLE_CREATE was received for a Guild that is not yet cached: {}", content);
             return null;
         }
 
