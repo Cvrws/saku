@@ -49,6 +49,10 @@ public final class NameTags extends Module {
             	return;
             }
             
+            if (name.contains("CLICK DERECHO") || name.contains("MEJORAS") || name.contains("[SHOP]")) {
+            	return;
+            }
+            
             event.setCancelled();
             
             renderNewTag(event, player, name);
@@ -72,7 +76,7 @@ public final class NameTags extends Module {
         GlStateManager.rotate(mc.getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
         GlStateManager.scale(-scale * scaleRatio, -scale * scaleRatio, scale * scaleRatio);
 	        		
-	    if (player.isSneaking() || mc.player.isSneaking()) {
+	    if (player.isSneaking()) {
 	        GlStateManager.translate(0.0F, 9.374999F, 0.0F);
 	    }
 	    
@@ -87,21 +91,19 @@ public final class NameTags extends Module {
 	        RenderUtil.roundedRect(-backgroundWidth / 2 + 1 , -4.0F, backgroundWidth / 2 - 3, backgroundHeight, 6, new Color(0, 0, 0, alphaBackground.getValue().intValue()).getRGB());
 	    }
 
-        GlStateManager.disableLighting();
-        GlStateManager.depthMask(false);
-        GlStateManager.disableDepth();
-        GlStateManager.enableBlend();
+	    GlStateManager.disableLighting();
+	    GlStateManager.depthMask(false);
+	    GlStateManager.disableDepth();
+	    GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        
         mc.fontRendererObj.draw(name, -nameWidth / 2, 0, -1);
 		
+        GlStateManager.disableBlend();
         GlStateManager.enableDepth();
         GlStateManager.depthMask(true);
         GlStateManager.enableLighting();
-        GlStateManager.disableBlend();
         GlStateManager.popMatrix();
-        
-		RenderHelper.disableStandardItemLighting();
-		mc.entityRenderer.disableLightmap();
 	}
 	
 	private void renderItem(final ItemStack stack, final int x, final int y) {

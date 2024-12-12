@@ -3,6 +3,8 @@ package cc.unknown.module.impl.combat;
 import java.util.Comparator;
 import java.util.List;
 
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.RotationComponent;
 import cc.unknown.component.impl.player.Slot;
@@ -38,6 +40,7 @@ import cc.unknown.value.impl.ListValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
+import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import de.florianmichael.viamcp.fixes.AttackOrder;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
@@ -101,7 +104,7 @@ public final class KillAura extends Module {
 	private final BooleanValue rayCast = new BooleanValue("Ray cast", this, false);
 	private final BooleanValue throughWalls = new BooleanValue("Through Walls", this, false, () -> !rayCast.getValue());
 
-	private final DescValue advanced = new DescValue("Advanced:", this);
+	private final DescValue advanced = new DescValue("Advanced Settings:", this);
 	private final BooleanValue attackWhilstScaffolding = new BooleanValue("Attack whilst Scaffolding", this, false);
 	private final BooleanValue noSwing = new BooleanValue("No swing", this, false);
 
@@ -111,7 +114,7 @@ public final class KillAura extends Module {
 	public final BooleanValue scoreboardCheckTeam = new BooleanValue("Scoreboard Check Team", this, false, () -> !teams.getValue());
 	public final BooleanValue checkArmorColor = new BooleanValue("Check Armor Color", this, false, () -> !teams.getValue());
 
-	private final DescValue showTargets = new DescValue("Targets:", this);
+	private final DescValue showTargets = new DescValue("Targets Settings:", this);
 	public final BooleanValue player = new BooleanValue("Players", this, true);
 	public final BooleanValue invisibles = new BooleanValue("Invisibles", this, true);
 	public final BooleanValue animals = new BooleanValue("Animals", this, false);
@@ -306,7 +309,7 @@ public final class KillAura extends Module {
         if (rotationSpeed != 0) RotationComponent.setRotations(targetRotations, rotationSpeed,
                 movementCorrection.getValue() == MovementFix.OFF ? MovementFix.OFF : movementCorrection.getValue(),
                 rotations -> {
-                    MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(rotations, range.getValue().floatValue(), -0.8f);
+                    MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(rotations, range.getValue().floatValue(), -0.1f);
 
                     return movingObjectPosition != null && movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY;
                 });
@@ -532,8 +535,11 @@ public final class KillAura extends Module {
 
 	private void unblock() {
 		if (blocking) {
-			PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN,
-					EnumFacing.DOWN));
+			if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) mc.gameSettings.keyBindUseItem.pressed = false;
+			else {
+				PacketUtil.send(new C08PacketPlayerBlockPlacement(getComponent(Slot.class).getItemStack()));
+				mc.gameSettings.keyBindUseItem.pressed = false;
+			}
 			blocking = false;
 		}
 	}
@@ -543,11 +549,18 @@ public final class KillAura extends Module {
 			MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationComponent.lastRotations, 3);
 
 			if (interact && movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
-				this.interact(movingObjectPosition);
+				if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) mc.gameSettings.keyBindUseItem.pressed = false;
+				else {
+					interact(movingObjectPosition);
+					mc.gameSettings.keyBindUseItem.pressed = false;
+				}
 			}
 			
-			PacketUtil.send(new C08PacketPlayerBlockPlacement(getComponent(Slot.class).getItemStack()));
-			
+			if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) mc.gameSettings.keyBindUseItem.pressed = true;
+			else {
+				PacketUtil.send(new C08PacketPlayerBlockPlacement(getComponent(Slot.class).getItemStack()));
+				mc.gameSettings.keyBindUseItem.pressed = true;
+			}
 
 			blocking = true;
 		}

@@ -6,14 +6,9 @@ import java.util.Arrays;
 import cc.unknown.Sakura;
 import cc.unknown.module.Module;
 import cc.unknown.module.impl.combat.*;
-import cc.unknown.module.impl.exploit.CancelPackets;
-import cc.unknown.module.impl.exploit.ChatBypass;
-import cc.unknown.module.impl.exploit.NoGuiClose;
+import cc.unknown.module.impl.exploit.*;
 import cc.unknown.module.impl.ghost.*;
-import cc.unknown.module.impl.latency.BackTrack;
-import cc.unknown.module.impl.latency.PerfectCriticals;
-import cc.unknown.module.impl.latency.PingSpoof;
-import cc.unknown.module.impl.latency.TickBase;
+import cc.unknown.module.impl.latency.*;
 import cc.unknown.module.impl.movement.*;
 import cc.unknown.module.impl.other.*;
 import cc.unknown.module.impl.player.*;
@@ -32,7 +27,6 @@ public final class ModuleManager {
         this.put(KillAura.class, new KillAura());
         this.put(Velocity.class, new Velocity());
         this.put(Criticals.class, new Criticals());
-        this.put(TickBase.class, new TickBase());
         this.put(HitBox.class, new HitBox());
         this.put(STap.class, new STap());
         this.put(Regen.class, new Regen());
@@ -50,6 +44,7 @@ public final class ModuleManager {
         // Latency
         this.put(PingSpoof.class, new PingSpoof());
         this.put(BackTrack.class, new BackTrack());
+        this.put(TickBase.class, new TickBase());
         this.put(PerfectCriticals.class, new PerfectCriticals());
         
         // Movement

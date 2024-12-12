@@ -32,8 +32,8 @@ public class StopWatch {
         return System.currentTimeMillis() >= millis;
     }
     
-    public boolean reached(final long currentTime) {
-        return Math.max(0L, System.currentTimeMillis() - millis) >= currentTime;
+    public boolean reached(final long delay) {
+        return Math.max(0L, System.currentTimeMillis() - millis) >= delay;
     }
     
     public boolean reached(final long lastTime, final long currentTime) {

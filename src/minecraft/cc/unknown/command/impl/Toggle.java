@@ -26,8 +26,8 @@ public final class Toggle extends Command {
             return;
         }
         module.toggle();
-        success(String.format("Toggled %s",
-                module.getAliases()[0] + " " + (module.isEnabled() ? green + "on" : red + "off"))
+        success(String.format("%s",
+                module.getAliases()[0] + " " + (module.isEnabled() ? green + "enabled" : red + "disabled"))
         );
     }
 }

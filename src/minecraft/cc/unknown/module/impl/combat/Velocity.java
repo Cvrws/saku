@@ -64,7 +64,7 @@ public final class Velocity extends Module {
 
 	@EventLink
 	public final Listener<MoveInputEvent> onMove = event -> {
-		if (mode.is("Legit") && reduced && MoveUtil.isMoving()) {
+		if (mode.is("Legit") && reduced && MoveUtil.isMoving() && mc.player.hurtTime > 0) {
 			event.setJump(true);
 		}
 		
@@ -108,7 +108,7 @@ public final class Velocity extends Module {
 					}
 					break;
 				case "Legit":
-					if (mc.player.onGround && mc.player.motionY > 0) {
+					if (mc.player.onGround && mc.player.motionY > 0 && mc.player.hurtTime > 0) {
 						if (!legitTiming.getValue() || mc.player.ticksSinceVelocity <= 14 || mc.player.onGroundTicks <= 1) {
 							reduced = true;
 						}

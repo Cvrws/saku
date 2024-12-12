@@ -54,7 +54,7 @@ public class IRC extends ListenerAdapter {
 	    	String extUser = extractUsername(content);
 	    	String extContent = extractMessage(content);
 	    	
-	    	PlayerUtil.display(pink + "[Sakura] " + darkAqua + extUser + ": " + reset + extContent);
+	    	PlayerUtil.display(pink + "[S] " + darkAqua + extUser + ": " + reset + extContent);
 	    } else {
 	    	PlayerUtil.display(blue + "[Discord] " + red + username + ": " + reset + content);
 	    }

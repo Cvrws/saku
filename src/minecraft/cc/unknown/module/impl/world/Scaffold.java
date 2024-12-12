@@ -51,6 +51,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.network.play.client.C09PacketHeldItemChange;
 import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -95,39 +96,35 @@ public class Scaffold extends Module {
 			.setDefault("Off");
 	
     private final StringValue macroKey = new StringValue("Macro Key:", this, "Y", () -> !rotationMode.is("Snap") && !rotationMode.is("Normal"));
-
-	public final ModeValue downwards = new ModeValue("Downwards (Press Sneak)", this)
-			.add(new SubMode("Off"))
-			.add(new NormalDownward("Normal", this))
-			.setDefault("Off");
-
-	private final BoundsNumberValue rotationSpeed = new BoundsNumberValue("Rotation Speed", this, 5, 10, 0, 10, 1);
-	public final BoundsNumberValue placeDelay = new BoundsNumberValue("Place Delay", this, 0, 0, 0, 5, 1);
-	private final NumberValue timer = new NumberValue("Timer", this, 1, 0.1, 10, 0.1);
-	private final NumberValue expand = new NumberValue("Expand", this, 0, 0, 5, 1);
-	public final BooleanValue movementCorrection = new BooleanValue("Movement Correction", this, false);
-	public final BooleanValue safeWalk = new BooleanValue("Safe Walk", this, false);
 	
-	private final BooleanValue sneak = new BooleanValue("Sneak", this, false);
-	public final BoundsNumberValue startSneaking = new BoundsNumberValue("Start Sneaking", this, 0, 0, 0, 5, 1, () -> !sneak.getValue());
-	public final BoundsNumberValue stopSneaking = new BoundsNumberValue("Stop Sneaking", this, 0, 0, 0, 5, 1, () -> !sneak.getValue());
-	public final BoundsNumberValue sneakEvery = new BoundsNumberValue("Sneak every x blocks", this, 1, 1, 1, 10, 1, () -> !sneak.getValue());
-	public final NumberValue sneakingSpeed = new NumberValue("Sneaking Speed", this, 0.2, 0.2, 1, 0.05, () -> !sneak.getValue());
-
-	private final DescValue advanced = new DescValue("Advanced:", this);
-	private final BooleanValue grim = new BooleanValue("Snap for grim", this, false, () -> !rotationMode.is("Snap"));
-	private final BooleanValue useBiggestStack = new BooleanValue("Use Biggest Stack", this, true);
-
 	public final ModeValue yawOffset = new ModeValue("Yaw Offset", this)
 			.add(new SubMode("0"))
 			.add(new SubMode("45"))
 			.add(new SubMode("-45"))
 			.setDefault("0");
-	
-	private final NumberValue blockToClutch = new NumberValue("Blocks To Clutch", this, 5, 4, 10, 1);
-	private final NumberValue yawOffsetRandomization = new NumberValue("Yaw Offset Randomization", this, 5, 5, 360, 5);
 
-	public final BooleanValue ignoreSpeed = new BooleanValue("Ignore Speed Effect", this, false);
+	private final DescValue general = new DescValue("Basic Settings:", this);
+    private final BoundsNumberValue placeDelay = new BoundsNumberValue("Place Delay", this, 0, 0, 0, 5, 1);
+	public final BooleanValue downwards = new BooleanValue("Downwards (Press Sneak)", this, false);
+    private final BooleanValue safeWalk = new BooleanValue("Safe Walk", this, false);
+	private final BoundsNumberValue timer = new BoundsNumberValue("Timer", this, 1, 2, 0.1, 10, 0.05);
+	private final NumberValue expand = new NumberValue("Expand", this, 0, 0, 5, 1);
+	
+	private final DescValue vipas = new DescValue("Advanced Settings:", this);
+	private final BoundsNumberValue rotationSpeed = new BoundsNumberValue("Rotation Speed", this, 5, 10, 0, 10, 1);
+	private final NumberValue range = new NumberValue("Block Range", this, 5, 4, 20, 1);
+    private final BooleanValue randomiseRotationSpeed = new BooleanValue("Randomise Rotation Speed", this, false);
+    private final BooleanValue movementCorrection = new BooleanValue("Movement Correction", this, false);
+	private final BooleanValue useBiggestStack = new BooleanValue("Use Biggest Stack", this, true);
+	private final BooleanValue ignoreSpeed = new BooleanValue("Ignore Speed Effect", this, false);
+
+	private final DescValue sneak = new DescValue("Sneak Settings:", this);
+	private final BooleanValue sneakOffGround = new BooleanValue("Sneak OffGround", this, false);
+	private final BooleanValue sneakOnGround = new BooleanValue("Sneak OnGround", this, false);
+	private final NumberValue startSneaking = new NumberValue("Start Sneaking", this, 1, 1, 5, 1);
+	private final BoundsNumberValue sneakEvery = new BoundsNumberValue("Sneak every x blocks", this, 1, 1, 1, 10, 1);
+	private final NumberValue sneakingSpeed = new NumberValue("Sneaking Speed", this, 0.2, 0.2, 1, 0.05);
+
 	private Vec3 targetBlock;
 	private EnumFacingOffset enumFacing;
 	public Vec3i offset = new Vec3i(0, 0, 0);
@@ -156,21 +153,21 @@ public class Scaffold extends Module {
 
 		pitchDrift = (float) ((Math.random() - 0.5) * (Math.random() - 0.5) * 10);
 		yawDrift = (float) ((Math.random() - 0.5) * (Math.random() - 0.5) * 10);
+		lastSlot = -1;
 
 		startY = Math.floor(mc.player.posY);
 		targetBlock = null;
-		lastSlot = -1;
 		this.sneakingTicks = 0;
 		recursions = 0;
 		placements = 0;
+		
+		if (randomiseRotationSpeed.getValue()) {
+			rotationSpeed.setValue(50 + (85 - 50) * Math.random());
+		}
 	}
 
 	@Override
 	public void onDisable() {
-        if (lastSlot != -1) {
-            getComponent(Slot.class).setSlot(lastSlot);
-            lastSlot = -1;
-        }
 		resetBinds();
 	}
 
@@ -252,8 +249,8 @@ public class Scaffold extends Module {
 		mc.player.hideSneakHeight.reset();
 
 		// Timer
-		if (timer.getValue().floatValue() != 1)
-			mc.timer.timerSpeed = timer.getValue().floatValue();
+		if (timer.getValue().floatValue() != 1 && timer.getSecondValue().floatValue() != 1)
+			mc.timer.timerSpeed = (float) MathUtil.getRandom(timer.getValue().floatValue(), timer.getSecondValue().floatValue());
 	};
 
 	@EventLink
@@ -292,7 +289,7 @@ public class Scaffold extends Module {
 	        } else if (getComponent(Slot.class).getItemStack() == null || !(getComponent(Slot.class).getItemStack().getItem() instanceof ItemBlock) || !InventoryUtil.canBePlaced((ItemBlock) getComponent(Slot.class).getItemStack().getItem())) {
 	        	slot = getSlot();
 	        }
-	        
+	        	        
 	        getComponent(Slot.class).setSlot(slot);
 	        	        
 			if (doesNotContainBlock(1) && (!sameY || (doesNotContainBlock(2) && doesNotContainBlock(3) && doesNotContainBlock(4)))) {
@@ -306,7 +303,7 @@ public class Scaffold extends Module {
 			if (recursion == 0)
 				this.calculateSneaking();
 
-			targetBlock = PlayerUtil.getPlacePossibility(blockToClutch.getValue().intValue(), offset.getX(), offset.getY(), offset.getZ(),
+			targetBlock = PlayerUtil.getPlacePossibility(range.getValue().intValue(), offset.getX(), offset.getY(), offset.getZ(),
 					sameY ? (int) Math.floor(startY) : null);
 
 			if (targetBlock == null) {
@@ -380,10 +377,6 @@ public class Scaffold extends Module {
 			return;
 		}
 
-		if (!this.sneak.getValue()) {
-			return;
-		}
-
 		double speed = this.sneakingSpeed.getValue().doubleValue();
 
 		if (speed <= 0.2) {
@@ -394,18 +387,15 @@ public class Scaffold extends Module {
 	}
 
 	public void calculateSneaking() {
-		if (ticksOnAir == 0)
+		boolean offOrOn = (mc.player.onGround && sneakOnGround.getValue()) || (!mc.player.onGround && sneakOffGround.getValue());
+		
+		if (ticksOnAir == 0 && offOrOn)
 			mc.gameSettings.keyBindSneak.setPressed(false);
 
 		this.sneakingTicks--;
 
-		if (!this.sneak.getValue() && pause <= 0) {
-			return;
-		}
-
-		int ahead = startSneaking.getRandomBetween().intValue();
+		int ahead = startSneaking.getValue().intValue();
 		int place = placeDelay.getRandomBetween().intValue();
-		int after = stopSneaking.getRandomBetween().intValue();
 
 		if (pause > 0) {
 			pause--;
@@ -414,19 +404,15 @@ public class Scaffold extends Module {
 			placements = 0;
 		}
 
-		if (this.sneakingTicks >= 0) {
+		if (this.sneakingTicks >= 0 && offOrOn) {
 			mc.gameSettings.keyBindSneak.setPressed(true);
 			return;
 		}
 
-		if (ticksOnAir > 0) {
-			this.sneakingTicks = (int) (double) (after);
-		}
 
-		if (ticksOnAir > 0 || PlayerUtil.blockRelativeToPlayer(mc.player.motionX * ahead, MoveUtil.HEAD_HITTER_MOTION,
-				mc.player.motionZ * ahead) instanceof BlockAir) {
+		if (ticksOnAir > 0 || PlayerUtil.blockRelativeToPlayer(mc.player.motionX * ahead, MoveUtil.HEAD_HITTER_MOTION, mc.player.motionZ * ahead) instanceof BlockAir) {
 			if (placements <= 0) {
-				this.sneakingTicks = (int) (double) (ahead + place + after);
+				this.sneakingTicks = (int) (double) (ahead + place);
 				placements = sneakEvery.getRandomBetween().intValue();
 			}
 		}
@@ -464,11 +450,7 @@ public class Scaffold extends Module {
 		            RotationComponent.rotations, enumFacing.getEnumFacing(), blockFace, rayCast.is("Normal"));
 
 		        if (!isAirTick)
-		        	
-		        	if (grim.getValue()) {
-			            targetYaw += (float) ((Math.random() - 0.5) * 0.2);		        		
-		        	} else targetYaw = (float) Math.toDegrees(MoveUtil.direction(mc.player.rotationYaw, forward, strafe)) - yawOffset;
-		        
+		        	targetYaw = (float) Math.toDegrees(MoveUtil.direction(mc.player.rotationYaw, forward, strafe)) - yawOffset;
 
 		        if (PlayerUtil.isOverAir()) {
 		            shouldGetMouseOver = true;
@@ -601,7 +583,8 @@ public class Scaffold extends Module {
 			mc.rightClickMouse();
 		} else if (mc.playerController.onPlayerRightClick(mc.player, mc.world, getComponent(Slot.class).getItemStack(),
 				blockFace, enumFacing.getEnumFacing(), hitVec)) {
-			PacketUtil.send(new C0APacketAnimation());
+			mc.clickMouseEvent();
+			//PacketUtil.send(new C0APacketAnimation());
 		}
 	}
 	
@@ -610,7 +593,7 @@ public class Scaffold extends Module {
 		double difference = player.posY + player.getEyeHeight() - targetBlock.yCoord - 0.5 - (Math.random() - 0.5) * 0.1;
 
 		MovingObjectPosition movingObjectPosition = null;		
-		for (int offset = -180 + yawOffset; offset <= 180; offset += yawOffsetRandomization.getValue().intValue()) {
+		for (int offset = -180 + yawOffset; offset <= 180; offset += 5) {
 			player.setPosition(player.posX, player.posY - difference, player.posZ);
 			movingObjectPosition = RayCastUtil.rayCast(new Vector2f((float) (player.rotationYaw + (offset * 3)), 0), 20);
 			player.setPosition(player.posX, player.posY + difference, player.posZ);

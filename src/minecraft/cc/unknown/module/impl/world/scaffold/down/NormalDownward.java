@@ -17,8 +17,10 @@ public class NormalDownward extends Mode<Scaffold> {
 
     @EventLink(value = Priority.HIGH)
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-        if (!Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) return;
-
-        getParent().offset = getParent().offset.add(0,-1,0);
+    	if (getParent().downwards.getValue()) {
+	        if (!Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) return;
+	
+	        getParent().offset = getParent().offset.add(0,-1,0);
+    	}
     };
 }

@@ -22,7 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.util.ChatFormatting;
 
-@ModuleInfo(aliases = "Murder Mystery", description = "Caja de herramientas para Murder Mystery", category = Category.OTHER)
+@ModuleInfo(aliases = "Murder Mystery", description = ">:3c", category = Category.OTHER)
 public final class MurderMystery extends Module {
 
 	private final BooleanValue checkBow = new BooleanValue("Check bow", this, false);
@@ -34,9 +34,6 @@ public final class MurderMystery extends Module {
 
 	private final ArrayList<EntityPlayer> murderers = new ArrayList<>();
 	private final ArrayList<EntityPlayer> detectives = new ArrayList<>();
-
-	public EntityLivingBase target;
-	public float rangeAimVelocity = 0.0f;
 
 	@EventLink
 	public final Listener<TickEvent> onTick = event -> {

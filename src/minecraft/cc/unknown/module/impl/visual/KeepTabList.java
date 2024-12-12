@@ -8,7 +8,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import net.minecraft.client.settings.GameSettings;
 
-@ModuleInfo(aliases = "Keep Tab List", description = "Muestra siempre la info del tabulador", category = Category.VISUALS)
+@ModuleInfo(aliases = "Keep Tab List", description = "Manten presionado siempre el tab", category = Category.VISUALS)
 public final class KeepTabList extends Module {
 	
     @EventLink

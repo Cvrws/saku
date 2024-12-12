@@ -493,12 +493,10 @@ public class PlayerUtil implements Accessor {
 
 		return null;
 	}
-
-	// This methods purpose is to get block placement possibilities, blocks are 1
-	// unit thick so please don't change it to 0.5 it causes bugs.
-	public Vec3 getPlacePossibility(int blockToClutch, double offsetX, double offsetY, double offsetZ, Integer sameY) {
+	
+	public Vec3 getPlacePossibility(int rangeV, double offsetX, double offsetY, double offsetZ, Integer sameY) {
 	    List<Vec3> possibilities = new ArrayList<>();
-	    int range = blockToClutch + (int) (Math.abs(offsetX) + Math.abs(offsetZ));
+	    int range = rangeV + (int) (Math.abs(offsetX) + Math.abs(offsetZ));
 
 	    for (int x = -range; x <= range; ++x) {
 	        for (int y = -range; y <= range; ++y) {
