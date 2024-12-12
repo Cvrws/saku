@@ -18,10 +18,8 @@ package net.dv8tion.jda.internal;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -70,15 +68,11 @@ import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
-import net.dv8tion.jda.api.entities.sticker.StickerPack;
-import net.dv8tion.jda.api.entities.sticker.StickerSnowflake;
-import net.dv8tion.jda.api.entities.sticker.StickerUnion;
 import net.dv8tion.jda.api.events.GatewayPingEvent;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
-import net.dv8tion.jda.api.exceptions.ParsingException;
 import net.dv8tion.jda.api.exceptions.RateLimitedException;
 import net.dv8tion.jda.api.hooks.IEventManager;
 import net.dv8tion.jda.api.hooks.InterfacedEventManager;
@@ -719,43 +713,6 @@ public class JDAImpl implements JDA
 
     @Nonnull
     @Override
-    public RestAction<StickerUnion> retrieveSticker(@Nonnull StickerSnowflake sticker)
-    {
-        Checks.notNull(sticker, "Sticker");
-        Route.CompiledRoute route = Route.Stickers.GET_STICKER.compile(sticker.getId());
-        return new RestActionImpl<>(this, route,
-            (response, request) -> entityBuilder.createRichSticker(response.getObject())
-        );
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<List<StickerPack>> retrieveNitroStickerPacks()
-    {
-        Route.CompiledRoute route = Route.Stickers.LIST_PACKS.compile();
-        return new RestActionImpl<>(this, route, (response, request) ->
-        {
-            DataArray array = response.getObject().getArray("sticker_packs");
-            List<StickerPack> packs = new ArrayList<>(array.length());
-            for (int i = 0; i < array.length(); i++)
-            {
-                DataObject object = null;
-                try
-                {
-                    object = array.getObject(i);
-                    StickerPack pack = entityBuilder.createStickerPack(object);
-                    packs.add(pack);
-                }
-                catch (ParsingException ex)
-                {
-                }
-            }
-            return Collections.unmodifiableList(packs);
-        });
-    }
-
-    @Nonnull
-    @Override
     public SnowflakeCacheView<ScheduledEvent> getScheduledEventCache()
     {
         return CacheView.allSnowflakes(() -> guildCache.stream().map(Guild::getScheduledEventCache));
@@ -1129,7 +1086,7 @@ public class JDAImpl implements JDA
         Route.CompiledRoute route = Route.Applications.UPDATE_ROLE_CONNECTION_METADATA.compile(getSelfUser().getApplicationId());
 
         DataArray array = DataArray.fromCollection(records);
-        RequestBody body = RequestBody.create(array.toJson(), Requester.MEDIA_TYPE_JSON);
+        RequestBody body = RequestBody.create(Requester.MEDIA_TYPE_JSON, array.toJson());
 
         return new RestActionImpl<>(this, route, body,
             (response, request) ->

@@ -17,8 +17,6 @@
 package net.dv8tion.jda.api.managers;
 
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.sticker.GuildSticker;
-import net.dv8tion.jda.api.entities.sticker.StickerSnowflake;
 import net.dv8tion.jda.internal.utils.Checks;
 
 import javax.annotation.CheckReturnValue;

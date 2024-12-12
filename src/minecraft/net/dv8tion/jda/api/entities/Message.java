@@ -15,12 +15,39 @@
  */
 package net.dv8tion.jda.api.entities;
 
+import java.io.File;
+import java.io.InputStream;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Formattable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.Unmodifiable;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.attribute.IThreadContainer;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -30,10 +57,7 @@ import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
-import net.dv8tion.jda.api.entities.sticker.GuildSticker;
-import net.dv8tion.jda.api.entities.sticker.Sticker;
-import net.dv8tion.jda.api.entities.sticker.StickerItem;
-import net.dv8tion.jda.api.entities.sticker.StickerSnowflake;
+
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.MissingAccessException;
 import net.dv8tion.jda.api.interactions.InteractionType;
@@ -61,18 +85,6 @@ import net.dv8tion.jda.internal.requests.restaction.pagination.PollVotersPaginat
 import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.Helpers;
 import okhttp3.MultipartBody;
-import org.jetbrains.annotations.Unmodifiable;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.File;
-import java.io.InputStream;
-import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Represents a Text message received from Discord.
@@ -811,15 +823,6 @@ public interface Message extends ISnowflake, Formattable
     @Unmodifiable
     List<MessageReaction> getReactions();
 
-    /**
-     * All {@link StickerItem StickerItems} that are in this Message.
-     * <br>The returned StickerItems may only contain necessary information such as the sticker id, format type, name, and icon url.
-     *
-     * @return Immutable list of all StickerItems in this message.
-     */
-    @Nonnull
-    @Unmodifiable
-    List<StickerItem> getStickers();
 
     /**
      * Defines whether or not this Message triggers TTS (Text-To-Speech).
@@ -1224,135 +1227,6 @@ public interface Message extends ISnowflake, Formattable
         return editMessageAttachments(Arrays.asList(attachments));
     }
 
-    /**
-     * Replies and references this message.
-     * <br>This is identical to {@code message.getGuildChannel().sendStickers(stickers).reference(message)}.
-     * You can use {@link MessageCreateAction#mentionRepliedUser(boolean) mentionRepliedUser(false)} to not mention the author of the message.
-     * <br>By default there won't be any error thrown if the referenced message does not exist.
-     * This behavior can be changed with {@link MessageCreateAction#failOnInvalidReply(boolean)}.
-     *
-     * <p>For further info, see {@link GuildMessageChannel#sendStickers(Collection)} and {@link MessageCreateAction#setMessageReference(Message)}.
-     *
-     * <p>Possible {@link net.dv8tion.jda.api.requests.ErrorResponse ErrorResponses} include:
-     * <ul>
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>If this message no longer exists</li>
-     *
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#MESSAGE_BLOCKED_BY_AUTOMOD MESSAGE_BLOCKED_BY_AUTOMOD}
-     *     <br>If this message was blocked by an {@link net.dv8tion.jda.api.entities.automod.AutoModRule AutoModRule}</li>
-     *
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#MESSAGE_BLOCKED_BY_HARMFUL_LINK_FILTER MESSAGE_BLOCKED_BY_HARMFUL_LINK_FILTER}
-     *     <br>If this message was blocked by the harmful link filter</li>
-     * </ul>
-     *
-     * @param  stickers
-     *         The 1-3 stickers to send
-     *
-     * @throws MissingAccessException
-     *         If the currently logged in account does not have {@link Permission#VIEW_CHANNEL Permission.VIEW_CHANNEL} in this channel
-     * @throws InsufficientPermissionException
-     *         <ul>
-     *           <li>If this is a {@link ThreadChannel} and the bot does not have {@link Permission#MESSAGE_SEND_IN_THREADS Permission.MESSAGE_SEND_IN_THREADS}</li>
-     *           <li>If this is not a {@link ThreadChannel} and the bot does not have {@link Permission#MESSAGE_SEND Permission.MESSAGE_SEND}</li>
-     *         </ul>
-     * @throws IllegalArgumentException
-     *         <ul>
-     *           <li>If any of the provided stickers is a {@link GuildSticker},
-     *               which is either {@link GuildSticker#isAvailable() unavailable} or from a different guild.</li>
-     *           <li>If the list is empty or has more than 3 stickers</li>
-     *           <li>If null is provided</li>
-     *         </ul>
-     * @throws IllegalStateException
-     *         If this message was not sent in a {@link Guild}
-     *
-     * @return {@link MessageCreateAction}
-     *
-     * @see    Sticker#fromId(long)
-     */
-    @Nonnull
-    @CheckReturnValue
-    default MessageCreateAction replyStickers(@Nonnull Collection<? extends StickerSnowflake> stickers)
-    {
-        return getGuildChannel().sendStickers(stickers).setMessageReference(this);
-    }
-
-    /**
-     * Replies and references this message.
-     * <br>This is identical to {@code message.getGuildChannel().sendStickers(stickers).reference(message)}.
-     * You can use {@link MessageCreateAction#mentionRepliedUser(boolean) mentionRepliedUser(false)} to not mention the author of the message.
-     * <br>By default there won't be any error thrown if the referenced message does not exist.
-     * This behavior can be changed with {@link MessageCreateAction#failOnInvalidReply(boolean)}.
-     *
-     * <p>For further info, see {@link GuildMessageChannel#sendStickers(Collection)} and {@link MessageCreateAction#setMessageReference(Message)}.
-     *
-     * <p>Possible {@link net.dv8tion.jda.api.requests.ErrorResponse ErrorResponses} include:
-     * <ul>
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>If this message no longer exists</li>
-     *
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#MESSAGE_BLOCKED_BY_AUTOMOD MESSAGE_BLOCKED_BY_AUTOMOD}
-     *     <br>If this message was blocked by an {@link net.dv8tion.jda.api.entities.automod.AutoModRule AutoModRule}</li>
-     *
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#MESSAGE_BLOCKED_BY_HARMFUL_LINK_FILTER MESSAGE_BLOCKED_BY_HARMFUL_LINK_FILTER}
-     *     <br>If this message was blocked by the harmful link filter</li>
-     * </ul>
-     *
-     * @param  stickers
-     *         The 1-3 stickers to send
-     *
-     * @throws MissingAccessException
-     *         If the currently logged in account does not have {@link Permission#VIEW_CHANNEL Permission.VIEW_CHANNEL} in this channel
-     * @throws InsufficientPermissionException
-     *         <ul>
-     *           <li>If this is a {@link ThreadChannel} and the bot does not have {@link Permission#MESSAGE_SEND_IN_THREADS Permission.MESSAGE_SEND_IN_THREADS}</li>
-     *           <li>If this is not a {@link ThreadChannel} and the bot does not have {@link Permission#MESSAGE_SEND Permission.MESSAGE_SEND}</li>
-     *         </ul>
-     * @throws IllegalArgumentException
-     *         <ul>
-     *           <li>If any of the provided stickers is a {@link GuildSticker},
-     *               which is either {@link GuildSticker#isAvailable() unavailable} or from a different guild.</li>
-     *           <li>If the list is empty or has more than 3 stickers</li>
-     *           <li>If null is provided</li>
-     *         </ul>
-     * @throws IllegalStateException
-     *         If this message was not sent in a {@link Guild}
-     *
-     * @return {@link MessageCreateAction}
-     *
-     * @see    Sticker#fromId(long)
-     */
-    @Nonnull
-    @CheckReturnValue
-    default MessageCreateAction replyStickers(@Nonnull StickerSnowflake... stickers)
-    {
-        return getGuildChannel().sendStickers(stickers).setMessageReference(this);
-    }
-
-    /**
-     * Shortcut for {@code getChannel().sendMessage(content).setMessageReference(this)}.
-     *
-     * <p>Possible {@link net.dv8tion.jda.api.requests.ErrorResponse ErrorResponses} include:
-     * <ul>
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>If this message no longer exists</li>
-     *
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#MESSAGE_BLOCKED_BY_AUTOMOD MESSAGE_BLOCKED_BY_AUTOMOD}
-     *     <br>If this message was blocked by an {@link net.dv8tion.jda.api.entities.automod.AutoModRule AutoModRule}</li>
-     *
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#MESSAGE_BLOCKED_BY_HARMFUL_LINK_FILTER MESSAGE_BLOCKED_BY_HARMFUL_LINK_FILTER}
-     *     <br>If this message was blocked by the harmful link filter</li>
-     * </ul>
-     *
-     * @param  content
-     *         The reply content
-     *
-     * @throws InsufficientPermissionException
-     *         If {@link MessageChannel#sendMessage(CharSequence)} throws
-     * @throws IllegalArgumentException
-     *         If {@link MessageChannel#sendMessage(CharSequence)} throws
-     *
-     * @return {@link MessageCreateAction}
-     */
     @Nonnull
     @CheckReturnValue
     default MessageCreateAction reply(@Nonnull CharSequence content)

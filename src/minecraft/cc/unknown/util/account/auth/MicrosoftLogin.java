@@ -49,33 +49,9 @@ public class MicrosoftLogin {
     private Object httpServer;
     private Consumer<String> callback;
 
+    @SneakyThrows
     private void browse(final String url) {
-        String userDir = System.getProperty("user.name");
-        String[] browsers = {
-            "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" " + url,
-            "\"C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe\" " + url,
-            "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" " + url,
-            "\"C:\\Users\\" + userDir + "\\AppData\\Local\\Programs\\Opera GX\\opera.exe\" " + url,
-            "\"C:\\Users\\" + userDir + "\\AppData\\Local\\Programs\\Opera\\opera.exe\" " + url
-        };
-
-        boolean opened = false;
-        for (String browser : browsers) {
-            try {
-                Runtime.getRuntime().exec(browser);
-                opened = true;
-                break;
-            } catch (Exception ignored) {
-            }
-        }
-
-        if (!opened) {
-            try {
-                Desktop.getDesktop().browse(new URI(url));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    	Desktop.getDesktop().browse(new URI(url));
     }
 
     private void copy(final String url) {

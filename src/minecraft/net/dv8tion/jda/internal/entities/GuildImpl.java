@@ -28,7 +28,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -82,9 +81,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.unions.DefaultGuildChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
-import net.dv8tion.jda.api.entities.sticker.GuildSticker;
-import net.dv8tion.jda.api.entities.sticker.StandardSticker;
-import net.dv8tion.jda.api.entities.sticker.StickerSnowflake;
 import net.dv8tion.jda.api.entities.templates.Template;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -98,7 +94,6 @@ import net.dv8tion.jda.api.interactions.commands.privileges.IntegrationPrivilege
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.managers.AutoModRuleManager;
 import net.dv8tion.jda.api.managers.GuildManager;
-import net.dv8tion.jda.api.managers.GuildStickerManager;
 import net.dv8tion.jda.api.managers.GuildWelcomeScreenManager;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -116,7 +111,6 @@ import net.dv8tion.jda.api.requests.restaction.order.CategoryOrderAction;
 import net.dv8tion.jda.api.requests.restaction.order.ChannelOrderAction;
 import net.dv8tion.jda.api.requests.restaction.order.RoleOrderAction;
 import net.dv8tion.jda.api.requests.restaction.pagination.AuditLogPaginationAction;
-import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.api.utils.cache.CacheView;
 import net.dv8tion.jda.api.utils.cache.MemberCacheView;
@@ -133,14 +127,11 @@ import net.dv8tion.jda.internal.interactions.command.CommandImpl;
 import net.dv8tion.jda.internal.managers.AudioManagerImpl;
 import net.dv8tion.jda.internal.managers.AutoModRuleManagerImpl;
 import net.dv8tion.jda.internal.managers.GuildManagerImpl;
-import net.dv8tion.jda.internal.managers.GuildStickerManagerImpl;
 import net.dv8tion.jda.internal.managers.GuildWelcomeScreenManagerImpl;
 import net.dv8tion.jda.internal.requests.CompletedRestAction;
 import net.dv8tion.jda.internal.requests.DeferredRestAction;
 import net.dv8tion.jda.internal.requests.MemberChunkManager;
-import net.dv8tion.jda.internal.requests.Requester;
 import net.dv8tion.jda.internal.requests.RestActionImpl;
-import net.dv8tion.jda.internal.requests.WebSocketClient;
 import net.dv8tion.jda.internal.requests.restaction.AuditableRestActionImpl;
 import net.dv8tion.jda.internal.requests.restaction.ChannelActionImpl;
 import net.dv8tion.jda.internal.requests.restaction.CommandCreateActionImpl;
@@ -165,8 +156,6 @@ import net.dv8tion.jda.internal.utils.cache.SnowflakeCacheViewImpl;
 import net.dv8tion.jda.internal.utils.cache.SortedChannelCacheViewImpl;
 import net.dv8tion.jda.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 import net.dv8tion.jda.internal.utils.concurrent.task.GatewayTask;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 
 public class GuildImpl implements Guild
 {
@@ -177,7 +166,6 @@ public class GuildImpl implements Guild
     private final SortedChannelCacheViewImpl<GuildChannel> channelCache = new SortedChannelCacheViewImpl<>(GuildChannel.class);
     private final SortedSnowflakeCacheViewImpl<Role> roleCache = new SortedSnowflakeCacheViewImpl<>(Role.class, Role::getName, Comparator.reverseOrder());
     private final SnowflakeCacheViewImpl<RichCustomEmoji> emojicache = new SnowflakeCacheViewImpl<>(RichCustomEmoji.class, RichCustomEmoji::getName);
-    private final SnowflakeCacheViewImpl<GuildSticker> stickerCache = new SnowflakeCacheViewImpl<>(GuildSticker.class, GuildSticker::getName);
     private final MemberCacheViewImpl memberCache = new MemberCacheViewImpl();
     private final CacheView.SimpleCacheView<MemberPresenceImpl> memberPresences;
 
@@ -874,14 +862,7 @@ public class GuildImpl implements Guild
     {
         return emojicache;
     }
-
-    @Nonnull
-    @Override
-    public SnowflakeCacheView<GuildSticker> getStickerCache()
-    {
-        return stickerCache;
-    }
-
+    
     @Nonnull
     @Override
     public List<GuildChannel> getChannels(boolean includeHidden)
@@ -972,57 +953,7 @@ public class GuildImpl implements Guild
         });
     }
 
-    @Nonnull
-    @Override
-    public RestAction<List<GuildSticker>> retrieveStickers()
-    {
-        Route.CompiledRoute route = Route.Stickers.GET_GUILD_STICKERS.compile(getId());
-        return new RestActionImpl<>(getJDA(), route, (response, request) -> {
-            DataArray array = response.getArray();
-            List<GuildSticker> stickers = new ArrayList<>(array.length());
-            EntityBuilder builder = api.getEntityBuilder();
-            for (int i = 0; i < array.length(); i++)
-            {
-                DataObject object = null;
-                try
-                {
-                    object = array.getObject(i);
-                    GuildSticker sticker = (GuildSticker) builder.createRichSticker(object);
-                    stickers.add(sticker);
-                }
-                catch (ParsingException | ClassCastException ex)
-                {
-                }
-            }
-
-            return Collections.unmodifiableList(stickers);
-        });
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<GuildSticker> retrieveSticker(@Nonnull StickerSnowflake sticker)
-    {
-        Checks.notNull(sticker, "Sticker");
-        Route.CompiledRoute route = Route.Stickers.GET_GUILD_STICKER.compile(getId(), sticker.getId());
-        return new RestActionImpl<>(getJDA(), route, (response, request) -> {
-            DataObject object = response.getObject();
-            EntityBuilder builder = api.getEntityBuilder();
-            return (GuildSticker) builder.createRichSticker(object);
-        });
-    }
-
-    @Nonnull
-    @Override
-    public GuildStickerManager editSticker(@Nonnull StickerSnowflake sticker)
-    {
-        Checks.notNull(sticker, "Sticker");
-        if (sticker instanceof GuildSticker)
-            Checks.check(((GuildSticker) sticker).getGuildIdLong() == id, "Cannot edit a sticker from another guild!");
-        Checks.check(!(sticker instanceof StandardSticker), "Cannot edit a standard sticker.");
-        return new GuildStickerManagerImpl(this, id, sticker);
-    }
-
+  
     @Nonnull
     @Override
     public BanPaginationActionImpl retrieveBanList()
@@ -1943,72 +1874,6 @@ public class GuildImpl implements Guild
             return jda.getEntityBuilder().createEmoji(this, obj);
         });
     }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<GuildSticker> createSticker(@Nonnull String name, @Nonnull String description, @Nonnull FileUpload file, @Nonnull Collection<String> tags)
-    {
-        checkPermission(Permission.MANAGE_GUILD_EXPRESSIONS);
-        Checks.inRange(name, 2, 30, "Name");
-        Checks.notNull(file, "File");
-        Checks.notNull(description, "Description");
-        Checks.notEmpty(tags, "Tags");
-        if (!description.isEmpty())
-            Checks.inRange(description, 2, 100, "Description");
-        for (String t : tags)
-            Checks.notEmpty(t, "Tags");
-
-        String csv = String.join(",", tags);
-        Checks.notLonger(csv, 200, "Tags");
-
-        // Extract file extension and map to media type
-        int index = file.getName().lastIndexOf('.');
-        Checks.check(index > -1, "Filename for sticker is missing file extension. Provided: '" + file.getName() + "'. Must be PNG, GIF, or JSON.");
-
-        // Convert file extension to media-type
-        String extension = file.getName().substring(index + 1).toLowerCase(Locale.ROOT);
-        MediaType mediaType;
-        switch (extension)
-        {
-            case "apng":
-            case "png":
-                mediaType = Requester.MEDIA_TYPE_PNG;
-                break;
-            case "gif":
-                mediaType = Requester.MEDIA_TYPE_GIF;
-                break;
-            case "json":
-                mediaType = Requester.MEDIA_TYPE_JSON;
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported file extension: '." + extension + "', must be PNG, GIF, or JSON.");
-        }
-
-        // Add sticker metadata as form parts (because payload_json is broken)
-        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-        builder.addFormDataPart("name", name);
-        builder.addFormDataPart("description", description);
-        builder.addFormDataPart("tags", csv);
-
-        // Attach file asset for sticker image/animation
-        builder.addFormDataPart("file", file.getName(), file.getRequestBody(mediaType));
-
-        MultipartBody body = builder.build();
-        Route.CompiledRoute route = Route.Stickers.CREATE_GUILD_STICKER.compile(getId());
-        return new AuditableRestActionImpl<>(api, route, body,
-            (response, request) -> (GuildSticker) api.getEntityBuilder().createRichSticker(response.getObject())
-        );
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> deleteSticker(@Nonnull StickerSnowflake id)
-    {
-        Checks.notNull(id, "Sticker");
-        Route.CompiledRoute route = Route.Stickers.DELETE_GUILD_STICKER.compile(getId(), id.getId());
-        return new AuditableRestActionImpl<>(api, route);
-    }
-
     @Nonnull
     @Override
     public ChannelOrderAction modifyCategoryPositions()
@@ -2349,10 +2214,6 @@ public class GuildImpl implements Guild
         return emojicache;
     }
 
-    public SnowflakeCacheViewImpl<GuildSticker> getStickersView()
-    {
-        return stickerCache;
-    }
 
     public MemberCacheViewImpl getMembersView()
     {

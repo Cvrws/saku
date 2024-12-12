@@ -16,23 +16,17 @@
 
 package net.dv8tion.jda.api.requests.restaction;
 
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
-import net.dv8tion.jda.api.entities.sticker.GuildSticker;
-import net.dv8tion.jda.api.entities.sticker.Sticker;
-import net.dv8tion.jda.api.entities.sticker.StickerSnowflake;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.requests.FluentRestAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageCreateRequest;
 import net.dv8tion.jda.internal.requests.restaction.MessageCreateActionImpl;
-import net.dv8tion.jda.internal.utils.Checks;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * Specialized {@link net.dv8tion.jda.api.requests.RestAction RestAction} used for sending messages to {@link MessageChannel MessageChannels}.
@@ -161,58 +155,5 @@ public interface MessageCreateAction extends MessageCreateRequest<MessageCreateA
     @CheckReturnValue
     MessageCreateAction failOnInvalidReply(boolean fail);
 
-    /**
-     * Set the stickers to send alongside this message.
-     * <br>This is not supported for message edits.
-     *
-     * @param  stickers
-     *         The stickers to send, or null to not send any stickers
-     *
-     * @throws IllegalStateException
-     *         If this request is a message edit request
-     * @throws IllegalArgumentException
-     *         <ul>
-     *           <li>If any of the provided stickers is a {@link GuildSticker},
-     *               which is either {@link GuildSticker#isAvailable() unavailable} or from a different guild.</li>
-     *           <li>If the collection has more than {@value Message#MAX_STICKER_COUNT} stickers</li>
-     *           <li>If a collection with null entries is provided</li>
-     *         </ul>
-     *
-     * @return Updated MessageCreateAction for chaining convenience
-     *
-     * @see    Sticker#fromId(long)
-     */
-    @Nonnull
-    @CheckReturnValue
-    MessageCreateAction setStickers(@Nullable Collection<? extends StickerSnowflake> stickers);
-
-    /**
-     * Set the stickers to send alongside this message.
-     * <br>This is not supported for message edits.
-     *
-     * @param  stickers
-     *         The stickers to send, or null to not send any stickers
-     *
-     * @throws IllegalStateException
-     *         If this request is a message edit request
-     * @throws IllegalArgumentException
-     *         <ul>
-     *           <li>If any of the provided stickers is a {@link GuildSticker},
-     *               which is either {@link GuildSticker#isAvailable() unavailable} or from a different guild.</li>
-     *           <li>If the collection has more than {@value Message#MAX_STICKER_COUNT} stickers</li>
-     *           <li>If a collection with null entries is provided</li>
-     *         </ul>
-     *
-     * @return Updated MessageCreateAction for chaining convenience
-     *
-     * @see    Sticker#fromId(long)
-     */
-    @Nonnull
-    @CheckReturnValue
-    default MessageCreateAction setStickers(@Nullable StickerSnowflake... stickers)
-    {
-        if (stickers != null)
-            Checks.noneNull(stickers, "Sticker");
-        return setStickers(stickers == null ? null : Arrays.asList(stickers));
-    }
+  
 }

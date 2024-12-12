@@ -18,7 +18,6 @@ public final class ComponentManager {
 
     public void init() {
         // event
-    	this.add(new EntityKillEventComponent());
         this.add(new EntityTickComponent());
         
         // hud

@@ -112,12 +112,6 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
-import net.dv8tion.jda.api.entities.sticker.GuildSticker;
-import net.dv8tion.jda.api.entities.sticker.RichSticker;
-import net.dv8tion.jda.api.entities.sticker.StandardSticker;
-import net.dv8tion.jda.api.entities.sticker.Sticker;
-import net.dv8tion.jda.api.entities.sticker.StickerItem;
-import net.dv8tion.jda.api.entities.sticker.StickerPack;
 import net.dv8tion.jda.api.entities.templates.Template;
 import net.dv8tion.jda.api.entities.templates.TemplateChannel;
 import net.dv8tion.jda.api.entities.templates.TemplateGuild;
@@ -159,11 +153,6 @@ import net.dv8tion.jda.internal.entities.emoji.CustomEmojiImpl;
 import net.dv8tion.jda.internal.entities.emoji.RichCustomEmojiImpl;
 import net.dv8tion.jda.internal.entities.emoji.UnicodeEmojiImpl;
 import net.dv8tion.jda.internal.entities.messages.MessagePollImpl;
-import net.dv8tion.jda.internal.entities.sticker.GuildStickerImpl;
-import net.dv8tion.jda.internal.entities.sticker.RichStickerImpl;
-import net.dv8tion.jda.internal.entities.sticker.StandardStickerImpl;
-import net.dv8tion.jda.internal.entities.sticker.StickerItemImpl;
-import net.dv8tion.jda.internal.entities.sticker.StickerPackImpl;
 import net.dv8tion.jda.internal.handle.EventCache;
 import net.dv8tion.jda.internal.utils.Helpers;
 import net.dv8tion.jda.internal.utils.UnlockHook;
@@ -297,34 +286,7 @@ public class EntityBuilder
         }
     }
 
-    private void createGuildStickerPass(GuildImpl guildObj, DataArray array)
-    {
-        if (!getJDA().isCacheFlagSet(CacheFlag.STICKER))
-            return;
-        SnowflakeCacheViewImpl<GuildSticker> stickerView = guildObj.getStickersView();
-        try (UnlockHook hook = stickerView.writeLock())
-        {
-            TLongObjectMap<GuildSticker> stickerMap = stickerView.getMap();
-            for (int i = 0; i < array.length(); i++)
-            {
-                DataObject object = array.getObject(i);
-                if (object.isNull("id"))
-                {
-
-                    continue;
-                }
-                if (object.getInt("type", -1) != Sticker.Type.GUILD.getId())
-                {
-
-                    continue;
-                }
-
-                RichSticker sticker = createRichSticker(object);
-                stickerMap.put(sticker.getIdLong(), (GuildSticker) sticker);
-            }
-        }
-    }
-
+  
     public GuildImpl createGuild(long guildId, DataObject guildJson, TLongObjectMap<DataObject> members, int memberCount)
     {
         final GuildImpl guildObj = new GuildImpl(getJDA(), guildId);
@@ -450,7 +412,6 @@ public class EntityBuilder
 
         createScheduledEventPass(guildObj, scheduledEventsArray);
         createGuildEmojiPass(guildObj, emojisArray);
-        stickersArray.ifPresent(stickers -> createGuildStickerPass(guildObj, stickers));
         guildJson.optArray("stage_instances")
                 .map(arr -> arr.stream(DataArray::getObject))
                 .ifPresent(list -> list.forEach(it -> createStageInstance(guildObj, it)));
@@ -1804,7 +1765,6 @@ public class EntityBuilder
         final List<Message.Attachment> attachments = map(jsonObject, "attachments",   this::createMessageAttachment);
         final List<MessageEmbed>       embeds      = map(jsonObject, "embeds",        this::createMessageEmbed);
         final List<MessageReaction>    reactions   = map(jsonObject, "reactions",     (obj) -> createMessageReaction(tmpChannel, channelId, id, obj));
-        final List<StickerItem>        stickers    = map(jsonObject, "sticker_items", this::createStickerItem);
 
         // Message activity (for game invites/spotify)
         MessageActivity activity = null;
@@ -1911,7 +1871,7 @@ public class EntityBuilder
         int position = jsonObject.getInt("position", -1);
 
         return new ReceivedMessage(id, channelId, guildId, api, guild, channel, type, messageReference, fromWebhook, applicationId, tts, pinned,
-                content, nonce, user, member, activity, poll, editTime, mentions, reactions, attachments, embeds, stickers, components, flags,
+                content, nonce, user, member, activity, poll, editTime, mentions, reactions, attachments, embeds, components, flags,
                 messageInteraction, startedThread, position);
     }
 
@@ -2125,73 +2085,6 @@ public class EntityBuilder
     {
         return new MessageEmbed(url, title, description, type, timestamp,
             color, thumbnail, siteProvider, author, videoInfo, footer, image, fields);
-    }
-
-    public StickerItem createStickerItem(DataObject content)
-    {
-        long id = content.getLong("id");
-        String name = content.getString("name");
-        Sticker.StickerFormat format = Sticker.StickerFormat.fromId(content.getInt("format_type"));
-        return new StickerItemImpl(id, format, name);
-    }
-
-    public RichStickerImpl createRichSticker(DataObject content)
-    {
-        long id = content.getLong("id");
-        String name = content.getString("name");
-        Sticker.StickerFormat format = Sticker.StickerFormat.fromId(content.getInt("format_type"));
-        Sticker.Type type = Sticker.Type.fromId(content.getInt("type", -1));
-
-        String description = content.getString("description", "");
-        Set<String> tags = Collections.emptySet();
-        if (!content.isNull("tags"))
-        {
-            String[] array = content.getString("tags").split(",\\s*");
-            tags = Helpers.setOf(array);
-        }
-
-        switch (type)
-        {
-        case GUILD:
-            boolean available = content.getBoolean("available");
-            long guildId = content.getUnsignedLong("guild_id", 0L);
-            User owner = content.isNull("user") ? null : createUser(content.getObject("user"));
-            return new GuildStickerImpl(id, format, name, tags, description, available, guildId, api, owner);
-        case STANDARD:
-            long packId = content.getUnsignedLong("pack_id", 0L);
-            int sortValue = content.getInt("sort_value", -1);
-            return new StandardStickerImpl(id, format, name, tags, description, packId, sortValue);
-        default:
-            throw new IllegalArgumentException("Unknown sticker type. Type: " + type  +" JSON: " + content);
-        }
-    }
-
-    public StickerPack createStickerPack(DataObject content)
-    {
-        long id = content.getUnsignedLong("id");
-        String name = content.getString("name");
-        String description = content.getString("description", "");
-        long skuId = content.getUnsignedLong("sku_id", 0);
-        long coverId = content.getUnsignedLong("cover_sticker_id", 0);
-        long bannerId = content.getUnsignedLong("banner_asset_id", 0);
-
-        DataArray stickerArr = content.getArray("stickers");
-        List<StandardSticker> stickers = new ArrayList<>(stickerArr.length());
-        for (int i = 0; i < stickerArr.length(); i++)
-        {
-            DataObject object = null;
-            try
-            {
-                object = stickerArr.getObject(i);
-                StandardSticker sticker = (StandardSticker) createRichSticker(object);
-                stickers.add(sticker);
-            }
-            catch (ParsingException | ClassCastException ex)
-            {
-            }
-        }
-
-        return new StickerPackImpl(id, stickers, name, description, coverId, bannerId, skuId);
     }
 
     public Message.Interaction createMessageInteraction(GuildImpl guildImpl, DataObject content)

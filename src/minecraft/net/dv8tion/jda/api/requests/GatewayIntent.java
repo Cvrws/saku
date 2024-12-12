@@ -16,6 +16,13 @@
 
 package net.dv8tion.jda.api.requests;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+
+import javax.annotation.Nonnull;
+
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -33,18 +40,11 @@ import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
-import net.dv8tion.jda.api.events.sticker.GenericGuildStickerEvent;
 import net.dv8tion.jda.api.events.user.UserTypingEvent;
 import net.dv8tion.jda.api.events.user.update.GenericUserPresenceEvent;
 import net.dv8tion.jda.api.events.user.update.GenericUserUpdateEvent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.utils.Checks;
-
-import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
 
 /**
  * Flags which enable or disable specific events from the discord gateway.
@@ -406,7 +406,7 @@ public enum GatewayIntent
 
             else if (GuildBanEvent.class.isAssignableFrom(event) || GuildUnbanEvent.class.isAssignableFrom(event) || GuildAuditLogEntryCreateEvent.class.isAssignableFrom(event))
                 intents.add(GUILD_MODERATION);
-            else if (GenericEmojiEvent.class.isAssignableFrom(event) || GenericGuildStickerEvent.class.isAssignableFrom(event))
+            else if (GenericEmojiEvent.class.isAssignableFrom(event))
                 intents.add(GUILD_EMOJIS_AND_STICKERS);
             else if (GenericScheduledEventUpdateEvent.class.isAssignableFrom(event))
                 intents.add(SCHEDULED_EVENTS);

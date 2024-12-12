@@ -102,6 +102,8 @@ public final class AimAssist extends Module {
 	        if (player != mc.player && player.deathTime == 0) {
 	            if (getInstance().getEnemyManager().isEnemy(player)) continue;
 	            if (player.getName().contains("[NPC]")) continue;
+	            if (player.getName().contains("MEJORAS")) continue;
+	            if (player.getName().contains("CLICK DERECHO")) continue;
 	            if (getInstance().getFriendManager().isFriend(player) && ignoreFriendlyEntities.getValue()) continue;
 	            if (ignoreTeammates.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
 	            if (playerPos.distanceTo(player) > distance.getValue().doubleValue()) continue;

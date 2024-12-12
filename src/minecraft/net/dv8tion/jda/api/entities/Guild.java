@@ -15,6 +15,28 @@
  */
 package net.dv8tion.jda.api.entities;
 
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.Unmodifiable;
+
 import net.dv8tion.jda.annotations.DeprecatedSince;
 import net.dv8tion.jda.annotations.ForRemoval;
 import net.dv8tion.jda.annotations.Incubating;
@@ -31,14 +53,20 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.attribute.ICopyableChannel;
 import net.dv8tion.jda.api.entities.channel.attribute.IGuildChannelContainer;
 import net.dv8tion.jda.api.entities.channel.attribute.IInviteContainer;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.MediaChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildChannel;
 import net.dv8tion.jda.api.entities.channel.unions.DefaultGuildChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
-import net.dv8tion.jda.api.entities.sticker.*;
 import net.dv8tion.jda.api.entities.templates.Template;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
@@ -47,20 +75,35 @@ import net.dv8tion.jda.api.interactions.commands.PrivilegeConfig;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.privileges.IntegrationPrivilege;
-import net.dv8tion.jda.api.managers.*;
+import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.managers.AutoModRuleManager;
+import net.dv8tion.jda.api.managers.GuildManager;
+import net.dv8tion.jda.api.managers.GuildWelcomeScreenManager;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.api.requests.restaction.*;
+import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
+import net.dv8tion.jda.api.requests.restaction.CacheRestAction;
+import net.dv8tion.jda.api.requests.restaction.ChannelAction;
+import net.dv8tion.jda.api.requests.restaction.CommandCreateAction;
+import net.dv8tion.jda.api.requests.restaction.CommandEditAction;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.api.requests.restaction.MemberAction;
+import net.dv8tion.jda.api.requests.restaction.RoleAction;
+import net.dv8tion.jda.api.requests.restaction.ScheduledEventAction;
 import net.dv8tion.jda.api.requests.restaction.order.CategoryOrderAction;
 import net.dv8tion.jda.api.requests.restaction.order.ChannelOrderAction;
 import net.dv8tion.jda.api.requests.restaction.order.RoleOrderAction;
 import net.dv8tion.jda.api.requests.restaction.pagination.AuditLogPaginationAction;
 import net.dv8tion.jda.api.requests.restaction.pagination.BanPaginationAction;
 import net.dv8tion.jda.api.requests.restaction.pagination.PaginationAction;
-import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.ImageProxy;
 import net.dv8tion.jda.api.utils.MiscUtil;
-import net.dv8tion.jda.api.utils.cache.*;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.api.utils.cache.ChannelCacheView;
+import net.dv8tion.jda.api.utils.cache.MemberCacheView;
+import net.dv8tion.jda.api.utils.cache.SnowflakeCacheView;
+import net.dv8tion.jda.api.utils.cache.SortedChannelCacheView;
+import net.dv8tion.jda.api.utils.cache.SortedSnowflakeCacheView;
 import net.dv8tion.jda.api.utils.concurrent.Task;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import net.dv8tion.jda.internal.requests.DeferredRestAction;
@@ -68,20 +111,6 @@ import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.EntityString;
 import net.dv8tion.jda.internal.utils.Helpers;
 import net.dv8tion.jda.internal.utils.concurrent.task.GatewayTask;
-import org.jetbrains.annotations.Unmodifiable;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.temporal.TemporalAccessor;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Represents a Discord {@link net.dv8tion.jda.api.entities.Guild Guild}.
@@ -1940,108 +1969,6 @@ public interface Guild extends IGuildChannelContainer<GuildChannel>, ISnowflake
     SnowflakeCacheView<RichCustomEmoji> getEmojiCache();
 
     /**
-     * Gets a {@link net.dv8tion.jda.api.entities.sticker.GuildSticker GuildSticker} from this guild that has the same id as the
-     * one provided.
-     * <br>If there is no {@link net.dv8tion.jda.api.entities.sticker.GuildSticker GuildSticker} with an id that matches the provided
-     * one, then this returns {@code null}.
-     *
-     * <p>This requires the {@link net.dv8tion.jda.api.utils.cache.CacheFlag#STICKER CacheFlag.STICKER} to be enabled!
-     *
-     * @param  id
-     *         the sticker id
-     *
-     * @throws java.lang.NumberFormatException
-     *         If the provided {@code id} cannot be parsed by {@link Long#parseLong(String)}
-     *
-     * @return A Sticker matching the specified id
-     *
-     * @see    #retrieveSticker(StickerSnowflake)
-     */
-    @Nullable
-    default GuildSticker getStickerById(@Nonnull String id)
-    {
-        return getStickerCache().getElementById(id);
-    }
-
-    /**
-     * Gets a {@link net.dv8tion.jda.api.entities.sticker.GuildSticker GuildSticker} from this guild that has the same id as the
-     * one provided.
-     * <br>If there is no {@link net.dv8tion.jda.api.entities.sticker.GuildSticker GuildSticker} with an id that matches the provided
-     * one, then this returns {@code null}.
-     *
-     * <p>This requires the {@link net.dv8tion.jda.api.utils.cache.CacheFlag#STICKER CacheFlag.STICKER} to be enabled!
-     *
-     * @param  id
-     *         the sticker id
-     *
-     * @return A Sticker matching the specified id
-     *
-     * @see    #retrieveSticker(StickerSnowflake)
-     */
-    @Nullable
-    default GuildSticker getStickerById(long id)
-    {
-        return getStickerCache().getElementById(id);
-    }
-
-    /**
-     * Gets all custom {@link net.dv8tion.jda.api.entities.sticker.GuildSticker GuildStickers} belonging to this {@link net.dv8tion.jda.api.entities.Guild Guild}.
-     * <br>GuildStickers are not ordered in any specific way in the returned list.
-     *
-     * <p>This copies the backing store into a list. This means every call
-     * creates a new list with O(n) complexity. It is recommended to store this into
-     * a local variable or use {@link #getStickerCache()} and use its more efficient
-     * versions of handling these values.
-     *
-     * <p>This requires the {@link net.dv8tion.jda.api.utils.cache.CacheFlag#STICKER CacheFlag.STICKER} to be enabled!
-     *
-     * @return An immutable List of {@link net.dv8tion.jda.api.entities.sticker.GuildSticker GuildStickers}.
-     *
-     * @see    #retrieveStickers()
-     */
-    @Nonnull
-    @Unmodifiable
-    default List<GuildSticker> getStickers()
-    {
-        return getStickerCache().asList();
-    }
-
-    /**
-     * Gets a list of all {@link net.dv8tion.jda.api.entities.sticker.GuildSticker GuildStickers} in this Guild that have the same
-     * name as the one provided.
-     * <br>If there are no {@link net.dv8tion.jda.api.entities.sticker.GuildSticker GuildStickers} with the provided name, then this returns an empty list.
-     *
-     * <p>This requires the {@link net.dv8tion.jda.api.utils.cache.CacheFlag#STICKER CacheFlag.STICKER} to be enabled!
-     *
-     * @param  name
-     *         The name used to filter the returned {@link net.dv8tion.jda.api.entities.sticker.GuildSticker GuildStickers}. Without colons.
-     * @param  ignoreCase
-     *         Determines if the comparison ignores case when comparing. True - case insensitive.
-     *
-     * @return Possibly-empty immutable list of all Stickers that match the provided name.
-     */
-    @Nonnull
-    @Unmodifiable
-    default List<GuildSticker> getStickersByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getStickerCache().getElementsByName(name, ignoreCase);
-    }
-
-    /**
-     * {@link net.dv8tion.jda.api.utils.cache.SnowflakeCacheView SnowflakeCacheView} of
-     * all cached {@link net.dv8tion.jda.api.entities.sticker.GuildSticker GuildStickers} of this Guild.
-     * <br>This will be empty if {@link net.dv8tion.jda.api.utils.cache.CacheFlag#STICKER} is disabled.
-     *
-     * <p>This requires the {@link net.dv8tion.jda.api.utils.cache.CacheFlag#STICKER CacheFlag.STICKER} to be enabled!
-     *
-     * @return {@link net.dv8tion.jda.api.utils.cache.SnowflakeCacheView SnowflakeCacheView}
-     *
-     * @see    #retrieveStickers()
-     */
-    @Nonnull
-    SnowflakeCacheView<GuildSticker> getStickerCache();
-
-    /**
      * Retrieves an immutable list of Custom Emojis together with their respective creators.
      *
      * <p>Note that {@link RichCustomEmoji#getOwner()} is only available if the currently
@@ -2142,78 +2069,7 @@ public interface Guild extends IGuildChannelContainer<GuildChannel>, ISnowflake
             return null;
         }, () -> retrieveEmojiById(emoji.getId()));
     }
-
-    /**
-     * Retrieves all the stickers from this guild.
-     * <br>This also includes {@link GuildSticker#isAvailable() unavailable} stickers.
-     *
-     * @return {@link RestAction} - Type: List of {@link GuildSticker}
-     */
-    @Nonnull
-    @CheckReturnValue
-    RestAction<@Unmodifiable List<GuildSticker>> retrieveStickers();
-
-    /**
-     * Attempts to retrieve a {@link GuildSticker} object for this guild based on the provided snowflake reference.
-     *
-     * <p>The returned {@link net.dv8tion.jda.api.requests.RestAction RestAction} can encounter the following Discord errors:
-     * <ul>
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#UNKNOWN_STICKER UNKNOWN_STICKER}
-     *     <br>Occurs when the provided id does not refer to a sticker known by Discord.</li>
-     * </ul>
-     *
-     * @param  sticker
-     *         The reference of the requested {@link Sticker}.
-     *         <br>Can be {@link RichSticker}, {@link StickerItem}, or {@link Sticker#fromId(long)}.
-     *
-     * @throws IllegalArgumentException
-     *         If null is provided
-     *
-     * @return {@link net.dv8tion.jda.api.requests.RestAction RestAction} - Type: {@link GuildSticker}
-     *         <br>On request, gets the sticker with id matching provided id from Discord.
-     */
-    @Nonnull
-    @CheckReturnValue
-    RestAction<GuildSticker> retrieveSticker(@Nonnull StickerSnowflake sticker);
-
-    /**
-     * Modify a sticker using {@link GuildStickerManager}.
-     * <br>You can update multiple fields at once, by calling the respective setters before executing the request.
-     *
-     * <p>The returned {@link net.dv8tion.jda.api.requests.RestAction RestAction} can encounter the following Discord errors:
-     * <ul>
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#UNKNOWN_STICKER UNKNOWN_STICKER}
-     *     <br>Occurs when the provided id does not refer to a sticker known by Discord.</li>
-     * </ul>
-     *
-     * @throws IllegalArgumentException
-     *         If null is provided
-     * @throws net.dv8tion.jda.api.exceptions.InsufficientPermissionException
-     *         If the currently logged in account does not have {@link Permission#MANAGE_GUILD_EXPRESSIONS MANAGE_GUILD_EXPRESSIONS} in the guild.
-     *
-     * @return {@link GuildStickerManager}
-     */
-    @Nonnull
-    @CheckReturnValue
-    GuildStickerManager editSticker(@Nonnull StickerSnowflake sticker);
-
-    /**
-     * Retrieves an immutable list of the currently banned {@link net.dv8tion.jda.api.entities.User Users}.
-     * <br>If you wish to ban or unban a user, use either {@link #ban(UserSnowflake, int, TimeUnit)} or
-     * {@link #unban(UserSnowflake)}.
-     *
-     * <p>Possible {@link net.dv8tion.jda.api.requests.ErrorResponse ErrorResponses} caused by
-     * the returned {@link RestAction RestAction} include the following:
-     * <ul>
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The ban list cannot be fetched due to a permission discrepancy</li>
-     * </ul>
-     *
-     * @throws net.dv8tion.jda.api.exceptions.InsufficientPermissionException
-     *         If the logged in account does not have the {@link net.dv8tion.jda.api.Permission#BAN_MEMBERS} permission.
-     *
-     * @return The {@link net.dv8tion.jda.api.requests.restaction.pagination.BanPaginationAction BanPaginationAction} of the guild's bans.
-     */
+    
     @Nonnull
     @CheckReturnValue
     BanPaginationAction retrieveBanList();
@@ -4894,145 +4750,7 @@ public interface Guild extends IGuildChannelContainer<GuildChannel>, ISnowflake
     @CheckReturnValue
     AuditableRestAction<RichCustomEmoji> createEmoji(@Nonnull String name, @Nonnull Icon icon, @Nonnull Role... roles);
 
-    /**
-     * Creates a new {@link GuildSticker} in this Guild.
-     *
-     * <p>Possible {@link net.dv8tion.jda.api.requests.ErrorResponse ErrorResponses} include:
-     * <ul>
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#INVALID_FILE_UPLOADED INVALID_FILE_UPLOADED}
-     *     <br>The sticker file asset is not in a supported file format</li>
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The sticker could not be created due to a permission discrepancy</li>
-     * </ul>
-     *
-     * @param  name
-     *         The sticker name (2-30 characters)
-     * @param  description
-     *         The sticker description (2-100 characters, or empty)
-     * @param  file
-     *         The sticker file containing the asset (png/apng/gif/lottie) with valid file extension (png, gif, or json)
-     * @param  tags
-     *         The tags to use for auto-suggestions (Up to 200 characters in total)
-     *
-     * @throws InsufficientPermissionException
-     *         If the currently logged in account does not have the {@link net.dv8tion.jda.api.Permission#MANAGE_GUILD_EXPRESSIONS MANAGE_GUILD_EXPRESSIONS} permission
-     * @throws IllegalArgumentException
-     *         <ul>
-     *             <li>If the name is not between 2 and 30 characters long</li>
-     *             <li>If the description is more than 100 characters long or exactly 1 character long</li>
-     *             <li>If the asset file is null or of an invalid format (must be PNG, GIF, or LOTTIE)</li>
-     *             <li>If anything is {@code null}</li>
-     *         </ul>
-     *
-     * @return {@link AuditableRestAction} - Type: {@link GuildSticker}
-     */
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<GuildSticker> createSticker(@Nonnull String name, @Nonnull String description, @Nonnull FileUpload file, @Nonnull Collection<String> tags);
-
-    /**
-     * Creates a new {@link GuildSticker} in this Guild.
-     *
-     * <p>Possible {@link net.dv8tion.jda.api.requests.ErrorResponse ErrorResponses} include:
-     * <ul>
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#INVALID_FILE_UPLOADED INVALID_FILE_UPLOADED}
-     *     <br>The sticker file asset is not in a supported file format</li>
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The sticker could not be created due to a permission discrepancy</li>
-     * </ul>
-     *
-     * @param  name
-     *         The sticker name (2-30 characters)
-     * @param  description
-     *         The sticker description (2-100 characters, or empty)
-     * @param  file
-     *         The sticker file containing the asset (png/apng/gif/lottie) with valid file extension (png, gif, or json)
-     * @param  tag
-     *         The sticker tag used for suggestions (emoji or tag words)
-     * @param  tags
-     *         Additional tags to use for suggestions
-     *
-     * @throws InsufficientPermissionException
-     *         If the currently logged in account does not have the {@link net.dv8tion.jda.api.Permission#MANAGE_GUILD_EXPRESSIONS MANAGE_GUILD_EXPRESSIONS} permission
-     * @throws IllegalArgumentException
-     *         <ul>
-     *             <li>If the name is not between 2 and 30 characters long</li>
-     *             <li>If the description is more than 100 characters long or exactly 1 character long</li>
-     *             <li>If the asset file is null or of an invalid format (must be PNG, GIF, or LOTTIE)</li>
-     *             <li>If anything is {@code null}</li>
-     *         </ul>
-     *
-     * @return {@link AuditableRestAction} - Type: {@link GuildSticker}
-     */
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<GuildSticker> createSticker(@Nonnull String name, @Nonnull String description, @Nonnull FileUpload file, @Nonnull String tag, @Nonnull String... tags)
-    {
-        List<String> list = new ArrayList<>(tags.length + 1);
-        list.add(tag);
-        Collections.addAll(list, tags);
-        return createSticker(name, description, file, list);
-    }
-
-    /**
-     * Deletes a sticker from the guild.
-     *
-     * <p>The returned {@link net.dv8tion.jda.api.requests.RestAction RestAction} can encounter the following Discord errors:
-     * <ul>
-     *     <li>{@link net.dv8tion.jda.api.requests.ErrorResponse#UNKNOWN_STICKER UNKNOWN_STICKER}
-     *     <br>Occurs when the provided id does not refer to a sticker known by Discord.</li>
-     * </ul>
-     *
-     * @throws IllegalStateException
-     *         If null is provided
-     * @throws net.dv8tion.jda.api.exceptions.InsufficientPermissionException
-     *         If the currently logged in account does not have {@link Permission#MANAGE_GUILD_EXPRESSIONS MANAGE_GUILD_EXPRESSIONS} in the guild.
-     *
-     * @return {@link AuditableRestAction}
-     */
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> deleteSticker(@Nonnull StickerSnowflake id);
-
-    /**
-     * Creates a new {@link ScheduledEvent}.
-     * Events created with this method will be of {@link ScheduledEvent.Type#EXTERNAL Type.EXTERNAL}.
-     * These events are set to take place at an external location.
-     *
-     * <p><b>Requirements</b><br>
-     *
-     * Events are required to have a name, location and start time.
-     * Additionally, an end time <em>must</em> also be specified for events of {@link ScheduledEvent.Type#EXTERNAL Type.EXTERNAL}.
-     * {@link Permission#MANAGE_EVENTS} is required on the guild level in order to create this type of event.
-     *
-     * <p><b>Example</b><br>
-     * <pre>{@code
-     * guild.createScheduledEvent("Cactus Beauty Contest", "Mike's Backyard", OffsetDateTime.now().plusHours(1), OffsetDateTime.now().plusHours(3))
-     *     .setDescription("Come and have your cacti judged! _Must be spikey to enter_")
-     *     .queue();
-     * }</pre>
-     *
-     * @param  name
-     *         the name for this scheduled event, 1-100 characters
-     * @param  location
-     *         the external location for this scheduled event, 1-100 characters
-     * @param  startTime
-     *         the start time for this scheduled event, can't be in the past or after the end time
-     * @param  endTime
-     *         the end time for this scheduled event, has to be later than the start time
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If a required parameter is {@code null} or empty</li>
-     *             <li>If the start time is in the past</li>
-     *             <li>If the end time is before the start time</li>
-     *             <li>If the name is longer than 100 characters</li>
-     *             <li>If the description is longer than 1000 characters</li>
-     *             <li>If the location is longer than 100 characters</li>
-     *         </ul>
-     *
-     * @return {@link ScheduledEventAction}
-     */
+  
     @Nonnull
     @CheckReturnValue
     ScheduledEventAction createScheduledEvent(@Nonnull String name, @Nonnull String location, @Nonnull OffsetDateTime startTime, @Nonnull OffsetDateTime endTime);

@@ -16,24 +16,22 @@
 
 package net.dv8tion.jda.internal.entities.channel.mixin.middleman;
 
+import java.util.Collection;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.unions.GuildMessageChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.entities.sticker.StickerSnowflake;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.Route;
-import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.utils.MiscUtil;
 import net.dv8tion.jda.api.utils.TimeUtil;
 import net.dv8tion.jda.internal.requests.RestActionImpl;
-import net.dv8tion.jda.internal.requests.restaction.MessageCreateActionImpl;
 import net.dv8tion.jda.internal.utils.Checks;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import java.util.Collection;
 
 public interface GuildMessageChannelMixin<T extends GuildMessageChannelMixin<T>> extends
         GuildMessageChannel,
@@ -106,16 +104,6 @@ public interface GuildMessageChannelMixin<T extends GuildMessageChannelMixin<T>>
 
         Route.CompiledRoute route = Route.Messages.CLEAR_EMOJI_REACTIONS.compile(getId(), messageId, emoji.getAsReactionCode());
         return new RestActionImpl<>(getJDA(), route);
-    }
-
-    @Nonnull
-    @Override
-    default MessageCreateAction sendStickers(@Nonnull Collection<? extends StickerSnowflake> stickers)
-    {
-        checkCanSendMessage();
-        Checks.notEmpty(stickers, "Stickers");
-        Checks.noneNull(stickers, "Stickers");
-        return new MessageCreateActionImpl(this).setStickers(stickers);
     }
 
     // ---- Default implementation of parent mixins hooks ----

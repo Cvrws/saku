@@ -16,6 +16,13 @@
 
 package net.dv8tion.jda.api.entities.channel.middleman;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,21 +31,9 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.entities.sticker.GuildSticker;
-import net.dv8tion.jda.api.entities.sticker.Sticker;
-import net.dv8tion.jda.api.entities.sticker.StickerSnowflake;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
-import net.dv8tion.jda.api.exceptions.MissingAccessException;
 import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.internal.utils.Checks;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -449,9 +444,7 @@ public interface GuildMessageChannel extends GuildChannel, MessageChannel
      *
      * @see    Sticker#fromId(long)
      */
-    @Nonnull
-    @CheckReturnValue
-    MessageCreateAction sendStickers(@Nonnull Collection<? extends StickerSnowflake> stickers);
+
 
     /**
      * Send up to 3 stickers in this channel.
@@ -480,11 +473,5 @@ public interface GuildMessageChannel extends GuildChannel, MessageChannel
      *
      * @see    Sticker#fromId(long)
      */
-    @Nonnull
-    @CheckReturnValue
-    default MessageCreateAction sendStickers(@Nonnull StickerSnowflake... stickers)
-    {
-        Checks.notEmpty(stickers, "Stickers");
-        return sendStickers(Arrays.asList(stickers));
-    }
+
 }

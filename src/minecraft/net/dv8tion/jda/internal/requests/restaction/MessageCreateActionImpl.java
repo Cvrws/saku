@@ -16,11 +16,16 @@
 
 package net.dv8tion.jda.internal.requests.restaction;
 
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BooleanSupplier;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
-import net.dv8tion.jda.api.entities.sticker.GuildSticker;
-import net.dv8tion.jda.api.entities.sticker.StickerSnowflake;
 import net.dv8tion.jda.api.requests.Request;
 import net.dv8tion.jda.api.requests.Response;
 import net.dv8tion.jda.api.requests.Route;
@@ -32,15 +37,6 @@ import net.dv8tion.jda.internal.requests.RestActionImpl;
 import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.message.MessageCreateBuilderMixin;
 import okhttp3.RequestBody;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.BooleanSupplier;
-import java.util.stream.Collectors;
 
 public class MessageCreateActionImpl extends RestActionImpl<Message> implements MessageCreateAction, MessageCreateBuilderMixin<MessageCreateAction>
 {
@@ -136,38 +132,6 @@ public class MessageCreateActionImpl extends RestActionImpl<Message> implements 
     public MessageCreateAction failOnInvalidReply(boolean fail)
     {
         failOnInvalidReply = fail;
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    public MessageCreateAction setStickers(@Nullable Collection<? extends StickerSnowflake> stickers)
-    {
-        this.stickers.clear();
-        if (stickers == null || stickers.isEmpty())
-            return this;
-
-        if (!channel.getType().isGuild())
-            throw new IllegalStateException("Cannot send stickers in direct messages!");
-
-        GuildChannel guildChannel = (GuildChannel) channel;
-
-        Checks.noneNull(stickers, "Stickers");
-        Checks.check(stickers.size() <= Message.MAX_STICKER_COUNT,
-                "Cannot send more than %d stickers in a message!", Message.MAX_STICKER_COUNT);
-        for (StickerSnowflake sticker : stickers)
-        {
-            if (sticker instanceof GuildSticker)
-            {
-                GuildSticker guildSticker = (GuildSticker) sticker;
-                Checks.check(guildSticker.isAvailable(),
-                        "Cannot use unavailable sticker. The guild may have lost the boost level required to use this sticker!");
-                Checks.check(guildSticker.getGuildIdLong() == guildChannel.getGuild().getIdLong(),
-                        "Sticker must be from the same guild. Cross-guild sticker posting is not supported!");
-            }
-        }
-
-        this.stickers.addAll(stickers.stream().map(StickerSnowflake::getId).collect(Collectors.toList()));
         return this;
     }
 
