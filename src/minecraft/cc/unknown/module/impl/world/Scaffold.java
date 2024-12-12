@@ -1,5 +1,6 @@
 package cc.unknown.module.impl.world;
 
+import java.awt.Color;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
@@ -17,11 +18,11 @@ import cc.unknown.event.impl.other.TeleportEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreStrafeEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
+import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.movement.Speed;
-import cc.unknown.module.impl.world.scaffold.down.NormalDownward;
 import cc.unknown.module.impl.world.scaffold.sprint.BypassSprint;
 import cc.unknown.module.impl.world.scaffold.sprint.DisabledSprint;
 import cc.unknown.module.impl.world.scaffold.sprint.LegitSprint;
@@ -30,7 +31,6 @@ import cc.unknown.module.impl.world.scaffold.tower.VanillaTower;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.geometry.Vector3d;
-import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.util.player.EnumFacingOffset;
 import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.MoveUtil;
@@ -38,6 +38,7 @@ import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.util.player.RotationUtil;
 import cc.unknown.util.player.SlotUtil;
+import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.DescValue;
@@ -46,13 +47,15 @@ import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.StringValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.block.BlockAir;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
-import net.minecraft.network.play.client.C09PacketHeldItemChange;
-import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
@@ -105,9 +108,8 @@ public class Scaffold extends Module {
 
 	private final DescValue general = new DescValue("Basic Settings:", this);
     private final BoundsNumberValue placeDelay = new BoundsNumberValue("Place Delay", this, 0, 0, 0, 5, 1);
-	public final BooleanValue downwards = new BooleanValue("Downwards (Press Sneak)", this, false);
     private final BooleanValue safeWalk = new BooleanValue("Safe Walk", this, false);
-	private final BoundsNumberValue timer = new BoundsNumberValue("Timer", this, 1, 2, 0.1, 10, 0.05);
+	private final BoundsNumberValue timer = new BoundsNumberValue("Timer", this, 1, 1, 0.1, 10, 0.05);
 	private final NumberValue expand = new NumberValue("Expand", this, 0, 0, 5, 1);
 	
 	private final DescValue vipas = new DescValue("Advanced Settings:", this);
@@ -117,6 +119,7 @@ public class Scaffold extends Module {
     private final BooleanValue movementCorrection = new BooleanValue("Movement Correction", this, false);
 	private final BooleanValue useBiggestStack = new BooleanValue("Use Biggest Stack", this, true);
 	private final BooleanValue ignoreSpeed = new BooleanValue("Ignore Speed Effect", this, false);
+	private final BooleanValue disableWithTeleport = new BooleanValue("Disabled on LagBack", this, true);
 
 	private final DescValue sneak = new DescValue("Sneak Settings:", this);
 	private final BooleanValue sneakOffGround = new BooleanValue("Sneak OffGround", this, false);
@@ -255,12 +258,12 @@ public class Scaffold extends Module {
 
 	@EventLink
 	public final Listener<TeleportEvent> onTeleport = event -> {
-		if (event.getPosY() < mc.player.posY - 2)
+		if (disableWithTeleport.getValue() && event.getPosY() < mc.player.posY - 2)
 			this.toggle();
 	};
-	
+
 	@EventLink
-	public final Listener<PreUpdateEvent> onPre = event -> {
+	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
 		for (recursion = 0; recursion <= recursions; recursion++) {
 			mc.player.safeWalk = this.safeWalk.getValue();
 
@@ -281,7 +284,7 @@ public class Scaffold extends Module {
 	        if (lastSlot == -1) {
 	        	lastSlot = getComponent(Slot.class).getItemIndex();
 	        }
-	        
+
 	        int slot = getComponent(Slot.class).getItemIndex();
 	        
 	        if (useBiggestStack.getValue()) {
@@ -289,9 +292,9 @@ public class Scaffold extends Module {
 	        } else if (getComponent(Slot.class).getItemStack() == null || !(getComponent(Slot.class).getItemStack().getItem() instanceof ItemBlock) || !InventoryUtil.canBePlaced((ItemBlock) getComponent(Slot.class).getItemStack().getItem())) {
 	        	slot = getSlot();
 	        }
-	        	        
+	        
 	        getComponent(Slot.class).setSlot(slot);
-	        	        
+
 			if (doesNotContainBlock(1) && (!sameY || (doesNotContainBlock(2) && doesNotContainBlock(3) && doesNotContainBlock(4)))) {
 				ticksOnAir++;
 			} else {
@@ -390,25 +393,17 @@ public class Scaffold extends Module {
 		boolean offOrOn = (mc.player.onGround && sneakOnGround.getValue()) || (!mc.player.onGround && sneakOffGround.getValue());
 		
 		if (ticksOnAir == 0 && offOrOn)
-			mc.gameSettings.keyBindSneak.setPressed(false);
+			mc.gameSettings.keyBindSneak.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindSneak);
 
 		this.sneakingTicks--;
 
 		int ahead = startSneaking.getValue().intValue();
 		int place = placeDelay.getRandomBetween().intValue();
 
-		if (pause > 0) {
-			pause--;
-
-			sneakingTicks = 0;
-			placements = 0;
-		}
-
 		if (this.sneakingTicks >= 0 && offOrOn) {
-			mc.gameSettings.keyBindSneak.setPressed(true);
+			mc.gameSettings.keyBindSneak.pressed = true;
 			return;
 		}
-
 
 		if (ticksOnAir > 0 || PlayerUtil.blockRelativeToPlayer(mc.player.motionX * ahead, MoveUtil.HEAD_HITTER_MOTION, mc.player.motionZ * ahead) instanceof BlockAir) {
 			if (placements <= 0) {
@@ -581,8 +576,7 @@ public class Scaffold extends Module {
 
 		if (rayCast.is("Strict")) {
 			mc.rightClickMouse();
-		} else if (mc.playerController.onPlayerRightClick(mc.player, mc.world, getComponent(Slot.class).getItemStack(),
-				blockFace, enumFacing.getEnumFacing(), hitVec)) {
+		} else if (mc.playerController.onPlayerRightClick(mc.player, mc.world, getComponent(Slot.class).getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
 			mc.clickMouseEvent();
 			//PacketUtil.send(new C0APacketAnimation());
 		}

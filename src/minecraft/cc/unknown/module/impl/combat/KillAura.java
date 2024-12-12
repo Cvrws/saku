@@ -87,8 +87,6 @@ public final class KillAura extends Module {
 			.setDefault("Distance");
 
 	public final NumberValue range = new NumberValue("Range", this, 3, 3, 6, 0.1);
-	/*private final BooleanValue swingInRange = new BooleanValue("Swing in Range", this, false);
-	private final NumberValue swingRange = new NumberValue("Swing Range", this, 3, 3, 6, 0.1, () -> !swingInRange.getValue());*/
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 10, 15, 1, 20, 1);
 	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 1.5, 2, 0.1);
 
@@ -107,7 +105,6 @@ public final class KillAura extends Module {
 	private final DescValue advanced = new DescValue("Advanced Settings:", this);
 	private final BooleanValue attackWhilstScaffolding = new BooleanValue("Attack whilst Scaffolding", this, false);
 	private final BooleanValue noSwing = new BooleanValue("No swing", this, false);
-
 	private final BooleanValue autoDisable = new BooleanValue("Auto disable", this, false);
 	public final BooleanValue smoothRotation = new BooleanValue("Smooth Rotation", this, false);
 	public final BooleanValue teams = new BooleanValue("Ignore Teammates", this, false);
