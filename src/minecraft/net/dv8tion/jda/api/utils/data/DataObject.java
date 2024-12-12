@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
@@ -53,7 +54,7 @@ import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.Helpers;
 
 public class DataObject implements SerializableData {
-    private static final Gson gson = new GsonBuilder().serializeNulls().create();
+    private static final Gson gson = new GsonBuilder().create();
     private static final Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
 
     protected final Map<String, Object> data;
@@ -70,8 +71,7 @@ public class DataObject implements SerializableData {
     @Nonnull
     public static DataObject fromJson(@Nonnull byte[] data) {
         try {
-            String json = new String(data);
-            Map<String, Object> map = gson.fromJson(json, mapType);
+            Map<String, Object> map = gson.fromJson(new String(data), mapType);
             return new DataObject(map);
         } catch (JsonSyntaxException ex) {
             throw new ParsingException(ex);
@@ -127,6 +127,7 @@ public class DataObject implements SerializableData {
     }
 
     @Nonnull
+    @SuppressWarnings("unchecked")
     public Optional<DataObject> optObject(@Nonnull String key) {
         Map<String, Object> child = null;
         try {
@@ -142,6 +143,7 @@ public class DataObject implements SerializableData {
     }
 
     @Nonnull
+    @SuppressWarnings("unchecked")
     public Optional<DataArray> optArray(@Nonnull String key) {
         List<Object> child = null;
         try {
@@ -237,7 +239,7 @@ public class DataObject implements SerializableData {
 
     public double getDouble(@Nonnull String key) {
         Double value = get(Double.class, key, Double::parseDouble, Number::doubleValue);
-        if (value == null)
+        if(value == null)
             throw valueError(key, "double");
         return value;
     }
@@ -250,7 +252,7 @@ public class DataObject implements SerializableData {
     @Nonnull
     public OffsetDateTime getOffsetDateTime(@Nonnull String key) {
         OffsetDateTime value = getOffsetDateTime(key, null);
-        if (value == null)
+        if(value == null)
             throw valueError(key, "OffsetDateTime");
         return value;
     }
@@ -274,13 +276,26 @@ public class DataObject implements SerializableData {
     }
 
     @Nonnull
-    public DataObject putNull(@Nonnull String key) {
+
+    public DataObject putNull(@Nonnull String key)
+    {
         data.put(key, null);
         return this;
     }
 
+    /**
+     * Upserts a new value for the provided key.
+     *
+     * @param  key
+     *         The key to upsert
+     * @param  value
+     *         The new value
+     *
+     * @return A DataObject with the updated value
+     */
     @Nonnull
-    public DataObject put(@Nonnull String key, @Nullable Object value) {
+    public DataObject put(@Nonnull String key, @Nullable Object value)
+    {
         if (value instanceof SerializableData)
             data.put(key, ((SerializableData) value).toData().data);
         else if (value instanceof SerializableArray)
@@ -290,68 +305,96 @@ public class DataObject implements SerializableData {
         return this;
     }
 
-    @Nonnull
-    public DataObject rename(@Nonnull String key, @Nonnull String newKey) {
-        Checks.notNull(key, "Key");
-        Checks.notNull(newKey, "Key");
-        if (!this.data.containsKey(key))
-            return this;
-        this.data.put(newKey, this.data.remove(key));
-        return this;
-    }
 
     @Nonnull
-    public Collection<Object> values() {
+    public Collection<Object> values()
+    {
         return data.values();
     }
 
+    /**
+     * {@link java.util.Set} of all keys in this DataObject.
+     *
+     * @return {@link Set} of keys
+     */
     @Nonnull
-    public Set<String> keys() {
+    public Set<String> keys()
+    {
         return data.keySet();
     }
 
+    /**
+     * Serialize this object as JSON.
+     *
+     * @return byte array containing the JSON representation of this object
+     */
     @Nonnull
     public byte[] toJson() {
         try {
-            return gson.toJson(data).getBytes();
+            String json = gson.toJson(data);
+            return json.getBytes(StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new UncheckedIOException(new IOException(e));
         }
     }
 
+    /**
+     * Serializes this object as ETF MAP term.
+     *
+     * @return byte array containing the encoded ETF term
+     *
+     * @since  4.2.1
+     */
     @Nonnull
-    public byte[] toETF() {
+    public byte[] toETF()
+    {
         ByteBuffer buffer = ExTermEncoder.pack(data);
         return Arrays.copyOfRange(buffer.array(), buffer.arrayOffset(), buffer.arrayOffset() + buffer.limit());
     }
 
     @Override
     public String toString() {
-        return gson.toJson(data);
+        try {
+            return gson.toJson(data);
+        } catch (Exception e) {
+            throw new ParsingException(e);
+        }
     }
 
+
+
+    /**
+     * Converts this DataObject to a {@link java.util.Map}
+     *
+     * @return The resulting map
+     */
     @Nonnull
-    public Map<String, Object> toMap() {
+    public Map<String, Object> toMap()
+    {
         return data;
     }
 
     @Nonnull
     @Override
-    public DataObject toData() {
+    public DataObject toData()
+    {
         return this;
     }
 
-    private ParsingException valueError(String key, String expectedType) {
+    private ParsingException valueError(String key, String expectedType)
+    {
         return new ParsingException("Unable to resolve value with key " + key + " to type " + expectedType + ": " + data.get(key));
     }
 
     @Nullable
-    private <T> T get(@Nonnull Class<T> type, @Nonnull String key) {
+    private <T> T get(@Nonnull Class<T> type, @Nonnull String key)
+    {
         return get(type, key, null, null);
     }
 
     @Nullable
-    private <T> T get(@Nonnull Class<T> type, @Nonnull String key, @Nullable Function<String, T> stringParse, @Nullable Function<Number, T> numberParse) {
+    private <T> T get(@Nonnull Class<T> type, @Nonnull String key, @Nullable Function<String, T> stringParse, @Nullable Function<Number, T> numberParse)
+    {
         Object value = data.get(key);
         if (value == null)
             return null;
@@ -370,7 +413,8 @@ public class DataObject implements SerializableData {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj)
+    {
         if (obj == this)
             return true;
         if (!(obj instanceof DataObject))
@@ -379,7 +423,8 @@ public class DataObject implements SerializableData {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return toMap().hashCode();
     }
 }
