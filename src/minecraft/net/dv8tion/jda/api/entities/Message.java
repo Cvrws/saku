@@ -56,8 +56,6 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
-import net.dv8tion.jda.api.entities.messages.MessagePoll;
-
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.MissingAccessException;
 import net.dv8tion.jda.api.interactions.InteractionType;
@@ -77,7 +75,6 @@ import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
-import net.dv8tion.jda.api.utils.messages.MessagePollData;
 import net.dv8tion.jda.api.utils.messages.MessageRequest;
 import net.dv8tion.jda.internal.JDAImpl;
 import net.dv8tion.jda.internal.entities.ReceivedMessage;
@@ -684,15 +681,6 @@ public interface Message extends ISnowflake, Formattable
     @Unmodifiable
     List<LayoutComponent> getComponents();
 
-    /**
-     * The {@link MessagePoll} attached to this message.
-     *
-     * @return Possibly-null poll instance for this message
-     *
-     * @see    #endPoll()
-     */
-    @Nullable
-    MessagePoll getPoll();
 
     /**
      * End the poll attached to this message.
@@ -1301,12 +1289,6 @@ public interface Message extends ISnowflake, Formattable
      *
      * @return {@link MessageCreateAction}
      */
-    @Nonnull
-    @CheckReturnValue
-    default MessageCreateAction replyPoll(@Nonnull MessagePollData poll)
-    {
-        return getChannel().sendMessagePoll(poll).setMessageReference(this);
-    }
 
     /**
      * Shortcut for {@code getChannel().sendMessageEmbeds(embed, other).setMessageReference(this)}.

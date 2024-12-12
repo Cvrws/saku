@@ -16,19 +16,18 @@
 
 package net.dv8tion.jda.internal.utils.message;
 
+import java.util.Collection;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateRequest;
-import net.dv8tion.jda.api.utils.messages.MessagePollData;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-
-@SuppressWarnings("unchecked")
 public interface MessageCreateBuilderMixin<R extends MessageCreateRequest<R>> extends AbstractMessageBuilderMixin<R, MessageCreateBuilder>, MessageCreateRequest<R>
 {
     @Nonnull
@@ -60,21 +59,6 @@ public interface MessageCreateBuilderMixin<R extends MessageCreateRequest<R>> ex
     default R addFiles(@Nonnull Collection<? extends FileUpload> files)
     {
         getBuilder().addFiles(files);
-        return (R) this;
-    }
-
-    @Nullable
-    @Override
-    default MessagePollData getPoll()
-    {
-        return getBuilder().getPoll();
-    }
-
-    @Nonnull
-    @Override
-    default R setPoll(@Nullable MessagePollData poll)
-    {
-        getBuilder().setPoll(poll);
         return (R) this;
     }
 

@@ -15,6 +15,25 @@
  */
 package net.dv8tion.jda.api.entities.channel.middleman;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Formattable;
+import java.util.List;
+import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+
+import org.jetbrains.annotations.Unmodifiable;
+
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -44,7 +63,6 @@ import net.dv8tion.jda.api.utils.MiscUtil;
 import net.dv8tion.jda.api.utils.data.DataArray;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
-import net.dv8tion.jda.api.utils.messages.MessagePollData;
 import net.dv8tion.jda.internal.JDAImpl;
 import net.dv8tion.jda.internal.entities.EntityBuilder;
 import net.dv8tion.jda.internal.requests.RestActionImpl;
@@ -55,17 +73,6 @@ import net.dv8tion.jda.internal.requests.restaction.pagination.MessagePagination
 import net.dv8tion.jda.internal.requests.restaction.pagination.PollVotersPaginationActionImpl;
 import net.dv8tion.jda.internal.requests.restaction.pagination.ReactionPaginationActionImpl;
 import net.dv8tion.jda.internal.utils.Checks;
-import net.dv8tion.jda.internal.utils.JDALogger;
-import org.jetbrains.annotations.Unmodifiable;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import java.io.File;
-import java.io.InputStream;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Represents a Discord channel that can have {@link net.dv8tion.jda.api.entities.Message Messages} and files sent to it.
@@ -688,14 +695,6 @@ public interface MessageChannel extends Channel, Formattable
      *
      * @return {@link MessageCreateAction}
      */
-    @Nonnull
-    @CheckReturnValue
-    default MessageCreateAction sendMessagePoll(@Nonnull MessagePollData poll)
-    {
-        Checks.notNull(poll, "Poll");
-        return new MessageCreateActionImpl(this).setPoll(poll);
-    }
-
     /**
      * Send a message to this channel.
      *

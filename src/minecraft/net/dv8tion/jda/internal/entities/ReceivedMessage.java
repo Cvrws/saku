@@ -62,7 +62,6 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
-import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -117,7 +116,6 @@ public class ReceivedMessage implements Message
     protected final String content;
     protected final String nonce;
     protected final MessageActivity activity;
-    protected final MessagePoll poll;
     protected final OffsetDateTime editedTime;
     protected final Mentions mentions;
     protected final Message.Interaction interaction;
@@ -138,7 +136,7 @@ public class ReceivedMessage implements Message
     public ReceivedMessage(
             long id, long channelId, long guildId, JDA jda, Guild guild, MessageChannel channel, MessageType type, MessageReference messageReference,
             boolean fromWebhook, long applicationId, boolean  tts, boolean pinned,
-            String content, String nonce, User author, Member member, MessageActivity activity, MessagePoll poll, OffsetDateTime editTime,
+            String content, String nonce, User author, Member member, MessageActivity activity, OffsetDateTime editTime,
             Mentions mentions, List<MessageReaction> reactions, List<Attachment> attachments, List<MessageEmbed> embeds,
             List<ActionRow> components,
             int flags, Message.Interaction interaction, ThreadChannel startedThread, int position)
@@ -170,7 +168,6 @@ public class ReceivedMessage implements Message
         this.interaction = interaction;
         this.startedThread = startedThread;
         this.position = position;
-        this.poll = poll;
     }
 
     private void checkSystem(String comment)
@@ -623,21 +620,12 @@ public class ReceivedMessage implements Message
         checkIntent();
         return components;
     }
-
-    @Override
-    public MessagePoll getPoll()
-    {
-        checkIntent();
-        return poll;
-    }
-
+    
     @Nonnull
     @Override
     public AuditableRestAction<Message> endPoll()
     {
         checkUser();
-        if (poll == null)
-            throw new IllegalStateException("This message does not contain a poll");
         return new AuditableRestActionImpl<>(getJDA(), Route.Messages.END_POLL.compile(getChannelId(), getId()), (response, request) -> {
             JDAImpl jda = (JDAImpl) getJDA();
             EntityBuilder entityBuilder = jda.getEntityBuilder();

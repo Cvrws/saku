@@ -108,10 +108,8 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
-import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.entities.templates.Template;
 import net.dv8tion.jda.api.entities.templates.TemplateChannel;
 import net.dv8tion.jda.api.entities.templates.TemplateGuild;
@@ -152,7 +150,6 @@ import net.dv8tion.jda.internal.entities.channel.mixin.middleman.AudioChannelMix
 import net.dv8tion.jda.internal.entities.emoji.CustomEmojiImpl;
 import net.dv8tion.jda.internal.entities.emoji.RichCustomEmojiImpl;
 import net.dv8tion.jda.internal.entities.emoji.UnicodeEmojiImpl;
-import net.dv8tion.jda.internal.entities.messages.MessagePollImpl;
 import net.dv8tion.jda.internal.handle.EventCache;
 import net.dv8tion.jda.internal.utils.Helpers;
 import net.dv8tion.jda.internal.utils.UnlockHook;
@@ -1839,8 +1836,6 @@ public class EntityBuilder
             );
         }
 
-        MessagePoll poll = jsonObject.optObject("poll").map(EntityBuilder::createMessagePoll).orElse(null);
-
         // Message Components
         List<ActionRow> components = Collections.emptyList();
         Optional<DataArray> componentsArrayOpt = jsonObject.optArray("components");
@@ -1871,7 +1866,7 @@ public class EntityBuilder
         int position = jsonObject.getInt("position", -1);
 
         return new ReceivedMessage(id, channelId, guildId, api, guild, channel, type, messageReference, fromWebhook, applicationId, tts, pinned,
-                content, nonce, user, member, activity, poll, editTime, mentions, reactions, attachments, embeds, components, flags,
+                content, nonce, user, member, activity, editTime, mentions, reactions, attachments, embeds, components, flags,
                 messageInteraction, startedThread, position);
     }
 
@@ -1899,47 +1894,6 @@ public class EntityBuilder
         }
 
         return new MessageActivity(activityType, partyId, application);
-    }
-
-    public static MessagePollImpl createMessagePoll(DataObject data)
-    {
-        MessagePoll.LayoutType layout = MessagePoll.LayoutType.fromKey(data.getInt("layout_type"));
-        OffsetDateTime expiresAt = data.isNull("expiry") ? null : data.getOffsetDateTime("expiry");
-        boolean isMultiAnswer = data.getBoolean("allow_multiselect");
-
-        DataArray answersData = data.getArray("answers");
-        DataObject questionData = data.getObject("question");
-
-        DataObject resultsData = data.optObject("results").orElseGet(
-            () -> DataObject.empty().put("answer_counts", DataArray.empty()) // FIXME: Discord bug
-        );
-        boolean isFinalized = resultsData.getBoolean("is_finalized");
-
-        DataArray resultVotes = resultsData.getArray("answer_counts");
-        TLongObjectMap<DataObject> voteMapping = new TLongObjectHashMap<>();
-        resultVotes.stream(DataArray::getObject)
-                .forEach(votes -> voteMapping.put(votes.getLong("id"), votes));
-
-        MessagePoll.Question question = new MessagePoll.Question(
-                questionData.getString("text"),
-                questionData.optObject("emoji").map(Emoji::fromData).orElse(null));
-
-        List<MessagePoll.Answer> answers = answersData.stream(DataArray::getObject)
-                .map(answer -> {
-                    long answerId = answer.getLong("answer_id");
-                    DataObject media = answer.getObject("poll_media");
-                    DataObject votes = voteMapping.get(answerId);
-                    return new MessagePoll.Answer(
-                        answerId,
-                        media.getString("text"),
-                        media.optObject("emoji").map(Emoji::fromData).orElse(null),
-                        votes != null ? votes.getInt("count") : 0,
-                        votes != null && votes.getBoolean("me_voted")
-                    );
-                })
-                .collect(Helpers.toUnmodifiableList());
-
-        return new MessagePollImpl(layout, question, answers, expiresAt, isMultiAnswer, isFinalized);
     }
 
     public MessageReaction createMessageReaction(MessageChannel chan, long channelId, long messageId, DataObject obj)

@@ -16,6 +16,20 @@
 
 package net.dv8tion.jda.internal.entities.channel.mixin.middleman;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -40,15 +54,8 @@ import net.dv8tion.jda.api.utils.TimeUtil;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
-import net.dv8tion.jda.api.utils.messages.MessagePollData;
 import net.dv8tion.jda.internal.entities.channel.mixin.ChannelMixin;
 import net.dv8tion.jda.internal.requests.RestActionImpl;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public interface MessageChannelMixin<T extends MessageChannelMixin<T>> extends
         MessageChannel,
@@ -172,14 +179,6 @@ public interface MessageChannelMixin<T extends MessageChannelMixin<T>> extends
     {
         checkCanSendMessage();
         return MessageChannelUnion.super.sendMessageComponents(components);
-    }
-
-    @Nonnull
-    @Override
-    default MessageCreateAction sendMessagePoll(@Nonnull MessagePollData poll)
-    {
-        checkCanSendMessage();
-        return MessageChannelUnion.super.sendMessagePoll(poll);
     }
 
     @Nonnull
