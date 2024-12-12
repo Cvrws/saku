@@ -37,7 +37,7 @@ public final class Config extends Command {
                         if (config != null) {
                             CompletableFuture.runAsync(() -> {
                                 if (config.read()) {
-                                	success("Loaded " + name + " config file!");
+                                	success("Loaded success!");
                                 }
                             });
                         }
@@ -76,8 +76,6 @@ public final class Config extends Command {
             case 2:
                 switch (command) {
                     case "list":
-                        warning("Click on the config you want to load.");
-
                         configManager.update();
 
                         configManager.forEach(configFile -> {

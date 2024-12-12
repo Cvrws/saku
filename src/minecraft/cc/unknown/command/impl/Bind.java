@@ -30,7 +30,7 @@ public final class Bind extends Command {
             final int keyCode = Keyboard.getKeyIndex(inputCharacter);
 
             bindable.setKey(keyCode);
-            PlayerUtil.display("Binded " + bindable.getName() + " to " + Keyboard.getKeyName(keyCode) + ".");
+            success("Binded " + bindable.getName() + " to " + Keyboard.getKeyName(keyCode) + ".");
         } else if (args.length == 2 && args[1].equalsIgnoreCase("list")) {
             getInstance().getBindableManager().getBinds().forEach(module -> {
                 if (module.getKey() != 0) {

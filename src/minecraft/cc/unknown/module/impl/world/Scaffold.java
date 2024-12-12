@@ -294,8 +294,6 @@ public class Scaffold extends Module {
 	        
 	        mc.player.inventory.currentItem = slot;
 	        
-	        //getComponent(Slot.class).setSlot(slot);
-
 			if (doesNotContainBlock(1) && (!sameY || (doesNotContainBlock(2) && doesNotContainBlock(3) && doesNotContainBlock(4)))) {
 				ticksOnAir++;
 			} else {
