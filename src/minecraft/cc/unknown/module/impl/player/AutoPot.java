@@ -1,7 +1,6 @@
 package cc.unknown.module.impl.player;
 
 import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -35,6 +34,17 @@ public class AutoPot extends Module {
 
     private int attackTicks;
     private long nextThrow;
+    private int lastSlot;
+    
+	@Override
+	public void onEnable() {
+		lastSlot = -1;	
+	}
+    
+    @Override
+    public void onDisable() {
+    	mc.player.inventory.currentItem = lastSlot;
+    }
 
     @EventLink
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
@@ -46,6 +56,10 @@ public class AutoPot extends Module {
 
         if (mc.player.onGroundTicks <= 1 || !stopWatch.finished(nextThrow) || attackTicks < 10 || this.getModule(Scaffold.class).isEnabled()) {
             return;
+        }
+        
+        if (lastSlot == -1) {
+        	lastSlot = mc.player.inventory.currentItem;
         }
 
         for (int i = 0; i < 9; i++) {
@@ -78,12 +92,12 @@ public class AutoPot extends Module {
                 final double maxRotationSpeed = this.rotationSpeed.getSecondValue().doubleValue();
                 final float rotationSpeed = (float) MathUtil.getRandom(minRotationSpeed, maxRotationSpeed);
                 RotationComponent.setRotations(new Vector2f((float) (mc.player.rotationYaw + (Math.random() - 0.5) * 3), (float) (87 + Math.random() * 3)), rotationSpeed, MovementFix.SILENT);
-
-                getComponent(Slot.class).setSlot(i);
+                
+    	        mc.player.inventory.currentItem = i;
 
                 if (RotationComponent.rotations.y > 85) {
                     mc.playerController.syncCurrentPlayItem();
-                    PacketUtil.send(new C08PacketPlayerBlockPlacement(getComponent(Slot.class).getItemStack()));
+                    PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
 
                     this.nextThrow = Math.round(MathUtil.getRandom(delay.getValue().longValue(), delay.getSecondValue().longValue()));
                     stopWatch.reset();

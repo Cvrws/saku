@@ -527,25 +527,39 @@ public class ItemRenderer {
     public void updateEquippedItem() {
         this.prevEquippedProgress = this.equippedProgress;
         EntityPlayer entityplayer = this.mc.player;
-        ItemStack itemstack = entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem];
-        
+
+        int currentItem = entityplayer.inventory.currentItem;
+        if (currentItem < 0 || currentItem >= entityplayer.inventory.mainInventory.length) {
+            return;
+        }
+
+        ItemStack itemstack = entityplayer.inventory.mainInventory[currentItem];
+
         boolean flag = false;
 
         if (this.itemToRender != null && itemstack != null) {
             if (!this.itemToRender.getIsItemStackEqual(itemstack)) {
                 if (Reflector.ForgeItem_shouldCauseReequipAnimation.exists()) {
-                    final boolean flag1 = Reflector.callBoolean(this.itemToRender.getItem(), Reflector.ForgeItem_shouldCauseReequipAnimation, this.itemToRender, itemstack, Boolean.valueOf(this.equippedItemSlot != entityplayer.inventory.currentItem));
+                    final boolean flag1 = Reflector.callBoolean(
+                        this.itemToRender.getItem(), 
+                        Reflector.ForgeItem_shouldCauseReequipAnimation, 
+                        this.itemToRender, 
+                        itemstack, 
+                        Boolean.valueOf(this.equippedItemSlot != currentItem)
+                    );
 
                     if (!flag1) {
                         this.itemToRender = itemstack;
-                        this.equippedItemSlot = entityplayer.inventory.currentItem;
+                        this.equippedItemSlot = currentItem;
                         return;
                     }
                 }
 
                 flag = true;
             }
-        } else flag = this.itemToRender != null || itemstack != null;
+        } else {
+            flag = this.itemToRender != null || itemstack != null;
+        }
 
         final float f2 = 0.4F;
         final float f = flag ? 0.0F : 1.0F;
@@ -554,13 +568,14 @@ public class ItemRenderer {
 
         if (this.equippedProgress < 0.1F) {
             this.itemToRender = itemstack;
-            this.equippedItemSlot = entityplayer.inventory.currentItem;
+            this.equippedItemSlot = currentItem;
 
             if (Config.isShaders()) {
                 Shaders.setItemToRenderMain(itemstack);
             }
         }
     }
+    
     /**
      * Resets equippedProgress
      */

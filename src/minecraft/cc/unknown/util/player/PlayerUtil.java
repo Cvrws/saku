@@ -734,4 +734,13 @@ public class PlayerUtil implements Accessor {
        motionZ *= f4;
        return new double[]{posX, posY, posZ, motionX, motionY, motionZ};
     }
+    
+    public Item getItem() {
+        ItemStack stack = getItemStack();
+        return stack == null ? null : stack.getItem();
+    }
+    
+    public ItemStack getItemStack() {
+        return (mc.player == null || mc.player.inventoryContainer == null ? null : mc.player.inventoryContainer.getSlot(mc.player.inventory.currentItem + 36).getStack());
+    }
 }

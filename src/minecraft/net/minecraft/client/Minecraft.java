@@ -1,6 +1,5 @@
 package net.minecraft.client;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +56,6 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.event.impl.input.ClickBlockEvent;
 import cc.unknown.event.impl.input.ClickEvent;
 import cc.unknown.event.impl.input.KeyboardInputEvent;
@@ -68,14 +66,12 @@ import cc.unknown.event.impl.other.GameEvent;
 import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
-import cc.unknown.module.impl.latency.TickBase;
-import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.ui.menu.LoginMenu;
 import cc.unknown.ui.menu.MainMenu;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.render.RenderUtil;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import cc.unknown.util.structure.CPSHelper;
 import de.florianmichael.viamcp.fixes.AttackOrder;
@@ -1559,7 +1555,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		if (!this.playerController.func_181040_m()) {
 			this.rightClickDelayTimer = 4;
 			boolean flag = true;
-			ItemStack itemstack = Sakura.instance.getComponentManager().get(Slot.class).getItemStack();
+			ItemStack itemstack = PlayerUtil.getItemStack();
 
 			if (this.objectMouseOver == null) {
 				logger.warn("Null returned as 'hitResult', this shouldn't happen!");
@@ -1593,8 +1589,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 						}
 
 						if (itemstack.stackSize == 0) {
-							this.player.inventory.mainInventory[Sakura.instance.getComponentManager().get(Slot.class)
-									.getItemIndex()] = null;
+							this.player.inventory.mainInventory[theMinecraft.player.inventory.currentItem] = null;
 						} else if (itemstack.stackSize != i || this.playerController.isInCreativeMode()) {
 							this.entityRenderer.itemRenderer.resetEquippedProgress();
 						}
@@ -1603,7 +1598,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			}
 
 			if (flag) {
-				final ItemStack itemstack1 = Sakura.instance.getComponentManager().get(Slot.class).getItemStack();
+				final ItemStack itemstack1 = PlayerUtil.getItemStack();
 
 				if (itemstack1 != null && this.playerController.sendUseItem(this.player, this.world, itemstack1)) {
 					this.entityRenderer.itemRenderer.resetEquippedProgress2();

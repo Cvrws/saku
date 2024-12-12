@@ -10,10 +10,10 @@ import com.mojang.authlib.GameProfile;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.event.impl.player.HitSlowDownEvent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.player.PlayerUtil;
 import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -480,10 +480,10 @@ public abstract class EntityPlayer extends EntityLivingBase implements java.io.S
 			final ItemStack itemstack = this.itemInUse.onItemUseFinish(this.worldObj, this);
 
 			if (itemstack != this.itemInUse || itemstack != null && itemstack.stackSize != i) {
-				this.inventory.mainInventory[getComponent(Slot.class).getItemIndex()] = itemstack;
+				this.inventory.mainInventory[mc.player.inventory.currentItem] = itemstack;
 
 				if (itemstack.stackSize == 0) {
-					this.inventory.mainInventory[getComponent(Slot.class).getItemIndex()] = null;
+					this.inventory.mainInventory[mc.player.inventory.currentItem] = null;
 				}
 			}
 
@@ -847,7 +847,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements java.io.S
 
 		if (f > 1.0F) {
 			final int i = EnchantmentHelper.getEfficiencyModifier(this);
-			final ItemStack itemstack = getComponent(Slot.class).getItemStack();
+			final ItemStack itemstack = PlayerUtil.getItemStack();
 
 			if (i > 0 && itemstack != null) {
 				f += (float) (i * i + 1);
@@ -1165,7 +1165,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements java.io.S
 	 * Destroys the currently equipped item from the player's inventory.
 	 */
 	public void destroyCurrentEquippedItem() {
-		this.inventory.setInventorySlotContents(getComponent(Slot.class).getItemIndex(), null);
+		this.inventory.setInventorySlotContents(mc.player.inventory.currentItem, null);
 	}
 
 	/**

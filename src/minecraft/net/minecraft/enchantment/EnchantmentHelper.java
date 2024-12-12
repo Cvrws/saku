@@ -1,11 +1,15 @@
 package net.minecraft.enchantment;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.*;
 import cc.unknown.util.Accessor;
+import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
@@ -17,11 +21,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.WeightedRandom;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 public class EnchantmentHelper implements Accessor {
     /**
@@ -275,7 +274,7 @@ public class EnchantmentHelper implements Accessor {
      * @param player The player being checked.
      */
     public static int getEfficiencyModifier(final EntityLivingBase player) {
-        return getEnchantmentLevel(Enchantment.efficiency.effectId, Sakura.instance.getComponentManager().get(Slot.class).getItemStack());
+        return getEnchantmentLevel(Enchantment.efficiency.effectId, PlayerUtil.getItemStack());
     }
 
     /**

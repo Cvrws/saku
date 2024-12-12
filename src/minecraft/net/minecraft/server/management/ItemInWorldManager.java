@@ -300,7 +300,7 @@ public class ItemInWorldManager implements Accessor {
             final ItemStack itemstack = stack.useItemRightClick(worldIn, player);
 
             if (itemstack != stack || itemstack != null && (itemstack.stackSize != i || itemstack.getMaxItemUseDuration() > 0 || itemstack.getMetadata() != j)) {
-                player.inventory.mainInventory[getComponent(Slot.class).getItemIndex()] = itemstack;
+                player.inventory.mainInventory[mc.player.inventory.currentItem] = itemstack;
 
                 if (this.isCreative()) {
                     itemstack.stackSize = i;
@@ -311,7 +311,7 @@ public class ItemInWorldManager implements Accessor {
                 }
 
                 if (itemstack.stackSize == 0) {
-                    player.inventory.mainInventory[getComponent(Slot.class).getItemIndex()] = null;
+                    player.inventory.mainInventory[mc.player.inventory.currentItem] = null;
                 }
 
                 if (!player.isUsingItem()) {

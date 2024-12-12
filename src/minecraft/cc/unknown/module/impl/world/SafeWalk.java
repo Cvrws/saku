@@ -1,12 +1,12 @@
 package cc.unknown.module.impl.world;
 
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.item.ItemBlock;
 
@@ -19,7 +19,7 @@ public class SafeWalk extends Module {
     @EventLink
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
         mc.player.safeWalk = mc.player.onGround && (!mc.gameSettings.keyBindForward.isKeyDown() || !backwardsOnly.getValue()) &&
-                ((getComponent(Slot.class).getItemStack() != null && getComponent(Slot.class).getItemStack().getItem() instanceof ItemBlock) ||
+                ((PlayerUtil.getItemStack() != null && PlayerUtil.getItemStack().getItem() instanceof ItemBlock) ||
                         !this.blocksOnly.getValue());
     };
 }

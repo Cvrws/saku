@@ -1,13 +1,11 @@
 package cc.unknown.module.impl.world;
 
-import java.awt.Color;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import org.lwjgl.input.Keyboard;
 
 import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -18,7 +16,6 @@ import cc.unknown.event.impl.other.TeleportEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreStrafeEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
-import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
@@ -38,7 +35,6 @@ import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.util.player.RotationUtil;
 import cc.unknown.util.player.SlotUtil;
-import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.DescValue;
@@ -47,9 +43,6 @@ import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.StringValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.block.BlockAir;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -165,13 +158,19 @@ public class Scaffold extends Module {
 		placements = 0;
 		
 		if (randomiseRotationSpeed.getValue()) {
-			rotationSpeed.setValue(50 + (85 - 50) * Math.random());
+			int first = 1 + (int)(Math.random() * 10);
+			int second = first + (int)(Math.random() * (10 - first + 1));
+
+			rotationSpeed.setValue(first);
+			rotationSpeed.setSecondValue(second);
 		}
 	}
 
 	@Override
 	public void onDisable() {
 		resetBinds();
+		
+		mc.player.inventory.currentItem = lastSlot;
 	}
 
 	@EventLink
@@ -282,18 +281,20 @@ public class Scaffold extends Module {
 			sameY = ((!this.sameYValue.is("Off") || this.getModule(Speed.class).isEnabled()) && !mc.gameSettings.keyBindJump.isKeyDown()) && MoveUtil.isMoving();
 
 	        if (lastSlot == -1) {
-	        	lastSlot = getComponent(Slot.class).getItemIndex();
+	        	lastSlot = mc.player.inventory.currentItem;
 	        }
 
-	        int slot = getComponent(Slot.class).getItemIndex();
+	        int slot = mc.player.inventory.currentItem;
 	        
 	        if (useBiggestStack.getValue()) {
 	        	slot = getSlot();
-	        } else if (getComponent(Slot.class).getItemStack() == null || !(getComponent(Slot.class).getItemStack().getItem() instanceof ItemBlock) || !InventoryUtil.canBePlaced((ItemBlock) getComponent(Slot.class).getItemStack().getItem())) {
+	        } else if (PlayerUtil.getItemStack() == null || !(PlayerUtil.getItemStack().getItem() instanceof ItemBlock) || !InventoryUtil.canBePlaced((ItemBlock) PlayerUtil.getItemStack().getItem())) {
 	        	slot = getSlot();
 	        }
 	        
-	        getComponent(Slot.class).setSlot(slot);
+	        mc.player.inventory.currentItem = slot;
+	        
+	        //getComponent(Slot.class).setSlot(slot);
 
 			if (doesNotContainBlock(1) && (!sameY || (doesNotContainBlock(2) && doesNotContainBlock(3) && doesNotContainBlock(4)))) {
 				ticksOnAir++;
@@ -337,20 +338,20 @@ public class Scaffold extends Module {
 				return;
 			}
 
-			if (getComponent(Slot.class).getItemStack() == null || !(getComponent(Slot.class).getItemStack().getItem() instanceof ItemBlock)) {
+			if (PlayerUtil.getItemStack() == null || !(PlayerUtil.getItemStack().getItem() instanceof ItemBlock)) {
 				return;
 			}
 
-			if (getComponent(Slot.class).getItem() instanceof ItemBlock) {
+			if (PlayerUtil.getItem() instanceof ItemBlock) {
 				if (canPlace && (RayCastUtil.overBlock(enumFacing.getEnumFacing(), blockFace, rayCast.is("Strict")) || rayCast.is("Off"))) {
 					this.place();
 
 					ticksOnAir = 0;
 
-					assert getComponent(Slot.class).getItemStack() != null;
+					assert PlayerUtil.getItemStack() != null;
 
-					if (getComponent(Slot.class).getItemStack() != null && getComponent(Slot.class).getItemStack().stackSize == 0) {
-						mc.player.inventory.mainInventory[getComponent(Slot.class).getItemIndex()] = null;
+					if (PlayerUtil.getItemStack() != null && PlayerUtil.getItemStack().stackSize == 0) {
+						mc.player.inventory.mainInventory[mc.player.inventory.currentItem] = null;
 					}
 
 				} else if (Math.random() > 0.3 && mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit != null && mc.objectMouseOver.sideHit == EnumFacing.UP && rayCast.is("Strict") && !(PlayerUtil.blockRelativeToPlayer(0, -1, 0) instanceof BlockAir)) {
@@ -576,7 +577,7 @@ public class Scaffold extends Module {
 
 		if (rayCast.is("Strict")) {
 			mc.rightClickMouse();
-		} else if (mc.playerController.onPlayerRightClick(mc.player, mc.world, getComponent(Slot.class).getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
+		} else if (mc.playerController.onPlayerRightClick(mc.player, mc.world, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
 			mc.clickMouseEvent();
 			//PacketUtil.send(new C0APacketAnimation());
 		}

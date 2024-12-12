@@ -32,7 +32,6 @@ public final class ComponentManager {
         // player
         this.add(new LastConnectionComponent());
         this.add(new RotationComponent());
-        this.add(new Slot());
         this.add(new SecurityComponent());
         this.add(new TargetComponent());
         this.add(new GameComponent());

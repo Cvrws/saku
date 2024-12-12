@@ -7,7 +7,6 @@ import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.component.impl.player.TargetComponent;
 import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
@@ -151,7 +150,7 @@ public final class KillAura extends Module {
 
 		this.hitTicks++;
 
-		if (getComponent(Slot.class).getItemStack() == null || !(getComponent(Slot.class).getItemStack().getItem() instanceof ItemSword)) {
+		if (PlayerUtil.getItemStack() == null || !(PlayerUtil.getItemStack().getItem() instanceof ItemSword)) {
 			blocking = false;
 		}
 
@@ -414,14 +413,14 @@ public final class KillAura extends Module {
 
 	@EventLink
 	public final Listener<RightClickEvent> onRightClick = event -> {
-		if (target == null || getComponent(Slot.class).getItemStack() == null
-				|| !(getComponent(Slot.class).getItemStack().getItem() instanceof ItemSword))
+		if (target == null || PlayerUtil.getItemStack() == null
+				|| !(PlayerUtil.getItemStack().getItem() instanceof ItemSword))
 			return;
 
 		switch (autoBlock.getValue().getName()) {
 		case "Fake":
-			if (!preventServerSideBlocking.getValue() || getComponent(Slot.class).getItemStack() == null
-					|| !(getComponent(Slot.class).getItemStack().getItem() instanceof ItemSword)) {
+			if (!preventServerSideBlocking.getValue() || PlayerUtil.getItemStack() == null
+					|| !(PlayerUtil.getItemStack().getItem() instanceof ItemSword)) {
 				return;
 			}
 
@@ -464,22 +463,22 @@ public final class KillAura extends Module {
 			break;
 		case "Beta":
 			if (this.hitTicks == blockingTicks.getValue().intValue() && PlayerUtil.isHoldingWeapon()) {
-				mc.player.setItemInUse(getComponent(Slot.class).getItemStack(), 1);
-				mc.playerController.sendUseItem(mc.player, mc.world, getComponent(Slot.class).getItemStack());
+				mc.player.setItemInUse(PlayerUtil.getItemStack(), 1);
+				mc.playerController.sendUseItem(mc.player, mc.world, PlayerUtil.getItemStack());
 			}
 			break;
 		case "Post":
 			boolean furry = false;
 			
 			if (PlayerUtil.isHoldingWeapon()) {
-				mc.player.setItemInUse(getComponent(Slot.class).getItemStack(), 1);
-				mc.playerController.sendUseItem(mc.player, mc.world, getComponent(Slot.class).getItemStack());
+				mc.player.setItemInUse(PlayerUtil.getItemStack(), 1);
+				mc.playerController.sendUseItem(mc.player, mc.world, PlayerUtil.getItemStack());
 			} else {
 				furry = true;
 			}
 			
 			if (furry) {
-				mc.player.setItemInUse(getComponent(Slot.class).getItemStack(), 0);
+				mc.player.setItemInUse(PlayerUtil.getItemStack(), 0);
 				PacketUtil.sendNoEvent(new C07PacketPlayerDigging(
 						C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
 			}
@@ -520,8 +519,8 @@ public final class KillAura extends Module {
 
 	public boolean canBlock() {
 		return (!rightClickOnly.getValue() || mc.gameSettings.keyBindUseItem.isKeyDown())
-				&& getComponent(Slot.class).getItemStack() != null
-				&& getComponent(Slot.class).getItemStack().getItem() instanceof ItemSword;
+				&& PlayerUtil.getItemStack() != null
+				&& PlayerUtil.getItemStack().getItem() instanceof ItemSword;
 	}
 
 	public void interact(MovingObjectPosition mouse) {
@@ -534,7 +533,7 @@ public final class KillAura extends Module {
 		if (blocking) {
 			if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) mc.gameSettings.keyBindUseItem.pressed = false;
 			else {
-				PacketUtil.send(new C08PacketPlayerBlockPlacement(getComponent(Slot.class).getItemStack()));
+				PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
 				mc.gameSettings.keyBindUseItem.pressed = false;
 			}
 			blocking = false;
@@ -555,7 +554,7 @@ public final class KillAura extends Module {
 			
 			if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) mc.gameSettings.keyBindUseItem.pressed = true;
 			else {
-				PacketUtil.send(new C08PacketPlayerBlockPlacement(getComponent(Slot.class).getItemStack()));
+				PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
 				mc.gameSettings.keyBindUseItem.pressed = true;
 			}
 

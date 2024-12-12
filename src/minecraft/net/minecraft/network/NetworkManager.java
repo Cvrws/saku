@@ -351,6 +351,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
                 }
             });
         }
+        
     }
 
     /**

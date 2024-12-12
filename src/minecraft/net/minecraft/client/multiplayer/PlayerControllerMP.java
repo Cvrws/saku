@@ -1,11 +1,11 @@
 package net.minecraft.client.multiplayer;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.event.impl.other.BlockDamageEvent;
 import cc.unknown.event.impl.player.HitEvent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -138,7 +138,7 @@ public class PlayerControllerMP implements Accessor {
 
             if (!this.mc.player.isAllowEdit()) {
                 final Block block = this.mc.world.getBlockState(pos).getBlock();
-                final ItemStack itemstack = getComponent(Slot.class).getItemStack();
+                final ItemStack itemstack = PlayerUtil.getItemStack();
 
                 if (itemstack == null) {
                     return false;
@@ -170,7 +170,7 @@ public class PlayerControllerMP implements Accessor {
                 this.currentBlock = new BlockPos(this.currentBlock.getX(), -1, this.currentBlock.getZ());
 
                 if (!this.currentGameType.isCreative()) {
-                    final ItemStack itemstack1 = mc.player.inventory.alternativeSlot ? getComponent(Slot.class).getItemStack() : mc.player.getHeldItem();
+                    final ItemStack itemstack1 = mc.player.inventory.alternativeSlot ? PlayerUtil.getItemStack() : mc.player.getHeldItem();
 
                     if (itemstack1 != null) {
                         itemstack1.onBlockDestroyed(world, block1, pos, this.mc.player);
@@ -200,7 +200,7 @@ public class PlayerControllerMP implements Accessor {
 
             if (!this.mc.player.isAllowEdit()) {
                 final Block block = this.mc.world.getBlockState(loc).getBlock();
-                final ItemStack itemstack = mc.player.inventory.alternativeSlot ? getComponent(Slot.class).getItemStack() : mc.player.getHeldItem();
+                final ItemStack itemstack = mc.player.inventory.alternativeSlot ? PlayerUtil.getItemStack() : mc.player.getHeldItem();
 
                 if (itemstack == null) {
                     return false;
@@ -243,7 +243,7 @@ public class PlayerControllerMP implements Accessor {
                 } else {
                     this.isHittingBlock = true;
                     this.currentBlock = loc;
-                    this.currentItemHittingBlock = mc.player.inventory.alternativeSlot ? getComponent(Slot.class).getItemStack() : mc.player.getHeldItem();
+                    this.currentItemHittingBlock = mc.player.inventory.alternativeSlot ? PlayerUtil.getItemStack() : mc.player.getHeldItem();
                     this.curBlockDamageMP = 0.0F;
                     this.stepSoundTickCounter = 0.0F;
                     this.mc.world.sendBlockBreakProgress(this.mc.player.getEntityId(), this.currentBlock, (int) (this.curBlockDamageMP * 10.0F) - 1);
@@ -328,7 +328,7 @@ public class PlayerControllerMP implements Accessor {
     }
 
     private boolean isHittingPosition(final BlockPos pos) {
-        final ItemStack itemstack = mc.player.inventory.alternativeSlot ? getComponent(Slot.class).getItemStack() : mc.player.getHeldItem();
+        final ItemStack itemstack = mc.player.inventory.alternativeSlot ? PlayerUtil.getItemStack() : mc.player.getHeldItem();
         boolean flag = this.currentItemHittingBlock == null && itemstack == null;
 
         if (this.currentItemHittingBlock != null && itemstack != null) {
@@ -424,10 +424,10 @@ public class PlayerControllerMP implements Accessor {
             final ItemStack itemstack = itemStackIn.useItemRightClick(worldIn, playerIn);
 
             if (itemstack != itemStackIn || itemstack != null && itemstack.stackSize != i) {
-                playerIn.inventory.mainInventory[getComponent(Slot.class).getItemIndex()] = itemstack;
+                playerIn.inventory.mainInventory[mc.player.inventory.currentItem] = itemstack;
 
                 if (itemstack.stackSize == 0) {
-                    playerIn.inventory.mainInventory[getComponent(Slot.class).getItemIndex()] = null;
+                    playerIn.inventory.mainInventory[mc.player.inventory.currentItem] = null;
                 }
 
                 return true;

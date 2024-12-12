@@ -1,11 +1,10 @@
 package cc.unknown.script.api;
 
-import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.script.api.wrapper.impl.ScriptEntity;
 import cc.unknown.script.api.wrapper.impl.ScriptItemStack;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector3d;
 import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.network.play.client.C00PacketKeepAlive;
@@ -75,12 +74,12 @@ public class PacketAPI extends API {
     }
 
     public void sendPlacement() {
-        PacketUtil.send(new C08PacketPlayerBlockPlacement(Sakura.instance.getComponentManager().get(Slot.class).getItemStack()));
+        PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
     }
 
     public void sendPlacement(ScriptVector3d vector3d, int direction, float x, float y, float z) {
         PacketUtil.send(new C08PacketPlayerBlockPlacement(new BlockPos(vector3d.getX(), vector3d.getY(), vector3d.getZ()),
-                direction, Sakura.instance.getComponentManager().get(Slot.class).getItemStack(), x, y, z));
+                direction, PlayerUtil.getItemStack(), x, y, z));
     }
 
     public void sendPlacement(ScriptVector3d vector3d, int direction, ScriptItemStack itemStack, float x, float y, float z) {

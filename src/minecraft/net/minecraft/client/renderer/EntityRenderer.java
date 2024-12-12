@@ -26,9 +26,8 @@ import com.google.gson.JsonSyntaxException;
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.other.RotationEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
-import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
-import cc.unknown.module.Module;
+import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.impl.visual.Ambience;
 import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.module.impl.visual.HurtCamera;
@@ -678,7 +677,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 					: f;
 		}
 	}
-	
+
 	private void hurtCameraEffect(final float partialTicks) {
 		if (this.mc.getRenderViewEntity() instanceof EntityLivingBase) {
 			final EntityLivingBase entitylivingbase = (EntityLivingBase) this.mc.getRenderViewEntity();
@@ -773,7 +772,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 					f2 += 180.0F;
 				}
 
-				Module noCameraClip = Sakura.instance.getModuleManager().get(NoCameraClip.class);
+				NoCameraClip noCameraClip = Sakura.instance.getModuleManager().get(NoCameraClip.class);
 
 				if (noCameraClip == null || !noCameraClip.isEnabled()) {
 					final double d4 = (double) (-MathHelper.sin(f1 / 180.0F * (float) Math.PI)
@@ -845,14 +844,9 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 			}
 		} else if (!this.mc.gameSettings.debugCamEnable) {
 			FreeLook freeLook = getModule(FreeLook.class);
-
-			if (freeLook != null && freeLook.isEnabled()) {
-				GlStateManager.rotate(freeLook.lastPitch * 1, 1.0F, 0.0F, 0.0F);
-			} else {
-				GlStateManager.rotate(
-						entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks,
-						1.0F, 0.0F, 0.0F);
-			}
+			GlStateManager.rotate(
+					entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 1.0F,
+					0.0F, 0.0F);
 
 			if (entity instanceof EntityAnimal) {
 				final EntityAnimal entityanimal = (EntityAnimal) entity;
@@ -1242,22 +1236,22 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 				i = -1;
 			}
 
-	         if (this.mc.gameSettings.smoothCamera) {
-	             this.smoothCamYaw += f2;
-	             this.smoothCamPitch += f3;
-	             float f4 = partialTicks - this.smoothCamPartialTicks;
-	             this.smoothCamPartialTicks = partialTicks;
-	             f2 = this.smoothCamFilterX * f4;
-	             f3 = this.smoothCamFilterY * f4;
-	          } else {
-	             this.smoothCamYaw = 0.0F;
-	             this.smoothCamPitch = 0.0F;
-	          }
-			
-             this.mc.player.setAngles(f2, f3 * (float)i);
+			if (this.mc.gameSettings.smoothCamera) {
+				this.smoothCamYaw += f2;
+				this.smoothCamPitch += f3;
+				float f4 = partialTicks - this.smoothCamPartialTicks;
+				this.smoothCamPartialTicks = partialTicks;
+				f2 = this.smoothCamFilterX * f4;
+				f3 = this.smoothCamFilterY * f4;
+			} else {
+				this.smoothCamYaw = 0.0F;
+				this.smoothCamPitch = 0.0F;
+			}
 
-	         RotationEvent event = new RotationEvent();
-	         Sakura.instance.getEventBus().handle(event);
+			this.mc.player.setAngles(f2, f3 * (float) i);
+
+			RotationEvent event = new RotationEvent();
+			Sakura.instance.getEventBus().handle(event);
 		}
 
 		this.mc.mcProfiler.endSection();
@@ -1297,23 +1291,24 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 				this.mc.mcProfiler.endStartSection("gui");
 
 				if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null) {
-				    GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-				    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+					GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+					GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE,
+							GL11.GL_ZERO);
 
-				    this.mc.ingameGUI.renderGameOverlay(partialTicks);
-				    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-				    GlStateManager.disableLighting();
-				    GlStateManager.enableAlpha();
-				    
-				    Sakura.instance.getEventBus().handle(new Render2DEvent(mc.scaledResolution, partialTicks));
-				    
-				    if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo) {
-				        Config.drawFps();
-				    }
+					this.mc.ingameGUI.renderGameOverlay(partialTicks);
+					GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+					GlStateManager.disableLighting();
+					GlStateManager.enableAlpha();
 
-				    if (this.mc.gameSettings.showDebugInfo) {
-				        Lagometer.showLagometer(scaledresolution);
-				    }
+					Sakura.instance.getEventBus().handle(new Render2DEvent(mc.scaledResolution, partialTicks));
+
+					if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo) {
+						Config.drawFps();
+					}
+
+					if (this.mc.gameSettings.showDebugInfo) {
+						Lagometer.showLagometer(scaledresolution);
+					}
 				}
 
 				this.mc.mcProfiler.endSection();
@@ -2034,7 +2029,11 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 								ResourceLocation texture = TEXTURE_SNOW_HEAVY;
 
 								if (ambience.isEnabled()) {
-									color = new Color(Color.getHSBColor((ambience.snowColor.getValue().floatValue() % 360) / 360.0f, 1.0f, 1f).getRGB());;
+									color = new Color(Color
+											.getHSBColor((ambience.snowColor.getValue().floatValue() % 360) / 360.0f,
+													1.0f, 1f)
+											.getRGB());
+									;
 									if (ambience.getWeather().getValue().getName().equals("Light Snow"))
 										texture = TEXTURE_SNOW_LIGHT;
 									else if (ambience.getWeather().getValue().getName().equals("Nether Particles")) {
@@ -2068,24 +2067,20 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 								final int k4 = i4 & 65535;
 
 								worldrenderer.pos((double) l1 - d3 + 0.5D, k2, (double) k1 - d4 + 0.5D)
-										.tex(0.0D + d9, (double) k2 * 0.25D + d8 + d10)
-										.color(color.getRed() / 255F, color.getGreen() / 255F,
-												color.getBlue() / 255F, f4)
+										.tex(0.0D + d9, (double) k2 * 0.25D + d8 + d10).color(color.getRed() / 255F,
+												color.getGreen() / 255F, color.getBlue() / 255F, f4)
 										.func_181671_a(j4, k4).endVertex();
 								worldrenderer.pos((double) l1 + d3 + 0.5D, k2, (double) k1 + d4 + 0.5D)
-										.tex(1.0D + d9, (double) k2 * 0.25D + d8 + d10)
-										.color(color.getRed() / 255F, color.getGreen() / 255F,
-												color.getBlue() / 255F, f4)
+										.tex(1.0D + d9, (double) k2 * 0.25D + d8 + d10).color(color.getRed() / 255F,
+												color.getGreen() / 255F, color.getBlue() / 255F, f4)
 										.func_181671_a(j4, k4).endVertex();
 								worldrenderer.pos((double) l1 + d3 + 0.5D, l2, (double) k1 + d4 + 0.5D)
-										.tex(1.0D + d9, (double) l2 * 0.25D + d8 + d10)
-										.color(color.getRed() / 255F, color.getGreen() / 255F,
-												color.getBlue() / 255F, f4)
+										.tex(1.0D + d9, (double) l2 * 0.25D + d8 + d10).color(color.getRed() / 255F,
+												color.getGreen() / 255F, color.getBlue() / 255F, f4)
 										.func_181671_a(j4, k4).endVertex();
 								worldrenderer.pos((double) l1 - d3 + 0.5D, l2, (double) k1 - d4 + 0.5D)
-										.tex(0.0D + d9, (double) l2 * 0.25D + d8 + d10)
-										.color(color.getRed() / 255F, color.getGreen() / 255F,
-												color.getBlue() / 255F, f4)
+										.tex(0.0D + d9, (double) l2 * 0.25D + d8 + d10).color(color.getRed() / 255F,
+												color.getGreen() / 255F, color.getBlue() / 255F, f4)
 										.func_181671_a(j4, k4).endVertex();
 							}
 						}

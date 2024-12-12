@@ -84,12 +84,6 @@ public final class NameTags extends Module {
 		if (armor.getValue()) {
 			renderArmor(player);
 		}
-	    
-	    if (background.getValue()) {
-	        float backgroundWidth = nameWidth + 12;
-	        float backgroundHeight = mc.fontRendererObj.FONT_HEIGHT + 2;
-	        RenderUtil.roundedRect(-backgroundWidth / 2 + 1 , -4.0F, backgroundWidth / 2 - 3, backgroundHeight, 6, new Color(0, 0, 0, alphaBackground.getValue().intValue()).getRGB());
-	    }
 
 	    GlStateManager.disableLighting();
 	    GlStateManager.depthMask(false);
@@ -97,8 +91,14 @@ public final class NameTags extends Module {
 	    GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         
+	    if (background.getValue()) {
+	        float backgroundWidth = nameWidth + 12;
+	        float backgroundHeight = mc.fontRendererObj.FONT_HEIGHT + 2;
+	        RenderUtil.roundedRect(-backgroundWidth / 2 + 1 , -4.0F, backgroundWidth / 2 - 3, backgroundHeight, 6, new Color(0, 0, 0, alphaBackground.getValue().intValue()).getRGB());
+	    }
+        
         mc.fontRendererObj.draw(name, -nameWidth / 2, 0, -1);
-		
+        
         GlStateManager.disableBlend();
         GlStateManager.enableDepth();
         GlStateManager.depthMask(true);

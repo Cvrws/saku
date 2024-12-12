@@ -2,7 +2,6 @@ package cc.unknown.script.api;
 
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -145,7 +144,7 @@ public class PlayerAPI extends ScriptEntityLiving {
     }
 
     public void setHeldItem(int slot, boolean render) {
-    	Sakura.instance.getComponentManager().get(Slot.class).setSlot(slot);
+    	MC.player.inventory.currentItem = slot;
     }
 
     public double[] getLerpedPosition() {
@@ -156,12 +155,8 @@ public class PlayerAPI extends ScriptEntityLiving {
         MC.player.inventory.currentItem = slot;
     }
 
-    public void setHeldItem(int slot) {
-    	Sakura.instance.getComponentManager().get(Slot.class).setSlot(slot);
-    }
-
     public ScriptItemStack getHeldItemStack() {
-        return new ScriptItemStack(Sakura.instance.getComponentManager().get(Slot.class).getItemStack());
+        return new ScriptItemStack(PlayerUtil.getItemStack());
     }
 
     public ScriptItemStack getClientHeldItemStack() {

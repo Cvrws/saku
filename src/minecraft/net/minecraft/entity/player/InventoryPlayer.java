@@ -3,8 +3,8 @@ package net.minecraft.entity.player;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.util.Accessor;
+import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
@@ -59,7 +59,7 @@ public class InventoryPlayer implements IInventory, Accessor {
      */
     public ItemStack getCurrentItem() {
         if (player == Minecraft.getMinecraft().player) {
-            return getComponent(Slot.class).getItemIndex() < 9 && getComponent(Slot.class).getItemIndex() >= 0 ? this.mainInventory[getComponent(Slot.class).getItemIndex()] : null;
+            return mc.player.inventory.currentItem < 9 && mc.player.inventory.currentItem >= 0 ? this.mainInventory[mc.player.inventory.currentItem] : null;
         } else {
             return this.currentItem < 9 && this.currentItem >= 0 ? this.mainInventory[this.currentItem] : null;
         }
@@ -141,12 +141,12 @@ public class InventoryPlayer implements IInventory, Accessor {
 
                 if (k >= 0) {
                     l = this.mainInventory[k].stackSize;
-                    this.mainInventory[k] = this.mainInventory[getComponent(Slot.class).getItemIndex()];
+                    this.mainInventory[k] = this.mainInventory[mc.player.inventory.currentItem];
                 } else {
                     l = 1;
                 }
 
-                this.mainInventory[getComponent(Slot.class).getItemIndex()] = new ItemStack(itemIn, l, p_146030_2_);
+                this.mainInventory[mc.player.inventory.currentItem] = new ItemStack(itemIn, l, p_146030_2_);
             }
         }
     }
@@ -467,8 +467,8 @@ public class InventoryPlayer implements IInventory, Accessor {
     public float getStrVsBlock(final Block blockIn) {
         float f = 1.0F;
 
-        if (this.mainInventory[getComponent(Slot.class).getItemIndex()] != null) {
-            f *= this.mainInventory[getComponent(Slot.class).getItemIndex()].getStrVsBlock(blockIn);
+        if (this.mainInventory[mc.player.inventory.currentItem] != null) {
+            f *= this.mainInventory[mc.player.inventory.currentItem].getStrVsBlock(blockIn);
         }
 
         return f;
@@ -579,7 +579,7 @@ public class InventoryPlayer implements IInventory, Accessor {
         if (blockIn.getMaterial().isToolNotRequired()) {
             return true;
         } else {
-            final ItemStack itemstack = getComponent(Slot.class).getItemStack();
+            final ItemStack itemstack = PlayerUtil.getItemStack();
             return itemstack != null && itemstack.canHarvestBlock(blockIn);
         }
     }

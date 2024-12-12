@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
@@ -204,7 +203,7 @@ public class Breaker extends Module {
                 int slot = SlotUtil.findTool(blockToBreak);
                 if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(slot));
                 if (slot != -1) hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, slot);
-                else hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, getComponent(Slot.class).getItemIndex());
+                else hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, mc.player.inventory.currentItem);
                 if (!mc.player.onGround) hardness *= airMultipalyer.getValue().floatValue();
 
                 if (damagetoblock == 0) {
@@ -220,7 +219,7 @@ public class Breaker extends Module {
                     mc.playerController.onPlayerDestroyBlock(blockToBreak, EnumFacing.UP);
                 }
                 
-                if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(getComponent(Slot.class).getItemIndex()));
+                if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
             }
         } else {
             if (breaking) {

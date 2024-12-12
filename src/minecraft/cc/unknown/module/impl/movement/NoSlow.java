@@ -2,7 +2,6 @@ package cc.unknown.module.impl.movement;
 
 import org.lwjgl.input.Keyboard;
 
-import cc.unknown.component.impl.player.Slot;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PostMotionEvent;
@@ -13,6 +12,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 import net.minecraft.item.ItemBow;
@@ -115,7 +115,7 @@ public class NoSlow extends Module {
 	@EventLink
 	public final Listener<SlowDownEvent> onSlowDown = event -> {
 		if (!isInGame()) return;
-	    ItemStack currentItem = getComponent(Slot.class).getItemStack();
+	    ItemStack currentItem = PlayerUtil.getItemStack();
 		
 	    if (currentItem == null) return;
 		
@@ -147,7 +147,7 @@ public class NoSlow extends Module {
 	@EventLink
 	public final Listener<PostMotionEvent> onPostMotion = event -> {
 	    if (!isInGame()) return;
-	    ItemStack currentItem = getComponent(Slot.class).getItemStack();
+	    ItemStack currentItem = PlayerUtil.getItemStack();
 	    if (currentItem == null) return;
 	    
     	if (currentItem.getItem() instanceof ItemSword) {
@@ -176,7 +176,7 @@ public class NoSlow extends Module {
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 	    if (!isInGame()) return;
-	    ItemStack currentItem = getComponent(Slot.class).getItemStack();
+	    ItemStack currentItem = PlayerUtil.getItemStack();
 	    if (currentItem == null) return;
 	    
         if (mc.player.getItemInUseDuration() == 1) {
@@ -216,14 +216,14 @@ public class NoSlow extends Module {
 	};
 	
 	private void switchItem() {
-		PacketUtil.send(new C09PacketHeldItemChange((getComponent(Slot.class).getItemIndex() + 1) % 3));
-		PacketUtil.send(new C09PacketHeldItemChange(getComponent(Slot.class).getItemIndex()));
+		PacketUtil.send(new C09PacketHeldItemChange((mc.player.inventory.currentItem + 1) % 3));
+		PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
 	}
 	
 	private void switchItem2() {
-        PacketUtil.send(new C09PacketHeldItemChange(getComponent(Slot.class).getItemIndex() % 8 + 1));
-        PacketUtil.send(new C09PacketHeldItemChange(getComponent(Slot.class).getItemIndex() % 7 + 2));
-        PacketUtil.send(new C09PacketHeldItemChange(getComponent(Slot.class).getItemIndex()));
+        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 8 + 1));
+        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 7 + 2));
+        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
 	}
 
 	private void handleKeyPresses() {
@@ -246,7 +246,7 @@ public class NoSlow extends Module {
 
 
 	public void sendC08() {
-		PacketUtil.send(new C08PacketPlayerBlockPlacement(getComponent(Slot.class).getItemStack()));
+		PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
 	}
 
 	public void sendC07NormalRelease() {
