@@ -35,7 +35,7 @@ public class WTap extends Module {
 	private BoundsNumberValue hits = new BoundsNumberValue("Hits", this, 1, 2, 0, 10, 1, () -> !isTwo());
 	private BooleanValue debug = new BooleanValue("Debug", this, false, () -> !isTwo());
 	private BooleanValue onlyGround = new BooleanValue("Only Ground", this, false);
-	private BooleanValue onlyMove = new BooleanValue("only Move", this, false);
+	private BooleanValue onlyMove = new BooleanValue("Only Move", this, false);
 	private BooleanValue onlyMoveForward = new BooleanValue("Only Forward", this, false, () -> !onlyMove.getValue());
 
     private final StopWatch stopWatch = new StopWatch();

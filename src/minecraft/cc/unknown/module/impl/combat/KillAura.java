@@ -533,7 +533,7 @@ public final class KillAura extends Module {
 		if (blocking) {
 			if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) mc.gameSettings.keyBindUseItem.pressed = false;
 			else {
-				PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
+				PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
 				mc.gameSettings.keyBindUseItem.pressed = false;
 			}
 			blocking = false;
@@ -548,14 +548,12 @@ public final class KillAura extends Module {
 				if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) mc.gameSettings.keyBindUseItem.pressed = false;
 				else {
 					interact(movingObjectPosition);
-					mc.gameSettings.keyBindUseItem.pressed = false;
 				}
 			}
 			
 			if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) mc.gameSettings.keyBindUseItem.pressed = true;
 			else {
 				PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
-				mc.gameSettings.keyBindUseItem.pressed = true;
 			}
 
 			blocking = true;

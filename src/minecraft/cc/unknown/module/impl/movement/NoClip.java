@@ -63,15 +63,14 @@ public class NoClip extends Module {
 
 	@EventLink
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
+        if (lastSlot == -1) {
+        	lastSlot = mc.player.inventory.currentItem;
+        }
 		mc.player.noClip = true;
 
 		if (getModule(Scaffold.class).isEnabled() || (getModule(KillAura.class).isEnabled() && getModule(KillAura.class).target != null)) return;
 
         final int slot = SlotUtil.findBlock();
-
-        if (lastSlot == -1) {
-        	lastSlot = mc.player.inventory.currentItem;
-        }
         
         if (slot == -1 || PlayerUtil.insideBlock()) {
             return;

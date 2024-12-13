@@ -42,23 +42,19 @@ public class SlotUtil implements Accessor {
             Blocks.trapped_chest, Blocks.anvil, Blocks.crafting_table, Blocks.furnace, Blocks.dispenser,
             Blocks.iron_door, Blocks.oak_door, Blocks.noteblock, Blocks.dropper);
 
-    /**
-     * Gets and returns a slot of a valid block
-     *
-     * @return slot
-     */
     public int findBlock() {
-        for (int i = 36; i < 45; i++) {
-            final ItemStack item = mc.player.inventoryContainer.getSlot(i).getStack();
-            if (item != null && item.getItem() instanceof ItemBlock && item.realStackSize > 0) {
-                final Block block = ((ItemBlock) item.getItem()).getBlock();
-                if ((block.isFullBlock() || block instanceof BlockGlass || block instanceof BlockStainedGlass || block instanceof BlockTNT) && !blacklist.contains(block)) {
-                    return i - 36;
+        int slot = -1;
+        int highestStack = -1;
+        for (int i = 0; i < 9; ++i) {
+            final ItemStack itemStack = mc.player.inventory.mainInventory[i];
+            if (itemStack != null && itemStack.getItem() instanceof ItemBlock &&  SlotUtil.blacklist.stream().noneMatch(block -> block.equals(((ItemBlock) itemStack.getItem()).getBlock())) && itemStack.stackSize > 0) {
+                if (mc.player.inventory.mainInventory[i].stackSize > highestStack) {
+                    highestStack = mc.player.inventory.mainInventory[i].stackSize;
+                    slot = i;
                 }
             }
         }
-
-        return -1;
+        return slot;
     }
     
 	private boolean holdWaterBucket() {

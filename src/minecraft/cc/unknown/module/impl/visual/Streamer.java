@@ -20,7 +20,7 @@ import cc.unknown.value.impl.StringValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.util.ChatFormatting;
 
-@ModuleInfo(aliases = "Streamer", description = "Oculta o modifica tu nombre", category = Category.VISUALS)
+@ModuleInfo(aliases = {"Nick Hider", "streamer", "name protect"}, description = "Oculta o modifica tu nombre", category = Category.VISUALS)
 public final class Streamer extends Module {
 
 	private final ModeValue mode = new ModeValue("Mode", this)

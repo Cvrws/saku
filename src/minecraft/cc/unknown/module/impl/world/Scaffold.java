@@ -26,8 +26,10 @@ import cc.unknown.module.impl.world.scaffold.sprint.LegitSprint;
 import cc.unknown.module.impl.world.scaffold.sprint.NormalSprint;
 import cc.unknown.module.impl.world.scaffold.tower.VanillaTower;
 import cc.unknown.util.client.MathUtil;
+import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.geometry.Vector3d;
+import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.util.player.EnumFacingOffset;
 import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.MoveUtil;
@@ -46,11 +48,12 @@ import net.minecraft.block.BlockAir;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
@@ -64,20 +67,21 @@ public class Scaffold extends Module {
 			.add(new SubMode("Snap"))
 			.add(new SubMode("Telly"))
 			.add(new SubMode("Legit"))
+			.add(new SubMode("Godbridge"))
 			.setDefault("Normal");
 
 	public final ModeValue rayCast = new ModeValue("Ray Cast", this)
 			.add(new SubMode("Off"))
 			.add(new SubMode("Normal"))
 			.add(new SubMode("Strict"))
-			.setDefault("Strict");
+			.setDefault("Normal");
 
 	public final ModeValue sprint = new ModeValue("Sprint", this)
 			.add(new NormalSprint("Normal", this))
 			.add(new DisabledSprint("Disabled", this))
 			.add(new LegitSprint("Legit", this))
 			.add(new BypassSprint("Cancel", this))
-			.setDefault("Normal");
+			.setDefault("Disabled");
 
 	public final ModeValue tower = new ModeValue("Tower", this)
 			.add(new SubMode("Polar"))
@@ -100,6 +104,7 @@ public class Scaffold extends Module {
 			.setDefault("0");
 
 	private final DescValue general = new DescValue("Basic Settings:", this);
+	private final BooleanValue smoothRotation = new BooleanValue("Smooth Rotation", this, false);
     private final BoundsNumberValue placeDelay = new BoundsNumberValue("Place Delay", this, 0, 0, 0, 5, 1);
     private final BooleanValue safeWalk = new BooleanValue("Safe Walk", this, false);
 	private final BoundsNumberValue timer = new BoundsNumberValue("Timer", this, 1, 1, 0.1, 10, 0.05);
@@ -117,13 +122,18 @@ public class Scaffold extends Module {
 	private final DescValue sneak = new DescValue("Sneak Settings:", this);
 	private final BooleanValue sneakOffGround = new BooleanValue("Sneak OffGround", this, false);
 	private final BooleanValue sneakOnGround = new BooleanValue("Sneak OnGround", this, false);
-	private final NumberValue startSneaking = new NumberValue("Start Sneaking", this, 1, 1, 5, 1);
+	private final NumberValue startSneaking = new NumberValue("Sneak Delay", this, 1, 1, 5, 1);
 	private final BoundsNumberValue sneakEvery = new BoundsNumberValue("Sneak every x blocks", this, 1, 1, 1, 10, 1);
 	private final NumberValue sneakingSpeed = new NumberValue("Sneaking Speed", this, 0.2, 0.2, 1, 0.05);
-
+	
+	private final DescValue click = new DescValue("Click Settings:", this);
+	private final BooleanValue internalClicking = new BooleanValue("Internal Clicking", this, true);
+	private final NumberValue cps = new NumberValue("CPS", this, 14, 8, 40, 1);
+	
 	private Vec3 targetBlock;
 	private EnumFacingOffset enumFacing;
 	public Vec3i offset = new Vec3i(0, 0, 0);
+	private final StopWatch stopWatch = new StopWatch();
 	private BlockPos blockFace;
 	private float targetYaw;
 	private float targetPitch;
@@ -141,6 +151,9 @@ public class Scaffold extends Module {
 	private int lastSlot;
 	private boolean canPlace;
 	private boolean sameY;
+	private long nextSwing;
+
+	private int directionalChange;
 
 	@Override
 	public void onEnable() {
@@ -263,6 +276,10 @@ public class Scaffold extends Module {
 
 	@EventLink
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
+        if (lastSlot == -1) {
+        	lastSlot = mc.player.inventory.currentItem;
+        }
+        
 		for (recursion = 0; recursion <= recursions; recursion++) {
 			mc.player.safeWalk = this.safeWalk.getValue();
 
@@ -277,19 +294,21 @@ public class Scaffold extends Module {
 					}
 				}
 			}
+			
+			RotationComponent.setSmoothed(smoothRotation.getValue());
 
 			sameY = ((!this.sameYValue.is("Off") || this.getModule(Speed.class).isEnabled()) && !mc.gameSettings.keyBindJump.isKeyDown()) && MoveUtil.isMoving();
 
-	        if (lastSlot == -1) {
-	        	lastSlot = mc.player.inventory.currentItem;
-	        }
-
-	        int slot = mc.player.inventory.currentItem;
+	        int slot = SlotUtil.findBlock();
 	        
+	        if (slot == -1) {
+	            return;
+	        }
+	        	        
 	        if (useBiggestStack.getValue()) {
-	        	slot = getSlot();
+	        	slot = SlotUtil.findBlock();
 	        } else if (PlayerUtil.getItemStack() == null || !(PlayerUtil.getItemStack().getItem() instanceof ItemBlock) || !InventoryUtil.canBePlaced((ItemBlock) PlayerUtil.getItemStack().getItem())) {
-	        	slot = getSlot();
+	        	slot = SlotUtil.findBlock();
 	        }
 	        
 	        mc.player.inventory.currentItem = slot;
@@ -514,6 +533,42 @@ public class Scaffold extends Module {
 				}
 			}
 			break;
+        case "Godbridge":
+        	if (PlayerUtil.getItem() instanceof ItemBlock && canPlace) {
+        	    int cps = this.cps.getValue().intValue();
+        	    long delay = 1000 / cps;
+        	    
+        	    for (int i = 0; i < cps; i++) {
+        	        mc.rightClickMouse();
+        	    }
+        	}
+
+            targetYaw = (mc.player.rotationYaw - mc.player.rotationYaw % 90) - 180 + 45 * (mc.player.rotationYaw > 0 ? 1 : -1);
+            targetPitch = 73.5f;
+
+            movementFix = MovementFix.SILENT;
+
+            directionalChange++;
+            if (Math.abs(MathHelper.wrapAngleTo180_double(targetYaw - RotationComponent.lastServerRotations.getX())) > 10) {
+                directionalChange = (int) (Math.random() * 4);
+                yawDrift = (float) (Math.random() - 0.5) / 10f;
+                pitchDrift = (float) (Math.random() - 0.5) / 10f;
+            }
+
+            if (Math.random() > 0.99) {
+                yawDrift = (float) (Math.random() - 0.5) / 10f;
+                pitchDrift = (float) (Math.random() - 0.5) / 10f;
+            }
+
+            if (directionalChange <= 10) {
+                mc.gameSettings.keyBindSneak.setPressed(true);
+            } else if (directionalChange == 11) {
+                mc.gameSettings.keyBindSneak.setPressed(false);
+            }
+
+            targetYaw += yawDrift;
+            targetPitch += pitchDrift;
+            break;
 		}
 
 		if (rotationSpeed != 0 && blockFace != null && enumFacing != null) {
@@ -576,8 +631,8 @@ public class Scaffold extends Module {
 		if (rayCast.is("Strict")) {
 			mc.rightClickMouse();
 		} else if (mc.playerController.onPlayerRightClick(mc.player, mc.world, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
-			mc.clickMouseEvent();
-			//PacketUtil.send(new C0APacketAnimation());
+			//mc.clickMouseEvent();
+			PacketUtil.send(new C0APacketAnimation());
 		}
 	}
 	
@@ -585,7 +640,7 @@ public class Scaffold extends Module {
 		EntityPlayer player = mc.player;
 		double difference = player.posY + player.getEyeHeight() - targetBlock.yCoord - 0.5 - (Math.random() - 0.5) * 0.1;
 
-		MovingObjectPosition movingObjectPosition = null;		
+		MovingObjectPosition movingObjectPosition;		
 		for (int offset = -180 + yawOffset; offset <= 180; offset += 5) {
 			player.setPosition(player.posX, player.posY - difference, player.posZ);
 			movingObjectPosition = RayCastUtil.rayCast(new Vector2f((float) (player.rotationYaw + (offset * 3)), 0), 20);
@@ -612,26 +667,43 @@ public class Scaffold extends Module {
 		}
 	}
 	
-    private int getSlot() {
-        int slot = -1;
-        int highestStack = -1;
-        for (int i = 0; i < 9; ++i) {
-            final ItemStack itemStack = mc.player.inventory.mainInventory[i];
-            if (itemStack != null && itemStack.getItem() instanceof ItemBlock &&  SlotUtil.blacklist.stream().noneMatch(block -> block.equals(((ItemBlock) itemStack.getItem()).getBlock())) && itemStack.stackSize > 0) {
-                if (mc.player.inventory.mainInventory[i].stackSize > highestStack) {
-                    highestStack = mc.player.inventory.mainInventory[i].stackSize;
-                    slot = i;
-                }
-            }
-        }
-        return slot;
-    }
-    
-	public void resetBinds() {
+	private void click(boolean strict) {
+	    if (internalClicking.getValue()) {
+	        if (strict) {
+	            mc.rightClickMouse();
+	        } else {
+	            Vec3 hitVec = getHitVec();
+	            if (mc.playerController.onPlayerRightClick(mc.player, mc.world, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
+	                PacketUtil.send(new C0APacketAnimation());
+	            }
+	        }
+	    } else {
+	        if (stopWatch.finished(nextSwing)) {
+	            final int clicks = (int) Math.round(cps.getValue().longValue() * 1.5); 
+	            this.nextSwing = 1000 / clicks;
+
+	            int executedClicks = 0;
+	            for (int i = 0; i < clicks; i++) {
+	                if (stopWatch.finished(nextSwing)) {
+	                    mc.rightClickMouse();
+
+	                    if (Math.random() > 0.9) {
+	                        mc.rightClickMouse();
+	                    }
+
+	                    executedClicks++;
+	                    stopWatch.reset();
+	                }
+	            }
+	        }
+	    }
+	}
+	
+	private void resetBinds() {
 		resetBinds(true, true, true, true, true, true);
 	}
 
-	public void resetBinds(boolean sneak, boolean jump, boolean right, boolean left, boolean forward, boolean back) {
+	private void resetBinds(boolean sneak, boolean jump, boolean right, boolean left, boolean forward, boolean back) {
 		BiConsumer<Boolean, Runnable> setKeyBind = (condition, action) -> {
 			if (condition)
 				action.run();

@@ -86,6 +86,7 @@ public final class ModuleManager {
         this.put(Insults.class, new Insults());
         this.put(AutoLeave.class, new AutoLeave());
         this.put(AltGenerator.class, new AltGenerator());
+        this.put(AnticheatDetector.class, new AnticheatDetector());
         this.put(MurderMystery.class, new MurderMystery());
         this.put(ChatBypass.class, new ChatBypass());
         this.put(NoGuiClose.class, new NoGuiClose());
@@ -97,6 +98,7 @@ public final class ModuleManager {
         this.put(FakeHackers.class, new FakeHackers());
         this.put(AutoArmor.class, new AutoArmor());
         this.put(NoPlaceDelay.class, new NoPlaceDelay());
+        this.put(Clutch.class, new Clutch());
         this.put(AutoTool.class, new AutoTool());
         this.put(Respawn.class, new Respawn());
         this.put(Blink.class, new Blink());

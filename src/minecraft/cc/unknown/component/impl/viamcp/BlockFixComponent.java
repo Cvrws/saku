@@ -21,7 +21,7 @@ public final class BlockFixComponent extends Component {
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
 			if (PlayerUtil.getItemStack() != null
-					&& PlayerUtil.getItemStack().getItem() instanceof ItemSword) {
+					&& PlayerUtil.getItemStack().getItem() instanceof ItemSword && mc.gameSettings.keyBindUseItem.isPressed()) {
                 PacketWrapper useItem = PacketWrapper.create(29, null, Via.getManager().getConnectionManager().getConnections().iterator().next());
                 useItem.write(Type.VAR_INT, 1);
                 PacketUtil.sendToServer(useItem, Protocol1_8To1_9.class, true, true);

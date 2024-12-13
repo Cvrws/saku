@@ -444,6 +444,10 @@ public class PlayerUtil implements Accessor {
 		}
 		return onLiquid;
 	}
+	
+    public EnumFacingOffset getEnumFacing(final Vec3 position) {
+        return getEnumFacing(position, false);
+    }
 
 	public EnumFacingOffset getEnumFacing(final Vec3 position, boolean downwards) {
 		List<EnumFacingOffset> possibleFacings = new ArrayList<>();
@@ -494,6 +498,10 @@ public class PlayerUtil implements Accessor {
 		return null;
 	}
 	
+    public Vec3 getPlacePossibility(double offsetX, double offsetY, double offsetZ) {
+        return getPlacePossibility(20, offsetX, offsetY, offsetZ, null);
+    }
+	
 	public Vec3 getPlacePossibility(int rangeV, double offsetX, double offsetY, double offsetZ, Integer sameY) {
 	    List<Vec3> possibilities = new ArrayList<>();
 	    int range = rangeV + (int) (Math.abs(offsetX) + Math.abs(offsetZ));
@@ -527,7 +535,6 @@ public class PlayerUtil implements Accessor {
 	        return null;
 	    }
 
-	    // Optional filtering if sameY is provided
 	    if (sameY != null) {
 	        possibilities = possibilities.stream()
 	            .filter(vec3 -> Math.floor(vec3.yCoord + 1) == sameY)

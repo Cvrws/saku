@@ -59,17 +59,14 @@ public class TeleportAura extends Module {
 	private final BooleanValue invi = new BooleanValue("Target invisibles", this, true);
 	private final BooleanValue teams = new BooleanValue("Check if player is not on your team", this, false);
 
-	private boolean canReach;
 	private double dashDistance = 5;
     private ArrayList<Vec3> path = new ArrayList<>();
     private List<Vec3>[] test = new ArrayList[50];
 	private List<EntityLivingBase> targets = new CopyOnWriteArrayList<>();
-	private final StopWatch stopWatch = new StopWatch();
 	private final StopWatch cpsTimer = new StopWatch();
 
 	@Override
 	public void onEnable() {
-		stopWatch.reset();
 		targets.clear();
 	}
 
