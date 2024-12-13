@@ -306,7 +306,7 @@ public final class RenderUtil implements Accessor {
     }
     
     public void drawSimpleBox(EntityPlayer player, int color, float partialTicks) {
-    	double expand = 0.0D;
+        double expand = 0.0D;
     	float alpha = (float) ((color >> 24) & 255) / 255.0F;
         float red = (float) ((color >> 16) & 255) / 255.0F;
         float green = (float) ((color >> 8) & 255) / 255.0F;

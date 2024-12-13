@@ -73,11 +73,6 @@ public final class CommandManager {
             ex.printStackTrace();
         }
 
-        if (!commandFound.get()) {
-        	String error = "Unknown command! Try .help if you're lost";
-        	PlayerUtil.display(yellow + "[" + red + "%" + yellow + "] " + reset + error); 
-        }
-
         event.setCancelled();
     };
 }

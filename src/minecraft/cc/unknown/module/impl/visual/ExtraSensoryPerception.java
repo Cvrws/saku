@@ -21,6 +21,12 @@ public final class ExtraSensoryPerception extends Module {
     @EventLink
     public final Listener<Render3DEvent> onRender3D = event -> {
     	for (EntityPlayer player : mc.world.playerEntities) {
+    		String name = player.getName();
+    		
+            if (name.contains("CLICK DERECHO") || name.contains("MEJORAS") || name.contains("CLIQUE PARA COMPRAR") || name.contains("[SHOP]") || name.contains("CLIQUE PARA ABRIR")) {
+            	return;
+            }
+            
             if (player != mc.player && player.deathTime == 0 && (checkInvis.getValue() || !player.isInvisible())) {
             	int color = 0;
             	

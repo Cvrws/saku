@@ -49,10 +49,6 @@ public final class NameTags extends Module {
             	return;
             }
             
-            if (name.contains("CLICK DERECHO") || name.contains("MEJORAS") || name.contains("[SHOP]")) {
-            	return;
-            }
-            
             event.setCancelled();
             
             renderNewTag(event, player, name);
@@ -60,9 +56,13 @@ public final class NameTags extends Module {
 	};
 	
 	private void renderNewTag(RenderLabelEvent event, EntityPlayer player, String name) {
-	    float nameWidth = mc.fontRendererObj.width(name);
+        if (name.contains("CLICK DERECHO") || name.contains("MEJORAS") || name.contains("[NPC]") || name.contains("[SHOP]") || name.contains("CLIQUE PARA ABRIR")) {
+        	return;
+        }
+        
+		float nameWidth = mc.fontRendererObj.width(name);
 	    double scaleRatio;
-	    float scale = 0.02666667F;
+	    float scale = 0.02666667F;        
 	    
 	    if (player == mc.player) {
 	        scaleRatio = 1.0D;
