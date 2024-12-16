@@ -7,7 +7,7 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.event.impl.netty.PacketSendEvent;
-import cc.unknown.event.impl.player.TickEndEvent;
+import cc.unknown.event.impl.other.GameEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
@@ -17,10 +17,8 @@ import net.minecraft.network.NetworkManager.InboundHandlerTuplePacketListener;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C00PacketKeepAlive;
 import net.minecraft.network.play.client.C03PacketPlayer;
-import net.minecraft.network.play.client.C03PacketPlayer.C06PacketPlayerPosLook;
 import net.minecraft.network.play.client.C0FPacketConfirmTransaction;
 import net.minecraft.network.play.server.S00PacketKeepAlive;
-import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 import net.minecraft.network.play.server.S14PacketEntity;
 import net.minecraft.network.play.server.S18PacketEntityTeleport;
 import net.minecraft.network.play.server.S32PacketConfirmTransaction;
@@ -46,7 +44,7 @@ public class Blink extends Module {
 	}
 
 	@EventLink
-	public final Listener<TickEndEvent> onGame = event -> {
+	public final Listener<GameEvent> onGame = event -> {
 		if (mc.player == null) return;
 		while (!packets.isEmpty()) {
 			Packet packet = packets.get(0);
