@@ -3,6 +3,7 @@ package cc.unknown.module.impl.ghost;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import cc.unknown.Sakura;
@@ -22,7 +23,6 @@ import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 
 @ModuleInfo(aliases = "Auto Clicker", description = "Clickea automáticamente", category = Category.GHOST)
@@ -44,6 +44,7 @@ public class AutoClicker extends Module {
 			.setDefault("Left");
 
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 8, 14, 1, 20, 1);
+	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 1.1, 5, 0.1);
 
 	private final BooleanValue breakBlocks = new BooleanValue("Break Blocks", this, true, () -> !isButtonClick());
 	private final BooleanValue guiClicker = new BooleanValue("Gui Clicker", this, false, () -> !isButtonClick());
@@ -58,16 +59,12 @@ public class AutoClicker extends Module {
 
 	@EventLink
 	public final Listener<TickEvent> onTick = event -> {
-		mc.leftClickCounter = 0;
 		attackTicks++;
+		
 		HitSelect hitSelect = Sakura.instance.getModuleManager().get(HitSelect.class);
 		
-		if (hitSelect != null && stopWatch.finished(nextSwing)
-				&& (!hitSelect.isEnabled() || ((hitSelect.isEnabled() && attackTicks >= 10)
-						|| (mc.player != null && mc.player.hurtTime > 0 && stopWatch.finished(nextSwing))))
-				&& mc.currentScreen == null) {
-			final long clicks = (long) (this.cps.getRandomBetween().longValue() * 1.5);
-
+		if (hitSelect != null && stopWatch.finished(nextSwing) && (!hitSelect.isEnabled() || ((hitSelect.isEnabled() && attackTicks >= 10) || (mc.player != null && stopWatch.finished(nextSwing)))) && mc.currentScreen == null) {
+			final long clicks = (long) (this.cps.getRandomBetween().longValue() * randomization.getValue().doubleValue());
 			if (mc.gameSettings.keyBindAttack.isKeyDown()) {
 				ticksDown++;
 			} else {
@@ -117,7 +114,6 @@ public class AutoClicker extends Module {
 		if (guiClicker.getValue()) {
 			inInvClick(mc.currentScreen);
 		}
-		mc.leftClickCounter = 0;
 	};
 
 	@EventLink
@@ -127,7 +123,7 @@ public class AutoClicker extends Module {
 
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		mc.leftClickCounter = 0;
+		mc.leftClickCounter = -1;
 	};
 
 	private void handleLeftClick() {
@@ -150,26 +146,27 @@ public class AutoClicker extends Module {
 	}
 
 	private void inInvClick(GuiScreen gui) {
-		if (gui == null)
-			return;
+		if (Keyboard.isKeyDown(42) && Mouse.isButtonDown(0)) {
+			if (gui == null)
+				return;
+	
+			int mouseX = Mouse.getX() * gui.width / mc.displayWidth;
+			int mouseY = gui.height - Mouse.getY() * gui.height / mc.displayHeight - 1;
 
-		int mouseX = Mouse.getX() * gui.width / mc.displayWidth;
-		int mouseY = gui.height - Mouse.getY() * gui.height / mc.displayHeight - 1;
-
-		try {
-			Method guiClicker = GuiScreen.class.getDeclaredMethod("mouseClicked", Integer.TYPE, Integer.TYPE,
-					Integer.TYPE);
-			guiClicker.setAccessible(true);
-
-			mouseDownTicks++;
-			if (mouseDownTicks > clickDuration.getValue().intValue() && Math.random() > randomizationFactor.getValue().intValue()) {
-				guiClicker.invoke(gui, mouseX, mouseY, 0);
-				mouseDownTicks = 0;
-			} else {
-				mouseDownTicks = 0;
+			try {
+				Method guiClicker = GuiScreen.class.getDeclaredMethod("mouseClicked", Integer.TYPE, Integer.TYPE, Integer.TYPE);
+				guiClicker.setAccessible(true);
+	
+				mouseDownTicks++;
+				if (mouseDownTicks > clickDuration.getValue().intValue() && Math.random() > randomizationFactor.getValue().intValue()) {
+					guiClicker.invoke(gui, mouseX, mouseY, 0);
+					mouseDownTicks = 0;
+				} else {
+					mouseDownTicks = 0;
+				}
+			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+				e.printStackTrace();
 			}
-		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-			e.printStackTrace();
 		}
 	}
 

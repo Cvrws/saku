@@ -39,8 +39,8 @@ import net.minecraft.item.ItemTool;
 		"Stealer" }, description = "Automatically steals items from chest", category = Category.PLAYER)
 public class ChestStealer extends Module {
 
-	public BoundsNumberValue startdelay = new BoundsNumberValue("Start Delay", this, 200.0, 400.0, 0.0, 1000.0, 1);
-	public BoundsNumberValue delay = new BoundsNumberValue("Delay", this, 100.0, 400.0, 0.0, 800.0, 1);
+	public BoundsNumberValue startdelay = new BoundsNumberValue("Start Delay", this, 200, 400, 0, 1000, 1);
+	public BoundsNumberValue speed = new BoundsNumberValue("Delay", this, 100, 400, 30, 800, 1);
 	public BooleanValue silent = new BooleanValue("Silent", this, false);
 	public BooleanValue autoClose = new BooleanValue("AutoClose", this, true);
 
@@ -73,13 +73,14 @@ public class ChestStealer extends Module {
 					}
 				}
 
-				if (delayTime.reached((long) (getRandomDelay()))) {
+				if (delayTime.elapse(getRandomDelay(), false)) {
 					boolean b = false;
 					for (Integer integer : itemPos) {
 						stealItem(integer);
 						lastItemPos = integer;
 						b = true;
-						if (delay.getValue().doubleValue() != 0.0) {
+						
+						if (speed.getValue().doubleValue() != 0.0) {
 							break;
 						}
 					}
@@ -90,7 +91,6 @@ public class ChestStealer extends Module {
 					}
 				} else if (lastItemPos != Integer.MIN_VALUE) {
 					mc.playerController.windowClick(chest.inventorySlots.windowId, lastItemPos, 0, 1, mc.player);
-
 					mc.mouseHelper.mouseXYChange();
 					Mouse.setCursorPosition(Display.getWidth() / 3, Display.getHeight() / 2);
 					Mouse.setGrabbed(true);
@@ -117,7 +117,7 @@ public class ChestStealer extends Module {
 		} catch (IOException var5) {
 			var5.printStackTrace();
 		}
-
+		
 		delayTime.reset();
 	}
 
@@ -131,16 +131,16 @@ public class ChestStealer extends Module {
 		return distance;
 	}
 
-	private double getRandomDelay() {
-		long min = (long) delay.getValue().doubleValue();
-		long max = (long) delay.getSecondValue().doubleValue();
-		return min + (double) MathUtil.getSafeRandom(min, max);
+	private long getRandomDelay() {
+		long min = (long) speed.getValue().longValue();
+		long max = (long) speed.getSecondValue().longValue();
+		return min + MathUtil.getSafeRandom(min, max);
 	}
 
-	private double getRandomStartDelay() {
-		long min = (long) startdelay.getValue().doubleValue();
-		long max = (long) startdelay.getSecondValue().doubleValue();
-		return min + (double) MathUtil.getSafeRandom(min, max);
+	private long getRandomStartDelay() {
+		long min = startdelay.getValue().longValue();
+		long max = startdelay.getSecondValue().longValue();
+		return min + MathUtil.getSafeRandom(min, max);
 	}
 
 	public boolean isBestChestItem(ItemStack itemStack) {
@@ -167,8 +167,10 @@ public class ChestStealer extends Module {
 						if (getBestRod(itemStack) < getBestRod(chestItem)) {
 							return false;
 						}
-					} else if (itemStack.getItem() instanceof ItemAxe && chestItem.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemPickaxe && chestItem.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemSpade && chestItem.getItem() instanceof ItemSpade && getToolSpeed(itemStack) < getToolSpeed(chestItem)) {
-						return false;
+					} else if (itemStack.getItem() instanceof ItemAxe && chestItem.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemPickaxe && chestItem.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemSpade) {
+						if (getToolSpeed(itemStack) < getToolSpeed(chestItem)) {
+							return false;
+						}
 					}
 				}
 			}

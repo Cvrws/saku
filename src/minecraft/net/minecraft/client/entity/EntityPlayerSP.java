@@ -204,8 +204,6 @@ public class EntityPlayerSP extends AbstractClientPlayer implements Accessor {
             } else {
                 this.onUpdateWalkingPlayer();
             }
-
-            //Sakura.instance.getEventBus().handle(new PostUpdateEvent());
         }
     }
 

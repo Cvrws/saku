@@ -66,6 +66,7 @@ import cc.unknown.event.impl.other.GameEvent;
 import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
+import cc.unknown.event.impl.player.TickEndEvent;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.ui.menu.LoginMenu;
@@ -2132,6 +2133,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 		this.mcProfiler.endSection();
 		this.systemTime = getSystemTime();
+		Sakura.instance.getEventBus().handle(new TickEndEvent());
 	}
 
 	/**

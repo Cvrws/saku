@@ -32,10 +32,10 @@ public final class MidClick extends Module {
 			.setDefault("Throw pearl");
 
 	private ExecutorService executorService = Executors.newSingleThreadExecutor();
-	private AtomicBoolean toggle = new AtomicBoolean(false);
-	private AtomicInteger prevSlot = new AtomicInteger(0);
-	private AtomicInteger pearlEvent = new AtomicInteger(4);
-	private Robot bot;
+    private AtomicBoolean x = new AtomicBoolean(false);
+    private AtomicInteger prevSlot = new AtomicInteger(0);
+    private Robot bot;
+    private AtomicInteger pearlEvent = new AtomicInteger(4);
 
 	@Override
 	public void onEnable() {
@@ -57,7 +57,7 @@ public final class MidClick extends Module {
 			pearlEvent.incrementAndGet();
 		}
 
-		if (!toggle.get() && event.getCode() == 2) {
+		if (!x.get() && event.getCode() == 2) {
 			if (mode.is("Add/Remove friend") && mc.objectMouseOver.entityHit instanceof EntityPlayer) {
 				EntityPlayer playerHit = (EntityPlayer) mc.objectMouseOver.entityHit;
 				if (!FriendComponent.isFriend(playerHit)) {
@@ -80,12 +80,12 @@ public final class MidClick extends Module {
 							bot.mouseRelease(InputEvent.BUTTON3_MASK);
 						});
 						pearlEvent.set(0);
-						toggle.set(true);
+						x.set(true);
 						return;
 					}
 				}
 			}
 		}
-		toggle.set(event.getCode() == 2);
+		x.set(event.getCode() == 2);
 	};
 }

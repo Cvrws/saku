@@ -347,7 +347,7 @@ public final class KillAura extends Module {
 
 		if (attackStopWatch.finished(this.nextSwing) && target != null
 				&& (clickStopWatch.finished((long) (delay * 50)) || flag)) {
-			final long clicks = (long) (this.cps.getValue().longValue() * randomization.getValue().doubleValue());
+			final long clicks = (long) (this.cps.getRandomBetween().longValue() * randomization.getValue().doubleValue());
 			this.nextSwing = 1000 / clicks;
 
 			if (Math.sin(nextSwing) + 1 > Math.random() || attackStopWatch.finished(this.nextSwing + 500) || Math.random() > 0.5) {
@@ -356,10 +356,6 @@ public final class KillAura extends Module {
 					final Vec3 rotationVector = mc.player.getVectorForRotation(RotationComponent.rotations.getY(), RotationComponent.rotations.getX());
 					MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationComponent.rotations, range);
 
-					/*if (swingInRange.getValue() && mc.player.getDistanceToEntity(this.target) < 6 || RotationUtil.getDistanceToEntityBox(this.target) <= 6) {
-			            mc.clickMouseEvent();
-					}*/
-					
 					if (throughWalls.getValue()) {
 						Vec3 eyes = mc.player.getPositionEyes(1);
 						movingObjectPosition = target.getEntityBoundingBox().expand(0.1, 0.1, 0.1)

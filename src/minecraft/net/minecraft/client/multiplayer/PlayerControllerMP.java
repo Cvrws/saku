@@ -6,6 +6,7 @@ import cc.unknown.event.impl.player.HitEvent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.structure.CPSHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -445,6 +446,7 @@ public class PlayerControllerMP implements Accessor {
      * Attacks an entity
      */
     public void attackEntity(final EntityPlayer playerIn, final Entity targetEntity) {
+    	CPSHelper.registerClick(CPSHelper.MouseButton.LEFT);
         this.syncCurrentPlayItem();
         this.netClientHandler.addToSendQueue(new C02PacketUseEntity(targetEntity, C02PacketUseEntity.Action.ATTACK));
 
@@ -454,6 +456,8 @@ public class PlayerControllerMP implements Accessor {
     }
     
     public void attackEntityEvent(EntityPlayer playerIn, Entity targetEntity) {
+    	CPSHelper.registerClick(CPSHelper.MouseButton.LEFT);
+    	
     	HitEvent event = new HitEvent(false);
         Sakura.instance.getEventBus().handle(event);
         if (event.isForced()) {

@@ -23,8 +23,8 @@ public class AutoArmor extends Module {
 			.add(new SubMode("Open Inv"))
 			.setDefault("Open Inv");
 
-	private final NumberValue startDelay = new NumberValue("Start Delay", this, 150.0D, 0.0D, 1000.0D, 1.0D);
-	private final NumberValue speed = new NumberValue("Speed", this, 150.0D, 0.0D, 1000.0D, 1.0D);
+	private final NumberValue startDelay = new NumberValue("Start Delay", this, 150, 0, 1000, 1);
+	private final NumberValue speed = new NumberValue("Speed", this, 150, 0, 1000, 1);
 	private final KeyBinding[] moveKeys = new KeyBinding[] { mc.gameSettings.keyBindForward, mc.gameSettings.keyBindBack, mc.gameSettings.keyBindLeft, mc.gameSettings.keyBindRight, mc.gameSettings.keyBindJump, mc.gameSettings.keyBindSneak };
 	private final StopWatch startTimer = new StopWatch();
 	private final StopWatch stopWatch = new StopWatch();
@@ -57,7 +57,7 @@ public class AutoArmor extends Module {
 		    	                InventoryUtil.closeInv(mode.getValue().getName());
 	
 		    	                stopWatch.reset();
-		    	                if (speed.getValue().doubleValue() != 0.0D) {
+		    	                if (speed.getValue().doubleValue() != 0) {
 		    	                    break;
 		    	                }
 		    	            }
@@ -75,7 +75,7 @@ public class AutoArmor extends Module {
 	    	                        InventoryUtil.closeInv(mode.getValue().getName());
 
 	    	                        stopWatch.reset();
-	    	                        if (speed.getValue().doubleValue() != 0.0D) {
+	    	                        if (speed.getValue().doubleValue() != 0) {
 	    	                            break;
 	    	                        }
 	    	                    }
