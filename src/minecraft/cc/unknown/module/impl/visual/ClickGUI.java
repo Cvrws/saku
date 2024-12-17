@@ -13,7 +13,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 
-@ModuleInfo(aliases = "Click GUI", description = "Muestra la interfaz que permite encender/apagar módulos y editar su configuración.", category = Category.VISUALS, keyBind = Keyboard.KEY_RSHIFT)
+@ModuleInfo(aliases = "Click GUI", description = "Abre la interfaz que permite encender/apagar módulos y editar su configuración.", category = Category.VISUALS, keyBind = Keyboard.KEY_RSHIFT)
 public final class ClickGUI extends Module {
     private final StopWatch stopWatch = new StopWatch();
 

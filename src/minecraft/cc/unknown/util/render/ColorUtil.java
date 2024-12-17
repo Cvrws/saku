@@ -65,37 +65,47 @@ public final class ColorUtil {
 	}
 	
 	public int getTeamColor(EntityPlayer player) {
-		Scoreboard scoreboard = player.getWorldScoreboard();
-		ScorePlayerTeam playerTeam = scoreboard.getPlayersTeam(player.getName());
-
-		if (playerTeam != null) {
-			String color = playerTeam.getColorPrefix();
-			if (color.length() < 2) {
-				return Color.WHITE.getRGB();
-			}
-			char colorChar = color.charAt(1);
-			if (colorChar == '4' || colorChar == 'c') {
-				return Color.RED.getRGB();
-			}
-			if (colorChar == '6' || colorChar == 'e') {
-				return Color.YELLOW.getRGB();
-			}
-			if (colorChar == '2' || colorChar == 'a') {
-				return Color.GREEN.getRGB();
-			}
-			if (colorChar == 'b' || colorChar == '3') {
-				return Color.CYAN.getRGB();
-			}
-			if (colorChar == '9' || colorChar == '1') {
-				return Color.BLUE.getRGB();
-			}
-			if (colorChar == 'd' || colorChar == '5') {
-				return Color.MAGENTA.getRGB();
-			}
-			if (colorChar == 'f' || colorChar == '7' || colorChar == '8' || colorChar == '0') {
-				return Color.WHITE.getRGB();
-			}
-		}
-		return Color.WHITE.getRGB();
+		String name = player.getDisplayName().getFormattedText();
+		name = removeFormatCodes(name);
+        if (name.isEmpty() || !name.startsWith("§") || name.charAt(1) == 'f') {
+            return -1;
+        }
+        switch (name.charAt(1)) {
+            case '0':
+                return -16777216;
+            case '1':
+                return -16777046;
+            case '2':
+                return -16733696;
+            case '3':
+                return -16733526;
+            case '4':
+                return -5636096;
+            case '5':
+                return -5635926;
+            case '6':
+                return -22016;
+            case '7':
+                return -5592406;
+            case '8':
+                return -11184811;
+            case '9':
+                return -11184641;
+            case 'a':
+                return -11141291;
+            case 'b':
+                return -11141121;
+            case 'c':
+                return -43691;
+            case 'd':
+                return -43521;
+            case 'e':
+                return -171;
+        }
+        return -1;
+    }
+	
+    private String removeFormatCodes(String str) {
+        return str.replace("§k", "").replace("§l", "").replace("§m", "").replace("§n", "").replace("§o", "").replace("§r", "");
     }
 }

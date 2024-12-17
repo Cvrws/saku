@@ -19,7 +19,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.AxisAlignedBB;
 
-@ModuleInfo(aliases = "Target ESP", description = ">:3c", category = Category.VISUALS)
+@ModuleInfo(aliases = "Target ESP", description = "Dibuja un objeto al apuntar hacia un objetivo específico.", category = Category.VISUALS)
 public final class TargetESP extends Module {
 	
 	private final ModeValue mode = new ModeValue("Mode", this)

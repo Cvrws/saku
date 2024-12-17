@@ -27,7 +27,7 @@ public class WTap extends Module {
 			.add(new SubMode("Advanced"))
 			.setDefault("Normal");
 	
-	private NumberValue delay = new NumberValue("Delay", this, 500, 0, 2000, 5);
+	private NumberValue delay = new NumberValue("Delay", this, 500, 50, 1000, 10);
 	private NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
 	private NumberValue hurtTime = new NumberValue("HurtTime", this, 10, 1, 10, 10, () -> !mode.is("Advanced"));
 	private BoundsNumberValue ticksUntilBlock = new BoundsNumberValue("Ticks Until Block", this, 0, 2, 0, 5, 1, () -> !mode.is("Advanced"));

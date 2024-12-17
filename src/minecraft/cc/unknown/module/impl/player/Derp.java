@@ -12,7 +12,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 
-@ModuleInfo(aliases = "Derp", description = "Makes you look like a derp", category = Category.PLAYER)
+@ModuleInfo(aliases = "Derp", description = "ahegao", category = Category.PLAYER)
 public class Derp extends Module {
 
 	private float yaw, pitch;

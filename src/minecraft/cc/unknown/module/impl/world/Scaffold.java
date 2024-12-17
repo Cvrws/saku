@@ -501,9 +501,9 @@ public class Scaffold extends Module {
 		    if (canPlace && !mc.gameSettings.keyBindPickBlock.isKeyDown()) {
 		        if (mc.objectMouseOver.sideHit != enumFacing.getEnumFacing() || !mc.objectMouseOver.getBlockPos().equals(blockFace)) {
 
-				    float yaw = (mc.player.rotationYaw + 10000000) % 360;
-				    float staticYaw = (yaw - 180) - (yaw % 90) + 45;
-				    float staticPitch = 75;
+	                float yaw = (mc.player.rotationYaw + 10000000) % 360;
+	                float staticYaw = (yaw - 180) - (yaw % 90) + 45;
+	                float staticPitch = 78;
 
 				    boolean straight = (Math.min(Math.abs(yaw % 90), Math.abs(90 - yaw) % 90) < Math.min(Math.abs(yaw + 45) % 90, Math.abs(90 - (yaw + 45)) % 90));
 

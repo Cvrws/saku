@@ -10,7 +10,6 @@ import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.font.Fonts;
@@ -25,11 +24,11 @@ import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.font.Font;
+import cc.unknown.value.Value;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
-import net.minecraft.client.renderer.RenderGlobal;
 
 @ModuleInfo(aliases = "HUD", description = "Renderiza los modulos del cliente.", category = Category.VISUALS, autoEnabled = true)
 public final class HUD extends Module {
@@ -41,18 +40,28 @@ public final class HUD extends Module {
         .setDefault("Fade");
         
     private final BooleanValue dropShadow = new BooleanValue("Drop Shadow", this, true);
-    public final BooleanValue noRenderVisuals = new BooleanValue("No Render Visuals", this, true);
+    
+    private final BooleanValue renderCategories = new BooleanValue("Render Category", this, true);
+    public final BooleanValue hideCombat = new BooleanValue("Hide Combat", this, false, () -> !renderCategories.getValue());
+    public final BooleanValue hideVisuals = new BooleanValue("Hide Visuals", this, true, () -> !renderCategories.getValue());
+    public final BooleanValue hideMovement = new BooleanValue("Hide Movement", this, false, () -> !renderCategories.getValue());
+    public final BooleanValue hideGhost = new BooleanValue("Hide Ghost", this, false, () -> !renderCategories.getValue());
+    public final BooleanValue hideExploit = new BooleanValue("Hide Exploit", this, false, () -> !renderCategories.getValue());
+    public final BooleanValue hideLatency = new BooleanValue("Hide Latency", this, false, () -> !renderCategories.getValue());
+    public final BooleanValue hideOther = new BooleanValue("Hide Other", this, false, () -> !renderCategories.getValue());
+    public final BooleanValue hidePlayer = new BooleanValue("Hide Player", this, false, () -> !renderCategories.getValue());
+    public final BooleanValue hideWorld = new BooleanValue("Hide World", this, false, () -> !renderCategories.getValue());
     private final BooleanValue lowercase = new BooleanValue("Lowercase", this, false);
     private final NumberValue alphaBackground = new NumberValue("Alpha BackGround", this, 180, 0, 255, 1);
     
     private List<ModuleComponent> activeModuleComponents = new ArrayList<>();
     private List<ModuleComponent> allModuleComponents = new ArrayList<>();
-    private Font font = Fonts.MINECRAFT.get(20, Weight.LIGHT);
+    private Font font = Fonts.MONSERAT.get(16, Weight.BOLD);
     private final StopWatch stopwatch = new StopWatch();
     private float moduleSpacing = 12, edgeOffset;
     
 	@Override
-	public void onEnable() {
+	public void onEnable() {		
         allModuleComponents.clear();
         Sakura.instance.getModuleManager().getAll().stream()
         .sorted(Comparator.comparingDouble(module -> -font.width(module.getName())))
@@ -68,20 +77,15 @@ public final class HUD extends Module {
     	.sorted(Comparator.comparingDouble(module -> -(module.getNameWidth())))
     	.collect(Collectors.toList());
     };
-    
-    @EventLink
-    public final Listener<TickEvent> onTick = event -> {
-
-    };
 
     @EventLink(value = Priority.LOW)
-    public final Listener<Render2DEvent> onRender2D = event -> {        
-        moduleSpacing = font.height() + 2;
-        edgeOffset = 10;
+    public final Listener<Render2DEvent> onRender2D = event -> {
+        moduleSpacing = font.height();
+        edgeOffset = 5;
 
         float sx = event.getScaledResolution().getScaledWidth();
         float sy = event.getScaledResolution().getScaledHeight() - font.height() - 1;
-        double widthOffset = 3.5;
+        double widthOffset = 3;
         
         for (final ModuleComponent module : activeModuleComponents) {
         	String name = getName(module);

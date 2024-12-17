@@ -23,7 +23,7 @@ import net.minecraft.network.play.server.S14PacketEntity;
 import net.minecraft.network.play.server.S18PacketEntityTeleport;
 import net.minecraft.network.play.server.S32PacketConfirmTransaction;
 
-@ModuleInfo(aliases = "Blink", description = "Bloquea temporalmente los datos que se envían al servidor.", category = Category.PLAYER)
+@ModuleInfo(aliases = "Blink", description = "Retiene los datos que se envian al servidor/cliente.", category = Category.PLAYER)
 public class Blink extends Module {
 
 	private final List<Packet<?>> packets = new CopyOnWriteArrayList<>();

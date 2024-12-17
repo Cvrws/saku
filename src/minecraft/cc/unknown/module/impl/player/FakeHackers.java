@@ -18,7 +18,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition;
 import net.minecraft.network.play.client.C03PacketPlayer.C06PacketPlayerPosLook;
 
-@ModuleInfo(aliases = "Fake Hackers", description = "Spoofea a cualquier persona y simula que esta usando chits", category = Category.PLAYER)
+@ModuleInfo(aliases = "Fake Hackers", description = "Spoofea a cualquier persona y simula que este usando chits", category = Category.PLAYER)
 public class FakeHackers extends Module {
 
 	private final ModeValue mode = new ModeValue("Mode", this)

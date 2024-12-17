@@ -12,7 +12,7 @@ import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 import net.minecraft.network.play.client.C03PacketPlayer;
 
-@ModuleInfo(aliases = "Regen", description = "Te hace regenerar la salud más rápido", category = Category.COMBAT)
+@ModuleInfo(aliases = "Regen", description = "Regenera la salud más rápido", category = Category.COMBAT)
 public class Regen extends Module {
 
 	private final NumberValue delay = new NumberValue("Delay", this, 500, 0, 1000, 50);

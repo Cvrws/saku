@@ -26,6 +26,7 @@ public enum Sakura {
     instance;
 
     public static final String NAME = "Sakura";
+    public static final String VERSION = "[KDR Edition]";
     public static final String VERSION_FULL = "5.4";
 
     private EventBus<Event> eventBus;
@@ -78,7 +79,7 @@ public enum Sakura {
         configManager.init();
         bindableManager.init();
 
-        Display.setTitle(NAME + " " + VERSION_FULL);
+        Display.setTitle(NAME + " " + VERSION_FULL + " " + VERSION);
     }
 
     public void terminate() {

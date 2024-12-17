@@ -2,9 +2,9 @@ package cc.unknown.module;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-
-import org.lwjgl.input.Keyboard;
+import java.util.Map;
 
 import cc.unknown.Sakura;
 import cc.unknown.bindable.Bindable;
@@ -152,13 +152,25 @@ public abstract class Module implements Accessor, Toggleable, Bindable {
         if (this instanceof ClickGUI) {
             return false;
         }
-        
+
         if (!this.getModuleInfo().allowDisable()) {
             return false;
         }
-        
-        if (instance.noRenderVisuals.getValue()) {
-        	return !this.getModuleInfo().category().equals(Category.VISUALS);
+
+        Map<Category, Boolean> visibility = new HashMap<>();
+        visibility.put(Category.COMBAT, instance.hideCombat.getValue());
+        visibility.put(Category.VISUALS, instance.hideVisuals.getValue());
+        visibility.put(Category.MOVEMENT, instance.hideMovement.getValue());
+        visibility.put(Category.GHOST, instance.hideGhost.getValue());
+        visibility.put(Category.LATENCY, instance.hideLatency.getValue());
+        visibility.put(Category.OTHER, instance.hideOther.getValue());
+        visibility.put(Category.PLAYER, instance.hidePlayer.getValue());
+        visibility.put(Category.WORLD, instance.hideWorld.getValue());
+        visibility.put(Category.EXPLOIT, instance.hideExploit.getValue());
+
+        Category currentCategory = this.getModuleInfo().category();
+        if (visibility.getOrDefault(currentCategory, false)) {
+            return false;
         }
 
         return true;

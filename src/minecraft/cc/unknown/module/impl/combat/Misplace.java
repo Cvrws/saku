@@ -19,7 +19,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.util.MovingObjectPosition;
 
-@ModuleInfo(aliases = "Misplace", description = "Allows you to hit entities in their previous locations", category = Category.COMBAT)
+@ModuleInfo(aliases = "Misplace", description = "Permite darles hits a tus enemigos en su posición anterior.", category = Category.COMBAT)
 public class Misplace extends Module {
 
     private final NumberValue amount = new NumberValue("Amount", this, 1, 1, 20, 1);

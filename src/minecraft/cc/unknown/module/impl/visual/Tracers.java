@@ -13,7 +13,7 @@ import cc.unknown.util.render.RenderUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
-@ModuleInfo(aliases = "Tracers", description = "Renders a line from your crosshair to every player", category = Category.VISUALS)
+@ModuleInfo(aliases = "Tracers", description = "Dibuja una línea hasta el jugador.", category = Category.VISUALS)
 public final class Tracers extends Module {
 
     @EventLink

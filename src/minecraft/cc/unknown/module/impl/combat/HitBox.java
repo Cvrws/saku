@@ -12,7 +12,7 @@ import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 
-@ModuleInfo(aliases = "Hit Box", description = "Expands other entities hitboxes", category = Category.COMBAT)
+@ModuleInfo(aliases = "Hit Box", description = "Incrementa la hitbox del jugador.", category = Category.COMBAT)
 public class HitBox extends Module {
     public final NumberValue expand = new NumberValue("Expand Amount", this, 0, 0, 6, 0.01);
     private final BooleanValue effectRange = new BooleanValue("Effect range", this, true);

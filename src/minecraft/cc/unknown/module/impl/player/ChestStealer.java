@@ -36,7 +36,7 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 
 @ModuleInfo(aliases = { "Chest Stealer",
-		"Stealer" }, description = "Automatically steals items from chest", category = Category.PLAYER)
+		"Stealer" }, description = "Saca todos los objectos de los cofres.", category = Category.PLAYER)
 public class ChestStealer extends Module {
 
 	public BoundsNumberValue startdelay = new BoundsNumberValue("Start Delay", this, 200, 400, 0, 1000, 1);

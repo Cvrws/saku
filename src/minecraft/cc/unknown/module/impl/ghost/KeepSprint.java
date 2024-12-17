@@ -9,7 +9,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 
-@ModuleInfo(aliases = "Keep Sprint", description = "Sigue corriendo después de atacar.", category = Category.GHOST)
+@ModuleInfo(aliases = "Keep Sprint", description = "Correr después de atacar.", category = Category.GHOST)
 public class KeepSprint extends Module {
 
     private final NumberValue slowDownVelocity = new NumberValue("Hit Slow Down During Velocity", this, 0.6, 0, 1, 0.05);

@@ -16,7 +16,7 @@ import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.socket.NetworkUtil;
 import cc.unknown.value.impl.DragValue;
 
-@ModuleInfo(aliases = "Ping Display", description = "Muestra tu latencia", category = Category.VISUALS)
+@ModuleInfo(aliases = "Ping Display", description = "Muestra la latencia de tu conexión actual.", category = Category.VISUALS)
 public final class PingDisplay extends Module {
 
     private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));

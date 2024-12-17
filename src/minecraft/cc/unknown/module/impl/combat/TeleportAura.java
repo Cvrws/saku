@@ -50,7 +50,7 @@ import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
-@ModuleInfo(aliases = "Teleport Aura", description = "Ataca automáticamente a entidades lejanas teletransportándose.", category = Category.COMBAT)
+@ModuleInfo(aliases = "Teleport Aura", description = "Ataca automáticamente a tus enemigos teletransportándose.", category = Category.COMBAT)
 public class TeleportAura extends Module {
 
 	private final NumberValue target = new NumberValue("Targets", this, 1, 1, 50, 1);

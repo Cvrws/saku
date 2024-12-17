@@ -35,7 +35,7 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
 
 @ModuleInfo(aliases = { "Inventory Manager", "Inv Manager",
-		"Manager" }, description = "Sorts your inventory for you and throws out useless items", category = Category.PLAYER)
+		"Manager" }, description = "Organiza tu inventario", category = Category.PLAYER)
 public class InventoryManager extends Module {
 
 	private final ModeValue mode = new ModeValue("Mode", this)

@@ -364,4 +364,34 @@ public final class RenderUtil implements Accessor {
             GL11.glEnd();
         }
     }
+    
+    public void drawOutline(float x, float y, float x2, float y2, float lineWidth, int color) {
+        float f5 = (float) ((color >> 24) & 255) / 255.0F;
+        float f6 = (float) ((color >> 16) & 255) / 255.0F;
+        float f7 = (float) ((color >> 8) & 255) / 255.0F;
+        float f8 = (float) (color & 255) / 255.0F;
+
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glPushMatrix();
+        GL11.glColor4f(f6, f7, f8, f5);
+        GL11.glLineWidth(lineWidth);
+        GL11.glBegin(1);
+        GL11.glVertex2d(x, y);
+        GL11.glVertex2d(x, y2);
+        GL11.glVertex2d(x2, y2);
+        GL11.glVertex2d(x2, y);
+        GL11.glVertex2d(x, y);
+        GL11.glVertex2d(x2, y);
+        GL11.glVertex2d(x, y2);
+        GL11.glVertex2d(x2, y2);
+        GL11.glEnd();
+        GL11.glColor4f(1f, 1f, 1f, 1f);
+        GL11.glPopMatrix();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+    }
 }

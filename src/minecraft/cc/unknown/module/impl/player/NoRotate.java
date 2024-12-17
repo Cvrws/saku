@@ -12,7 +12,7 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C03PacketPlayer;
 
-@ModuleInfo(aliases = "No Rotate", description = "Evita que los servidores modifiquen tu fov.", category = Category.PLAYER)
+@ModuleInfo(aliases = "No Rotate", description = "Evita que los servidores modifiquen tu rotación.", category = Category.PLAYER)
 public class NoRotate extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", this)

@@ -20,7 +20,7 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 
-@ModuleInfo(aliases = "Velocity", description = "Uses heavy dick and balls to drag across the floor to reduce velocity.", category = Category.COMBAT)
+@ModuleInfo(aliases = "Velocity", description = "Te vuelve un gordito come hamburguesas haciendo que no tengas kb.", category = Category.COMBAT)
 public final class Velocity extends Module {
 
 	public final ModeValue mode = new ModeValue("Mode", this)

@@ -7,7 +7,7 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 
-@ModuleInfo(aliases = "No Click Delay", description = "Elimina el delay de la 1.8 al clickear", category = Category.PLAYER)
+@ModuleInfo(aliases = "No Click Delay", description = "Elimina el delay al hacer click", category = Category.PLAYER)
 public class NoClickDelay extends Module {
 
 	@EventLink
