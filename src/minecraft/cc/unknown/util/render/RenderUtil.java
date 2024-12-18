@@ -1,12 +1,24 @@
 package cc.unknown.util.render;
 
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.util.Accessor;
+import cc.unknown.util.render.blur.GaussianFilter;
 import cc.unknown.util.render.shader.Shaders;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.Gui;
@@ -14,8 +26,12 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +44,7 @@ import net.minecraft.util.ResourceLocation;
 public final class RenderUtil implements Accessor {
 
     private final Frustum FRUSTUM = new Frustum();
+    private final Map<Integer, Integer> shadowCache = new HashMap<>();
     public final int GENERIC_SCALE = 22;
     
     public void start() {
@@ -394,4 +411,99 @@ public final class RenderUtil implements Accessor {
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
     }
+    
+    public void drawRect(double left, double top, double right, double bottom, int color) {
+        double j;
+        if (left < right) {
+            j = left;
+            left = right;
+            right = j;
+        }
+
+        if (top < bottom) {
+            j = top;
+            top = bottom;
+            bottom = j;
+        }
+
+        float f3 = (float) (color >> 24 & 255) / 255.0F;
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.color(f, f1, f2, f3);
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION);
+        worldrenderer.pos(left, bottom, 0.0).endVertex();
+        worldrenderer.pos(right, bottom, 0.0).endVertex();
+        worldrenderer.pos(right, top, 0.0).endVertex();
+        worldrenderer.pos(left, top, 0.0).endVertex();
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
+
+    
+    public static void drawBloomShadow(float x, float y, float width, float height, int blurRadius, Color color) {
+        drawBloomShadow(x, y, width, height, blurRadius, 0, color);
+    }
+
+    public static void drawBloomShadow(float x, float y, float width, float height, int blurRadius, int roundRadius, Color color) {
+        width = width + blurRadius * 2;
+        height = height + blurRadius * 2;
+        x -= blurRadius + 0.75f;
+        y -= blurRadius + 0.75f;
+
+        int identifier = Arrays.deepHashCode(new Object[]{width, height, blurRadius, roundRadius});
+        if (!shadowCache.containsKey(identifier)) {
+            if (width <= 0) width = 1;
+            if (height <= 0) height = 1;
+            BufferedImage original = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_ARGB_PRE);
+            Graphics g = original.getGraphics();
+            g.setColor(new Color(-1));
+            g.fillRoundRect(blurRadius, blurRadius, (int) (width - blurRadius * 2), (int) (height - blurRadius * 2), roundRadius, roundRadius);
+            g.dispose();
+            GaussianFilter op = new GaussianFilter(blurRadius);
+            BufferedImage blurred = op.filter(original, null);
+            shadowCache.put(identifier, TextureUtil.uploadTextureImageAllocate(TextureUtil.glGenTextures(), blurred, true, false));
+        }
+        drawImage(shadowCache.get(identifier), x, y, width, height, color.getRGB());
+    }
+
+    public void drawImage(int image, float x, float y, float width, float height, int color) {
+        glPushMatrix();
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.01f);
+        glEnable(GL11.GL_TEXTURE_2D);
+        glDisable(GL_CULL_FACE);
+        glEnable(GL11.GL_ALPHA_TEST);
+        GlStateManager.enableBlend();
+        GlStateManager.bindTexture(image);
+
+        ColorUtil.glColor(color);
+
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glTexCoord2f(0, 0); // top left
+        GL11.glVertex2f(x, y);
+
+        GL11.glTexCoord2f(0, 1); // bottom left
+        GL11.glVertex2f(x, y + height);
+
+        GL11.glTexCoord2f(1, 1); // bottom right
+        GL11.glVertex2f(x + width, y + height);
+
+        GL11.glTexCoord2f(1, 0); // top right
+        GL11.glVertex2f(x + width, y);
+        GL11.glEnd();
+
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.resetColor();
+
+        glEnable(GL_CULL_FACE);
+        glPopMatrix();
+    }
+
 }

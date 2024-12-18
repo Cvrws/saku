@@ -67,6 +67,7 @@ import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.TickEndEvent;
+import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.ui.menu.LoginMenu;
@@ -644,10 +645,17 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			this.gameSettings.enableVsync = false;
 			this.gameSettings.saveOptions();
 		}
-
+		
 		Sakura.instance.init();
 		
-		this.displayGuiScreen(new LoginMenu());
+		if (Sakura.instance != null && Sakura.instance.getModuleManager() != null) {
+		    Sprint sprint = Sakura.instance.getModuleManager().get(Sprint.class);
+
+		    if (sprint != null && !sprint.logged) {
+		    	this.displayGuiScreen(new LoginMenu());
+		    }
+		}
+						
 		this.renderGlobal.makeEntityOutlineShader();
 
 	}

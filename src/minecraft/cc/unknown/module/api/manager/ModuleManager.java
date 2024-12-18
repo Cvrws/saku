@@ -2,18 +2,112 @@ package cc.unknown.module.api.manager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import cc.unknown.Sakura;
 import cc.unknown.module.Module;
-import cc.unknown.module.impl.combat.*;
-import cc.unknown.module.impl.exploit.*;
-import cc.unknown.module.impl.ghost.*;
-import cc.unknown.module.impl.latency.*;
-import cc.unknown.module.impl.movement.*;
-import cc.unknown.module.impl.other.*;
-import cc.unknown.module.impl.player.*;
-import cc.unknown.module.impl.visual.*;
-import cc.unknown.module.impl.world.*;
+import cc.unknown.module.api.Category;
+import cc.unknown.module.impl.combat.Criticals;
+import cc.unknown.module.impl.combat.HitBox;
+import cc.unknown.module.impl.combat.KillAura;
+import cc.unknown.module.impl.combat.Misplace;
+import cc.unknown.module.impl.combat.Regen;
+import cc.unknown.module.impl.combat.TeleportAura;
+import cc.unknown.module.impl.combat.Velocity;
+import cc.unknown.module.impl.exploit.CancelPackets;
+import cc.unknown.module.impl.exploit.ChatBypass;
+import cc.unknown.module.impl.exploit.NoGuiClose;
+import cc.unknown.module.impl.ghost.AimAssist;
+import cc.unknown.module.impl.ghost.AutoClicker;
+import cc.unknown.module.impl.ghost.HitSelect;
+import cc.unknown.module.impl.ghost.KeepSprint;
+import cc.unknown.module.impl.ghost.Reach;
+import cc.unknown.module.impl.ghost.STap;
+import cc.unknown.module.impl.ghost.WTap;
+import cc.unknown.module.impl.latency.BackTrack;
+import cc.unknown.module.impl.latency.PerfectCriticals;
+import cc.unknown.module.impl.latency.PingSpoof;
+import cc.unknown.module.impl.latency.TickBase;
+import cc.unknown.module.impl.movement.AntiFire;
+import cc.unknown.module.impl.movement.Clipper;
+import cc.unknown.module.impl.movement.Flight;
+import cc.unknown.module.impl.movement.InventoryMove;
+import cc.unknown.module.impl.movement.NoClip;
+import cc.unknown.module.impl.movement.NoJumpDelay;
+import cc.unknown.module.impl.movement.NoSlow;
+import cc.unknown.module.impl.movement.Parkour;
+import cc.unknown.module.impl.movement.Sneak;
+import cc.unknown.module.impl.movement.Speed;
+import cc.unknown.module.impl.movement.Spider;
+import cc.unknown.module.impl.movement.Sprint;
+import cc.unknown.module.impl.movement.Strafe;
+import cc.unknown.module.impl.movement.Stuck;
+import cc.unknown.module.impl.other.AltGenerator;
+import cc.unknown.module.impl.other.AntiAFK;
+import cc.unknown.module.impl.other.AntiCrash;
+import cc.unknown.module.impl.other.AnticheatDetector;
+import cc.unknown.module.impl.other.AutoLeave;
+import cc.unknown.module.impl.other.AutoPlay;
+import cc.unknown.module.impl.other.AutoRefill;
+import cc.unknown.module.impl.other.AutoSword;
+import cc.unknown.module.impl.other.AutoText;
+import cc.unknown.module.impl.other.FPSBoost;
+import cc.unknown.module.impl.other.Insults;
+import cc.unknown.module.impl.other.InternetRelayChat;
+import cc.unknown.module.impl.other.MidClick;
+import cc.unknown.module.impl.other.MurderMystery;
+import cc.unknown.module.impl.other.MusicPlayer;
+import cc.unknown.module.impl.player.AntiFireBall;
+import cc.unknown.module.impl.player.AutoArmor;
+import cc.unknown.module.impl.player.AutoPot;
+import cc.unknown.module.impl.player.AutoTool;
+import cc.unknown.module.impl.player.Blink;
+import cc.unknown.module.impl.player.ChestStealer;
+import cc.unknown.module.impl.player.Clutch;
+import cc.unknown.module.impl.player.Derp;
+import cc.unknown.module.impl.player.FakeHackers;
+import cc.unknown.module.impl.player.FastUse;
+import cc.unknown.module.impl.player.InventoryManager;
+import cc.unknown.module.impl.player.NoClickDelay;
+import cc.unknown.module.impl.player.NoPlaceDelay;
+import cc.unknown.module.impl.player.NoRotate;
+import cc.unknown.module.impl.player.Respawn;
+import cc.unknown.module.impl.player.Timer;
+import cc.unknown.module.impl.visual.Ambience;
+import cc.unknown.module.impl.visual.Animations;
+import cc.unknown.module.impl.visual.ArmorDisplay;
+import cc.unknown.module.impl.visual.CPSDisplay;
+import cc.unknown.module.impl.visual.Chams;
+import cc.unknown.module.impl.visual.ChestESP;
+import cc.unknown.module.impl.visual.ClickGUI;
+import cc.unknown.module.impl.visual.ExtraSensoryPerception;
+import cc.unknown.module.impl.visual.FPSDisplay;
+import cc.unknown.module.impl.visual.FreeCam;
+import cc.unknown.module.impl.visual.FreeLook;
+import cc.unknown.module.impl.visual.FullBright;
+import cc.unknown.module.impl.visual.HUD;
+import cc.unknown.module.impl.visual.HurtCamera;
+import cc.unknown.module.impl.visual.Invisibles;
+import cc.unknown.module.impl.visual.ItemESP;
+import cc.unknown.module.impl.visual.ItemPhysics;
+import cc.unknown.module.impl.visual.KeepTabList;
+import cc.unknown.module.impl.visual.NameTags;
+import cc.unknown.module.impl.visual.NoCameraClip;
+import cc.unknown.module.impl.visual.PacketDisplay;
+import cc.unknown.module.impl.visual.PingDisplay;
+import cc.unknown.module.impl.visual.Streamer;
+import cc.unknown.module.impl.visual.TargetESP;
+import cc.unknown.module.impl.visual.Tracers;
+import cc.unknown.module.impl.visual.Trajectories;
+import cc.unknown.module.impl.visual.UnlimitedChat;
+import cc.unknown.module.impl.world.Breaker;
+import cc.unknown.module.impl.world.FastBreak;
+import cc.unknown.module.impl.world.FastPlace;
+import cc.unknown.module.impl.world.LegitScaffold;
+import cc.unknown.module.impl.world.SafeWalk;
+import cc.unknown.module.impl.world.Scaffold;
+import cc.unknown.module.impl.world.Spammer;
 import cc.unknown.util.structure.AdaptiveMap;
 
 public final class ModuleManager {
@@ -150,7 +244,11 @@ public final class ModuleManager {
     public <T extends Module> T get(final Class<T> clazz) {
         return (T) this.moduleMap.get(clazz);
     }
-
+    
+    public List<Module> getModulesByCategory(Category category) {
+        return getAll().stream().filter(m -> m.getModuleInfo().category() == category).collect(Collectors.toList());
+    }
+    
     public <T extends Module> T get(final String name) {
         return (T) this.getAll().stream().filter(module -> Arrays.stream(module.getAliases()).anyMatch(alias -> alias.replace(" ", "").equalsIgnoreCase(name.replace(" ", "")))).findAny().orElse(null);
     }

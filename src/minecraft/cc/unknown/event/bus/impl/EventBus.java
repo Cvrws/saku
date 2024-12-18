@@ -20,7 +20,6 @@ import cc.unknown.event.impl.other.GameEvent;
 import cc.unknown.event.impl.other.ServerJoinEvent;
 import cc.unknown.event.impl.other.ServerKickEvent;
 import cc.unknown.event.impl.other.WorldChangeEvent;
-import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.player.PlayerUtil;
@@ -106,7 +105,7 @@ public final class EventBus<Event> implements Bus<Event>, Accessor {
     @Override
     public void handle(final Event event) {
         try {
-            if ((mc.world == null || mc.getNetHandler() == null || (!mc.getNetHandler().doneLoadingTerrain && !(event instanceof PacketReceiveEvent))) && !(event instanceof Render2DEvent || event instanceof ServerKickEvent || event instanceof GameEvent || event instanceof WorldChangeEvent || event instanceof ServerJoinEvent)) {
+            if ((mc.world == null || mc.getNetHandler() == null || (!mc.getNetHandler().doneLoadingTerrain && !(event instanceof PacketReceiveEvent))) && !(event instanceof ServerKickEvent || event instanceof GameEvent || event instanceof WorldChangeEvent || event instanceof ServerJoinEvent) || !(getModule(Sprint.class).logged)) {
                 return;
             }
 

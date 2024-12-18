@@ -7,7 +7,7 @@ import static cc.unknown.util.client.StreamerUtil.red;
 import static cc.unknown.util.client.StreamerUtil.reset;
 
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.socket.AesUtil;
+import cc.unknown.util.socket.EncryptUtil;
 import cc.unknown.util.socket.SocketUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +31,7 @@ public class IRC extends ListenerAdapter {
 	@SneakyThrows
 	public synchronized void init() {
         if (jda == null || jda.getStatus() == JDA.Status.SHUTDOWN || jda.getStatus() == JDA.Status.FAILED_TO_LOGIN) {
-            jda = JDABuilder.createDefault(AesUtil.decrypt(SocketUtil.ircBridge)).enableIntents(GatewayIntent.MESSAGE_CONTENT).addEventListeners(new IRC()).build();
+            jda = JDABuilder.createDefault(EncryptUtil.decrypt(SocketUtil.ircBridge)).enableIntents(GatewayIntent.MESSAGE_CONTENT).addEventListeners(new IRC()).build();
             jda.awaitReady();
         }
 	}

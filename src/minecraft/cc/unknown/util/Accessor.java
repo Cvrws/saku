@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.Component;
 import cc.unknown.module.Module;
-import cc.unknown.ui.ClickGui;
+import cc.unknown.ui.clickgui.rice.RiceScreen;
 import cc.unknown.ui.theme.Themes;
 import net.minecraft.client.Minecraft;
 
@@ -20,7 +20,7 @@ public interface Accessor {
         return mc != null || mc.player != null || mc.world != null;
     }
     
-    default ClickGui getClickGUI() {
+    default RiceScreen getClickGUI() {
         return getInstance().getClickGui();
     }
 

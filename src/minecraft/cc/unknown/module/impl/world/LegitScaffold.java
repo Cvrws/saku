@@ -12,6 +12,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.SlotUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.ModeValue;
@@ -36,8 +37,14 @@ public class LegitScaffold extends Module {
 	private final BooleanValue backwards = new BooleanValue("Backwards Movement Only", this, true);
 
 	private boolean shouldBridge, isShifting = false;
+	private int lastSlot;
 	private StopWatch stopWatch = new StopWatch();
 
+	@Override
+	public void onEnable() {
+		lastSlot = -1;		
+	}
+	
 	@Override
 	public void onDisable() {
 		setSneak(false);
@@ -45,18 +52,17 @@ public class LegitScaffold extends Module {
 			setSneak(false);
 		}
 
+		mc.player.inventory.currentItem = lastSlot;
 		shouldBridge = false;
 	}
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
-		if (!(mc.currentScreen == null) || !isInGame())
-			return;
+		if (!(mc.currentScreen == null) || !isInGame()) return;
 
 		boolean shift = delay.getSecondValue().intValue() > 0;
 
-		if (mc.player.rotationPitch < pitchRange.getValue().floatValue()
-				|| mc.player.rotationPitch > pitchRange.getSecondValue().floatValue()) {
+		if (mc.player.rotationPitch < pitchRange.getValue().floatValue() || mc.player.rotationPitch > pitchRange.getSecondValue().floatValue()) {
 			shouldBridge = false;
 			if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
 				setSneak(true);
@@ -139,14 +145,24 @@ public class LegitScaffold extends Module {
 
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		if (!isInGame())
-			return;
+		if (!isInGame()) return;
+		
+        if (lastSlot == -1) {
+        	lastSlot = mc.player.inventory.currentItem;
+        }
+        
+		final int slot = SlotUtil.findBlock();
+		
+        if (slot == -1) {
+            return;
+        }
+        
+        if (slotSwap.getValue() && shouldSkipBlockCheck()) {
+        	mc.player.inventory.currentItem = slot;
+        }
 
-		if (slotSwap.getValue() && shouldSkipBlockCheck())
-			swapToBlock();
+		if (mc.currentScreen == null || mc.player.getHeldItem() == null) return;
 
-		if (mc.currentScreen != null || mc.player.getHeldItem() == null)
-			return;
 	};
 
 	private void swapToBlock() {
@@ -171,7 +187,7 @@ public class LegitScaffold extends Module {
 	}
 
 	private void setSneak(boolean sneak) {
-		//mc.player.movementInput.sneak = sneak;
+		mc.player.movementInput.sneak = sneak;
 		KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), sneak);		
 	}
 }

@@ -41,7 +41,7 @@ public class MainMenu extends GuiMainMenu {
         super.initGui();
         
         if (UserUtil.getUser().isEmpty()) {
-        	mc.displayGuiScreen(new LoginMenu());
+        	mc.displayGuiScreen(new IrcMenu());
         }
         
         this.buttonList.clear();
@@ -79,6 +79,10 @@ public class MainMenu extends GuiMainMenu {
 
         String title = "§fSakura Client";
         String name = String.format("§fLogged in as §7%s", UserUtil.getUser());
+        
+        if(getModule(Sprint.class).logged) {
+        	getModule(Sprint.class).sleek = 1;
+        }
 
         fontRenderer.drawWithShadow(title, 2.0f, height - 10, -1);
         fontRenderer.drawWithShadow(name, width - fontRenderer.width(name) - 2, height - 10, -1);

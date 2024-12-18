@@ -25,7 +25,7 @@ public class FastPlace extends Module {
 
 	private final BooleanValue blocks = new BooleanValue("Blocks", this, true);
 	private final NumberValue blockDelay = new NumberValue("Block Delay", this, 50.0, 0.0, 300.0, 1, () -> !blocks.getValue());
-	private final BooleanValue projectiles = new BooleanValue("Egg/SnowBall", this, true);
+	private final BooleanValue projectiles = new BooleanValue("Egg/SnowBall", this, false);
 	private final NumberValue projectileDelay = new NumberValue("Egg/SnowBall Delay", this, 50.0, 0.0, 300.0, 1, () -> !projectiles.getValue());
 	private final BooleanValue xpBottle = new BooleanValue("Exp Bottle", this, false);
 	private final NumberValue xpBottleDelay = new NumberValue("Exp Bottle Delay", this, 50.0, 0.0, 300.0, 1, () -> !xpBottle.getValue());

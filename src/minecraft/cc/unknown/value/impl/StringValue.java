@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import cc.unknown.module.Module;
-import cc.unknown.ui.components.value.impl.StringValueComponent;
+import cc.unknown.ui.clickgui.rice.impl.StringValueComponent;
 import cc.unknown.value.Mode;
 import cc.unknown.value.Value;
 

@@ -12,12 +12,14 @@ import cc.unknown.event.Event;
 import cc.unknown.event.bus.impl.EventBus;
 import cc.unknown.module.api.manager.ModuleManager;
 import cc.unknown.script.ScriptManager;
-import cc.unknown.ui.ClickGui;
+import cc.unknown.ui.clickgui.kerosene.KeroScreen;
+import cc.unknown.ui.clickgui.rice.RiceScreen;
 import cc.unknown.ui.theme.ThemeManager;
 import cc.unknown.util.file.FileManager;
 import cc.unknown.util.file.config.ConfigManager;
 import cc.unknown.util.file.enemy.EnemyManager;
 import cc.unknown.util.file.friend.FriendManager;
+import cc.unknown.util.socket.EncryptUtil;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 
@@ -44,7 +46,8 @@ public enum Sakura {
     private BindableManager bindableManager;
     private ScriptManager scriptManager;
 
-    private ClickGui clickGui;
+    private RiceScreen clickGui;
+    private KeroScreen betaGui;
     
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -70,8 +73,11 @@ public enum Sakura {
         friendManager.init();
         enemyManager.init();
 
-        clickGui = new ClickGui();
+        clickGui = new RiceScreen();
         clickGui.initGui();
+        
+        betaGui = new KeroScreen();
+        betaGui.initGui();
         
         ViaMCP.INSTANCE.initAsyncSlider();
         ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);

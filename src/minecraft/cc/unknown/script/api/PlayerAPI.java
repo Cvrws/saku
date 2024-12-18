@@ -12,7 +12,7 @@ import cc.unknown.script.api.wrapper.impl.ScriptInventory;
 import cc.unknown.script.api.wrapper.impl.ScriptItemStack;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector2f;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector3d;
-import cc.unknown.ui.ClickGui;
+import cc.unknown.ui.clickgui.rice.RiceScreen;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.geometry.Vector3d;
 import cc.unknown.util.player.MoveUtil;
@@ -303,7 +303,7 @@ public class PlayerAPI extends ScriptEntityLiving {
             return "none";
         } else if (MC.currentScreen instanceof GuiChest) {
             return "chest";
-        } else if (MC.currentScreen instanceof ClickGui) {
+        } else if (MC.currentScreen instanceof RiceScreen) {
             return "clickgui";
         } else if (MC.currentScreen instanceof GuiChat) {
             return "chat";

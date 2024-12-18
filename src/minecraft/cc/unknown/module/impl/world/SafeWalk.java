@@ -28,7 +28,6 @@ public class SafeWalk extends Module {
 		}
 	}
 
-    
     @EventLink
     public final Listener<PreMotionEvent> onPreMotion = event -> {
     	if (!legit.getValue()) {

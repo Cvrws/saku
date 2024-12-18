@@ -31,7 +31,7 @@ public class NoClip extends Module {
 	
 	@Override
 	public void onEnable() {
-		lastSlot = -1;	
+		lastSlot = -1;
 	}
 
 	@Override
@@ -66,6 +66,7 @@ public class NoClip extends Module {
         if (lastSlot == -1) {
         	lastSlot = mc.player.inventory.currentItem;
         }
+        
 		mc.player.noClip = true;
 
 		if (getModule(Scaffold.class).isEnabled() || (getModule(KillAura.class).isEnabled() && getModule(KillAura.class).target != null)) return;
