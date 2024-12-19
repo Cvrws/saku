@@ -1,80 +1,76 @@
 package cc.unknown.util.socket;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.Base64;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class EncryptUtil {
 	
-	// code war crimes
-
 	@SneakyThrows
-    public String encrypt(String data) {
-		javax.crypto.SecretKey secretKey = getSecretKey();
+    public static String encrypt(String data) {
+        SecretKey secretKey = getSecretKey();
         byte[] iv = generateIV(secretKey);
-        javax.crypto.spec.IvParameterSpec ivSpec = new javax.crypto.spec.IvParameterSpec(iv);
-        javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, secretKey, ivSpec);
-        byte[] encryptedData = cipher.doFinal(data.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-        return java.util.Base64.getEncoder().encodeToString(encryptedData);
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec);
+        byte[] encryptedData = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(encryptedData);
     }
 
     @SneakyThrows
-    public String decrypt(String encryptedData) {
-    	javax.crypto.SecretKey secretKey = getSecretKey();
+    public static String decrypt(String encryptedData) {
+        SecretKey secretKey = getSecretKey();
         byte[] iv = generateIV(secretKey);
-        javax.crypto.spec.IvParameterSpec ivSpec = new javax.crypto.spec.IvParameterSpec(iv);
-        javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(javax.crypto.Cipher.DECRYPT_MODE, secretKey, ivSpec);
-        byte[] encryptedBytes = java.util.Base64.getDecoder().decode(encryptedData);
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec);
+        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedData);
         byte[] decryptedData = cipher.doFinal(encryptedBytes);
-        return new String(decryptedData, java.nio.charset.StandardCharsets.UTF_8);
+        return new String(decryptedData, StandardCharsets.UTF_8);
     }
 
     @SneakyThrows
-    public String decrypt2(String encryptedData) {
-    	javax.crypto.SecretKey secretKey = getSecretKey2();
+    public static String decrypt2(String encryptedData) {
+        SecretKey secretKey = getSecretKey2();
         byte[] iv = generateIV(secretKey);
-        javax.crypto.spec.IvParameterSpec ivSpec = new javax.crypto.spec.IvParameterSpec(iv);
-        javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(javax.crypto.Cipher.DECRYPT_MODE, secretKey, ivSpec);
-        byte[] encryptedBytes = java.util.Base64.getDecoder().decode(encryptedData);
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec);
+        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedData);
         byte[] decryptedData = cipher.doFinal(encryptedBytes);
-        return new String(decryptedData, java.nio.charset.StandardCharsets.UTF_8);
+        return new String(decryptedData, StandardCharsets.UTF_8);
     }
 
     @SneakyThrows
-    private byte[] generateIV(Object secretKey) {
-        Class<?> c = Class.forName("java.security.MessageDigest");
-        java.lang.reflect.Method x = c.getMethod("getInstance", String.class);
-        Object z = x.invoke(null, "SHA-256");
-        java.lang.reflect.Method v = c.getMethod("digest", byte[].class);
-        byte[] b = (byte[]) v.invoke(z, secretKey.getClass().getMethod("getEncoded").invoke(secretKey));
-        byte[] n = new byte[16];
-        System.arraycopy(b, 0, n, 0, Math.min(b.length, 16));
-        return n;
+    private byte[] generateIV(SecretKey secretKey) {
+        byte[] iv = new byte[16]; 
+        MessageDigest sha = MessageDigest.getInstance("SHA-256");
+        byte[] keyBytes = sha.digest(secretKey.getEncoded());
+        System.arraycopy(keyBytes, 0, iv, 0, iv.length);
+        return iv;
     }
 
     @SneakyThrows
-    private javax.crypto.SecretKey getSecretKey() {
-        Class<?> c = Class.forName("java.security.MessageDigest");
-        java.lang.reflect.Method x = c.getMethod("getInstance", String.class);
-        Object b = x.invoke(null, "SHA-256");
-        java.lang.reflect.Method v = c.getMethod("digest", byte[].class);
-        byte[] n = (byte[]) v.invoke(b, SocketUtil.key.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-        Class<?> m = Class.forName("javax.crypto.spec.SecretKeySpec");
-        return (javax.crypto.SecretKey) m.getConstructor(byte[].class, String.class).newInstance(n, "AES");
+    private SecretKey getSecretKey() {
+        MessageDigest sha = MessageDigest.getInstance("SHA-256");
+        byte[] key = sha.digest(SocketUtil.key.getBytes(StandardCharsets.UTF_8));
+        return new SecretKeySpec(key, "AES");
     }
 
     @SneakyThrows
-    private javax.crypto.SecretKey getSecretKey2() {
-        Class<?> q = Class.forName("java.security.MessageDigest");
-        java.lang.reflect.Method w = q.getMethod("getInstance", String.class);
-        Object h = w.invoke(null, "SHA-256");
-        java.lang.reflect.Method e = q.getMethod("digest", byte[].class);
-        byte[] r = (byte[]) e.invoke(h, "5q7inZ34T0LiadFjaZWexQryC0G8Fr".getBytes(java.nio.charset.StandardCharsets.UTF_8));
-        Class<?> t = Class.forName("javax.crypto.spec.SecretKeySpec");
-        return (javax.crypto.SecretKey) t.getConstructor(byte[].class, String.class).newInstance(r, "AES");
+    private SecretKey getSecretKey2() {
+        MessageDigest sha = MessageDigest.getInstance("SHA-256");
+        byte[] key = sha.digest("5q7inZ34T0LiadFjaZWexQryC0G8Fr".getBytes(StandardCharsets.UTF_8));
+        return new SecretKeySpec(key, "AES");
     }
 
 }

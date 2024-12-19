@@ -48,6 +48,7 @@ public enum Sakura {
 
     private RiceScreen clickGui;
     private KeroScreen betaGui;
+    public boolean firstLogin;
     
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 

@@ -46,7 +46,7 @@ public final class AutoPlay extends Module {
 	            
 	            if (!command.isEmpty()) {
 	                PlayerUtil.send(command);
-	                PlayerUtil.display(StreamerUtil.pink + "[S] Joined a new game");
+	                PlayerUtil.display(StreamerUtil.red +  "[S] " + StreamerUtil.pink + "Joined a new game");
 	            }
 	        }
 	    }

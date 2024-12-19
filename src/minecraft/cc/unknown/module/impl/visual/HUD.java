@@ -40,7 +40,7 @@ public final class HUD extends Module {
         .setDefault("Fade");
         
     private final BooleanValue dropShadow = new BooleanValue("Drop Shadow", this, true);
-    
+    private final BooleanValue bloom = new BooleanValue("Bloom", this, true);
     private final BooleanValue renderCategories = new BooleanValue("Render Category", this, true);
     public final BooleanValue hideCombat = new BooleanValue("Hide Combat", this, false, () -> !renderCategories.getValue());
     public final BooleanValue hideVisuals = new BooleanValue("Hide Visuals", this, true, () -> !renderCategories.getValue());
@@ -86,6 +86,7 @@ public final class HUD extends Module {
         float sx = event.getScaledResolution().getScaledWidth();
         float sy = event.getScaledResolution().getScaledHeight() - font.height() - 1;
         double widthOffset = 3;
+        float totalHeight = activeModuleComponents.size() * moduleSpacing;
         
         for (final ModuleComponent module : activeModuleComponents) {
         	String name = getName(module);
@@ -98,7 +99,8 @@ public final class HUD extends Module {
         	if (colorMode.is("Breathe")) {
                 color = ColorUtil.mixColors(color, this.getTheme().getSecondColor(), this.getTheme().getBlendFactor(new Vector2d(0, 0)));
         	}
-                
+        	
+        	
         	module.setColor(color);
         	module.setNameWidth(font.width(name));
         	module.setDisplayName(name);
@@ -109,7 +111,7 @@ public final class HUD extends Module {
             double y = module.getPosition().getY();
 
             Color finalColor = module.getColor();
-        	setRenderRectangle(module, x, y, widthOffset);
+            setRenderRectangle(module, x, y, widthOffset, totalHeight);
             drawText(module, x, y - .7f, finalColor.getRGB());
         }
         
@@ -146,7 +148,13 @@ public final class HUD extends Module {
     	return (lowercase.getValue() ? module.getTranslatedName().toLowerCase() : module.getTranslatedName()).replace(" ", "");
     }
 
-    private void setRenderRectangle(ModuleComponent module, double x, double y, double widthOffset) {
-    	RenderUtil.rectangle(x - widthOffset, y - 3f, module.nameWidth + 3 + widthOffset, moduleSpacing, new Color(0, 0, 0, alphaBackground.getValue().intValue()));
+    private void setRenderRectangle(ModuleComponent module, double x, double y, double widthOffset, float totalHeight) {
+        float rectangleWidth = (float) (module.nameWidth + 3 + widthOffset);
+
+        if (bloom.getValue()) {
+        	RenderUtil.drawBloomShadow((float) (x - widthOffset), (float) (y - 3f), rectangleWidth, (float) moduleSpacing + 4, 6, 0, new Color(0, 0, 0, alphaBackground.getValue().intValue()));
+        }
+        
+        RenderUtil.rectangle(x - widthOffset, y - 3f, rectangleWidth, moduleSpacing, new Color(0, 0, 0, alphaBackground.getValue().intValue()));
     }
 }
