@@ -1498,7 +1498,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
 
     @Override
     public void handleKeepAlive(final S00PacketKeepAlive packetIn) {
-        this.addToSendQueue(new C00PacketKeepAlive(packetIn.func_149134_c()));
+        this.addToSendQueue(new C00PacketKeepAlive(packetIn.func_149134_c(), 0));
     }
 
     @Override

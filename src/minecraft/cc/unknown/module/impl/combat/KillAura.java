@@ -399,13 +399,13 @@ public final class KillAura extends Module {
 		}
 	}
 
-	@EventLink(value = Priority.HIGH)
-	public final Listener<RenderItemEvent> onRenderItem = event -> {
-		if (target != null && this.canBlock()) {
-			event.setEnumAction(EnumAction.BLOCK);
-			event.setUseItem(true);
-		}
-	};
+    @EventLink(value = Priority.HIGH)
+    public final Listener<RenderItemEvent> onRenderItem = event -> {
+        if (target != null && !autoBlock.is("Fake") && this.canBlock()) {
+            event.setEnumAction(EnumAction.BLOCK);
+            event.setUseItem(true);
+        }
+    };
 
 	@EventLink
 	public final Listener<RightClickEvent> onRightClick = event -> {
@@ -430,7 +430,7 @@ public final class KillAura extends Module {
 
 	@EventLink
 	public final Listener<HitSlowDownEvent> onHitSlowDown = event -> {
-		if (mc.player.hurtTime > 0) {
+		if (keepSprint.getValue() && mc.player.hurtTime > 0) {
 			event.setSlowDown(this.defMotion.getValue().doubleValue());
 			event.setSprint(this.defCheck.getValue());
 		} else {

@@ -16,6 +16,7 @@ import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -99,7 +100,7 @@ public final class AimAssist extends Module {
 	    int validTargets = 0;
 	
 	    for (final EntityPlayer player : mc.world.playerEntities) {
-	        if (player != mc.player && player.deathTime == 0) {
+	        if (player != mc.player && player.deathTime == 0 && player.isEntityAlive()) {
 	            if (getInstance().getEnemyManager().isEnemy(player)) continue;
 	            if (player.getName().contains("[NPC]")) continue;
 	            if (player.getName().contains("MEJORAS")) continue;
@@ -135,7 +136,7 @@ public final class AimAssist extends Module {
 	        BlockPos p = mc.objectMouseOver.getBlockPos();
 	        if (p != null) {
 	            Block bl = mc.world.getBlockState(p).getBlock();
-	            if (bl != Blocks.air && !(bl instanceof BlockLiquid) && bl instanceof Block) {
+	            if (bl != Blocks.air && !(bl instanceof BlockLiquid) && (bl instanceof Block || bl instanceof BlockBed)) {
 	                return true;
 	            }
 	        }

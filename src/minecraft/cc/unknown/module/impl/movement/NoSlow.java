@@ -36,7 +36,6 @@ public class NoSlow extends Module {
 	private final NumberValue swordStrafe = shortNumber("Sword Strafe", sword, swordSlowdown);
 	private final BooleanValue swordSprint = shortBoolean("Sprint", sword);
 	private final BooleanValue swordSwitchNormal = shortBoolean("Normal Switch", sword);
-	private final BooleanValue swordPostSwitch = shortBoolean("Post Switch", sword);
 	private final BooleanValue swordPreSwitch = shortBoolean("Pre Switch", sword);
 	private final BooleanValue swordC08Pre = shortBoolean("C08 Pre", sword);
 	private final BooleanValue swordC0CPre = shortBoolean("C0C Pre", sword);
@@ -187,9 +186,8 @@ public class NoSlow extends Module {
         		if (swordC07BRPre.getValue()) sendC07BlockRelease();
         		if (swordC07NDPre.getValue()) sendC07DropNormal();
         		if (swordC07BDPre.getValue()) sendC07BlockDrop();
-        		if (swordPostSwitch.getValue()) switchItem();
+        		if (swordPreSwitch.getValue()) switchItem();
         		if (swordSwitchNormal.getValue()) switchItem2();
-        		if (swordPreSwitch.getValue() && mc.player.isBlocking()) switchItem();
         		setTimerSpeed(swordTimer, timerSword);
         	} else if (currentItem.getItem() instanceof ItemBow) {
         		if (bowC08Pre.getValue()) sendC08();

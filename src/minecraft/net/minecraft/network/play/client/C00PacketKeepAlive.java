@@ -2,18 +2,22 @@ package net.minecraft.network.play.client;
 
 import java.io.IOException;
 
+import lombok.Getter;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
 
+@Getter
 public class C00PacketKeepAlive implements Packet<INetHandlerPlayServer> {
     public int key;
+    public long time;
 
     public C00PacketKeepAlive() {
     }
 
-    public C00PacketKeepAlive(final int key) {
+    public C00PacketKeepAlive(final int key, final long time) {
         this.key = key;
+        this.time = time;
     }
 
     /**
@@ -35,9 +39,5 @@ public class C00PacketKeepAlive implements Packet<INetHandlerPlayServer> {
      */
     public void writePacketData(final PacketBuffer buf) throws IOException {
         buf.writeVarIntToBuffer(this.key);
-    }
-
-    public int getKey() {
-        return this.key;
     }
 }

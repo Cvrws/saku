@@ -11,12 +11,14 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.MoveUtil;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.entity.player.EntityPlayer;
 
 @ModuleInfo(aliases = "WTap", description = "Suelta brevemente la W después de atacar para aumentar el knockback dado", category = Category.GHOST)
 public class WTap extends Module {
@@ -24,19 +26,17 @@ public class WTap extends Module {
 	private ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Normal"))
 			.add(new SubMode("Fast"))
-			.add(new SubMode("Advanced"))
 			.setDefault("Normal");
 	
 	private NumberValue delay = new NumberValue("Delay", this, 500, 50, 1000, 10);
 	private NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
-	private NumberValue hurtTime = new NumberValue("HurtTime", this, 10, 1, 10, 10, () -> !mode.is("Advanced"));
-	private BoundsNumberValue ticksUntilBlock = new BoundsNumberValue("Ticks Until Block", this, 0, 2, 0, 5, 1, () -> !mode.is("Advanced"));
-	private BoundsNumberValue reSprintTicks = new BoundsNumberValue("ReSprint Ticks", this, 0, 2, 0, 5, 1, () -> !mode.is("Advanced"));
+	private NumberValue hurtTime = new NumberValue("HurtTime", this, 10, 1, 10, 10);
 	private BoundsNumberValue hits = new BoundsNumberValue("Hits", this, 1, 2, 0, 10, 1, () -> !isTwo());
 	private BooleanValue debug = new BooleanValue("Debug", this, false, () -> !isTwo());
 	private BooleanValue onlyGround = new BooleanValue("Only Ground", this, false);
 	private BooleanValue onlyMove = new BooleanValue("Only Move", this, false);
 	private BooleanValue onlyMoveForward = new BooleanValue("Only Forward", this, false, () -> !onlyMove.getValue());
+	private BooleanValue ignoreTeammates = new BooleanValue("Ignore Teams", this, false);
 
     private final StopWatch stopWatch = new StopWatch();
     private int ticks;
@@ -58,6 +58,11 @@ public class WTap extends Module {
 	    if (event.getTarget().hurtTime > hurtTime.getValue().intValue() || !stopWatch.finished(delay.getValue().intValue()) || (onlyGround.getValue() && !mc.player.onGround)) {
 	        return;
 	    }
+	    
+        if (ignoreTeammates.getValue() && PlayerUtil.isTeam((EntityPlayer) event.getTarget(), true, true)) {
+        	return;
+        }
+
 
 	    if (onlyMove.getValue() && (!MoveUtil.isMoving() || (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f))) {
 	        return;
@@ -71,22 +76,6 @@ public class WTap extends Module {
     			ticks = hits.getSecondValue().intValue();
         	}
         	break;
-        	
-    	case "Advanced":
-    	    if (mc.player.isSprinting() && mc.player.serverSprintState && !blockInput && !startWaiting) {
-    	    	double delayMultiplier = 1.0 / 3.0;
-    	    	
-    	        blockInputTicks = (int) (MathUtil.nextSecureInt(ticksUntilBlock.getValue().intValue(), ticksUntilBlock.getSecondValue().intValue()) * delayMultiplier);
-
-    	        blockInput = blockInputTicks == 0;
-
-    	        if (!blockInput) {
-    	            startWaiting = true;
-    	        }
-
-    	        allowInputTicks = (int) (MathUtil.nextSecureInt(reSprintTicks.getValue().intValue(), reSprintTicks.getSecondValue().intValue()) * delayMultiplier);
-    	    }
-    		break;
     	}
     };
 
@@ -113,24 +102,6 @@ public class WTap extends Module {
                 break;
 	        }
 	    }
-	    
-    	if (mode.is("Advanced")) {
-            if (blockInput) {
-                if (ticksElapsed++ >= allowInputTicks) {
-                    blockInput = false;
-                    ticksElapsed = 0;
-                }
-            } else {
-                if (startWaiting) {
-                    blockInput = blockTicksElapsed++ >= blockInputTicks;
-
-                    if (blockInput) {
-                        startWaiting = false;
-                        blockTicksElapsed = 0;
-                    }
-                }
-            }
-    	}
 
 	    if (ticks > 0) {
 	        ticks--;

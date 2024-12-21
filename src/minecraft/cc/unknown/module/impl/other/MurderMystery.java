@@ -70,12 +70,14 @@ public final class MurderMystery extends Module {
 				if (murderers.contains(entity)) {
 					RenderUtil.drawSimpleLine((EntityPlayer) entity, event.getPartialTicks(), Color.RED);
 				}
-			}
-			
-			if (murderers.contains(entity) && drawMurder.getValue()) {
-				RenderUtil.drawSimpleBox((EntityPlayer) entity, Color.RED.getRGB(), event.getPartialTicks());
-			} else if (detectives.contains(entity) && drawDetective.getValue()) {
-				RenderUtil.drawSimpleBox((EntityPlayer) entity, Color.BLUE.getRGB(), event.getPartialTicks());
+				
+				if (murderers.contains(entity) && drawMurder.getValue()) {
+					RenderUtil.drawSimpleBox((EntityPlayer) entity, Color.RED.getRGB(), event.getPartialTicks());
+				} else if (detectives.contains(entity) && drawDetective.getValue()) {
+					RenderUtil.drawSimpleBox((EntityPlayer) entity, Color.BLUE.getRGB(), event.getPartialTicks());
+				} else {
+					RenderUtil.drawSimpleBox((EntityPlayer) entity, Color.WHITE.getRGB(), event.getPartialTicks());
+				}
 			}
 		}
 	};

@@ -187,7 +187,6 @@ public class LegitScaffold extends Module {
 	}
 
 	private void setSneak(boolean sneak) {
-		mc.player.movementInput.sneak = sneak;
 		KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), sneak);		
 	}
 }

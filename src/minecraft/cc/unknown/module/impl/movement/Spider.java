@@ -33,7 +33,6 @@ public class Spider extends Module {
 
 	private final ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Vulcan"))
-			.add(new SubMode("Verus"))
 			.add(new SubMode("Polar"))
 			.setDefault("Vulcan");
 
@@ -43,15 +42,6 @@ public class Spider extends Module {
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
-
-		if (mode.is("verus")) {
-			if (mc.player.isCollidedHorizontally) {
-				if (mc.player.ticksExisted % 2 == 0) {
-					mc.player.jump();
-				}
-			}
-		}
-
 		if (mode.is("vulcan")) {
 			if (mc.player.isCollidedHorizontally) {
 				if (mc.player.ticksExisted % 2 == 0) {
@@ -112,10 +102,7 @@ public class Spider extends Module {
 				for (int z = MathHelper.floor_double(bb.minZ); z < MathHelper.floor_double(bb.maxZ) + 1; ++z) {
 					final Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
 					final AxisAlignedBB boundingBox;
-					if (block != null && !(block instanceof BlockAir)
-							&& (boundingBox = block.getCollisionBoundingBox(world, new BlockPos(x, y, z),
-									world.getBlockState(new BlockPos(x, y, z)))) != null
-							&& bb.intersectsWith(boundingBox)) {
+					if (block != null && !(block instanceof BlockAir) && (boundingBox = block.getCollisionBoundingBox(world, new BlockPos(x, y, z), world.getBlockState(new BlockPos(x, y, z)))) != null && bb.intersectsWith(boundingBox)) {
 						return true;
 					}
 				}

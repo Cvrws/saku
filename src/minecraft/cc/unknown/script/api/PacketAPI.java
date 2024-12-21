@@ -31,7 +31,7 @@ import net.minecraft.util.Vec3;
 public class PacketAPI extends API {
 
     public void sendKeepAlive(final int key) {
-        PacketUtil.send(new C00PacketKeepAlive(key));
+        PacketUtil.send(new C00PacketKeepAlive(key, 0));
     }
 
     public void sendMessage(final String message) {

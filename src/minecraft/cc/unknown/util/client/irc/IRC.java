@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 @Getter
 @Setter
 public class IRC extends ListenerAdapter {
-	private String channelId = "1308613616198746143";
+	private String channelId = "1319452789352698008";
 
 	@Getter
 	private JDA jda;

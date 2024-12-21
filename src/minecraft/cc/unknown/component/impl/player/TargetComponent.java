@@ -11,73 +11,49 @@ import cc.unknown.module.impl.combat.KillAura;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.INpc;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class TargetComponent extends Component implements Accessor {
-    private static final HashMap<Class<?>, List<EntityLivingBase>> targetMap = new HashMap<>();
-    private static KillAura aura;
-
-    public static void handler(List<EntityLivingBase> entities, Class<?> module) {
-        List<EntityLivingBase> targetList = new ArrayList<>(entities);
-        targetMap.put(module, targetList);
-    }
+    private static KillAura killAura;
 
     public static EntityLivingBase getTarget(double range) {
         return getTargets(range).stream().findFirst().orElse(null);
     }
 
     public static List<EntityLivingBase> getTargets(double range) {
-        if (aura == null) {
-            aura = Sakura.instance.getModuleManager().get(KillAura.class);
+        if (killAura == null) {
+            killAura = Sakura.instance.getModuleManager().get(KillAura.class);
         }
 
-        return getTargets(aura.getClass(), aura.player.getValue(), aura.invisibles.getValue(), aura.animals.getValue(), aura.mobs.getValue(), aura.teams.getValue()).stream().filter(entity -> mc.player.getDistanceToEntity(entity) <= range).collect(Collectors.toList());
+        return getTargets(killAura.player.getValue(), killAura.invisibles.getValue(), killAura.animals.getValue(), killAura.mobs.getValue(), killAura.teams.getValue()).stream().filter(entity -> mc.player.getDistanceToEntity(entity) <= range).collect(Collectors.toList());
     }
 
-    public static List<EntityLivingBase> getTargets(Class<?> module, double range, boolean players, boolean invisibles, boolean animals, boolean mobs, boolean teams) {
-        return getTargets(module, players, invisibles, animals, mobs, teams).stream().filter(entity -> mc.player.getDistanceToEntity(entity) <= range).collect(Collectors.toList());
+    public static List<EntityLivingBase> getTargets(double range, boolean players, boolean invisibles, boolean animals, boolean mobs, boolean teams) {
+        return getTargets(players, invisibles, animals, mobs, teams).stream().filter(entity -> mc.player.getDistanceToEntity(entity) <= range).collect(Collectors.toList());
     }
 
     public static List<EntityLivingBase> getTargets() {
-        if (aura == null) {
-            aura = Sakura.instance.getModuleManager().get(KillAura.class);
+        if (killAura == null) {
+            killAura = Sakura.instance.getModuleManager().get(KillAura.class);
         }
 
-        return getTargets(aura.getClass(), aura.player.getValue(), aura.invisibles.getValue(), aura.animals.getValue(), aura.mobs.getValue(), aura.teams.getValue());
+        return getTargets(killAura.player.getValue(), killAura.invisibles.getValue(), killAura.animals.getValue(), killAura.mobs.getValue(), killAura.teams.getValue());
     }
 
-    public static List<EntityLivingBase> getTargets(Class<?> module, boolean players, boolean invisibles, boolean animals, boolean mobs, boolean teams) {
-        if (aura == null) {
-            aura = Sakura.instance.getModuleManager().get(KillAura.class);
-        }
-        
-        List<EntityLivingBase> startingTargets = mc.world.loadedEntityList.stream()
-        .filter(entity -> entity instanceof EntityLivingBase)
-        .filter(entity -> entity != mc.getRenderViewEntity())
-        .filter(entity -> !Sakura.instance.getFriendManager().isFriend(entity.getName()))
-        .filter(entity -> !(entity instanceof EntityArmorStand))
-        .filter(entity -> !(entity instanceof EntityVillager))
-        .filter(entity -> !entity.getName().contains("[NPC]"))
-        .filter(entity -> !entity.getName().contains("CLICK DERECHO"))
-        .filter(entity -> !entity.getName().contains("MEJORAS"))
-        .filter(entity -> !(entity instanceof EntityPlayer) || players)
-        .filter(entity -> !(entity instanceof EntityPlayer && PlayerUtil.isTeam((EntityPlayer) entity, aura.scoreboardCheckTeam.getValue(), aura.checkArmorColor.getValue()) && teams))
-        .filter(entity -> !(entity.isInvisible() && !invisibles))
-        .filter(entity -> !(entity instanceof EntityAnimal && !animals))
-        .filter(entity -> mobs || !(entity instanceof EntityMob || entity instanceof EntitySlime))
-        .map(entity -> (EntityLivingBase) entity)
-        .collect(Collectors.toList());
-        
-        if (startingTargets.isEmpty()) {
-        	return new ArrayList<>();
-        }
-
-        handler(startingTargets, module);
-        return targetMap.getOrDefault(module, new ArrayList<>()).stream().filter(entity -> mc.world.loadedEntityList.contains(entity)).collect(Collectors.toList());
+    public static List<EntityLivingBase> getTargets(boolean players, boolean invisibles, boolean animals, boolean mobs, boolean teams) {
+        return getTargets(players, invisibles, animals, mobs, teams, false);
+    }
+    
+    public static List<EntityLivingBase> getTargets(boolean players, boolean invisibles, boolean animals, boolean mobs, boolean teams, boolean friends) {
+        return mc.world.loadedEntityList.stream().filter(entity -> entity instanceof EntityLivingBase && entity != mc.getRenderViewEntity() && (!Sakura.instance.getFriendManager().isFriend(entity.getName()) || friends) && (!(entity instanceof EntityPlayer) || players) && (!(entity instanceof IMob || entity instanceof INpc) || mobs) && (!(entity instanceof EntityAnimal || entity instanceof EntityAmbientCreature || entity instanceof EntityWaterMob) || animals) && (!entity.isInvisible() || invisibles) && !(entity instanceof EntityArmorStand)).map(entity -> ((EntityLivingBase) entity)).filter(entity -> !entity.getName().contains("[NPC]")).filter(entity -> !entity.getName().contains("CLICK DERECHO")).filter(entity -> !entity.getName().contains("MEJORAS")).filter(entity -> !(entity instanceof EntityPlayer) || (!PlayerUtil.sameTeam(entity) || teams)).collect(Collectors.toList());
     }
 }

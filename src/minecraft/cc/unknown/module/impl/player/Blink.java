@@ -54,7 +54,7 @@ public class Blink extends Module {
 				PacketUtil.sendNoEvent(new C0FPacketConfirmTransaction(transaction.getWindowId(), transaction.getActionNumber(), false));
 			} else if (packet instanceof S00PacketKeepAlive) {
 				S00PacketKeepAlive keepAlive = (S00PacketKeepAlive) packet;
-				PacketUtil.sendNoEvent(new C00PacketKeepAlive(keepAlive.func_149134_c()));
+				PacketUtil.sendNoEvent(new C00PacketKeepAlive(keepAlive.func_149134_c(), 0));
 			} else if (packet instanceof C03PacketPlayer) {
 				break;
 			}
