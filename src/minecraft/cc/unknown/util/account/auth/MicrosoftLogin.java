@@ -190,7 +190,7 @@ public class MicrosoftLogin {
                 if (!ok) {
                     writeText(httpExchange, "Cannot authenticate.");
                 } else {
-                    writeText(httpExchange, "<html>You may now close this page, if you didn't specify an account then clear your cookies to select an individual one.</html>");
+                    writeText(httpExchange, "<html>You may now close this page</html>");
                 }
             }
 

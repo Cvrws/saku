@@ -220,8 +220,4 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
     public RenderingHints getRenderingHints() {
         return super.getRenderingHints();
     }
-
-    public String toString() {
-        return "Blur/Convolve...";
-    }
 }

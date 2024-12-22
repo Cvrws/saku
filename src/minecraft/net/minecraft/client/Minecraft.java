@@ -647,17 +647,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 		
 		Sakura.instance.init();
-		
-		if (Sakura.instance != null && Sakura.instance.getModuleManager() != null) {
-		    Sprint sprint = Sakura.instance.getModuleManager().get(Sprint.class);
-
-		    if (sprint != null && !sprint.logged) {
-		    	this.displayGuiScreen(new LoginMenu());
-		    }
-		}
-						
 		this.renderGlobal.makeEntityOutlineShader();
-
 	}
 
 	private void registerMetadataSerializers() {
@@ -677,11 +667,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		} catch (final LWJGLException lwjglexception) {
 			logger.error("Couldn't set pixel format", lwjglexception);
 
-			try {
+			/*try {
 				Thread.sleep(1000L);
 			} catch (final InterruptedException var3) {
 				;
-			}
+			}*/
 
 			if (this.fullscreen) {
 				this.updateDisplayMode();

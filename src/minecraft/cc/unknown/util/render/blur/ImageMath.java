@@ -1,22 +1,23 @@
 package cc.unknown.util.render.blur;
 
-public class ImageMath {
-    public static final float PI = 3.1415927F;
+import lombok.experimental.UtilityClass;
 
-    public static float step(float a, float x) {
+@UtilityClass
+public class ImageMath {
+    public float step(float a, float x) {
         return (x < a) ? 0.0F : 1.0F;
     }
 
-    public static float clamp(float x, float a, float b) {
+    public float clamp(float x, float a, float b) {
         return (x < a) ? a : (Math.min(x, b));
     }
 
 
-    public static int clamp(int x, int a, int b) {
+    public int clamp(int x, int a, int b) {
         return (x < a) ? a : (Math.min(x, b));
     }
 
-    public static double mod(double a, double b) {
+    public double mod(double a, double b) {
         int n = (int) (a / b);
         a -= n * b;
 
@@ -27,7 +28,7 @@ public class ImageMath {
         return a;
     }
 
-    public static float mod(float a, float b) {
+    public float mod(float a, float b) {
         int n = (int) (a / b);
         a -= n * b;
 
@@ -38,7 +39,7 @@ public class ImageMath {
         return a;
     }
 
-    public static int mod(int a, int b) {
+    public int mod(int a, int b) {
         int n = a / b;
         a -= n * b;
 
@@ -49,7 +50,7 @@ public class ImageMath {
         return a;
     }
 
-    public static void premultiply(int[] p, int offset, int length) {
+    public void premultiply(int[] p, int offset, int length) {
         length += offset;
 
         for (int i = offset; i < length; i++) {
@@ -67,7 +68,7 @@ public class ImageMath {
         }
     }
 
-    public static void unpremultiply(int[] p, int offset, int length) {
+    public void unpremultiply(int[] p, int offset, int length) {
         length += offset;
 
         for (int i = offset; i < length; i++) {

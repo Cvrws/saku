@@ -320,6 +320,14 @@ public class ShaderGroup {
     public final String getShaderGroupName() {
         return this.shaderGroupName;
     }
+    
+    public List<Shader> getShaders() {
+        return listShaders;
+    }
+    
+    public List<Framebuffer> getFbos(){
+        return listFramebuffers;
+    }
 
     private Framebuffer getFramebuffer(final String p_148017_1_) {
         return p_148017_1_ == null ? null : (p_148017_1_.equals("minecraft:main") ? this.mainFramebuffer : this.mapFramebuffers.get(p_148017_1_));

@@ -13,7 +13,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.value.impl.BooleanValue;
 
-@ModuleInfo(aliases = "Free Look", description = "Le permite mirar a su alrededor sin cambiar de dirección", category = Category.VISUALS)
+@ModuleInfo(aliases = "Free Look", description = "Le permite mirar a su alrededor sin cambiar de dirección", category = Category.VISUALS, keyBind = Keyboard.KEY_LMENU)
 public final class FreeLook extends Module {
 
     private int previousPerspective;

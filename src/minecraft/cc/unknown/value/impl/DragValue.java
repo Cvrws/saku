@@ -12,8 +12,12 @@ import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.animation.Animation;
 import cc.unknown.value.Mode;
 import cc.unknown.value.Value;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.gui.ScaledResolution;
 
+@Getter
+@Setter
 public class DragValue extends Value<Vector2d> implements Accessor {
 
     public Vector2d position = new Vector2d(100, 100), targetPosition = new Vector2d(100, 100), scale = new Vector2d(100, 100), lastScale = new Vector2d(-1, -1);
@@ -74,72 +78,4 @@ public class DragValue extends Value<Vector2d> implements Accessor {
         this.lastScale = scale;
         this.lastScaledResolution = scaledResolution;
     }
-
-	public Vector2d getPosition() {
-		return position;
-	}
-
-	public Vector2d getTargetPosition() {
-		return targetPosition;
-	}
-
-	public Vector2d getScale() {
-		return scale;
-	}
-
-	public Vector2d getLastScale() {
-		return lastScale;
-	}
-
-	public Animation getAnimationPosition() {
-		return animationPosition;
-	}
-
-	public Animation getSmoothAnimation() {
-		return smoothAnimation;
-	}
-
-	public ScaledResolution getLastScaledResolution() {
-		return lastScaledResolution;
-	}
-
-	public boolean isRender() {
-		return render;
-	}
-
-	public boolean isStructure() {
-		return structure;
-	}
-
-	public void setPosition(Vector2d position) {
-		this.position = position;
-	}
-
-	public void setTargetPosition(Vector2d targetPosition) {
-		this.targetPosition = targetPosition;
-	}
-
-	public void setLastScale(Vector2d lastScale) {
-		this.lastScale = lastScale;
-	}
-
-	public void setAnimationPosition(Animation animationPosition) {
-		this.animationPosition = animationPosition;
-	}
-
-	public void setSmoothAnimation(Animation smoothAnimation) {
-		this.smoothAnimation = smoothAnimation;
-	}
-
-	public void setLastScaledResolution(ScaledResolution lastScaledResolution) {
-		this.lastScaledResolution = lastScaledResolution;
-	}
-
-	public void setRender(boolean render) {
-		this.render = render;
-	}
-
-	public void setStructure(boolean structure) {
-		this.structure = structure;
-	}
 }

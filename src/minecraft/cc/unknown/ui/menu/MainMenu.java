@@ -41,7 +41,7 @@ public class MainMenu extends GuiMainMenu {
         super.initGui();
         
         if (UserUtil.getUser().isEmpty()) {
-        	mc.displayGuiScreen(new IrcMenu());
+        	mc.displayGuiScreen(new LoginMenu());
         }
         
         this.buttonList.clear();

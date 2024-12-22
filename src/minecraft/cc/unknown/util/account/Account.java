@@ -1,7 +1,11 @@
 package cc.unknown.util.account;
 
+import static cc.unknown.util.client.StreamerUtil.gray;
+import static cc.unknown.util.client.StreamerUtil.green;
+
 import com.google.gson.JsonObject;
 
+import cc.unknown.ui.menu.alt.AltManagerScreen;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -14,7 +18,6 @@ public class Account {
     private String name;
     private String uuid;
     private String accessToken;
-    private long lastUsed;
 
     public Account(AccountType type, String name, String uuid, String accessToken) {
         this.type = type;
@@ -25,7 +28,6 @@ public class Account {
 
     public boolean login() {
         Minecraft.getMinecraft().setSession(new Session(name, uuid, accessToken, "mojang"));
-        lastUsed = System.currentTimeMillis();
         return true;
     }
 
@@ -39,7 +41,6 @@ public class Account {
         object.addProperty("name", name);
         object.addProperty("uuid", uuid);
         object.addProperty("accessToken", accessToken);
-        object.addProperty("lastUsed", lastUsed);
         return object;
     }
 
@@ -58,10 +59,6 @@ public class Account {
 
         if (object.has("accessToken")) {
             accessToken = object.get("accessToken").getAsString();
-        }
-
-        if (object.has("lastUsed")) {
-            lastUsed = object.get("lastUsed").getAsLong();
         }
     }
 }

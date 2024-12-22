@@ -1,6 +1,9 @@
 package cc.unknown.module.impl.ghost;
 
+import static org.apache.commons.lang3.RandomUtils.nextFloat;
+
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -34,6 +37,12 @@ public final class AimAssist extends Module {
 	
 	private final NumberValue horizontalSpeed = new NumberValue("Horizontal Speed", this, 45.0, 5.0, 100.0, 1.0);
 	private final NumberValue horizontalCompl = new NumberValue("Horizontal Complement", this, 35.0, 2.0, 97.0, 1.0);
+	
+	private BooleanValue vertical = new BooleanValue("Vertical", this, false);
+	private NumberValue verticalSpeed = new NumberValue("Vertical Aim Speed", this, 10, 1, 15, 1, () -> !vertical.getValue());
+	private NumberValue verticalCompl = new NumberValue("Vertical Complement", this, 5, 1, 10, 1, () -> !vertical.getValue());
+	private BooleanValue verticalRandom = new BooleanValue("Vertical Random", this, false, () -> !vertical.getValue());
+	private NumberValue verticalRandomization = new NumberValue("Vertical Randomization", this, 1.2, 0.1, 5, 0.01, () -> !verticalRandom.getValue());
 
 	private final ModeValue randomMode = new ModeValue("Speed Randomization", this)
 			.add(new SubMode("Thread Local Random"))
@@ -54,6 +63,7 @@ public final class AimAssist extends Module {
 	private final BooleanValue disableAimWhileBreakingBlock = new BooleanValue("Disable While Breaking Blocks", this, false);
 	private final BooleanValue weaponOnly = new BooleanValue("Only Aim While Holding at Weapon", this, false);
 	public EntityPlayer target;
+	private Random random = new Random();
 	private StopWatch stopWatch = new StopWatch();
 	
 	@EventLink
@@ -70,18 +80,37 @@ public final class AimAssist extends Module {
         double yawOffset = MathUtil.nextSecureDouble(yawSpeed, yawCompl) / 180;
         
         double yawFov = PlayerUtil.fovFromTarget(target);
+        double pitchEntity = PlayerUtil.pitchFromTarget(target, 0);
         float yaw = getSpeedRandomize(randomMode.getValue().getName(), yawFov, yawOffset, yawSpeed, yawCompl);
+		double verticalRandomOffset = ThreadLocalRandom.current().nextDouble(verticalCompl.getValue().doubleValue() - 1.47328, verticalCompl.getValue().doubleValue() + 2.48293) / 100;
+		float resultVertical = (float) (-(pitchEntity * verticalRandomOffset + pitchEntity / (101.0D - (float) ThreadLocalRandom.current().nextDouble(verticalSpeed.getValue().doubleValue() - 4.723847, verticalSpeed.getValue().doubleValue()))));
         
         if (onTarget(target)) {
             if (isYawFov(yawFov)) {
                 mc.player.rotationYaw += yaw;
                 mc.player.setAngles(Math.abs(yaw / 50), 0.0f);
             }
+            
+			if (vertical.getValue()) {
+				float pitchChange = random.nextBoolean() ? -nextFloat(0F, verticalRandomization.getValue().floatValue()) : nextFloat(0F, verticalRandomization.getValue().floatValue());
+				float pitchAdjustment = (float) (verticalRandom.getValue() ? pitchChange : resultVertical);
+				float newPitch = mc.player.rotationPitch + pitchAdjustment;
+				mc.player.rotationPitch += pitchAdjustment;
+				mc.player.rotationPitch = newPitch >= 90f ? newPitch - 360f : newPitch <= -90f ? newPitch + 360f : newPitch;
+			}
         } else {
         	if (isYawFov(yawFov)) {
             	mc.player.rotationYaw += yaw;
             	mc.player.setAngles(Math.abs(yaw / 50), 0.0f);
         	}
+        	
+			if (vertical.getValue()) {
+				float pitchChange = random.nextBoolean() ? -nextFloat(0F, verticalRandomization.getValue().floatValue()) : nextFloat(0F, verticalRandomization.getValue().floatValue());
+				float pitchAdjustment = (float) (verticalRandom.getValue() ? pitchChange : resultVertical);
+				float newPitch = mc.player.rotationPitch + pitchAdjustment;
+				mc.player.rotationPitch += pitchAdjustment;
+				mc.player.rotationPitch = newPitch >= 90f ? newPitch - 360f : newPitch <= -90f ? newPitch + 360f : newPitch;
+			}
         }
 	};
 

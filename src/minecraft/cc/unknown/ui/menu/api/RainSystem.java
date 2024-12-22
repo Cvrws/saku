@@ -72,7 +72,7 @@ public class RainSystem {
         }
 
         public void render() {
-        	GL11.glColor4f(1.0f, .5f, 1.0f, 1f);
+        	GL11.glColor4f(1f, 1f, 1f, 1f);
         	GL11.glVertex2f(x, y);
         }
 

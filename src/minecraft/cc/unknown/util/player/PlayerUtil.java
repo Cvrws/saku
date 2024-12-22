@@ -187,6 +187,17 @@ public class PlayerUtil implements Accessor {
 		double diffZ = tg.posZ - mc.player.posZ;
 		return (float) Math.toDegrees(Math.atan2(diffZ, diffX)) - 90.0F;
 	}
+	
+    public double pitchFromTarget(Entity en, float f) {
+        return (double) (mc.player.rotationPitch - pitchToEntity(en, f));
+    }
+
+    public float pitchToEntity(Entity ent, float f) {
+        double x = mc.player.getDistanceToEntity(ent);
+        double y = mc.player.posY - (ent.posY + f);
+        double pitch = (((Math.atan2(x, y) * 180.0D) / Math.PI));
+        return (float) (90 - pitch);
+    }
 
 	public boolean fov(Entity entity, float fov) {
 		fov = (float) ((double) fov * 0.5D);

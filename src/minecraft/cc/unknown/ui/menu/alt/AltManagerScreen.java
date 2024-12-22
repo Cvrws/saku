@@ -14,12 +14,11 @@ import cc.unknown.ui.menu.MainMenu;
 import cc.unknown.ui.menu.api.Button;
 import cc.unknown.ui.menu.api.TextField;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.account.Account;
 import cc.unknown.util.account.auth.MicrosoftAccount;
+import cc.unknown.util.account.auth.MicrosoftLogin;
 import cc.unknown.util.account.name.UsernameGenerator;
 import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.BackgroundUtil;
-import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.render.animation.Easing;
 import cc.unknown.util.render.font.Font;
@@ -32,7 +31,7 @@ import net.minecraft.util.Session.Type;
 public class AltManagerScreen extends GuiScreen implements Accessor {
     private static TextField usernameBox;
     private static GuiScreen reference;
-    private String status = yellow + "Idle...";
+    public String status = yellow + "Idle...";
     private Animation animation;
     private static final Font FONT_RENDERER = Fonts.ROBOTO.get(20, Weight.LIGHT);
 
@@ -116,7 +115,6 @@ public class AltManagerScreen extends GuiScreen implements Accessor {
             }
         	break;
         case 3:
-        	status = gray + "Abriendo navegador...";
             MicrosoftAccount.create();
         	break;
         case 4:

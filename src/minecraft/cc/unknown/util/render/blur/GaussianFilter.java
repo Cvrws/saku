@@ -128,8 +128,4 @@ public class GaussianFilter extends ConvolveFilter {
         dst.setRGB(0, 0, width, height, inPixels, 0, width);
         return dst;
     }
-
-    public String toString() {
-        return "Blur/Gaussian Blur...";
-    }
 }
