@@ -189,10 +189,10 @@ public final class RotationComponent extends Component {
 			rotations = RotationUtil.smooth(new Vector2f(targetYaw, targetPitch), rotationSpeed + Math.random());
 
 			if (correctMovement == MovementFix.SILENT || correctMovement == MovementFix.STRICT) {
-				mc.player.movementYaw = rotations.x;
+				mc.player.rotationYaw = rotations.x;
 			}
 
-			mc.player.velocityYaw = rotations.x;
+			mc.player.rotationYaw = rotations.x;
 		}
 
 		smoothed = true;

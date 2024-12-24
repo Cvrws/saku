@@ -31,6 +31,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityEgg;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucketMilk;
 import net.minecraft.item.ItemFood;
@@ -246,20 +247,6 @@ public class PlayerUtil implements Accessor {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Checks if another players' team is the same as the players' team
-	 *
-	 * @return same team
-	 */
-	public boolean sameTeam(final EntityLivingBase player) {
-		if (player.getTeam() != null && mc.player.getTeam() != null) {
-			final char c1 = player.getDisplayName().getFormattedText().charAt(1);
-			final char c2 = mc.player.getDisplayName().getFormattedText().charAt(1);
-			return c1 == c2;
-		}
-		return false;
 	}
 
 	/**
@@ -591,6 +578,10 @@ public class PlayerUtil implements Accessor {
 			return item instanceof ItemSword;
 		}
 	}
+	
+	public boolean isTeam(EntityPlayer player) {
+		return isTeam(player, true, true);
+	}
 
 	public boolean isTeam(final EntityPlayer e, final EntityPlayer e2) {
 		if (e2.getTeam() != null && e.getTeam() != null) {
@@ -760,5 +751,43 @@ public class PlayerUtil implements Accessor {
     
     public ItemStack getItemStack() {
         return (mc.player == null || mc.player.inventoryContainer == null ? null : mc.player.inventoryContainer.getSlot(mc.player.inventory.currentItem + 36).getStack());
+    }
+    
+    public boolean isLobby() {
+        if (mc.world == null) {
+            return true;
+        }
+
+        List<Entity> entities = (List<Entity>) mc.world.getLoadedEntityList();
+        for (Entity entity : entities) {
+            if (entity != null && entity.getName().equals("§e§lCLICK TO PLAY")) {
+                return true;
+            }
+        }
+
+        boolean hasNetherStar = false;
+        boolean hasCompass = false;
+        boolean hasClock = false;
+        
+        for (ItemStack stack : mc.player.inventory.mainInventory) {
+            if (stack != null) {
+                if (stack.getItem() == Items.nether_star) {
+                    hasNetherStar = true;
+                }
+                
+                if (stack.getItem() == Items.compass) {
+                    hasCompass = true;
+                }
+                
+                if (stack.getItem() == Items.clock) {
+                	hasClock = true;
+                }
+                
+                if (hasNetherStar || hasCompass || hasClock) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -44,7 +44,7 @@ public class AutoClicker extends Module {
 			.setDefault("Left");
 
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 8, 14, 1, 20, 1);
-	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 1.1, 5, 0.1);
+	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 1.1, 2, 0.1);
 
 	private final BooleanValue breakBlocks = new BooleanValue("Break Blocks", this, true, () -> !isButtonClick());
 	private final BooleanValue guiClicker = new BooleanValue("Gui Clicker", this, false, () -> !isButtonClick());
@@ -123,7 +123,7 @@ public class AutoClicker extends Module {
 
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		mc.leftClickCounter = -1;
+		mc.leftClickCounter = 0;
 	};
 
 	private void handleLeftClick() {

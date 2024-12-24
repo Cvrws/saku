@@ -14,7 +14,7 @@ import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S32PacketConfirmTransaction;
 
-@ModuleInfo(aliases = "Anticheat Detector", description = "Detecta que anticheat tiene cada servidor [BETA]", category = Category.OTHER)
+@ModuleInfo(aliases = {"Anticheat Detector", "ac detector", "ac find"}, description = "Detecta que anticheat tiene cada servidor [Esto no suele ser preciso]", category = Category.OTHER)
 public final class AnticheatDetector extends Module {
 
     private static final int PATTERN_LENGTH = 15;
@@ -76,14 +76,6 @@ public final class AnticheatDetector extends Module {
     	    if (history.isEmpty() || history.get(0) != -23767) return false;
     	    for (int i = 0; i < history.size() - 1; i++) {
     	        if (history.get(i) - history.get(i + 1) != -1) return false;
-    	    }
-    	    return true;
-    	}));
-    	
-    	anticheatPatterns.put("Frequency", new PatternChecker((history) -> {
-    	    int first = history.get(0);
-    	    for (int num : history) {
-    	        if (num != first) return false;
     	    }
     	    return true;
     	}));

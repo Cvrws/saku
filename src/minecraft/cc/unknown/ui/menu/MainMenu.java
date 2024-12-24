@@ -6,11 +6,9 @@ import java.util.function.Consumer;
 
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.ui.menu.alt.AltManagerScreen;
 import cc.unknown.ui.menu.api.Button;
 import cc.unknown.ui.menu.api.RainSystem;
-import cc.unknown.util.client.irc.UserUtil;
 import cc.unknown.util.render.font.Font;
 import lombok.SneakyThrows;
 import net.minecraft.client.gui.GuiButton;
@@ -39,11 +37,6 @@ public class MainMenu extends GuiMainMenu {
     @Override
     public void initGui() {
         super.initGui();
-        
-        if (UserUtil.getUser().isEmpty()) {
-        	mc.displayGuiScreen(new LoginMenu());
-        }
-        
         this.buttonList.clear();
 
         final String[] keys = {"SinglePlayer", "MultiPlayer", "Alt Manager", "Settings"};
@@ -78,11 +71,7 @@ public class MainMenu extends GuiMainMenu {
         ScaledResolution sr = mc.scaledResolution;
 
         String title = "§fSakura Client";
-        String name = String.format("§fLogged in as §7%s", UserUtil.getUser());
-        
-        if(getModule(Sprint.class).logged) {
-        	getModule(Sprint.class).sleek = 1;
-        }
+        String name = String.format("§fLogged in as §7%s", mc.getSession().getUsername());
 
         fontRenderer.drawWithShadow(title, 2.0f, height - 10, -1);
         fontRenderer.drawWithShadow(name, width - fontRenderer.width(name) - 2, height - 10, -1);

@@ -118,17 +118,17 @@ public abstract class Entity implements ICommandSender {
     /**
      * Entity motion X
      */
-    public double motionX, lastMotionX;
+    public double motionX;
 
     /**
      * Entity motion Y
      */
-    public double motionY, lastMotionY;
+    public double motionY;
 
     /**
      * Entity motion Z
      */
-    public double motionZ, lastMotionZ;
+    public double motionZ;
 
     /**
      * Entity rotation Yaw
@@ -150,7 +150,7 @@ public abstract class Entity implements ICommandSender {
      * Axis aligned bounding box.
      */
     @Getter @Setter private transient AxisAlignedBB entityBoundingBox;
-    public boolean onGround, lastGround;
+    public boolean onGround;
 
     public boolean render = true, renderNameTag = true;
 
@@ -260,7 +260,7 @@ public abstract class Entity implements ICommandSender {
      * How many ticks has this entity had ran since being alive
      */
     public int ticksExisted, ticksVisible;
-    public int ticksSinceVelocity, ticksSincePlayerVelocity, ticksSincePlace, ticksSinceAttack;
+    public int ticksSinceVelocity, ticksSincePlayerVelocity, ticksSinceAttack;
     public double lastVelocityDeltaX, lastVelocityDeltaY, lastVelocityDeltaZ;
     public int ticksSinceTeleport;
 
@@ -320,8 +320,6 @@ public abstract class Entity implements ICommandSender {
     protected transient EnumFacing teleportDirection;
     private boolean invulnerable;
     protected transient UUID entityUniqueID;
-
-    public float movementYaw, velocityYaw, lastMovementYaw;
 
     public boolean moved = false;
     public int ticksSinceStep;
@@ -1209,7 +1207,7 @@ public abstract class Entity implements ICommandSender {
         float yaw = this.rotationYaw;
 
         if (player) {
-            final PreStrafeEvent event = new PreStrafeEvent(forward, strafe, friction, this.movementYaw);
+            final PreStrafeEvent event = new PreStrafeEvent(forward, strafe, friction, yaw);
 
             Sakura.instance.getEventBus().handle(event);
 

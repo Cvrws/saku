@@ -1619,7 +1619,6 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 				++entityIn.ticksSincePlayerVelocity;
 				++entityIn.ticksSinceTeleport;
 				++entityIn.ticksSinceAttack;
-				++entityIn.ticksSincePlace;
 
 				if (entityIn.timer.finished(60)) {
 					entityIn.render = true;

@@ -1,5 +1,8 @@
 package cc.unknown;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.lwjgl.opengl.Display;
 
 import com.google.gson.Gson;
@@ -11,27 +14,25 @@ import cc.unknown.component.ComponentManager;
 import cc.unknown.event.Event;
 import cc.unknown.event.bus.impl.EventBus;
 import cc.unknown.module.api.manager.ModuleManager;
-import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.script.ScriptManager;
 import cc.unknown.ui.clickgui.kerosene.KeroScreen;
 import cc.unknown.ui.clickgui.rice.RiceScreen;
-import cc.unknown.ui.menu.LoginMenu;
+import cc.unknown.ui.menu.MainMenu;
 import cc.unknown.ui.theme.ThemeManager;
 import cc.unknown.util.file.FileManager;
 import cc.unknown.util.file.config.ConfigManager;
 import cc.unknown.util.file.enemy.EnemyManager;
 import cc.unknown.util.file.friend.FriendManager;
-import cc.unknown.util.socket.EncryptUtil;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.Config;
 
 @Getter
 public enum Sakura {
     instance;
 
     public static final String NAME = "Sakura";
-    public static final String VERSION = "[KDR Edition]";
     public static final String VERSION_FULL = "5.5";
 
     private EventBus<Event> eventBus;
@@ -51,12 +52,14 @@ public enum Sakura {
 
     private RiceScreen clickGui;
     private KeroScreen betaGui;
-    public boolean firstLogin;
     
+    private final ScheduledExecutorService ex = Executors.newScheduledThreadPool(4);
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public void init() {
-    	Display.setTitle(NAME + " " + VERSION_FULL + " " + VERSION);
+    	Display.setTitle(NAME + " " + VERSION_FULL);
+    	Runtime.getRuntime().addShutdownHook(new Thread(ex::shutdown));
+    	optimize(Minecraft.getMinecraft());
     	
         moduleManager = new ModuleManager();
         componentManager = new ComponentManager();
@@ -90,13 +93,7 @@ public enum Sakura {
         configManager.init();
         bindableManager.init();
         
-		if (instance != null && getModuleManager() != null) {
-		    Sprint sprint = getModuleManager().get(Sprint.class);
-
-		    if (sprint != null && !sprint.logged) {
-		    	Minecraft.getMinecraft().displayGuiScreen(new LoginMenu());
-		    }
-		}
+        Minecraft.getMinecraft().displayGuiScreen(new MainMenu());
     }
 
     public void terminate() {
@@ -105,5 +102,17 @@ public enum Sakura {
         }
     	
         System.gc();
+    }
+    
+    private void optimize(Minecraft mc) {
+    	mc.gameSettings.ofFastRender = !Config.isShaders();
+		mc.gameSettings.ofChunkUpdatesDynamic = true;
+		mc.gameSettings.ofSmartAnimations = true;
+        mc.gameSettings.ofShowGlErrors = false;
+        mc.gameSettings.ofRenderRegions = true;
+    	mc.gameSettings.ofSmoothFps = false;
+        mc.gameSettings.ofFastMath = true;
+        mc.gameSettings.useVbo = true;
+        mc.gameSettings.guiScale = 2;
     }
 }

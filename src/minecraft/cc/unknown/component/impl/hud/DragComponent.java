@@ -36,8 +36,6 @@ public class DragComponent extends Component {
     private static DragValue selectedValue = null;
     private static Vector2d offset;
     private static final ArrayList<Module> modules = new ArrayList<>();
-    private static final Animation animationAlpha = new Animation(LINEAR, 600);
-    public static final StopWatch closeStopWatch = new StopWatch(), stopWatch = new StopWatch();
 
     public static ArrayList<Snap> snaps = new ArrayList<>();
     public static Snap selected;
@@ -49,28 +47,8 @@ public class DragComponent extends Component {
             final int width = scaledResolution.getScaledWidth();
             final int height = scaledResolution.getScaledHeight();
 
-            boolean shouldRender = mc.currentScreen instanceof GuiChat;
-
-            if (!shouldRender) {
-                selectedValue = null;
-            } else {
-                closeStopWatch.reset();
-            }
-
-            animationAlpha.setEasing(LINEAR);
-            animationAlpha.setDuration(300);
-            animationAlpha.run(shouldRender ? 100 : 0);
-
-            if (animationAlpha.getValue() <= 0 && closeStopWatch.finished(0)) {
-                selectedValue = null;
-                return;
-            }
-
             modules.clear();
-            Sakura.instance.getModuleManager().getAll().stream().filter(module ->
-                            module.isEnabled() && module.getValues().stream().
-                                    anyMatch(value -> value instanceof DragValue)).
-                    forEach(modules::add);
+            Sakura.instance.getModuleManager().getAll().stream().filter(module -> module.isEnabled() && module.getValues().stream().anyMatch(value -> value instanceof DragValue)).forEach(modules::add);
 
             if (selectedValue != null) {
                 Vector2d mouse = MouseUtil.mouse();
@@ -94,9 +72,7 @@ public class DragComponent extends Component {
                 snaps.add(new Snap(edgeSnap, 5, Orientation.HORIZONTAL, false, true, false));
 
                 for (Module module : modules) {
-                    // Getting Position Value
-                    Optional<Value<?>> positionValues = module.getValues().stream().filter(value ->
-                            value instanceof DragValue).findFirst();
+                    Optional<Value<?>> positionValues = module.getValues().stream().filter(value -> value instanceof DragValue).findFirst();
                     DragValue positionValue = ((DragValue) positionValues.get());
 
                     if (positionValue == selectedValue) continue;
@@ -128,7 +104,6 @@ public class DragComponent extends Component {
                                     closest = distance;
                                     selectedValue.targetPosition.y = snap.position + y;
                                     selected = snap;
-                                    //RenderUtil.rectangle(0, selected.position, scaledResolution.getScaledWidth(), 0.5, color);
                                 }
                             }
                             break;
@@ -146,7 +121,6 @@ public class DragComponent extends Component {
                                     closest = distance;
                                     selectedValue.targetPosition.x = snap.position + x;
                                     selected = snap;
-                                    //RenderUtil.rectangle(selected.position, 0, 0.5, scaledResolution.getScaledHeight(), color);
                                 }
                             }
                             break;
@@ -177,10 +151,8 @@ public class DragComponent extends Component {
 
                 positionValue.position = new Vector2d(Math.min(width - positionValue.scale.x - offset, positionValue.targetPosition.x), Math.min(height - positionValue.scale.y - offset, positionValue.targetPosition.y));
             }
-            stopWatch.reset();
         } catch (Exception exception) {
             exception.printStackTrace();
-            //System.out.println("exception");
         }
     };
 

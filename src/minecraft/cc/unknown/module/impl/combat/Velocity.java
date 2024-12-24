@@ -11,6 +11,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
+import net.minecraft.entity.player.EntityPlayer;
 
 @ModuleInfo(aliases = "Velocity", description = "Te vuelve un gordito come hamburguesas haciendo que no tengas kb.", category = Category.COMBAT)
 public final class Velocity extends Module {
@@ -21,13 +22,15 @@ public final class Velocity extends Module {
 	@EventLink
 	public final Listener<MoveInputEvent> onMove = event -> {
 	    if (shouldSkipUpdate()) return;
+	    EntityPlayer player = mc.player;
+	    if (player == null) return;
 
 	    double chanceValue = chance.getValue().doubleValue();
-	    double randomFactor = getRandomFactor(chanceValue);
+	    double randomFactor = getFactor(chanceValue);
 
 	    if (!shouldPerformAction(chanceValue, randomFactor)) return;
 	    
-		if (MoveUtil.isMoving() && mc.player.hurtTime > 0 && mc.player.motionY > 0 && (mc.player.ticksSinceVelocity <= 14 || mc.player.onGroundTicks <= 1)) {
+		if (MoveUtil.isMoving() && player.hurtTime > 0 && player.motionY > 0 && (player.ticksSinceVelocity <= 14 || player.onGroundTicks <= 1)) {
 			event.setJump(true);
 		}
 	};
@@ -36,7 +39,7 @@ public final class Velocity extends Module {
 	    return onSwing.getValue() && !mc.player.isSwingInProgress;
 	}
 
-	private double getRandomFactor(double chanceValue) {
+	private double getFactor(double chanceValue) {
 	    return Math.abs(Math.sin(System.nanoTime() * Double.doubleToLongBits(chanceValue))) * 100.0;
 	}
 

@@ -102,7 +102,7 @@ public final class KillAura extends Module {
 	private final BooleanValue throughWalls = new BooleanValue("Through Walls", this, false, () -> !rayCast.getValue());
 
 	private final DescValue advanced = new DescValue("Advanced Settings:", this);
-	private final BooleanValue attackWhilstScaffolding = new BooleanValue("Attack whilst Scaffolding", this, false);
+	private final BooleanValue attackWhilstScaffolding = new BooleanValue("No attack when scaffolding", this, false);
 	private final BooleanValue noSwing = new BooleanValue("No swing", this, false);
 	private final BooleanValue autoDisable = new BooleanValue("Auto disable", this, false);
 	public final BooleanValue smoothRotation = new BooleanValue("Smooth Rotation", this, false);
@@ -114,6 +114,7 @@ public final class KillAura extends Module {
 	public final BooleanValue player = new BooleanValue("Players", this, true);
 	public final BooleanValue invisibles = new BooleanValue("Invisibles", this, true);
 	public final BooleanValue animals = new BooleanValue("Animals", this, false);
+	public final BooleanValue friends = new BooleanValue("Friends", this, false);
 	public final BooleanValue mobs = new BooleanValue("Mobs", this, false);
 
 	private final StopWatch attackStopWatch = new StopWatch();

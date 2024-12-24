@@ -67,10 +67,8 @@ import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.TickEndEvent;
-import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.visual.FreeLook;
-import cc.unknown.ui.menu.LoginMenu;
 import cc.unknown.ui.menu.MainMenu;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.PlayerUtil;
@@ -212,7 +210,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	public static byte[] memoryReserve = new byte[10485760];
 	private static final List<DisplayMode> macDisplayModes = Lists.newArrayList(new DisplayMode(2560, 1600), new DisplayMode(2880, 1800));
 	private final File fileResourcepacks;
-	private final PropertyMap twitchDetails;
 	private final PropertyMap field_181038_N;
 	private ServerData currentServerData;
 
@@ -426,7 +423,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.fileAssets = gameConfig.folderInfo.assetsDir;
 		this.fileResourcepacks = gameConfig.folderInfo.resourcePacksDir;
 		this.launchedVersion = gameConfig.gameInfo.version;
-		this.twitchDetails = gameConfig.userInfo.userProperties;
 		this.field_181038_N = gameConfig.userInfo.field_181172_c;
 		this.mcDefaultResourcePack = new DefaultResourcePack(
 				(new ResourceIndex(gameConfig.folderInfo.assetsDir, gameConfig.folderInfo.assetIndex))
@@ -455,14 +451,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		Bootstrap.register();
 	}
 
-	private String getComputerName() {
-		Map<String, String> env = System.getenv();
-		if (env.containsKey("COMPUTERNAME"))
-			return env.get("COMPUTERNAME");
-		else
-			return env.getOrDefault("HOSTNAME", "Unknown Computer");
-	}
-
 	List splitString(String s, int maxSize) {
 		List<String> linesOfMaxSize = new ArrayList<>();
 
@@ -473,9 +461,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 
 		return linesOfMaxSize;
-	}
-
-	public void sendCrashLog(String log) {
 	}
 
 	public void run() {
@@ -512,10 +497,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 				this.displayCrashReport(reportedexception.getCrashReport());
 				break;
 			} catch (final Throwable throwable1) {
-				final CrashReport crashreport1 = this
-						.addGraphicsAndWorldToCrashReport(new CrashReport("Unexpected error", throwable1));
-				this.sendCrashLog(crashreport1.getCompleteReport());
-
+				final CrashReport crashreport1 = this.addGraphicsAndWorldToCrashReport(new CrashReport("Unexpected error", throwable1));
 				this.freeMemory();
 				logger.fatal("Unreported exception thrown!", throwable1);
 
@@ -535,7 +517,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	private void startGame() throws LWJGLException {
 		this.gameSettings = new GameSettings(this, this.mcDataDir);
 		this.defaultResourcePacks.add(this.mcDefaultResourcePack);
-		//this.startTimerHackThread();
 
 		if (this.gameSettings.overrideHeight > 0 && this.gameSettings.overrideWidth > 0) {
 			this.displayWidth = this.gameSettings.overrideWidth;
@@ -667,11 +648,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		} catch (final LWJGLException lwjglexception) {
 			logger.error("Couldn't set pixel format", lwjglexception);
 
-			/*try {
+			try {
 				Thread.sleep(1000L);
 			} catch (final InterruptedException var3) {
 				;
-			}*/
+			}
 
 			if (this.fullscreen) {
 				this.updateDisplayMode();
@@ -701,12 +682,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 			try {
 				inputstream = this.mcDefaultResourcePack.getInputStream(new ResourceLocation("sakura/icon/icon16.png"));
-				inputstream1 = this.mcDefaultResourcePack
-						.getInputStream(new ResourceLocation("sakura/icon/icon32.png"));
+				inputstream1 = this.mcDefaultResourcePack.getInputStream(new ResourceLocation("sakura/icon/icon32.png"));
 
 				if (inputstream != null && inputstream1 != null) {
-					Display.setIcon(new ByteBuffer[] { this.readImageToBuffer(inputstream),
-							this.readImageToBuffer(inputstream1) });
+					Display.setIcon(new ByteBuffer[] { this.readImageToBuffer(inputstream), this.readImageToBuffer(inputstream1) });
 				}
 			} catch (IOException ioexception) {
 				logger.error("Couldn't set icon", ioexception);
@@ -738,22 +717,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	public String getVersion() {
 		return this.launchedVersion;
 	}
-
-	/*private void startTimerHackThread() {
-		final Thread thread = new Thread("Timer hack thread") {
-			public void run() {
-				while (Minecraft.this.running) {
-					try {
-						Thread.sleep(2147483647L);
-					} catch (final InterruptedException var2) {
-						;
-					}
-				}
-			}
-		};
-		thread.setDaemon(true);
-		thread.start();
-	}*/
 
 	public void crashed(final CrashReport crash) {
 		this.hasCrashed = true;
@@ -1681,16 +1644,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	 */
 	public void runTick() throws IOException {
 		scaledResolution = new ScaledResolution(this);
-
-		if (player != null) {
-			player.lastMotionX = player.motionX;
-			player.lastMotionY = player.motionY;
-			player.lastMotionZ = player.motionZ;
-			player.lastGround = player.onGround;
-
-			player.lastMovementYaw = player.movementYaw;
-			player.movementYaw = player.velocityYaw = player.rotationYaw;
-		}
 
 		if (this.rightClickDelayTimer > 0) {
 			--this.rightClickDelayTimer;
@@ -2791,10 +2744,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 	public Timer getTimer() {
 		return timer;
-	}
-
-	public PropertyMap getTwitchDetails() {
-		return this.twitchDetails;
 	}
 
 	public PropertyMap func_181037_M() {

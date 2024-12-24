@@ -857,7 +857,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
                             d1 = (Math.random() - Math.random()) * 0.01D;
                         }
 
-                        this.attackedAtYaw = (float) (MathHelper.atan2(d0, d1) * 180.0D / Math.PI - (double) this.movementYaw);
+                        this.attackedAtYaw = (float) (MathHelper.atan2(d0, d1) * 180.0D / Math.PI - (double) this.rotationYaw);
                         this.knockBack(entity, amount, d1, d0);
                     } else {
                         this.attackedAtYaw = (float) ((int) (Math.random() * 2.0D) * 180);
@@ -1390,11 +1390,10 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
         }
 
         if (this == Minecraft.getMinecraft().player) {
-            final JumpEvent event = new JumpEvent(jumpMotion, this.movementYaw);
+            final JumpEvent event = new JumpEvent(jumpMotion, this.rotationYaw);
             Sakura.instance.getEventBus().handle(event);
             jumpMotion = event.getJumpMotion();
-            this.movementYaw = event.getYaw();
-            this.velocityYaw = event.getYaw();
+            this.rotationYaw = event.getYaw();
 
             if (event.isCancelled()) {
                 return;
@@ -1405,7 +1404,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
         this.motionY = jumpMotion;
 
         if (this.isSprinting()) {
-            float f = this.movementYaw * 0.017453292F;
+            float f = this.rotationYaw * 0.017453292F;
 
             final Minecraft mc = Minecraft.getMinecraft();
             if (mc.player.omniSprint) {

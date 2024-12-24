@@ -1,4 +1,4 @@
-package cc.unknown.util.client.irc;
+package cc.unknown.util.client;
 
 import static cc.unknown.util.client.StreamerUtil.blue;
 import static cc.unknown.util.client.StreamerUtil.darkAqua;
@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.minecraft.client.Minecraft;
 
 @Getter
 @Setter
@@ -95,7 +96,7 @@ public class IRC extends ListenerAdapter {
 	public synchronized void sendMessage(String message) {
 		TextChannel channel = jda.getTextChannelById(channelId);
 		if (channel != null) {
-			channel.sendMessage("-# [IRC] " + UserUtil.getUser() + ": " + message).queue();
+			channel.sendMessage("-# [IRC] " + Minecraft.getMinecraft().getSession().getUsername() + ": " + message).queue();
 		}
 	}
 	

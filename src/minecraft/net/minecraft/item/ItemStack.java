@@ -37,7 +37,7 @@ import net.minecraft.world.World;
 
 public final class ItemStack {
     public static final DecimalFormat DECIMALFORMAT = new DecimalFormat("#.###");
-
+    public static final ItemStack EMPTY = new ItemStack();
     /**
      * Size of the stack.
      */
@@ -61,7 +61,7 @@ public final class ItemStack {
     private EntityItemFrame itemFrame;
     private Block canDestroyCacheBlock;
     private boolean canDestroyCacheResult;
-    private Block canPlaceOnCacheBlock;
+    public Block canPlaceOnCacheBlock;
     private boolean canPlaceOnCacheResult;
 
     public ItemStack(final Block blockIn) {
@@ -114,6 +114,7 @@ public final class ItemStack {
         this.canPlaceOnCacheBlock = null;
         this.canPlaceOnCacheResult = false;
     }
+    
 
     /**
      * Splits off a stack of the given amount of this stack and reduces this stack by the amount.
@@ -920,5 +921,13 @@ public final class ItemStack {
             this.canPlaceOnCacheResult = false;
             return false;
         }
+    }
+    
+    public static ItemStack convert(ItemStack itemStack) {
+        if (itemStack == null) {
+            return EMPTY;
+        }
+        
+        return new ItemStack();
     }
 }

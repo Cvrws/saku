@@ -18,7 +18,7 @@ import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Session;
 
-@ModuleInfo(aliases = "Alt Generator", description = "Genera cuentas de 3 letras no registradas para universocraft [BETA]", category = Category.OTHER)
+@ModuleInfo(aliases = "Alt Generator", description = "Te recomiendo no activar esto xd", category = Category.OTHER)
 public final class AltGenerator extends Module {
 
     private String serverAddress = "mc.universocraft.com";

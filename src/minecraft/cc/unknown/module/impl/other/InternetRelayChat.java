@@ -13,7 +13,7 @@ import cc.unknown.event.impl.input.ChatInputEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.client.irc.IRC;
+import cc.unknown.util.client.IRC;
 import cc.unknown.value.impl.StringValue;
 
 @ModuleInfo(aliases = {"Irc", "Internet Relay Chat"}, description = "Habla con otros Sakura users", category = Category.OTHER)
