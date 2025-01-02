@@ -94,7 +94,6 @@ public final class MurderMystery extends Module {
 
 	private void sendNotification(String message, ChatFormatting color, String symbol) {
 		PlayerUtil.displayInClient(ChatFormatting.YELLOW + "[" + color + symbol + ChatFormatting.YELLOW + "] " + color + message + ChatFormatting.RESET);
-		
 	}
 
 	private boolean isMurder(String itemName) {

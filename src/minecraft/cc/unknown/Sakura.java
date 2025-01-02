@@ -83,10 +83,8 @@ public enum Sakura {
         enemyManager.init();
 
         clickGui = new RiceScreen();
-        betaGui = new KeroScreen();
         
         clickGui.initGui();
-        betaGui.initGui();
         
         ViaMCP.INSTANCE.initAsyncSlider();
         ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);
