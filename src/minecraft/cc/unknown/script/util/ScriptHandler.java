@@ -26,10 +26,10 @@ public class ScriptHandler {
         try {
             function.call(this, parameters);
         } catch (final ECMAException ex) {
-            PlayerUtil.display(ex.toString());
+            PlayerUtil.displayInClient(ex.toString());
         } catch (final Exception ex) {
             ex.printStackTrace();
-            PlayerUtil.display("A script threw an exception, stacktrace printed.");
+            PlayerUtil.displayInClient("A script threw an exception, stacktrace printed.");
         }
     }
 }

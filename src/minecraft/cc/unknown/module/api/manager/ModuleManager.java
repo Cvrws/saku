@@ -40,7 +40,9 @@ public final class ModuleManager {
         this.put(AimAssist.class, new AimAssist());
         this.put(HitSelect.class, new HitSelect());
         this.put(AutoClicker.class, new AutoClicker());
+        this.put(JumpReset.class, new JumpReset());
         this.put(Reach.class, new Reach());
+        this.put(BlockHit.class, new BlockHit());
         this.put(KeepSprint.class, new KeepSprint());
         this.put(WTap.class, new WTap());
         
@@ -78,6 +80,7 @@ public final class ModuleManager {
 
         // Other
         this.put(AntiCrash.class, new AntiCrash());
+        this.put(RemoteShop.class, new RemoteShop());
         this.put(AntiAFK.class, new AntiAFK());
         this.put(AutoPlay.class, new AutoPlay());
         this.put(AutoRefill.class, new AutoRefill());
@@ -105,6 +108,7 @@ public final class ModuleManager {
         this.put(AutoTool.class, new AutoTool());
         this.put(Respawn.class, new Respawn());
         this.put(Blink.class, new Blink());
+        this.put(GhostHand.class, new GhostHand());
         this.put(Derp.class, new Derp());
         this.put(NoClickDelay.class, new NoClickDelay());
         this.put(FastUse.class, new FastUse());
@@ -116,11 +120,11 @@ public final class ModuleManager {
         this.put(Ambience.class, new Ambience());
         this.put(Animations.class, new Animations());
         this.put(ChestESP.class, new ChestESP());
-        this.put(BedESP.class, new BedESP());
         this.put(ClickGUI.class, new ClickGUI());
         this.put(CPSDisplay.class, new CPSDisplay());
         this.put(FPSDisplay.class, new FPSDisplay());
         this.put(FreeCam.class, new FreeCam());
+        this.put(AntiBlind.class, new AntiBlind());
         this.put(FreeLook.class, new FreeLook());
         this.put(FullBright.class, new FullBright());
         this.put(HurtCamera.class, new HurtCamera());

@@ -219,8 +219,10 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 	 *
 	 * @param entityYaw The yaw rotation of the passed entity
 	 */
-	public void doRender(final T entity, final double x, final double y, final double z, final float entityYaw, final float partialTicks) {
-		if (!Reflector.RenderLivingEvent_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Pre_Constructor, entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z))) {
+	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
+		if (!Reflector.RenderLivingEvent_Pre_Constructor.exists()
+				|| !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Pre_Constructor,
+						new Object[] { entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z) })) {
 			if (animateModelLiving) {
 				entity.limbSwingAmount = 1.0F;
 			}
@@ -238,16 +240,18 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 			this.mainModel.isChild = entity.isChild();
 
 			try {
-	            RenderRotationEvent event = new RenderRotationEvent(entity.rotationYaw, entity.rotationPitch);
-	            Sakura.instance.getEventBus().handle(event);
-	            
+				RenderRotationEvent event = new RenderRotationEvent(entity.rotationYaw, entity.rotationPitch);
+				Sakura.instance.getEventBus().handle(event);
+
 				float f = this.interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
-				final float f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
+				final float f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead,
+						partialTicks);
 				float f2 = f1 - f;
 
 				if (this.mainModel.isRiding && entity.ridingEntity instanceof EntityLivingBase) {
 					final EntityLivingBase entitylivingbase = (EntityLivingBase) entity.ridingEntity;
-					f = this.interpolateRotation(entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, partialTicks);
+					f = this.interpolateRotation(entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset,
+							partialTicks);
 					f2 = f1 - f;
 					float f3 = MathHelper.wrapAngleTo180_float(f2);
 
@@ -268,7 +272,8 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 					f2 = f1 - f;
 				}
 
-				final float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+				final float f7 = entity.prevRotationPitch
+						+ (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
 				this.renderLivingAt(entity, x, y, z);
 				final float f8 = this.handleRotationFloat(entity, partialTicks);
 				this.rotateCorpse(entity, f8, f, partialTicks);
@@ -277,18 +282,19 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 				this.preRenderCallback(entity, partialTicks);
 				final float f4 = 0.0625F;
 				GlStateManager.translate(0.0F, -1.5078125F, 0.0F);
-				float f5 = entity.prevLimbSwingAmount + (entity.limbSwingAmount - entity.prevLimbSwingAmount) * partialTicks;
+				float f5 = entity.prevLimbSwingAmount
+						+ (entity.limbSwingAmount - entity.prevLimbSwingAmount) * partialTicks;
 				float f6 = entity.limbSwing - entity.limbSwingAmount * (1.0F - partialTicks);
 
-	            if (entity instanceof EntityPlayer) {
-	            	PreRenderLivingEntityEvent pre = new PreRenderLivingEntityEvent(entity, f6, f5, f7, f2, f8, f, f4);
-	                Sakura.instance.getEventBus().handle(pre);
+				if (entity instanceof EntityPlayer) {
+					PreRenderLivingEntityEvent pre = new PreRenderLivingEntityEvent(entity, f6, f5, f7, f2, f8, f, f4);
+					Sakura.instance.getEventBus().handle(pre);
 
-	                if (pre.isCancelled()) {
-	                    return;
-	                }
-	            }
-				
+					if (pre.isCancelled()) {
+						return;
+					}
+				}
+
 				if (entity.isChild()) {
 					f6 *= 3.0F;
 				}
@@ -320,7 +326,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 						this.unsetScoreTeamColor();
 					}
 				} else {
-					final boolean flag = entity.render && this.setDoRenderBrightness(entity, partialTicks);
+					final boolean flag = /* entity.render && */this.setDoRenderBrightness(entity, partialTicks);
 
 					if (EmissiveTextures.isActive()) {
 						EmissiveTextures.beginRender();
@@ -365,8 +371,8 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 				}
 
 				GlStateManager.disableRescaleNormal();
-			} catch (final Exception exception) {
-				logger.error("Couldn't render entity", exception);
+			} catch (Exception exception) {
+				logger.error((String) "Couldn\'t render entity", (Throwable) exception);
 			}
 
 			GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
@@ -378,12 +384,13 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 			if (!this.renderOutlines) {
 				super.doRender(entity, x, y, z, entityYaw, partialTicks);
 			}
-			
+
 			PostRenderLivingEntityEvent post = new PostRenderLivingEntityEvent(entity);
-	        Sakura.instance.getEventBus().handle(post);
+			Sakura.instance.getEventBus().handle(post);
 
 			if (Reflector.RenderLivingEvent_Post_Constructor.exists()) {
-				Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Post_Constructor, entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z));
+				Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Post_Constructor, entity, this,
+						Double.valueOf(x), Double.valueOf(y), Double.valueOf(z));
 			}
 		}
 	}
@@ -699,12 +706,15 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 	}
 
 	public void renderName(T entity, double x, double y, double z) {
-		if (!Reflector.RenderLivingEvent_Specials_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Pre_Constructor, new Object[] { entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z) })) {
-			
+		if (!Reflector.RenderLivingEvent_Specials_Pre_Constructor.exists()
+				|| !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Pre_Constructor,
+						new Object[] { entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z) })) {
+
 			RenderLabelEvent event = new RenderLabelEvent(entity, x, y, z);
 			Sakura.instance.getEventBus().handle(event);
-			if (event.isCancelled()) return;
-			
+			if (event.isCancelled())
+				return;
+
 			if (this.canRenderName(entity)) {
 				double d0 = entity.getDistanceSqToEntity(this.renderManager.livingPlayer);
 				float f = entity.isSneaking() ? NAME_TAG_RANGE_SNEAK : NAME_TAG_RANGE;
@@ -717,7 +727,9 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 					if (entity.isSneaking()) {
 						FontRenderer fontrenderer = this.getFontRendererFromRenderManager();
 						GlStateManager.pushMatrix();
-						GlStateManager.translate((float) x, (float) y + entity.height + 0.5F - (entity.isChild() ? entity.height / 2.0F : 0.0F), (float) z);
+						GlStateManager.translate((float) x,
+								(float) y + entity.height + 0.5F - (entity.isChild() ? entity.height / 2.0F : 0.0F),
+								(float) z);
 						GL11.glNormal3f(0.0F, 1.0F, 0.0F);
 						GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
 						GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
@@ -745,13 +757,15 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 						GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 						GlStateManager.popMatrix();
 					} else {
-						this.renderOffsetLivingLabel(entity, x, y - (entity.isChild() ? (double) (entity.height / 2.0F) : 0.0D), z, s, 0.02666667F, d0);
+						this.renderOffsetLivingLabel(entity, x,
+								y - (entity.isChild() ? (double) (entity.height / 2.0F) : 0.0D), z, s, 0.02666667F, d0);
 					}
 				}
 			}
 
 			if (Reflector.RenderLivingEvent_Specials_Post_Constructor.exists()) {
-				Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Post_Constructor, new Object[] { entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z) });
+				Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Post_Constructor,
+						new Object[] { entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z) });
 			}
 		}
 	}

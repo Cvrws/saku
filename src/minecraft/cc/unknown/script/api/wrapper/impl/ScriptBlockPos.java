@@ -17,11 +17,11 @@ public class ScriptBlockPos extends ScriptWrapper<BlockPos> {
     }
 
     public float getHardness() {
-        return SlotUtil.getPlayerRelativeBlockHardness(MC.player, MC.world, this.wrapped, MC.player.inventory.currentItem);
+        return SlotUtil.getPlayerRelativeBlockHardness(MC.player, MC.theWorld, this.wrapped, MC.player.inventory.currentItem);
     }
 
     public float getHardness(int hotBarSlot) {
-        return SlotUtil.getPlayerRelativeBlockHardness(MC.player, MC.world, this.wrapped, hotBarSlot);
+        return SlotUtil.getPlayerRelativeBlockHardness(MC.player, MC.theWorld, this.wrapped, hotBarSlot);
     }
 
     public ScriptBlock getBlock() {

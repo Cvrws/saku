@@ -20,7 +20,7 @@ public class Join extends Command {
 	@Override
 	public void execute(String[] args) {
 	    if (args.length == 2 && args[0].equalsIgnoreCase("game") && args[1].equalsIgnoreCase("list")) {
-	    	PlayerUtil.display(getList());
+	    	PlayerUtil.displayInClient(getList());
 	        return;
 	    }
 

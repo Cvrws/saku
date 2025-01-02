@@ -83,7 +83,7 @@ public class NoClip extends Module {
 
         if (RotationComponent.rotations.y >= 89 && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && mc.player.posY == mc.objectMouseOver.getBlockPos().up().getY()) {
 
-            mc.playerController.onPlayerRightClick(mc.player, mc.world, PlayerUtil.getItemStack(),  mc.objectMouseOver.getBlockPos(), mc.objectMouseOver.sideHit, mc.objectMouseOver.hitVec);
+            mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(),  mc.objectMouseOver.getBlockPos(), mc.objectMouseOver.sideHit, mc.objectMouseOver.hitVec);
 
             mc.player.swingItem();
         }
@@ -91,7 +91,7 @@ public class NoClip extends Module {
 	
 	@EventLink
 	public final Listener<Render2DEvent> onRender2D = event -> {
-        final ScaledResolution scaledResolution = mc.scaledResolution;
+        final ScaledResolution scaledResolution = /*mc.scaledResolution*/ new ScaledResolution(mc);
 
         final String name = "Una ves activado presiona shift";
         mc.fontRendererObj.drawCentered(name, scaledResolution.getScaledWidth() / 2F, scaledResolution.getScaledHeight() - 89.5F, new Color(0, 0, 0, 200).hashCode());

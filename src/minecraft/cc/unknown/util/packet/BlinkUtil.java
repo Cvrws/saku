@@ -101,7 +101,7 @@ public class BlinkUtil implements Accessor {
     
     public boolean handleReceivePacket(PacketReceiveEvent event) {
         final Packet packet = event.getPacket();
-        if (mc.player == null || mc.world == null || mc.player.ticksExisted < 4) return false;
+        if (mc.player == null || mc.theWorld == null || mc.player.ticksExisted < 4) return false;
         if (isBlinking()) {
         	if (BLINK_INBOUND) {
                 if (!(packet instanceof S00PacketDisconnect || packet instanceof S01PacketPong ||
@@ -120,7 +120,7 @@ public class BlinkUtil implements Accessor {
     
     public boolean handleSendPacket(PacketSendEvent event) {
         final Packet packet = event.getPacket();
-        if (mc.player == null || mc.world == null || mc.player.ticksExisted < 4) return false;
+        if (mc.player == null || mc.theWorld == null || mc.player.ticksExisted < 4) return false;
         if (isBlinking()) {
         	if (BLINK_OUTBOUND) {
                 if (!(packet instanceof C00PacketKeepAlive || packet instanceof C00Handshake ||

@@ -41,17 +41,17 @@ public final class Ambience extends Module {
 
 	@Override
 	public void onDisable() {
-		mc.world.setRainStrength(0);
-		mc.world.getWorldInfo().setCleanWeatherTime(Integer.MAX_VALUE);
-		mc.world.getWorldInfo().setRainTime(0);
-		mc.world.getWorldInfo().setThunderTime(0);
-		mc.world.getWorldInfo().setRaining(false);
-		mc.world.getWorldInfo().setThundering(false);
+		mc.theWorld.setRainStrength(0);
+		mc.theWorld.getWorldInfo().setCleanWeatherTime(Integer.MAX_VALUE);
+		mc.theWorld.getWorldInfo().setRainTime(0);
+		mc.theWorld.getWorldInfo().setThunderTime(0);
+		mc.theWorld.getWorldInfo().setRaining(false);
+		mc.theWorld.getWorldInfo().setThundering(false);
 	}
 
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		mc.world.setWorldTime(
+		mc.theWorld.setWorldTime(
 				(long) (time.getValue().intValue() + (System.currentTimeMillis() * speed.getValue().intValue())));
 	};
 
@@ -61,24 +61,24 @@ public final class Ambience extends Module {
 
 			switch (this.weather.getValue().getName()) {
 			case "Clear": {
-				mc.world.setRainStrength(0);
-				mc.world.getWorldInfo().setCleanWeatherTime(Integer.MAX_VALUE);
-				mc.world.getWorldInfo().setRainTime(0);
-				mc.world.getWorldInfo().setThunderTime(0);
-				mc.world.getWorldInfo().setRaining(false);
-				mc.world.getWorldInfo().setThundering(false);
+				mc.theWorld.setRainStrength(0);
+				mc.theWorld.getWorldInfo().setCleanWeatherTime(Integer.MAX_VALUE);
+				mc.theWorld.getWorldInfo().setRainTime(0);
+				mc.theWorld.getWorldInfo().setThunderTime(0);
+				mc.theWorld.getWorldInfo().setRaining(false);
+				mc.theWorld.getWorldInfo().setThundering(false);
 				break;
 			}
 			case "Nether Particles":
 			case "Light Snow":
 			case "Heavy Snow":
 			case "Rain": {
-				mc.world.setRainStrength(1);
-				mc.world.getWorldInfo().setCleanWeatherTime(0);
-				mc.world.getWorldInfo().setRainTime(Integer.MAX_VALUE);
-				mc.world.getWorldInfo().setThunderTime(Integer.MAX_VALUE);
-				mc.world.getWorldInfo().setRaining(true);
-				mc.world.getWorldInfo().setThundering(false);
+				mc.theWorld.setRainStrength(1);
+				mc.theWorld.getWorldInfo().setCleanWeatherTime(0);
+				mc.theWorld.getWorldInfo().setRainTime(Integer.MAX_VALUE);
+				mc.theWorld.getWorldInfo().setThunderTime(Integer.MAX_VALUE);
+				mc.theWorld.getWorldInfo().setRaining(true);
+				mc.theWorld.getWorldInfo().setThundering(false);
 			}
 
 			}

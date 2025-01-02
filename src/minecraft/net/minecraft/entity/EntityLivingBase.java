@@ -16,6 +16,7 @@ import cc.unknown.component.impl.player.RotationComponent;
 import cc.unknown.event.impl.player.JumpEvent;
 import cc.unknown.event.impl.player.MinimumMotionEvent;
 import cc.unknown.event.impl.render.SwingAnimationEvent;
+import cc.unknown.module.impl.visual.AntiBlind;
 import cc.unknown.util.player.MoveUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -671,6 +672,13 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
     }
 
     public boolean isPotionActive(final Potion potionIn) {
+    	AntiBlind antiBlind = (AntiBlind) Sakura.instance.getModuleManager().get(AntiBlind.class);
+    	
+    	if (antiBlind.isEnabled()) {
+    		if ((potionIn == Potion.confusion || potionIn == Potion.blindness) && antiBlind.removeConfusion.getValue()) {
+    			return false;
+    		}
+        }
         return this.isPotionActive(potionIn.id);
     }
 
@@ -857,7 +865,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
                             d1 = (Math.random() - Math.random()) * 0.01D;
                         }
 
-                        this.attackedAtYaw = (float) (MathHelper.atan2(d0, d1) * 180.0D / Math.PI - (double) this.rotationYaw);
+                        this.attackedAtYaw = (float) (MathHelper.atan2(d0, d1) * 180.0D / Math.PI - (double) this.movementYaw);
                         this.knockBack(entity, amount, d1, d0);
                     } else {
                         this.attackedAtYaw = (float) ((int) (Math.random() * 2.0D) * 180);
@@ -1390,10 +1398,11 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
         }
 
         if (this == Minecraft.getMinecraft().player) {
-            final JumpEvent event = new JumpEvent(jumpMotion, this.rotationYaw);
+            final JumpEvent event = new JumpEvent(jumpMotion, this.movementYaw);
             Sakura.instance.getEventBus().handle(event);
             jumpMotion = event.getJumpMotion();
-            this.rotationYaw = event.getYaw();
+            this.movementYaw = event.getYaw();
+            this.velocityYaw = event.getYaw();
 
             if (event.isCancelled()) {
                 return;
@@ -1404,7 +1413,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
         this.motionY = jumpMotion;
 
         if (this.isSprinting()) {
-            float f = this.rotationYaw * 0.017453292F;
+            float f = this.movementYaw * 0.017453292F;
 
             final Minecraft mc = Minecraft.getMinecraft();
             if (mc.player.omniSprint) {

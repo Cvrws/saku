@@ -31,7 +31,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityEgg;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucketMilk;
 import net.minecraft.item.ItemFood;
@@ -81,7 +80,7 @@ public class PlayerUtil implements Accessor {
 	 * @return block
 	 */
 	public Block block(final double x, final double y, final double z) {
-		return mc.world.getBlockState(new BlockPos(x, y, z)).getBlock();
+		return mc.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();
 	}
 
 	/**
@@ -90,7 +89,7 @@ public class PlayerUtil implements Accessor {
 	 * @return block
 	 */
 	public Block block(final BlockPos blockPos) {
-		return mc.world.getBlockState(blockPos).getBlock();
+		return mc.theWorld.getBlockState(blockPos).getBlock();
 	}
 
 	public Block block(final Vec3i pos) {
@@ -142,7 +141,7 @@ public class PlayerUtil implements Accessor {
 	}
 
 	public float[] getDirectionToBlock(final double x, final double y, final double z, final EnumFacing enumfacing) {
-		final EntityEgg var4 = new EntityEgg(mc.world);
+		final EntityEgg var4 = new EntityEgg(mc.theWorld);
 		var4.posX = x + 0.5D;
 		var4.posY = y + 0.5D;
 		var4.posZ = z + 0.5D;
@@ -250,6 +249,20 @@ public class PlayerUtil implements Accessor {
 	}
 
 	/**
+	 * Checks if another players' team is the same as the players' team
+	 *
+	 * @return same team
+	 */
+	public boolean sameTeam(final EntityLivingBase player) {
+		if (player.getTeam() != null && mc.player.getTeam() != null) {
+			final char c1 = player.getDisplayName().getFormattedText().charAt(1);
+			final char c2 = mc.player.getDisplayName().getFormattedText().charAt(1);
+			return c1 == c2;
+		}
+		return false;
+	}
+
+	/**
 	 * Checks if there is a block under the player
 	 *
 	 * @return block under
@@ -262,7 +275,7 @@ public class PlayerUtil implements Accessor {
 		if (boundingBox) {
 			final AxisAlignedBB bb = mc.player.getEntityBoundingBox().offset(0, -height, 0);
 
-			if (!mc.world.getCollidingBoundingBoxes(mc.player, bb).isEmpty()) {
+			if (!mc.theWorld.getCollidingBoundingBoxes(mc.player, bb).isEmpty()) {
 				return true;
 			}
 		} else {
@@ -279,7 +292,7 @@ public class PlayerUtil implements Accessor {
 		final AxisAlignedBB bb = mc.player.getEntityBoundingBox().offset(0, height / 2f, 0).expand(0,
 				height - mc.player.height, 0);
 
-		if (!mc.world.getCollidingBoundingBoxes(mc.player, bb).isEmpty()) {
+		if (!mc.theWorld.getCollidingBoundingBoxes(mc.player, bb).isEmpty()) {
 			return true;
 		}
 
@@ -287,7 +300,7 @@ public class PlayerUtil implements Accessor {
 	}
 
 	public boolean isOverAir() {
-		return mc.world.isAirBlock(new BlockPos(MathHelper.floor_double(mc.player.posX),
+		return mc.theWorld.isAirBlock(new BlockPos(MathHelper.floor_double(mc.player.posX),
 				MathHelper.floor_double(mc.player.posY - 1.0D), MathHelper.floor_double(mc.player.posZ)));
 	}
 
@@ -391,7 +404,7 @@ public class PlayerUtil implements Accessor {
 		}
 
 		final EntityPlayerSP player = mc.player;
-		final WorldClient world = mc.world;
+		final WorldClient world = mc.theWorld;
 		final AxisAlignedBB bb = player.getEntityBoundingBox();
 		for (int x = MathHelper.floor_double(bb.minX); x < MathHelper.floor_double(bb.maxX) + 1; ++x) {
 			for (int y = MathHelper.floor_double(bb.minY); y < MathHelper.floor_double(bb.maxY) + 1; ++y) {
@@ -427,7 +440,7 @@ public class PlayerUtil implements Accessor {
 	public boolean onLiquid() {
 		boolean onLiquid = false;
 		final AxisAlignedBB playerBB = mc.player.getEntityBoundingBox();
-		final WorldClient world = mc.world;
+		final WorldClient world = mc.theWorld;
 		final int y = (int) playerBB.offset(0.0, -0.01, 0.0).minY;
 		for (int x = MathHelper.floor_double(playerBB.minX); x < MathHelper.floor_double(playerBB.maxX) + 1; ++x) {
 			for (int z = MathHelper.floor_double(playerBB.minZ); z < MathHelper.floor_double(playerBB.maxZ) + 1; ++z) {
@@ -450,7 +463,7 @@ public class PlayerUtil implements Accessor {
 	public EnumFacingOffset getEnumFacing(final Vec3 position, boolean downwards) {
 		List<EnumFacingOffset> possibleFacings = new ArrayList<>();
 		for (int z2 = -1; z2 <= 1; z2 += 2) {
-			if (!(block(position.xCoord, position.yCoord, position.zCoord + z2).isReplaceable(mc.world,
+			if (!(block(position.xCoord, position.yCoord, position.zCoord + z2).isReplaceable(mc.theWorld,
 					new BlockPos(position.xCoord, position.yCoord, position.zCoord + z2)))) {
 				if (z2 < 0) {
 					possibleFacings.add(new EnumFacingOffset(EnumFacing.SOUTH, new Vec3(0, 0, z2)));
@@ -461,7 +474,7 @@ public class PlayerUtil implements Accessor {
 		}
 
 		for (int x2 = -1; x2 <= 1; x2 += 2) {
-			if (!(block(position.xCoord + x2, position.yCoord, position.zCoord).isReplaceable(mc.world,
+			if (!(block(position.xCoord + x2, position.yCoord, position.zCoord).isReplaceable(mc.theWorld,
 					new BlockPos(position.xCoord + x2, position.yCoord, position.zCoord)))) {
 				if (x2 > 0) {
 					possibleFacings.add(new EnumFacingOffset(EnumFacing.WEST, new Vec3(x2, 0, 0)));
@@ -483,7 +496,7 @@ public class PlayerUtil implements Accessor {
 			return possibleFacings.get(0);
 
 		for (int y2 = -1; y2 <= 1; y2 += 2) {
-			if (!(block(position.xCoord, position.yCoord + y2, position.zCoord).isReplaceable(mc.world,
+			if (!(block(position.xCoord, position.yCoord + y2, position.zCoord).isReplaceable(mc.theWorld,
 					new BlockPos(position.xCoord, position.yCoord + y2, position.zCoord)))) {
 				if (y2 < 0) {
 					return new EnumFacingOffset(EnumFacing.UP, new Vec3(0, y2, 0));
@@ -510,7 +523,7 @@ public class PlayerUtil implements Accessor {
 	                Block block = blockRelativeToPlayer(x, y, z);
 	                BlockPos blockPos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
 
-	                if (!block.isReplaceable(mc.world, blockPos)) {
+	                if (!block.isReplaceable(mc.theWorld, blockPos)) {
 	                    possibilities.add(new Vec3(mc.player.posX + x + 1, mc.player.posY + y, mc.player.posZ + z));
 	                    possibilities.add(new Vec3(mc.player.posX + x - 1, mc.player.posY + y, mc.player.posZ + z));
 	                    possibilities.add(new Vec3(mc.player.posX + x, mc.player.posY + y + 1, mc.player.posZ + z));
@@ -526,7 +539,7 @@ public class PlayerUtil implements Accessor {
 	    possibilities = possibilities.stream()
 	        .filter(vec3 -> mc.player.getDistance(vec3.xCoord, vec3.yCoord, vec3.zCoord) <= 5)
 	        .filter(vec3 -> PlayerUtil.block(vec3.xCoord, vec3.yCoord, vec3.zCoord)
-	                .isReplaceable(mc.world, new BlockPos(vec3.xCoord, vec3.yCoord, vec3.zCoord)))
+	                .isReplaceable(mc.theWorld, new BlockPos(vec3.xCoord, vec3.yCoord, vec3.zCoord)))
 	        .collect(Collectors.toList());
 
 	    if (possibilities.isEmpty()) {
@@ -583,38 +596,25 @@ public class PlayerUtil implements Accessor {
 		return isTeam(player, true, true);
 	}
 
-	public boolean isTeam(final EntityPlayer e, final EntityPlayer e2) {
-		if (e2.getTeam() != null && e.getTeam() != null) {
-			Character target = e2.getDisplayName().getFormattedText().charAt(1);
-			Character player = e.getDisplayName().getFormattedText().charAt(1);
-			if (target.equals(player)) {
-				return true;
-			}
-		} else {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean isTeam(EntityPlayer entity, boolean scoreboard, boolean checkColor) {
-		String entityName = entity.getDisplayName().getUnformattedText();
+	public boolean isTeam(EntityPlayer player, boolean scoreboard, boolean checkColor) {
+		String entityName = player.getDisplayName().getUnformattedText();
 		String playerName = mc.player.getDisplayName().getUnformattedText();
 
 		if (entityName.length() >= 3 && playerName.startsWith(entityName.substring(0, 3))) {
 			return true;
 		}
 
-		if (mc.player.isOnSameTeam((EntityLivingBase) entity)) {
+		if (mc.player.isOnSameTeam((EntityLivingBase) player)) {
 			return true;
 		}
 
-		if (scoreboard && mc.player.getTeam() != null && entity.getTeam() != null
-				&& mc.player.getTeam().isSameTeam(entity.getTeam())) {
+		if (scoreboard && mc.player.getTeam() != null && player.getTeam() != null
+				&& mc.player.getTeam().isSameTeam(player.getTeam())) {
 			return true;
 		}
 
-		if (checkColor && playerName != null && entity.getDisplayName() != null) {
-			String targetName = entity.getDisplayName().getFormattedText().replace("§r", "");
+		if (checkColor && playerName != null && player.getDisplayName() != null) {
+			String targetName = player.getDisplayName().getFormattedText().replace("§r", "");
 			String clientName = playerName.replace("§r", "");
 			return targetName.startsWith("§" + clientName.charAt(1));
 		}
@@ -634,21 +634,6 @@ public class PlayerUtil implements Accessor {
 		return getEyePos(mc.player);
 	}
 
-	public boolean isHoldingFood() {
-		if (mc.player.getHeldItem() == null)
-			return false;
-		if (!(mc.player.getHeldItem().getItem() instanceof ItemFood)
-				&& !(mc.player.getHeldItem().getItem() instanceof ItemBucketMilk))
-			if (mc.player.getHeldItem().getItem() instanceof ItemPotion) {
-				mc.player.getHeldItem().getItem();
-				if (ItemPotion.isSplash(mc.player.getHeldItem().getMetadata()))
-					return false;
-			} else {
-				return false;
-			}
-		return true;
-	}
-
 	public boolean isClicking() {
 		AutoClicker clicker = Sakura.instance.getModuleManager().get(AutoClicker.class);
 
@@ -658,14 +643,22 @@ public class PlayerUtil implements Accessor {
 			return Mouse.isButtonDown(0) && clicker != null && !clicker.isEnabled();
 	}
 	
-    public void display(final Object message, final Object... objects) {
+	public boolean lookingAtPlayer(EntityPlayer player1, EntityPlayer player2, double m) {
+		double deltaX = player2.posX - player1.posX;
+		double deltaY = player2.posY - player1.posY + player1.getEyeHeight();
+		double deltaZ = player2.posZ - player1.posZ;
+		double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+		return distance < m;
+	}
+	
+    public void displayInClient(final Object message, final Object... objects) {
         if (mc.player != null) {
             final String format = String.format(message.toString(), objects);
             mc.player.addChatMessage(new ChatComponentText(format));
         }
     }
 
-    public void send(final Object message) {
+    public void sendInChat(final Object message) {
         if (mc.player != null) {
             PacketUtil.send(new C01PacketChatMessage(message.toString()));
         }
@@ -751,43 +744,5 @@ public class PlayerUtil implements Accessor {
     
     public ItemStack getItemStack() {
         return (mc.player == null || mc.player.inventoryContainer == null ? null : mc.player.inventoryContainer.getSlot(mc.player.inventory.currentItem + 36).getStack());
-    }
-    
-    public boolean isLobby() {
-        if (mc.world == null) {
-            return true;
-        }
-
-        List<Entity> entities = (List<Entity>) mc.world.getLoadedEntityList();
-        for (Entity entity : entities) {
-            if (entity != null && entity.getName().equals("§e§lCLICK TO PLAY")) {
-                return true;
-            }
-        }
-
-        boolean hasNetherStar = false;
-        boolean hasCompass = false;
-        boolean hasClock = false;
-        
-        for (ItemStack stack : mc.player.inventory.mainInventory) {
-            if (stack != null) {
-                if (stack.getItem() == Items.nether_star) {
-                    hasNetherStar = true;
-                }
-                
-                if (stack.getItem() == Items.compass) {
-                    hasCompass = true;
-                }
-                
-                if (stack.getItem() == Items.clock) {
-                	hasClock = true;
-                }
-                
-                if (hasNetherStar || hasCompass || hasClock) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

@@ -128,7 +128,7 @@ public class PlayerAPI extends ScriptEntityLiving {
     }
 
     public void attackEntity(final ScriptEntityLiving target) {
-        MC.playerController.attackEntity(MC.player, MC.world.getEntityByID(target.getEntityId()));
+        MC.playerController.attackEntity(MC.player, MC.theWorld.getEntityByID(target.getEntityId()));
     }
 
     public void swingItem() {
@@ -136,7 +136,7 @@ public class PlayerAPI extends ScriptEntityLiving {
     }
 
     public void message(String message) {
-        if (MC.player != null && MC.world != null) MC.player.sendChatMessage(message);
+        if (MC.player != null && MC.theWorld != null) MC.player.sendChatMessage(message);
     }
 
     public void setRotation(ScriptVector2f rotations, double rotationSpeed, boolean movementFix) {
@@ -293,7 +293,7 @@ public class PlayerAPI extends ScriptEntityLiving {
     }
 
     public void placeBlock(ScriptItemStack heldStack, ScriptVector3d blockPos, int side, ScriptVector3d hitVec){
-        MC.playerController.onPlayerRightClick(MC.player, MC.world, heldStack.getWrapped(),
+        MC.playerController.onPlayerRightClick(MC.player, MC.theWorld, heldStack.getWrapped(),
                 new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ()), EnumFacing.getFront(side),
                 new Vec3(hitVec.getX(),hitVec.getY(),hitVec.getZ()));
     }

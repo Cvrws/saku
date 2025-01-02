@@ -6,6 +6,7 @@ import static cc.unknown.util.client.StreamerUtil.pink;
 import static cc.unknown.util.client.StreamerUtil.red;
 import static cc.unknown.util.client.StreamerUtil.reset;
 
+import cc.unknown.util.Accessor;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.socket.EncryptUtil;
 import cc.unknown.util.socket.SocketUtil;
@@ -22,8 +23,8 @@ import net.minecraft.client.Minecraft;
 
 @Getter
 @Setter
-public class IRC extends ListenerAdapter {
-	private String channelId = "1319452789352698008";
+public class IRC extends ListenerAdapter implements Accessor {
+	private String channelId = "1056785337181024286";
 
 	@Getter
 	private JDA jda;
@@ -55,9 +56,9 @@ public class IRC extends ListenerAdapter {
 	    	String extUser = extractUsername(content);
 	    	String extContent = extractMessage(content);
 	    	
-	    	PlayerUtil.display(pink + "[S] " + darkAqua + extUser + ": " + reset + extContent);
+	    	PlayerUtil.displayInClient(pink + "[S] " + darkAqua + extUser + ": " + reset + extContent);
 	    } else {
-	    	PlayerUtil.display(blue + "[Discord] " + red + username + ": " + reset + content);
+	    	PlayerUtil.displayInClient(blue + "[Discord] " + red + username + ": " + reset + content);
 	    }
 	}
 	
@@ -95,8 +96,9 @@ public class IRC extends ListenerAdapter {
 	
 	public synchronized void sendMessage(String message) {
 		TextChannel channel = jda.getTextChannelById(channelId);
+
 		if (channel != null) {
-			channel.sendMessage("-# [IRC] " + Minecraft.getMinecraft().getSession().getUsername() + ": " + message).queue();
+			channel.sendMessage("-# [IRC] " + mc.getSession().getUsername() + " - " + mc.player.getMaxHealth() / mc.player.getHealth() + " :" + message).queue();
 		}
 	}
 	

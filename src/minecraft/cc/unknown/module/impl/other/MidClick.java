@@ -62,10 +62,10 @@ public final class MidClick extends Module {
 				EntityPlayer playerHit = (EntityPlayer) mc.objectMouseOver.entityHit;
 				if (!FriendComponent.isFriend(playerHit)) {
 					FriendComponent.addFriend(playerHit);
-					PlayerUtil.send(ChatFormatting.GRAY + playerHit.getName() + " was added to your friends.");
+					PlayerUtil.displayInClient(ChatFormatting.GRAY + playerHit.getName() + " was added to your friends.");
 				} else {
 					FriendComponent.removeFriend(playerHit);
-					PlayerUtil.send(ChatFormatting.GRAY + playerHit.getName() + " was removed from your friends.");
+					PlayerUtil.displayInClient(ChatFormatting.GRAY + playerHit.getName() + " was removed from your friends.");
 				}
 			}
 

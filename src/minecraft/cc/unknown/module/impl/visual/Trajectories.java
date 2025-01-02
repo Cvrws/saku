@@ -101,14 +101,14 @@ public final class Trajectories extends Module {
 				++ticksInAir;
 				Vec3 vec3 = new Vec3(posX, posY, posZ);
 				Vec3 vec4 = new Vec3(posX + motionX, posY + motionY, posZ + motionZ);
-				MovingObjectPosition movingobjectposition = mc.world.rayTraceBlocks(vec3, vec4);
+				MovingObjectPosition movingobjectposition = mc.theWorld.rayTraceBlocks(vec3, vec4);
 				vec3 = new Vec3(posX, posY, posZ);
 				vec4 = new Vec3(posX + motionX, posY + motionY, posZ + motionZ);
 				if (movingobjectposition != null) {
 					vec4 = new Vec3(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord,
 							movingobjectposition.hitVec.zCoord);
 				}
-				for (final Entity entity : mc.world.loadedEntityList) {
+				for (final Entity entity : mc.theWorld.loadedEntityList) {
 					if (entity != mc.player && entity instanceof EntityLivingBase) {
 						final float f2 = 0.3f;
 						final AxisAlignedBB localAxisAlignedBB = entity.getEntityBoundingBox().expand(f2, f2, f2);

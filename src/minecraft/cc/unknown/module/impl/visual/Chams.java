@@ -22,14 +22,14 @@ public final class Chams extends Module {
 	@EventLink
 	public final Listener<PreRenderLivingEntityEvent> onPreRenderLiving = event -> {
         if (event.getEntity() instanceof EntityPlayer && event.getEntity() != mc.player) {
-        	GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
-        	GL11.glPolygonOffset(1.0F, -2000000.0F);
+            GL11.glEnable(32823);
+            GL11.glPolygonOffset(1.0F, -1100000.0F);
         }
 	};
 	
     @EventLink
     public final Listener<Render3DEvent> onRender3D = event -> {
-		for (EntityPlayer player : mc.world.playerEntities) {
+		for (EntityPlayer player : mc.theWorld.playerEntities) {
 			if (player == mc.player || player.isDead || player == null) {
 				continue;
 			}
@@ -53,21 +53,16 @@ public final class Chams extends Module {
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, color.getAlpha());
 
 			render.doRender(player, x, y, z, yaw, partialTicks);
-	
-			player.hide();
+			RenderHelper.disableStandardItemLighting();
+			mc.entityRenderer.disableLightmap();
 		}
-	
-		RenderHelper.disableStandardItemLighting();
-		mc.entityRenderer.disableLightmap();
     };
 	
     @EventLink
     public final Listener<PostRenderLivingEntityEvent> onPostRenderLiving = event -> {
-    	if (event.getEntity() instanceof EntityPlayer) {
-    		GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
-    		GL11.glPolygonOffset(1.0F, -2000000.0F);
-    		RenderHelper.disableStandardItemLighting();
-    		mc.entityRenderer.disableLightmap();
+    	if (event.getEntity() instanceof EntityPlayer && event.getEntity() != mc.player) {
+            GL11.glDisable(32823);
+            GL11.glPolygonOffset(1.0F, 1100000.0F);
         }
     };
 }

@@ -39,7 +39,7 @@ public final class AutoText extends Module {
                 int keyCode = Keyboard.class.getField(keyFieldName).getInt(null);
 
                 if (event.getKeyCode() == keyCode) {
-                	PlayerUtil.send(pair.message.getValue());
+                	PlayerUtil.sendInChat(pair.message.getValue());
                     break;
                 }
             } catch (NoSuchFieldException | IllegalAccessException e) {

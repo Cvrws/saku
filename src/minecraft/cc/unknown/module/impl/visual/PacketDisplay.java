@@ -76,7 +76,7 @@ public class PacketDisplay extends Module {
                     validFieldsCount++;
                 }
             } catch (IllegalAccessException e) {
-            	PlayerUtil.display("Error accessing field: " + field.getName() + " - " + e.getMessage());
+            	PlayerUtil.displayInClient("Error accessing field: " + field.getName() + " - " + e.getMessage());
             }
         }
 

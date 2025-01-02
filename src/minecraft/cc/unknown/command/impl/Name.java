@@ -15,6 +15,6 @@ public final class Name extends Command {
         final String name = mc.player.getName();
 
         GuiScreen.setClipboardString(name);
-        PlayerUtil.display("Copied your username to clipboard. (%s)", name);
+        PlayerUtil.displayInClient("Copied your username to clipboard. (%s)", name);
     }
 }

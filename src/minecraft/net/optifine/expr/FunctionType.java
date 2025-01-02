@@ -211,7 +211,7 @@ public enum FunctionType {
 
             case TIME:
                 final Minecraft minecraft = Minecraft.getMinecraft();
-                final World world = minecraft.world;
+                final World world = minecraft.theWorld;
 
                 if (world == null) {
                     return 0.0F;

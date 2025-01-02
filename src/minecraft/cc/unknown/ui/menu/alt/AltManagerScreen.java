@@ -32,6 +32,7 @@ public class AltManagerScreen extends GuiScreen implements Accessor {
     private static TextField usernameBox;
     private static GuiScreen reference;
     public String status = yellow + "Idle...";
+    public static boolean success = false;
     private Animation animation;
     private static final Font FONT_RENDERER = Fonts.ROBOTO.get(20, Weight.LIGHT);
 
@@ -115,7 +116,15 @@ public class AltManagerScreen extends GuiScreen implements Accessor {
             }
         	break;
         case 3:
+        	
+        	success = false;
+        	
             MicrosoftAccount.create();
+            
+            if (success) {
+            	status = mc.getSession().getUsername();
+            }
+            
         	break;
         case 4:
         	mc.displayGuiScreen(new CookieScreen());

@@ -14,12 +14,12 @@ public class ScriptEntity extends ScriptWrapper<Entity> {
     }
 
     static ScriptEntity getById(final int id) {
-        final Entity entity = MC.world.getEntityByID(id);
+        final Entity entity = MC.theWorld.getEntityByID(id);
         return tryInstantiate(entity);
     }
 
     static ScriptEntity getByName(final String name) {
-        final Entity entity = MC.world.getPlayerEntityByName(name);
+        final Entity entity = MC.theWorld.getPlayerEntityByName(name);
         return tryInstantiate(entity);
     }
 

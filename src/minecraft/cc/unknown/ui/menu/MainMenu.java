@@ -68,7 +68,7 @@ public class MainMenu extends GuiMainMenu {
         GlStateManager.popMatrix();
 
         super.drawScreen(mouseX, mouseY, partialTicks);
-        ScaledResolution sr = mc.scaledResolution;
+        ScaledResolution sr = /*mc.scaledResolution*/ new ScaledResolution(mc);
 
         String title = "§fSakura Client";
         String name = String.format("§fLogged in as §7%s", mc.getSession().getUsername());

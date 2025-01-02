@@ -86,7 +86,7 @@ public abstract class Entity implements ICommandSender {
      */
     public transient Entity ridingEntity;
     public boolean forceSpawn;
-    public List<Vector3d> positions = new EvictingList<>(100);
+    //public List<Vector3d> positions = new EvictingList<>(100);
 
     /**
      * Reference to the World object.
@@ -118,17 +118,17 @@ public abstract class Entity implements ICommandSender {
     /**
      * Entity motion X
      */
-    public double motionX;
+    public double motionX, lastMotionX;
 
     /**
      * Entity motion Y
      */
-    public double motionY;
+    public double motionY, lastMotionY;
 
     /**
      * Entity motion Z
      */
-    public double motionZ;
+    public double motionZ, lastMotionZ;
 
     /**
      * Entity rotation Yaw
@@ -150,9 +150,9 @@ public abstract class Entity implements ICommandSender {
      * Axis aligned bounding box.
      */
     @Getter @Setter private transient AxisAlignedBB entityBoundingBox;
-    public boolean onGround;
+    public boolean onGround, lastGround;
 
-    public boolean render = true, renderNameTag = true;
+    //public boolean render = true, renderNameTag = true;
 
     /**
      * True if after a move this entity has collided with something on X- or Z-axis
@@ -260,7 +260,7 @@ public abstract class Entity implements ICommandSender {
      * How many ticks has this entity had ran since being alive
      */
     public int ticksExisted, ticksVisible;
-    public int ticksSinceVelocity, ticksSincePlayerVelocity, ticksSinceAttack;
+    public int ticksSinceVelocity, ticksSincePlayerVelocity, ticksSincePlace, ticksSinceAttack;
     public double lastVelocityDeltaX, lastVelocityDeltaY, lastVelocityDeltaZ;
     public int ticksSinceTeleport;
 
@@ -321,8 +321,9 @@ public abstract class Entity implements ICommandSender {
     private boolean invulnerable;
     protected transient UUID entityUniqueID;
 
+    public float movementYaw, velocityYaw, lastMovementYaw;
+
     public boolean moved = false;
-    public int ticksSinceStep;
 
     /**
      * The command result statistics for this Entity.
@@ -384,8 +385,9 @@ public abstract class Entity implements ICommandSender {
         return p_equals_1_ instanceof Entity ? ((Entity) p_equals_1_).entityId == this.entityId : false;
     }
 
-    public StopWatch timer = new StopWatch();
+    /*public StopWatch timer = new StopWatch();
     public StopWatch timerName = new StopWatch();
+    
     public void hide() {
         timer.reset();
         render = false;
@@ -394,7 +396,7 @@ public abstract class Entity implements ICommandSender {
     public void hideNameTag() {
         timerName.reset();
         renderNameTag = false;
-    }
+    }*/
 
     public int hashCode() {
         return this.entityId;
@@ -515,7 +517,7 @@ public abstract class Entity implements ICommandSender {
      * Gets called every tick from main Entity class
      */
     public void onEntityUpdate() {
-        positions.add(new Vector3d(this.posX, this.posY, this.posZ));
+        //positions.add(new Vector3d(this.posX, this.posY, this.posZ));
 
         this.worldObj.theProfiler.startSection("entityBaseTick");
 
@@ -534,8 +536,6 @@ public abstract class Entity implements ICommandSender {
         this.prevRotationPitch = this.rotationPitch;
         this.prevPrevRotationYaw = this.prevRotationYaw;
         this.prevRotationYaw = this.rotationYaw;
-
-//        this.speeds.add(Math.sqrt((this.prevPosX - this.posX) * (this.prevPosX - this.posX) + (this.prevPosZ - this.posZ) * (this.prevPosZ - this.posZ)));
 
         if (!this.worldObj.isRemote && this.worldObj instanceof WorldServer) {
             this.worldObj.theProfiler.startSection("portal");
@@ -855,7 +855,6 @@ public abstract class Entity implements ICommandSender {
                 }
             }
 
-            ticksSinceStep++;
             this.worldObj.theProfiler.endSection();
             this.worldObj.theProfiler.startSection("rest");
             this.resetPositionToBB();
@@ -1207,7 +1206,7 @@ public abstract class Entity implements ICommandSender {
         float yaw = this.rotationYaw;
 
         if (player) {
-            final PreStrafeEvent event = new PreStrafeEvent(forward, strafe, friction, yaw);
+            final PreStrafeEvent event = new PreStrafeEvent(forward, strafe, friction, this.movementYaw);
 
             Sakura.instance.getEventBus().handle(event);
 

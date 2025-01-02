@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import cc.unknown.ui.menu.alt.AltManagerScreen;
 import cc.unknown.util.socket.NetworkUtil;
 import cc.unknown.util.structure.NameValuePair;
 import lombok.AllArgsConstructor;
@@ -191,6 +192,7 @@ public class MicrosoftLogin {
                     writeText(httpExchange, "Cannot authenticate.");
                 } else {
                     writeText(httpExchange, "<html>You may now close this page</html>");
+                    AltManagerScreen.success = true;
                 }
             }
 

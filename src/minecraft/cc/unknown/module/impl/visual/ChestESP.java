@@ -19,7 +19,7 @@ public final class ChestESP extends Module {
 	
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		for (final TileEntity tileEntity : mc.world.loadedTileEntityList) {
+		for (final TileEntity tileEntity : mc.theWorld.loadedTileEntityList) {
 			int color = 0;
 			
 			if (tileEntity instanceof TileEntityChest) {

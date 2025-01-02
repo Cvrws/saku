@@ -65,7 +65,7 @@ public final class EventBus<Event> implements Bus<Event>, Accessor {
                             this.callSiteMap.put(eventType, callSites);
                         }
                     } catch (Throwable exception) {
-                    	PlayerUtil.display("Exception in console");
+                    	PlayerUtil.displayInClient("Exception in console");
                         exception.printStackTrace();
                     }
                 }
@@ -105,7 +105,7 @@ public final class EventBus<Event> implements Bus<Event>, Accessor {
     @Override
     public void handle(final Event event) {
         try {
-            if ((mc.world == null || mc.getNetHandler() == null || (!mc.getNetHandler().doneLoadingTerrain && !(event instanceof PacketReceiveEvent))) && !(event instanceof ServerKickEvent || event instanceof GameEvent || event instanceof WorldChangeEvent || event instanceof ServerJoinEvent)) {
+            if ((mc.theWorld == null || mc.getNetHandler() == null || (!mc.getNetHandler().doneLoadingTerrain && !(event instanceof PacketReceiveEvent))) && !(event instanceof ServerKickEvent || event instanceof GameEvent || event instanceof WorldChangeEvent || event instanceof ServerJoinEvent)) {
                 return;
             }
 
@@ -124,7 +124,7 @@ public final class EventBus<Event> implements Bus<Event>, Accessor {
 
         } catch (Exception exception) {
         	exception.printStackTrace();
-        	PlayerUtil.display("Exception in console");
+        	PlayerUtil.displayInClient("Exception in console");
         }
     }
 

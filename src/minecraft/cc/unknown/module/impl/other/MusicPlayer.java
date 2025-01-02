@@ -168,6 +168,6 @@ public class MusicPlayer extends Module {
     }
     
     private void setMessage(String message) {
-    	PlayerUtil.display(StreamerUtil.pink + "[S]" + " " + StreamerUtil.red + message);
+    	PlayerUtil.displayInClient(StreamerUtil.pink + "[S]" + " " + StreamerUtil.red + message);
     }
 }

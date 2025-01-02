@@ -33,7 +33,7 @@ public class AutoTool extends Module {
 				prevItem = mc.player.inventory.currentItem;
 			}
 
-			Block block = mc.world.getBlockState(mc.objectMouseOver.getBlockPos()).getBlock();
+			Block block = mc.theWorld.getBlockState(mc.objectMouseOver.getBlockPos()).getBlock();
 
 			for (int i = 0; i <= 8; i++) {
 				ItemStack item = mc.player.inventory.getStackInSlot(i);

@@ -31,10 +31,10 @@ public class FakeHackers extends Module {
 	
 	@Override
 	public void onDisable() {
-	    if (mc.world != null) {
+	    if (mc.theWorld != null) {
 	        String playerName = name.getValue();
 	        if (playerName != null && !playerName.isEmpty()) {
-	            EntityPlayer player = mc.world.getPlayerEntityByName(playerName);
+	            EntityPlayer player = mc.theWorld.getPlayerEntityByName(playerName);
 	            if (player != null && mode.is("Sneak")) {
 	                player.setSneaking(false);
 	            }
@@ -45,10 +45,10 @@ public class FakeHackers extends Module {
  
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
-	    if (mc.world != null) {
+	    if (mc.theWorld != null) {
 	        String playerName = name.getValue();
 	        if (playerName != null && !playerName.isEmpty()) {
-	            EntityPlayer player = mc.world.getPlayerEntityByName(playerName);
+	            EntityPlayer player = mc.theWorld.getPlayerEntityByName(playerName);
 	            if (player != null) {
 	                if (mode.is("Sneak")) {
 	                    player.setSneaking(true);

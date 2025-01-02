@@ -387,21 +387,6 @@ public class RenderItem implements IResourceManagerReloadListener {
 			if (this.isThereOneNegativeScale(itemcameratransforms.func_181688_b(cameraTransformType))) {
 				GlStateManager.cullFace(1028);
 			}
-			
-			if (cameraTransformType == ItemCameraTransforms.TransformType.THIRD_PERSON && lastRender instanceof EntityPlayer) {
-                EntityPlayer p = (EntityPlayer) lastRender;
-                ItemStack heldStack = p.getHeldItem();
-                if (heldStack != null) {
-                    EntityPlayerSP player = Minecraft.getMinecraft().player;
-                    if (lastRender == player) {
-                        if (heldStack.getItem() instanceof ItemSword && (p.getItemInUseCount() > 0 || Sakura.instance.getModuleManager().get(KillAura.class).isEnabled() && !Sakura.instance.getModuleManager().get(KillAura.class).autoBlock.is("None") && Sakura.instance.getModuleManager().get(KillAura.class).target != null && Sakura.instance.getModuleManager().get(KillAura.class).canBlock() || player.isBlocking())) {
-                            doThirdPersonBlockTransformations();
-                        }
-                    } else if (p.getItemInUseCount() > 0 && heldStack.getItemUseAction() == EnumAction.BLOCK) {
-                        doThirdPersonBlockTransformations();
-                    }
-                }
-            }
 		}
 
 		this.renderItem(stack, model);
@@ -412,12 +397,12 @@ public class RenderItem implements IResourceManagerReloadListener {
 		this.textureManager.bindTexture(TextureMap.locationBlocksTexture);
 		this.textureManager.getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
 	}
-	
-    private void doThirdPersonBlockTransformations() {
-        GlStateManager.translate(-0.15F, -0.2F, 0);
-        GlStateManager.rotate(70, 1, 0, 0);
-        GlStateManager.translate(0.119F, 0.2F, -0.024F);
-    }
+
+	private void doThirdPersonBlockTransformations() {
+		GlStateManager.translate(-0.15F, -0.2F, 0);
+		GlStateManager.rotate(70, 1, 0, 0);
+		GlStateManager.translate(0.119F, 0.2F, -0.024F);
+	}
 
 	private boolean isThereOneNegativeScale(ItemTransformVec3f itemTranformVec) {
 		return itemTranformVec.scale.x < 0.0F ^ itemTranformVec.scale.y < 0.0F ^ itemTranformVec.scale.z < 0.0F;

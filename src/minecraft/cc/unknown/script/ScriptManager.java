@@ -87,9 +87,9 @@ public final class ScriptManager implements Accessor {
             } catch (final ScriptException ex) {
                 ex.printStackTrace();
 
-                PlayerUtil.display("Syntax error!");
+                PlayerUtil.displayInClient("Syntax error!");
 
-                PlayerUtil.display(ex.getMessage());
+                PlayerUtil.displayInClient(ex.getMessage());
                 return true;
             }
         });
@@ -124,9 +124,9 @@ public final class ScriptManager implements Accessor {
                 return false;
             } catch (final ScriptException ex) {
                 ex.printStackTrace();
-                PlayerUtil.display("Syntax error!");
+                PlayerUtil.displayInClient("Syntax error!");
 
-                PlayerUtil.display(ex.getMessage());
+                PlayerUtil.displayInClient(ex.getMessage());
                 return true;
             }
         });
@@ -139,7 +139,7 @@ public final class ScriptManager implements Accessor {
             } catch (final ScriptException ex) {
                 ex.printStackTrace();
 
-                PlayerUtil.display("Script \"" + script.getName() + "\" unloaded incorrectly");
+                PlayerUtil.displayInClient("Script \"" + script.getName() + "\" unloaded incorrectly");
             }
         });
 

@@ -1,13 +1,9 @@
 package net.minecraft.client.renderer;
 
-import java.nio.FloatBuffer;
-
+import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
-import cc.unknown.util.render.ColorUtil;
-import cc.unknown.util.render.RenderUtil;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
+import java.nio.FloatBuffer;
 
 public class RenderHelper {
     /**

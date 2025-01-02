@@ -5,15 +5,20 @@ import static org.apache.commons.lang3.RandomUtils.nextFloat;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.lwjgl.opengl.GL11;
+
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.render.ColorUtil;
+import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
@@ -21,8 +26,11 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
@@ -52,17 +60,20 @@ public final class AimAssist extends Module {
 	
 	private final NumberValue maxAngle = new NumberValue("Max Angle", this, 180, 1, 180, 1);
 	private final NumberValue distance = new NumberValue("Distance", this, 4, 1, 8, 0.1);
-	private final BooleanValue clickAim = new BooleanValue("Aim on Click", this, true);
+	private final BooleanValue clickAim = new BooleanValue("Require Clicking", this, true);
 	private final BooleanValue ignoreFriendlyEntities = new BooleanValue("Ignore Friends", this, false);
 	private final BooleanValue ignoreTeammates = new BooleanValue("Ignore Teams", this, false);
 	private final BooleanValue scoreboardCheckTeam = new BooleanValue("Scoreboard Check Team", this, false, () -> !ignoreTeammates.getValue());
 	private final BooleanValue checkArmorColor = new BooleanValue("Check Armor Color", this, false, () -> !ignoreTeammates.getValue());
-	private final BooleanValue aimAtInvisibleEnemies = new BooleanValue("Aim at Invisible Targets", this, false);
-	private final BooleanValue lineOfSightCheck = new BooleanValue("Line of Sight Check", this, true);
+	private final BooleanValue aimAtInvisibleEnemies = new BooleanValue("Target invisibles", this, false);
+	private final BooleanValue lineOfSightCheck = new BooleanValue("Visibility Check", this, true);
 	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !lineOfSightCheck.getValue());
-	private final BooleanValue disableAimWhileBreakingBlock = new BooleanValue("Disable While Breaking Blocks", this, false);
-	private final BooleanValue weaponOnly = new BooleanValue("Only Aim While Holding at Weapon", this, false);
+	private final BooleanValue disableAimWhileBreakingBlock = new BooleanValue("Check Block Break", this, false);
+	private final BooleanValue weaponOnly = new BooleanValue("Weapons Only", this, false);
+	private final BooleanValue targetIndicator = new BooleanValue("Target Indicator", this, false);
 	public EntityPlayer target;
+	private double animation;
+	private boolean direction;
 	private Random random = new Random();
 	private StopWatch stopWatch = new StopWatch();
 	
@@ -113,7 +124,55 @@ public final class AimAssist extends Module {
 			}
         }
 	};
+	
+	@EventLink
+	public final Listener<Render3DEvent> onRender3D = event -> {
+		if (target != null && targetIndicator.getValue()) {
+            GL11.glPushMatrix();
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glDepthMask(false);
+            GlStateManager.disableCull();
+            GL11.glShadeModel(GL11.GL_SMOOTH);
 
+            double x = target.prevPosX + (target.posX - target.prevPosX) * event.getPartialTicks() - mc.getRenderManager().viewerPosX;
+            double y = target.prevPosY + (target.posY - target.prevPosY) * event.getPartialTicks() - mc.getRenderManager().viewerPosY;
+            double z = target.prevPosZ + (target.posZ - target.prevPosZ) * event.getPartialTicks() - mc.getRenderManager().viewerPosZ;
+            double size = (double)(target.width / 2.0F);
+            
+            animation += direction ? -0.02D : 0.02D;
+            if (Math.abs(animation) > target.height / 2.0F) {
+                direction = !direction;
+            }
+            
+            GL11.glPointSize(10.0F);
+            GL11.glTranslated(x, y, z);
+            GL11.glRotatef((mc.player.ticksExisted + event.getPartialTicks()) * 8.0F, 0.0F, 1.0F, 0.0F);
+            GL11.glTranslated(-x, -y, -z);
+            
+            GL11.glBegin(GL11.GL_POINTS);
+            for (double angle = 0.0D; angle <= 360.0D; angle += 40.0D) {
+            	double offsetX = Math.sin(angle * Math.PI / 180.0D) * target.width;
+            	double offsetZ = Math.cos(angle * Math.PI / 180.0D) * target.width;
+            	double pointY = y + animation + target.height / 2.0F;
+            	
+            	RenderUtil.color(ColorUtil.withAlpha(getTheme().getFirstColor(), (int) (255 * 0.25)));
+            	GL11.glVertex3d(x + offsetX, pointY, z + offsetZ);
+            }
+            GL11.glEnd();
+            	
+            GL11.glShadeModel(GL11.GL_FLAT);
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glDepthMask(true);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GlStateManager.enableCull();
+            GL11.glPopMatrix();
+		}
+	};
+	
 	@Override
 	public void onDisable() {
 		target = null;
@@ -128,12 +187,13 @@ public final class AimAssist extends Module {
 	    EntityPlayer potentialTarget = null;
 	    int validTargets = 0;
 	
-	    for (final EntityPlayer player : mc.world.playerEntities) {
+	    for (final EntityPlayer player : mc.theWorld.playerEntities) {
 	        if (player != mc.player && player.deathTime == 0 && player.isEntityAlive()) {
 	            if (getInstance().getEnemyManager().isEnemy(player)) continue;
 	            if (player.getName().contains("[NPC]")) continue;
 	            if (player.getName().contains("MEJORAS")) continue;
 	            if (player.getName().contains("CLICK DERECHO")) continue;
+	            if (aimAtInvisibleEnemies.getValue() && player.isInvisible()) continue;
 	            if (getInstance().getFriendManager().isFriend(player) && ignoreFriendlyEntities.getValue()) continue;
 	            if (ignoreTeammates.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
 	            if (playerPos.distanceTo(player) > distance.getValue().doubleValue()) continue;
@@ -164,7 +224,7 @@ public final class AimAssist extends Module {
 	    if (disableAimWhileBreakingBlock.getValue() && mc.objectMouseOver != null) {
 	        BlockPos p = mc.objectMouseOver.getBlockPos();
 	        if (p != null) {
-	            Block bl = mc.world.getBlockState(p).getBlock();
+	            Block bl = mc.theWorld.getBlockState(p).getBlock();
 	            if (bl != Blocks.air && !(bl instanceof BlockLiquid) && (bl instanceof Block || bl instanceof BlockBed)) {
 	                return true;
 	            }

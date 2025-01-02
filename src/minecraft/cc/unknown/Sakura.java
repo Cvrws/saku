@@ -33,7 +33,7 @@ public enum Sakura {
     instance;
 
     public static final String NAME = "Sakura";
-    public static final String VERSION_FULL = "5.5";
+    public static final String VERSION_FULL = "5.6";
 
     private EventBus<Event> eventBus;
     private ModuleManager moduleManager;
@@ -52,6 +52,7 @@ public enum Sakura {
 
     private RiceScreen clickGui;
     private KeroScreen betaGui;
+    public boolean firstLogin;
     
     private final ScheduledExecutorService ex = Executors.newScheduledThreadPool(4);
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();

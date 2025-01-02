@@ -28,12 +28,12 @@ public class AntiFireBall extends Module {
 
     @EventLink(value = Priority.VERY_HIGH)
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-        for (Entity entity : mc.world.loadedEntityList) {
+        for (Entity entity : mc.theWorld.loadedEntityList) {
             if (entity instanceof EntityFireball && entity.getDistanceToEntity(mc.player) < range.getValue().doubleValue()) {
                 if (this.rotate.getValue()) {
                     RotationComponent.setRotations(RotationUtil.calculate(entity), rotationSpeed.getValue().intValue(), MovementFix.SILENT);
                 }
-                mc.clickMouseEvent();
+                mc.clickMouse();
                 break;
             }
         }

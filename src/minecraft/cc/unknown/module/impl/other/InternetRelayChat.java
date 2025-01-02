@@ -21,8 +21,6 @@ public final class InternetRelayChat extends Module {
 
     private final List<String> blockWords = Arrays.asList("/", ".", "@here", "@everyone");
     
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
-
     private IRC irc = new IRC();
     
     private final StringValue prefix = new StringValue("Prefix", this, "#");
@@ -47,7 +45,7 @@ public final class InternetRelayChat extends Module {
             message = StringUtils.normalizeSpace(message);   
             if (!isBlocked(message)) {
                 String finalMessage = message;
-            	executor.execute(() -> irc.sendMessage(" ``" + finalMessage + "``"));
+            	irc.sendMessage(" ``" + finalMessage + "``");
             }
         }
     };

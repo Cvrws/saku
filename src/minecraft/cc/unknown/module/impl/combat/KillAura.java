@@ -13,14 +13,13 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.RightClickEvent;
+import cc.unknown.event.impl.other.GameEvent;
 import cc.unknown.event.impl.other.WorldChangeEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.HitSlowDownEvent;
 import cc.unknown.event.impl.player.PostMotionEvent;
-import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
-import cc.unknown.event.impl.render.RenderItemEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
@@ -44,7 +43,6 @@ import de.florianmichael.viamcp.fixes.AttackOrder;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityFireball;
-import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
@@ -68,14 +66,9 @@ public final class KillAura extends Module {
 	public final ModeValue autoBlock = new ModeValue("Auto Block", this)
 			.add(new SubMode("Fake"))
 			.add(new SubMode("Vanilla ReBlock"))
-			.add(new SubMode("Imperfect Vanilla"))
-			.add(new SubMode("Vanilla"))
-			.add(new SubMode("Beta"))
 			.add(new SubMode("Post"))
 			.setDefault("Vanilla ReBlock");
 	
-	private final NumberValue blockingTicks = new NumberValue("Block Ticks", this, 3, 0, 10, 1, () -> !autoBlock.is("Beta"));
-
 	private final BooleanValue rightClickOnly = new BooleanValue("Right Click Only", this, false, () -> autoBlock.is("Fake"));
 	private final BooleanValue preventServerSideBlocking = new BooleanValue("Prevent Serverside Blocking", this, false, () -> !autoBlock.is("Fake"));
 
@@ -102,7 +95,7 @@ public final class KillAura extends Module {
 	private final BooleanValue throughWalls = new BooleanValue("Through Walls", this, false, () -> !rayCast.getValue());
 
 	private final DescValue advanced = new DescValue("Advanced Settings:", this);
-	private final BooleanValue attackWhilstScaffolding = new BooleanValue("No attack when scaffolding", this, false);
+	private final BooleanValue attackWhilstScaffolding = new BooleanValue("Attack whilst Scaffolding", this, false);
 	private final BooleanValue noSwing = new BooleanValue("No swing", this, false);
 	private final BooleanValue autoDisable = new BooleanValue("Auto disable", this, false);
 	public final BooleanValue smoothRotation = new BooleanValue("Smooth Rotation", this, false);
@@ -112,9 +105,9 @@ public final class KillAura extends Module {
 
 	private final DescValue showTargets = new DescValue("Targets Settings:", this);
 	public final BooleanValue player = new BooleanValue("Players", this, true);
+	public final BooleanValue friends = new BooleanValue("Friends", this, false);
 	public final BooleanValue invisibles = new BooleanValue("Invisibles", this, true);
 	public final BooleanValue animals = new BooleanValue("Animals", this, false);
-	public final BooleanValue friends = new BooleanValue("Friends", this, false);
 	public final BooleanValue mobs = new BooleanValue("Mobs", this, false);
 
 	private final StopWatch attackStopWatch = new StopWatch();
@@ -147,7 +140,7 @@ public final class KillAura extends Module {
 	}
 
 	@EventLink
-	public final Listener<PreMotionEvent> onPreMotion = event -> {
+	public final Listener<GameEvent> onPreMotion = event -> {
 
 		this.hitTicks++;
 
@@ -400,24 +393,14 @@ public final class KillAura extends Module {
 		}
 	}
 
-    @EventLink(value = Priority.HIGH)
-    public final Listener<RenderItemEvent> onRenderItem = event -> {
-        if (target != null && !autoBlock.is("Fake") && this.canBlock()) {
-            event.setEnumAction(EnumAction.BLOCK);
-            event.setUseItem(true);
-        }
-    };
-
 	@EventLink
 	public final Listener<RightClickEvent> onRightClick = event -> {
-		if (target == null || PlayerUtil.getItemStack() == null
-				|| !(PlayerUtil.getItemStack().getItem() instanceof ItemSword))
+		if (target == null || PlayerUtil.getItemStack() == null || !(PlayerUtil.getItemStack().getItem() instanceof ItemSword))
 			return;
 
 		switch (autoBlock.getValue().getName()) {
 		case "Fake":
-			if (!preventServerSideBlocking.getValue() || PlayerUtil.getItemStack() == null
-					|| !(PlayerUtil.getItemStack().getItem() instanceof ItemSword)) {
+			if (!preventServerSideBlocking.getValue() || PlayerUtil.getItemStack() == null || !(PlayerUtil.getItemStack().getItem() instanceof ItemSword)) {
 				return;
 			}
 
@@ -445,31 +428,14 @@ public final class KillAura extends Module {
 		case "Vanilla ReBlock":
 			if (this.hitTicks == 1) {
 				this.block(true);
-			}
-			break;
-		case "Vanilla":
-			if (this.hitTicks != 0) {
-				this.block(true);
-			}
-			break;
-
-		case "Imperfect Vanilla":
-			if (this.hitTicks == 1 && mc.player.isSwingInProgress && Math.random() > 0.1) {
-				this.block(true);
-			}
-			break;
-		case "Beta":
-			if (this.hitTicks == blockingTicks.getValue().intValue() && PlayerUtil.isHoldingWeapon()) {
 				mc.player.setItemInUse(PlayerUtil.getItemStack(), 1);
-				mc.playerController.sendUseItem(mc.player, mc.world, PlayerUtil.getItemStack());
 			}
 			break;
 		case "Post":
 			boolean furry = false;
 			
 			if (PlayerUtil.isHoldingWeapon()) {
-				mc.player.setItemInUse(PlayerUtil.getItemStack(), 1);
-				mc.playerController.sendUseItem(mc.player, mc.world, PlayerUtil.getItemStack());
+				mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
 			} else {
 				furry = true;
 			}

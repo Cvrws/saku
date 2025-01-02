@@ -18,7 +18,7 @@ public final class Tracers extends Module {
 
     @EventLink
     public final Listener<Render3DEvent> onRender3D = event -> {
-        for (final Entity player : mc.world.playerEntities) {
+        for (final Entity player : mc.theWorld.playerEntities) {
             if (player == mc.player || player.isDead) {
                 continue;
             }

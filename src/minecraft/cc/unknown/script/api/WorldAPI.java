@@ -14,7 +14,7 @@ import net.minecraft.util.BlockPos;
 public class WorldAPI extends ScriptWorld {
 
     public WorldAPI() {
-        super(MC.world);
+        super(MC.theWorld);
 
         Sakura.instance.getEventBus().register(this);
     }
@@ -22,12 +22,12 @@ public class WorldAPI extends ScriptWorld {
     @EventLink
     public final Listener<TickEvent> onTick = event -> {
         if (this.wrapped == null) {
-            this.wrapped = MC.world;
+            this.wrapped = MC.theWorld;
         }
     };
 
     public ScriptEntityLiving[] getEntities() {
-        final Object[] entityLivingBases = MC.world.loadedEntityList.stream().filter(entity -> entity instanceof EntityLivingBase).toArray();
+        final Object[] entityLivingBases = MC.theWorld.loadedEntityList.stream().filter(entity -> entity instanceof EntityLivingBase).toArray();
         final ScriptEntityLiving[] scriptEntities = new ScriptEntityLiving[entityLivingBases.length];
 
         for (int index = 0; index < entityLivingBases.length; index++) {
@@ -43,7 +43,7 @@ public class WorldAPI extends ScriptWorld {
     }
 
     public void removeEntity(int id) {
-        MC.world.removeEntityFromWorld(id);
+        MC.theWorld.removeEntityFromWorld(id);
     }
 
     public void removeEntity(ScriptEntityLiving entity) {

@@ -5,6 +5,7 @@ import org.lwjgl.input.Mouse;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.geometry.Vector2d;
 import lombok.experimental.UtilityClass;
+import net.minecraft.client.gui.ScaledResolution;
 
 @UtilityClass
 public class MouseUtil implements Accessor {
@@ -13,8 +14,9 @@ public class MouseUtil implements Accessor {
     }
 
     public Vector2d mouse() {
-        final int i1 = mc.scaledResolution.getScaledWidth();
-        final int j1 = mc.scaledResolution.getScaledHeight();
+    	ScaledResolution sr = /*mc.scaledResolution*/ new ScaledResolution(mc);
+        final int i1 = sr.getScaledWidth();
+        final int j1 = sr.getScaledHeight();
         final int mouseX = Mouse.getX() * i1 / mc.displayWidth;
         final int mouseY = j1 - Mouse.getY() * j1 / mc.displayHeight - 1;
 

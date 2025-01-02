@@ -47,21 +47,10 @@ public class AttackOrder {
 
 	}
 
-	public static void sendFixedAttackEvent(EntityPlayerSP entityIn, Entity target) {
-		if (ViaLoadingBase.getInstance().getTargetVersion().isOlderThanOrEqualTo(ProtocolVersion.v1_8)) {
-			mc.player.swingItem();
-			mc.playerController.attackEntityEvent(entityIn, target);
-		} else {
-			mc.playerController.attackEntityEvent(entityIn, target);
-			mc.player.swingItem();
-		}
-
-	}
-
 	public static void sendLegitFixedKillAuraAttack(EntityPlayerSP entityIn, Entity target) {
 		if (mc.leftClickCounter <= 0) {
 			sendConditionalSwing(mc.objectMouseOver);
-			sendFixedAttackEvent(entityIn, target);
+			sendFixedAttack(entityIn, target);
 		}
 	}
 }

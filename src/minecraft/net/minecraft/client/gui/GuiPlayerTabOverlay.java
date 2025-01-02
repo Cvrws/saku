@@ -160,7 +160,7 @@ public class GuiPlayerTabOverlay extends Gui {
                 final GameProfile gameprofile = networkplayerinfo1.getGameProfile();
                 
                 if (flag) {
-                    final EntityPlayer entityplayer = this.mc.world.getPlayerEntityByUUID(gameprofile.getId());
+                    final EntityPlayer entityplayer = this.mc.theWorld.getPlayerEntityByUUID(gameprofile.getId());
                     final boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE) && (gameprofile.getName().equals("Dinnerbone") || gameprofile.getName().equals("Grumm"));
                     this.mc.getTextureManager().bindTexture(networkplayerinfo1.getLocationSkin());
                     final int l2 = 8 + (flag1 ? 8 : 0);

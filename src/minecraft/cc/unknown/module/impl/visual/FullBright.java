@@ -6,6 +6,7 @@ import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.potion.Potion;
@@ -18,7 +19,7 @@ public final class FullBright extends Module {
             .add(new SubMode("Gamma"))
             .add(new SubMode("Effect"))
             .setDefault("Gamma");
-    
+        
     private float oldGamma;
     
     @EventLink

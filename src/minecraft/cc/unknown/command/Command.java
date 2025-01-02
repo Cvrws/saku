@@ -23,14 +23,14 @@ public abstract class Command implements Accessor {
     public abstract void execute(String[] args);
 	
 	public void error(String error) {
-		PlayerUtil.display(yellow + "[" + red + "%" + yellow + "] " + reset + error); 
+		PlayerUtil.displayInClient(yellow + "[" + red + "%" + yellow + "] " + reset + error); 
 	}
 	
 	public void warning(String warn) {
-		PlayerUtil.display(yellow + "[" + red + "!" + yellow + "] " + reset + warn);
+		PlayerUtil.displayInClient(yellow + "[" + red + "!" + yellow + "] " + reset + warn);
 	}
 	
 	public void success(String success) {
-		PlayerUtil.display(yellow + "[" + green + "*" + yellow + "] " + reset + success);
+		PlayerUtil.displayInClient(yellow + "[" + green + "*" + yellow + "] " + reset + success);
 	}
 }

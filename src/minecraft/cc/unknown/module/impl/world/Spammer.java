@@ -61,7 +61,7 @@ public final class Spammer extends Module {
     
     @EventLink
     public final Listener<PreUpdateEvent> onPre = event -> {
-    	if (mc.player == null || mc.world == null) {
+    	if (mc.player == null || mc.theWorld == null) {
             return;
         }
         
@@ -142,7 +142,7 @@ public final class Spammer extends Module {
         int clockIndex = 0;
         ItemStack stack = mc.player.inventory.getStackInSlot(clockIndex);
         if (stack != null && (stack.getItem() == clockItem || stack.getItem() instanceof ItemSword) || stack == null) {
-            Scoreboard scoreboard = mc.world.getScoreboard();
+            Scoreboard scoreboard = mc.theWorld.getScoreboard();
             boolean containsString = scoreboard.getScoreObjectives().stream()
                     .map(objective -> objective.getDisplayName().replaceAll("§[0-9A-FK-ORa-fk-or]", ""))
                     .anyMatch(displayName -> displayName.contains(targetString[0]) || displayName.contains(scoreboardTarget[0]) && !displayName.contains("UniversoCraft"));
@@ -202,7 +202,7 @@ public final class Spammer extends Module {
         List<String> playerNames = new ArrayList<>();
         List<String> allPlayerNames = new ArrayList<>();
 
-        for (Object player : mc.world.playerEntities) {
+        for (Object player : mc.theWorld.playerEntities) {
             if (player instanceof EntityPlayer && !(((EntityPlayer) player).getEntityId() == mc.player.getEntityId())) {
                 allPlayerNames.add(((EntityPlayer) player).getName());
             }

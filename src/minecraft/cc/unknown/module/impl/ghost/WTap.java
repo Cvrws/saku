@@ -41,13 +41,6 @@ public class WTap extends Module {
     private final StopWatch stopWatch = new StopWatch();
     private int ticks;
     
-    private int blockInputTicks = 0;
-    private int blockTicksElapsed = 0;
-    private boolean startWaiting = false;
-    private boolean blockInput = false;
-    private int allowInputTicks = 0;
-    private int ticksElapsed = 0;
-    
     @EventLink
     public final Listener<AttackEvent> onAttack = event -> {
 	    double chanceValue = chance.getValue().doubleValue();

@@ -63,7 +63,7 @@ public class DragValue extends Value<Vector2d> implements Accessor {
             this.lastScale = this.scale;
         }
 
-        ScaledResolution scaledResolution = mc.scaledResolution;
+        ScaledResolution scaledResolution = /*mc.scaledResolution*/ new ScaledResolution(mc);;
 
         if (this.position.x > scaledResolution.getScaledWidth() / 2f) {
             this.targetPosition.x += this.lastScale.x - this.scale.x;

@@ -17,11 +17,11 @@ import net.minecraft.util.MathHelper;
 public final class ColorUtil {
 
     public void glColor(final int hex) {
-        final float alpha = (hex >> 24 & 0xFF) / 255.0f;
-        final float red = (hex >> 16 & 0xFF) / 255.0f;
-        final float green = (hex >> 8 & 0xFF) / 255.0f;
-        final float blue = (hex & 0xFF) / 255.0f;
-        GL11.glColor4f(red, green, blue, alpha);
+        final float a = (hex >> 24 & 0xFF) / 255.0F;
+        final float r = (hex >> 16 & 0xFF) / 255.0F;
+        final float g = (hex >> 8 & 0xFF) / 255.0F;
+        final float b = (hex & 0xFF) / 255.0F;
+        GL11.glColor4f(r, g, b, a);
     }
     
     public int getColor(final Color color) {

@@ -29,7 +29,7 @@ public final class AutoLeave extends Module {
 	            String command = text.getValue();
 	            
 	            if (!command.isEmpty()) {
-	                PlayerUtil.send(command);
+	                PlayerUtil.sendInChat(command);
 	            }
 	        }
 	    }

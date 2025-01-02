@@ -23,45 +23,39 @@ import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class TargetComponent extends Component implements Accessor {
-	private static KillAura killAura;
+    private static KillAura killAura;
 
-	public static EntityLivingBase getTarget(double range) {
-		return getTargets(range).stream().findFirst().orElse(null);
-	}
+    public static EntityLivingBase getTarget(double range) {
+        return getTargets(range).stream().findFirst().orElse(null);
+    }
 
-	public static List<EntityLivingBase> getTargets(double range) {
-		if (killAura == null) {
-			killAura = Sakura.instance.getModuleManager().get(KillAura.class);
-		}
+    public static List<EntityLivingBase> getTargets(double range) {
+        if (killAura == null) {
+            killAura = Sakura.instance.getModuleManager().get(KillAura.class);
+        }
 
-		return getTargets(killAura.player.getValue(), killAura.invisibles.getValue(), killAura.animals.getValue(),
-				killAura.mobs.getValue(), killAura.teams.getValue()).stream()
-				.filter(entity -> mc.player.getDistanceToEntity(entity) <= range).collect(Collectors.toList());
-	}
+        return getTargets(killAura.player.getValue(), killAura.invisibles.getValue(), killAura.animals.getValue(), killAura.mobs.getValue(), killAura.teams.getValue()).stream().filter(entity -> mc.player.getDistanceToEntity(entity) <= range).collect(Collectors.toList());
+    }
 
-	public static List<EntityLivingBase> getTargets(double range, boolean players, boolean invisibles, boolean animals,
-			boolean mobs, boolean teams) {
-		return getTargets(players, invisibles, animals, mobs, teams).stream()
-				.filter(entity -> mc.player.getDistanceToEntity(entity) <= range).collect(Collectors.toList());
-	}
+    public static List<EntityLivingBase> getTargets(double range, boolean players, boolean invisibles, boolean animals, boolean mobs, boolean teams) {
+        return getTargets(players, invisibles, animals, mobs, teams).stream().filter(entity -> mc.player.getDistanceToEntity(entity) <= range).collect(Collectors.toList());
+    }
 
-	public static List<EntityLivingBase> getTargets() {
-		if (killAura == null) {
-			killAura = Sakura.instance.getModuleManager().get(KillAura.class);
-		}
+    public static List<EntityLivingBase> getTargets() {
+        if (killAura == null) {
+            killAura = Sakura.instance.getModuleManager().get(KillAura.class);
+        }
 
-		return getTargets(killAura.player.getValue(), killAura.invisibles.getValue(), killAura.animals.getValue(),
-				killAura.mobs.getValue(), killAura.teams.getValue(), killAura.friends.getValue());
-	}
+        return getTargets(killAura.player.getValue(), killAura.invisibles.getValue(), killAura.animals.getValue(), killAura.mobs.getValue(), killAura.teams.getValue(), killAura.friends.getValue());
+    }
 
-	public static List<EntityLivingBase> getTargets(boolean players, boolean invisibles, boolean animals, boolean mobs,
-			boolean teams) {
-		return getTargets(players, invisibles, animals, mobs, teams, false);
-	}
-
+    public static List<EntityLivingBase> getTargets(boolean players, boolean invisibles, boolean animals, boolean mobs, boolean teams) {
+        return getTargets(players, invisibles, animals, mobs, teams, false);
+    }
+    
 	public static List<EntityLivingBase> getTargets(boolean players, boolean invisibles, boolean animals, boolean mobs,
 			boolean teams, boolean friends) {
-		return mc.world.loadedEntityList.stream()
+		return mc.theWorld.loadedEntityList.stream()
 				.filter(entity -> entity instanceof EntityLivingBase && entity != mc.getRenderViewEntity()
 				&& (!Sakura.instance.getFriendManager().isFriend(entity.getName()) || friends)
 				&& (!(entity instanceof EntityPlayer) || players)

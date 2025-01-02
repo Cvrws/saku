@@ -322,7 +322,7 @@ public class MoveUtil implements Accessor {
      * Gets the players' movement yaw
      */
     public double direction() {
-        float rotationYaw = mc.player.rotationYaw;
+        float rotationYaw = mc.player.movementYaw;
 
         if (mc.player.moveForward < 0) {
             rotationYaw += 180;
@@ -348,7 +348,7 @@ public class MoveUtil implements Accessor {
     }
 
     public double direction(MoveInputEvent moveInputEvent) {
-        float rotationYaw = mc.player.rotationYaw;
+        float rotationYaw = mc.player.movementYaw;
 
         if (moveInputEvent.getForward() < 0) {
             rotationYaw += 180;
@@ -374,7 +374,7 @@ public class MoveUtil implements Accessor {
     }
 
     public double direction(float inputForward, float inputStrafe) {
-        float rotationYaw = mc.player.rotationYaw;
+        float rotationYaw = mc.player.movementYaw;
 
         if (inputForward < 0) {
             rotationYaw += 180;
@@ -403,7 +403,7 @@ public class MoveUtil implements Accessor {
      * Gets the players' movement yaw wrapped to 90
      */
     public double wrappedDirection() {
-        float rotationYaw = mc.player.rotationYaw;
+        float rotationYaw = mc.player.movementYaw;
 
         if (mc.player.moveForward < 0 && mc.player.moveStrafing == 0) {
             rotationYaw += 180;
@@ -442,6 +442,10 @@ public class MoveUtil implements Accessor {
      */
     public double speed() {
         return Math.hypot(mc.player.motionX, mc.player.motionZ);
+    }
+
+    public void setSpeedMoveEvent(final MoveEvent moveEvent, final double moveSpeed) {
+        setSpeedMoveEvent(moveEvent, moveSpeed, mc.player.movementYaw, mc.player.movementInput.moveStrafe, mc.player.movementInput.moveForward);
     }
 
     public void setSpeedMoveEvent(final MoveEvent moveEvent, final double moveSpeed, final float pseudoYaw, final double pseudoStrafe, final double pseudoForward) {
@@ -509,7 +513,7 @@ public class MoveUtil implements Accessor {
         float f = 0.91F;
 
         if (mc.player.onGround) {
-            f = mc.world.getBlockState(new BlockPos(MathHelper.floor_double(mc.player.posX), MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1, MathHelper.floor_double(mc.player.posZ))).getBlock().slipperiness * 0.91F;
+            f = mc.theWorld.getBlockState(new BlockPos(MathHelper.floor_double(mc.player.posX), MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1, MathHelper.floor_double(mc.player.posZ))).getBlock().slipperiness * 0.91F;
         }
 
         return f;
@@ -656,6 +660,47 @@ public class MoveUtil implements Accessor {
         }
 
         workingYaw = currentMoveYaw;
+
+        strafe(speed(), workingYaw);
+
+        return workingYaw;
+    }
+
+    public float simulationStrafe(float currentMoveYaw) {
+        double moveFlying = 0.02599999835384377;
+        double friction = 0.9100000262260437;
+
+        double lastDeltaX = mc.player.lastMotionX * friction;
+        double lastDeltaZ = mc.player.lastMotionZ * friction;
+
+        float workingYaw = currentMoveYaw;
+
+        float target = (float) Math.toDegrees(direction());
+
+        for (int i = 0; i <= 360; i++) {
+
+            strafe(speed(), currentMoveYaw);
+
+            double deltaX = Math.abs(mc.player.motionX);
+            double deltaZ = Math.abs(mc.player.motionZ);
+
+            double minDeltaX = lastDeltaX - moveFlying;
+            double minDeltaZ = lastDeltaZ - moveFlying;
+
+            if (currentMoveYaw == target || (deltaX < minDeltaX || deltaZ < minDeltaZ)) {
+                break;
+            }
+
+            workingYaw = currentMoveYaw;
+
+            if (Math.abs(currentMoveYaw - target) <= 1) {
+                currentMoveYaw = target;
+            } else if (currentMoveYaw > target) {
+                currentMoveYaw -= 1;
+            } else {
+                currentMoveYaw += 1;
+            }
+        }
 
         strafe(speed(), workingYaw);
 

@@ -162,7 +162,7 @@ public class SlotUtil implements Accessor {
         float bestSpeed = 1;
         int bestSlot = -1;
 
-        final IBlockState blockState = mc.world.getBlockState(blockPos);
+        final IBlockState blockState = mc.theWorld.getBlockState(blockPos);
 
         for (int i = 0; i < 9; i++) {
             final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
@@ -196,7 +196,7 @@ public class SlotUtil implements Accessor {
     }
 
     public float getPlayerRelativeBlockHardness(final EntityPlayer playerIn, final World worldIn, final BlockPos pos, final int slot) {
-        final Block block = mc.world.getBlockState(pos).getBlock();
+        final Block block = mc.theWorld.getBlockState(pos).getBlock();
         final float f = block.getBlockHardness(worldIn, pos);
         return f < 0.0F ? 0.0F : (!canHeldItemHarvest(block, slot) ? getToolDigEfficiency(block, slot) / f / 100.0F : getToolDigEfficiency(block, slot) / f / 30.0F);
     }
@@ -241,7 +241,7 @@ public class SlotUtil implements Accessor {
                 speedMultiplier = 1;
             } else if (id == 359 && (block instanceof BlockWeb || block instanceof BlockLeaves)) {
                 speedMultiplier = 15;
-            } else if (id == 359 && block.getBlockHardness(Minecraft.getMinecraft().world, blockIn) == 0.8) {
+            } else if (id == 359 && block.getBlockHardness(Minecraft.getMinecraft().theWorld, blockIn) == 0.8) {
                 speedMultiplier = 5;
             }
             if (!canHeldItemHarvest(block, slot)) {

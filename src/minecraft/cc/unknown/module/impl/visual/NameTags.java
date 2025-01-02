@@ -33,12 +33,17 @@ public final class NameTags extends Module {
 	private final BooleanValue dropShadow = new BooleanValue("Drop shadow", this, false);
 	private final BooleanValue showDistance = new BooleanValue("Show Distance", this, false);
 	private final BooleanValue onlyRenderName = new BooleanValue("Only Render Name", this, true);
-	private final BooleanValue checkInvis = new BooleanValue("Show Invisibles", this, false);
+	private final BooleanValue background = new BooleanValue("Background", this, true);
+	private final NumberValue alphaBackground = new NumberValue("Alpha Background", this, 110, 0, 255, 1, () -> !background.getValue());
 	private final DescValue armorSettings = new DescValue("Armor Settings", this);
 	private final BooleanValue showArmor = new BooleanValue("Show Armor", this, true);
 	private final BooleanValue showEnchants = new BooleanValue("Show enchant", this, true, () -> !showArmor.getValue());
 	private final BooleanValue showDurability = new BooleanValue("Show Durability", this, true, () -> !showArmor.getValue());
 	private final BooleanValue showStackSize = new BooleanValue("Show StackSize", this, true, () -> !showArmor.getValue());
+	private final BooleanValue checkInvis = new BooleanValue("Show Invisibles", this, false, () -> !showArmor.getValue());
+	
+    private int friendColor = new Color(0, 255, 0, 255).getRGB();
+    private int enemyColor = new Color(255, 0, 0, 255).getRGB();
 
 	@EventLink
 	public final Listener<RenderLabelEvent> onRenderLabel = event -> {
@@ -111,6 +116,20 @@ public final class NameTags extends Module {
 			renderArmor(player);
 		}
         
+	    if (background.getValue()) {
+	    	if (player.isSneaking()) {
+	    		RenderUtil.roundedRect(-compactWidth / 2 + 1 , 4, compactWidth / 2 - 3, compactHeight + 8, 6, new Color(0, 0, 0, alphaBackground.getValue().intValue()).getRGB());
+	    	} else {
+	    		RenderUtil.roundedRect(-compactWidth / 2 + 1 , -6.0F, compactWidth / 2 - 3, compactHeight - 1, 6, new Color(0, 0, 0, alphaBackground.getValue().intValue()).getRGB());
+	    	}
+	    }
+	    
+	    if (FriendComponent.isFriend(player)) {
+	        RenderUtil.drawOutline(-compactWidth / 2 + 1, -4.0F, compactWidth / 2 - 3, mc.fontRendererObj.FONT_HEIGHT + 2, 2, friendColor);
+	    } else if (EnemyComponent.isEnemy(player)) {
+	        RenderUtil.drawOutline(-compactWidth / 2 + 1, -4.0F, compactWidth / 2 - 3, mc.fontRendererObj.FONT_HEIGHT + 2, 2, enemyColor);
+	    }
+	    
 	    if (player.isSneaking()) {
 	        GlStateManager.translate(0.0F, 9.374999F, 0.0F);
 	    }

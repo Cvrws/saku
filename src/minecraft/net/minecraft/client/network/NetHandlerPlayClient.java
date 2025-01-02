@@ -490,7 +490,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
         final double d2 = (double) packetIn.getZ() / 32.0D;
         final float f = (float) (packetIn.getYaw() * 360) / 256.0F;
         final float f1 = (float) (packetIn.getPitch() * 360) / 256.0F;
-        final EntityOtherPlayerMP entityotherplayermp = new EntityOtherPlayerMP(this.gameController.world, this.getPlayerInfo(packetIn.getPlayer()).getGameProfile());
+        final EntityOtherPlayerMP entityotherplayermp = new EntityOtherPlayerMP(this.gameController.theWorld, this.getPlayerInfo(packetIn.getPlayer()).getGameProfile());
         entityotherplayermp.prevPosX = entityotherplayermp.lastTickPosX = entityotherplayermp.serverPosX = packetIn.getX();
         entityotherplayermp.prevPosY = entityotherplayermp.lastTickPosY = entityotherplayermp.serverPosY = packetIn.getY();
         entityotherplayermp.prevPosZ = entityotherplayermp.lastTickPosZ = entityotherplayermp.serverPosZ = packetIn.getZ();
@@ -860,7 +860,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
         final double d2 = (double) packetIn.getZ() / 32.0D;
         final float f = (float) (packetIn.getYaw() * 360) / 256.0F;
         final float f1 = (float) (packetIn.getPitch() * 360) / 256.0F;
-        final EntityLivingBase entitylivingbase = (EntityLivingBase) EntityList.createEntityByID(packetIn.getEntityType(), this.gameController.world);
+        final EntityLivingBase entitylivingbase = (EntityLivingBase) EntityList.createEntityByID(packetIn.getEntityType(), this.gameController.theWorld);
         entitylivingbase.serverPosX = packetIn.getX();
         entitylivingbase.serverPosY = packetIn.getY();
         entitylivingbase.serverPosZ = packetIn.getZ();
@@ -891,15 +891,15 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
     @Override
     public void handleTimeUpdate(final S03PacketTimeUpdate packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
-        this.gameController.world.setTotalWorldTime(packetIn.getTotalWorldTime());
-        this.gameController.world.setWorldTime(packetIn.getWorldTime());
+        this.gameController.theWorld.setTotalWorldTime(packetIn.getTotalWorldTime());
+        this.gameController.theWorld.setWorldTime(packetIn.getWorldTime());
     }
 
     @Override
     public void handleSpawnPosition(final S05PacketSpawnPosition packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
         this.gameController.player.setSpawnPoint(packetIn.getSpawnPos(), true);
-        this.gameController.world.getWorldInfo().setSpawn(packetIn.getSpawnPos());
+        this.gameController.theWorld.getWorldInfo().setSpawn(packetIn.getSpawnPos());
     }
 
     @Override
@@ -983,7 +983,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
         if (packetIn.getDimensionID() != this.gameController.player.dimension) {
             this.doneLoadingTerrain = false;
             final Scoreboard scoreboard = this.clientWorldController.getScoreboard();
-            this.clientWorldController = new WorldClient(this, new WorldSettings(0L, packetIn.getGameType(), false, this.gameController.world.getWorldInfo().isHardcoreModeEnabled(), packetIn.getWorldType()), packetIn.getDimensionID(), packetIn.getDifficulty(), this.gameController.mcProfiler);
+            this.clientWorldController = new WorldClient(this, new WorldSettings(0L, packetIn.getGameType(), false, this.gameController.theWorld.getWorldInfo().isHardcoreModeEnabled(), packetIn.getWorldType()), packetIn.getDimensionID(), packetIn.getDifficulty(), this.gameController.mcProfiler);
             this.clientWorldController.setWorldScoreboard(scoreboard);
             this.gameController.loadWorld(this.clientWorldController);
             this.gameController.player.dimension = packetIn.getDimensionID();
@@ -1000,7 +1000,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
     @Override
     public void handleExplosion(final S27PacketExplosion packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
-        final Explosion explosion = new Explosion(this.gameController.world, null, packetIn.getX(), packetIn.getY(), packetIn.getZ(), packetIn.getStrength(), packetIn.getAffectedBlockPositions());
+        final Explosion explosion = new Explosion(this.gameController.theWorld, null, packetIn.getX(), packetIn.getY(), packetIn.getZ(), packetIn.getStrength(), packetIn.getAffectedBlockPositions());
         explosion.doExplosionB(true);
         this.gameController.player.motionX += packetIn.func_149149_c();
         this.gameController.player.motionY += packetIn.func_149144_d();
@@ -1149,8 +1149,8 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
         boolean flag = false;
 
-        if (this.gameController.world.isBlockLoaded(packetIn.getPos())) {
-            final TileEntity tileentity = this.gameController.world.getTileEntity(packetIn.getPos());
+        if (this.gameController.theWorld.isBlockLoaded(packetIn.getPos())) {
+            final TileEntity tileentity = this.gameController.theWorld.getTileEntity(packetIn.getPos());
 
             if (tileentity instanceof TileEntitySign) {
                 final TileEntitySign tileentitysign = (TileEntitySign) tileentity;
@@ -1177,8 +1177,8 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
     public void handleUpdateTileEntity(final S35PacketUpdateTileEntity packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
 
-        if (this.gameController.world.isBlockLoaded(packetIn.getPos())) {
-            final TileEntity tileentity = this.gameController.world.getTileEntity(packetIn.getPos());
+        if (this.gameController.theWorld.isBlockLoaded(packetIn.getPos())) {
+            final TileEntity tileentity = this.gameController.theWorld.getTileEntity(packetIn.getPos());
             final int i = packetIn.getTileEntityType();
 
             if (i == 1 && tileentity instanceof TileEntityMobSpawner || i == 2 && tileentity instanceof TileEntityCommandBlock || i == 3 && tileentity instanceof TileEntityBeacon || i == 4 && tileentity instanceof TileEntitySkull || i == 5 && tileentity instanceof TileEntityFlowerPot || i == 6 && tileentity instanceof TileEntityBanner) {
@@ -1227,7 +1227,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
     @Override
     public void handleBlockAction(final S24PacketBlockAction packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
-        this.gameController.world.addBlockEvent(packetIn.getBlockPosition(), packetIn.getBlockType(), packetIn.getData1(), packetIn.getData2());
+        this.gameController.theWorld.addBlockEvent(packetIn.getBlockPosition(), packetIn.getBlockType(), packetIn.getData1(), packetIn.getData2());
     }
 
     /**
@@ -1236,7 +1236,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
     @Override
     public void handleBlockBreakAnim(final S25PacketBlockBreakAnim packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
-        this.gameController.world.sendBlockBreakProgress(packetIn.getBreakerId(), packetIn.getPosition(), packetIn.getProgress());
+        this.gameController.theWorld.sendBlockBreakProgress(packetIn.getBreakerId(), packetIn.getPosition(), packetIn.getProgress());
     }
 
     @Override
@@ -1309,7 +1309,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
     @Override
     public void handleMaps(final S34PacketMaps packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
-        final MapData mapdata = ItemMap.loadMapData(packetIn.getMapId(), this.gameController.world);
+        final MapData mapdata = ItemMap.loadMapData(packetIn.getMapId(), this.gameController.theWorld);
         packetIn.setMapdataTo(mapdata);
         this.gameController.entityRenderer.getMapItemRenderer().updateMapTexture(mapdata);
     }
@@ -1319,9 +1319,9 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
 
         if (packetIn.isSoundServerwide()) {
-            this.gameController.world.playBroadcastSound(packetIn.getSoundType(), packetIn.getSoundPos(), packetIn.getSoundData());
+            this.gameController.theWorld.playBroadcastSound(packetIn.getSoundType(), packetIn.getSoundPos(), packetIn.getSoundData());
         } else {
-            this.gameController.world.playAuxSFX(packetIn.getSoundType(), packetIn.getSoundPos(), packetIn.getSoundData());
+            this.gameController.theWorld.playAuxSFX(packetIn.getSoundType(), packetIn.getSoundPos(), packetIn.getSoundData());
         }
     }
 
@@ -1385,8 +1385,8 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
     @Override
     public void handleServerDifficulty(final S41PacketServerDifficulty packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
-        this.gameController.world.getWorldInfo().setDifficulty(packetIn.getDifficulty());
-        this.gameController.world.getWorldInfo().setDifficultyLocked(packetIn.isDifficultyLocked());
+        this.gameController.theWorld.getWorldInfo().setDifficulty(packetIn.getDifficulty());
+        this.gameController.theWorld.getWorldInfo().setDifficultyLocked(packetIn.isDifficultyLocked());
     }
 
     @Override
@@ -1530,7 +1530,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
     @Override
     public void handleSoundEffect(final S29PacketSoundEffect packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
-        this.gameController.world.playSound(packetIn.getX(), packetIn.getY(), packetIn.getZ(), packetIn.getSoundName(), packetIn.getVolume(), packetIn.getPitch(), false);
+        this.gameController.theWorld.playSound(packetIn.getX(), packetIn.getY(), packetIn.getZ(), packetIn.getSoundName(), packetIn.getVolume(), packetIn.getPitch(), false);
     }
 
     @Override

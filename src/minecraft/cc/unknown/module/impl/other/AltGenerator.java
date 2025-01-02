@@ -18,7 +18,7 @@ import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Session;
 
-@ModuleInfo(aliases = "Alt Generator", description = "Te recomiendo no activar esto xd", category = Category.OTHER)
+@ModuleInfo(aliases = "Alt Generator", description = "Genera cuentas de 3 letras no registradas para universocraft [BETA]", category = Category.OTHER)
 public final class AltGenerator extends Module {
 
     private String serverAddress = "mc.universocraft.com";
@@ -29,7 +29,7 @@ public final class AltGenerator extends Module {
     public final Listener<PreMotionEvent> onPreMotion = event -> {
         if (currentName == null) {
             currentName = genName();
-            PlayerUtil.display("Attempting with name: " + currentName);
+            PlayerUtil.displayInClient("Attempting with name: " + currentName);
 
             mc.session = new Session(currentName, "", "", "mojang");
 
@@ -46,7 +46,7 @@ public final class AltGenerator extends Module {
             String message = wrapped.getChatComponent().getUnformattedText();
 
             if (message.contains("/codigo")) {
-                PlayerUtil.display("Success " + currentName + ".");
+                PlayerUtil.displayInClient("Success " + currentName + ".");
 
                 disconnectAndRetry();
             }
@@ -64,7 +64,7 @@ public final class AltGenerator extends Module {
     }
 
     private void connectToServer(String address, int port) {
-        mc.world = null;
+        mc.theWorld = null;
         mc.displayGuiScreen(new GuiConnecting(new MainMenu(), mc, new ServerData("FurryServer", address, false)));
     }
 

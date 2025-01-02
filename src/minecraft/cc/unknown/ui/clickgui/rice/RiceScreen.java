@@ -85,7 +85,7 @@ public class RiceScreen extends GuiScreen implements Accessor {
         scaleAnimation.reset();
         scaleAnimation.setValue(0);
 
-        ScaledResolution scaledResolution = mc.scaledResolution;
+        ScaledResolution scaledResolution = /*mc.scaledResolution*/ new ScaledResolution(mc);
 
         lastScreen = selectedScreen;
         timeInCategory.reset();

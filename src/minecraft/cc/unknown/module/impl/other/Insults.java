@@ -32,13 +32,13 @@ public final class Insults extends Module {
 	private final BooleanValue randomizer = new BooleanValue("Randomizer", this, false);
 	private final BooleanValue autoTell = new BooleanValue("Auto Tell", this, false);
 
-	private final String[] defaultInsults = { "Akemi Client esta en otro level %s", "Config issue %s",
-			"Eso te paso por no usar Akemi Client, bobo %s", "Deberias simplemente descargar Akemi Client %s",
-			"Esto no se te da, descarga Akemi Client anda. %s",
-			"No, no puedo ganar sin hacks, solo con Akemi Client! %s",
-			"Antes de insultarme al tell mejor descarga Akemi Client! %s", "He-he-headshot!",
-			"Que puedo decir, Akemi Client me da poderes %s", "Akemi Client 1 - %s 0",
-			"Eso te pasa por no descargar Akemi Client muajaj! %s", "Deberias descargar akemi cliente yperra %s",
+	private final String[] defaultInsults = { "Sakura Client esta en otro level %s", "Config issue %s",
+			"Eso te paso por no usar Sakura Client, bobo %s", "Deberias simplemente descargar Sakura Client %s",
+			"Esto no se te da, descarga Sakura Client anda. %s",
+			"No, no puedo ganar sin hacks, solo con Sakura Client! %s",
+			"Antes de insultarme al tell mejor descarga Sakura Client! %s", "He-he-headshot!",
+			"Que puedo decir, Sakura Client me da poderes %s", "Sakura Client 1 - %s 0",
+			"Eso te pasa por no descargar Sakura Client muajaj! %s", "Deberias descargar Sakura cliente yperra %s",
 			"Jajaja que malo eres %s", "Puta de yMierda %s", "Du Schweinehund %s", };
 
 	private EntityPlayer target;
@@ -46,7 +46,7 @@ public final class Insults extends Module {
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
-		if (target != null && !mc.world.playerEntities.contains(target)) {
+		if (target != null && !mc.theWorld.playerEntities.contains(target)) {
 			if (ticks >= delay.getValue().intValue() + Math.random() * 2) {
 				String insult = "";
 

@@ -52,7 +52,7 @@ public class TickBase extends Module {
 			.add(new SubMode("Latency"))
 			.setDefault("Tick");
 	
-	private final NumberValue range = new NumberValue("Range", this, 3, 3, 8, 0.1, () -> !mode.is("Latency") && !mode.is("Tick"));
+	private final NumberValue range = new NumberValue("Range", this, 3, 3, 8, 0.1, () -> !mode.is("Packet") && !mode.is("Tick"));
 	private final NumberValue lagTime = new NumberValue("Lag Time", this, 50, 0, 500, 10, () -> !mode.is("Tick"));
 	private final NumberValue delay = new NumberValue("Delay", this, 150, 50, 2000, 50, () -> !mode.is("Tick") && !mode.is("Latency"));
 	private final BooleanValue checkTeams = new BooleanValue("Check Teams", this, false, () -> !mode.is("Tick"));
@@ -122,7 +122,7 @@ public class TickBase extends Module {
 
     private boolean shouldStart() {
         if (System.currentTimeMillis() - lastLagTime < delay.getValue().longValue()) return false;
-        EntityPlayer target = mc.world.playerEntities.stream().filter(p -> p != mc.player).filter(p -> !checkTeams.getValue() || !PlayerUtil.isTeam(p)).filter(p -> !FriendComponent.isFriend(p)).map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p))).min(Comparator.comparing(Doble::getSecond)).map(Doble::getFirst).orElse(null);
+        EntityPlayer target = mc.theWorld.playerEntities.stream().filter(p -> p != mc.player).filter(p -> !checkTeams.getValue() || !PlayerUtil.sameTeam(p)).filter(p -> !FriendComponent.isFriend(p)).map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p))).min(Comparator.comparing(Doble::getSecond)).map(Doble::getFirst).orElse(null);
         if (target == null) return false;
         double distance = new Vec3(target).distanceTo(mc.player);
         return distance >= 3.0 && distance <= range.getValue().doubleValue();
@@ -188,7 +188,7 @@ public class TickBase extends Module {
            Vec3 vec32 = vec3.addVector(vec31.xCoord * range, vec31.yCoord * range, vec31.zCoord * range);
            Entity pointedEntity = null;
            float f = 1.0F;
-           List<?> list = mc.world.getEntitiesInAABBexcluding(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec31.xCoord * range, vec31.yCoord * range, vec31.zCoord * range).expand((double)f, (double)f, (double)f), Predicates.and(EntitySelectors.NOT_SPECTATING, Entity::canBeCollidedWith));
+           List<?> list = mc.theWorld.getEntitiesInAABBexcluding(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec31.xCoord * range, vec31.yCoord * range, vec31.zCoord * range).expand((double)f, (double)f, (double)f), Predicates.and(EntitySelectors.NOT_SPECTATING, Entity::canBeCollidedWith));
            double d2 = range;
            Iterator var12 = list.iterator();
 

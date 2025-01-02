@@ -37,22 +37,23 @@ public class FastPlace extends Module {
 			ItemStack stack = mc.player.getCurrentEquippedItem();
 			if (stack != null) {
 				Item item = mc.player.getCurrentEquippedItem().getItem();
+				if (mc.objectMouseOver.typeOfHit == null || mc.objectMouseOver == null) return;
 				if (blocks.getValue() && item instanceof ItemBlock && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-					long random = this.blockDelay.getValue().longValue() == 0.0 ? 0L : this.blockDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
+					long random = blockDelay.getValue().longValue() == 0.0 ? 0L : blockDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
 					if (stopWatch.reached(random)) {
 						mc.rightClickMouse();
 						stopWatch.reset();
 					}
 					event.setCancelled();
 				} else if (projectiles.getValue() && item instanceof ItemSnowball || item instanceof ItemEgg) {
-					long random = this.projectileDelay.getValue().longValue() == 0.0 ? 0L : this.projectileDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
+					long random = projectileDelay.getValue().longValue() == 0.0 ? 0L : projectileDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
 					if (stopWatch.reached(random)) {
 						mc.rightClickMouse();
 						stopWatch.reset();
 					}
 					event.setCancelled();
 				} else if (xpBottle.getValue() && item instanceof ItemExpBottle) {
-					long random = this.xpBottleDelay.getValue().longValue() == 0.0 ? 0L : this.xpBottleDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
+					long random = xpBottleDelay.getValue().longValue() == 0.0 ? 0L : xpBottleDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
 					if (stopWatch.reached(random)) {
 						mc.rightClickMouse();
 						stopWatch.reset();

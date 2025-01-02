@@ -3,6 +3,7 @@ package cc.unknown.util.player;
 import java.util.Arrays;
 import java.util.List;
 
+import cc.unknown.util.Accessor;
 import lombok.experimental.UtilityClass;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
@@ -10,18 +11,13 @@ import net.minecraft.block.BlockGlass;
 import net.minecraft.block.BlockSlime;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockTNT;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EnumCreatureAttribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -30,7 +26,7 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
 
 @UtilityClass
-public class ItemUtil {
+public class ItemUtil implements Accessor {
 
     private final List<Item> WHITELISTED_ITEMS = Arrays.asList(Items.milk_bucket, Items.golden_apple, Items.potionitem, Items.ender_pearl, Items.water_bucket, Items.arrow, Items.bow);
 
@@ -93,30 +89,33 @@ public class ItemUtil {
         }
     }
     
-    public float getCombatDamage(ItemStack stack) {
-        if (stack == null || stack.getItem() == null || stack.stackSize == 0) return 0.0F;
-        final Item item = stack.getItem();
-        if (item instanceof ItemSword) {
-            return ((ItemSword) item).getDamageVsEntity() + EnchantmentHelper.getModifierForCreature(stack, EnumCreatureAttribute.UNDEFINED) +
-                    0.5F * EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, stack) +
-                    0.5F * EnchantmentHelper.getEnchantmentLevel(Enchantment.fireAspect.effectId, stack) +
-                    0.5F * EnchantmentHelper.getEnchantmentLevel(Enchantment.looting.effectId, stack) +
-                    ((((ItemSword) item).getToolMaterialName().equals(Item.ToolMaterial.GOLD.name())) ? 0.5F : 1.0F);
-        } else if (item instanceof ItemBow) {
-            return 1.0F + EnchantmentHelper.getModifierForCreature(stack, EnumCreatureAttribute.UNDEFINED) +
-                    0.5F * EnchantmentHelper.getEnchantmentLevel(Enchantment.flame.effectId, stack) +
-                    0.5F * EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack) +
-                    0.5F * EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, stack);
-        } else if (item instanceof ItemPickaxe) {
-            return ((ItemPickaxe) item).getToolMaterial().getDamageVsEntity() + EnchantmentHelper.getModifierForCreature(stack, EnumCreatureAttribute.UNDEFINED) +
-                    ((((ItemPickaxe) item).getToolMaterialName().equals(Item.ToolMaterial.GOLD.name())) ? 0.5F : 1.0F);
-        } else if (item instanceof ItemAxe) {
-            return ((ItemAxe) item).getToolMaterial().getDamageVsEntity() + EnchantmentHelper.getModifierForCreature(stack, EnumCreatureAttribute.UNDEFINED) +
-                    0.5F * EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, stack) +
-                    0.5F * EnchantmentHelper.getEnchantmentLevel(Enchantment.fireAspect.effectId, stack) +
-                    0.5F * EnchantmentHelper.getEnchantmentLevel(Enchantment.looting.effectId, stack) +
-                    ((((ItemAxe) item).getToolMaterialName().equals(Item.ToolMaterial.GOLD.name())) ? 0.5F : 1.0F);
+    public int getMaxDamageSlot(){
+        int index = -1;
+        double damage = -1;
+
+        for (int slot = 0; slot <= 8; slot++) {
+           ItemStack itemInSlot = mc.player.inventory.getStackInSlot(slot);
+           if(itemInSlot == null)
+              continue;
+           for (AttributeModifier mooommHelp :itemInSlot.getAttributeModifiers().values()){
+              if(mooommHelp.getAmount() > damage) {
+                 damage = mooommHelp.getAmount();
+                 index = slot;
+              }
+           }
+
+
         }
-        return 0.0F;
-    }
+           return index;
+     }
+
+     public double getSlotDamage(int slot) {
+        ItemStack itemInSlot = mc.player.inventory.getStackInSlot(slot);
+        if (itemInSlot == null)
+           return -1;
+        for (AttributeModifier mooommHelp : itemInSlot.getAttributeModifiers().values()) {
+              return mooommHelp.getAmount();
+        }
+        return -1;
+     }
 }

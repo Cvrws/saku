@@ -48,7 +48,7 @@ public final class FastBreak extends Module {
 	                    BlockPos blockPos = mc.objectMouseOver.getBlockPos();
 	                    Block block = PlayerUtil.block(blockPos);
 	
-	                    float blockHardness = block.getPlayerRelativeBlockHardness(mc.player, mc.world, blockPos);
+	                    float blockHardness = block.getPlayerRelativeBlockHardness(mc.player, mc.theWorld, blockPos);
 	                    percentageFaster = blockHardness * ticks.getValue().intValue();
 	                }
 	                break;

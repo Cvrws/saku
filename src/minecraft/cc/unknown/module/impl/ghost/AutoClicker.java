@@ -1,6 +1,5 @@
 package cc.unknown.module.impl.ghost;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.lwjgl.input.Keyboard;
@@ -9,168 +8,234 @@ import org.lwjgl.input.Mouse;
 import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.other.TickEvent;
-import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.client.MathUtil;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
+import lombok.SneakyThrows;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.GuiInventory;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemBucketMilk;
+import net.minecraft.item.ItemFishingRod;
+import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemPotion;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 
 @ModuleInfo(aliases = "Auto Clicker", description = "Clickea automáticamente", category = Category.GHOST)
 public class AutoClicker extends Module {
 
-	private final ModeValue clickMode = new ModeValue("Randomization", this) {
-		{
-			add(new SubMode("Normal"));
-			add(new SubMode("ButterFly"));
-			add(new SubMode("Drag"));
-			setDefault("Normal");
-		}
-	};
-
-	private final ModeValue button = new ModeValue("Click Button", this)
+	private final ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Left"))
 			.add(new SubMode("Right"))
 			.add(new SubMode("Both"))
 			.setDefault("Left");
 
-	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 8, 14, 1, 20, 1);
-	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 1.1, 2, 0.1);
+	private final BoundsNumberValue leftCPS = new BoundsNumberValue("Left CPS", this, 16, 19, 1, 40, 1, () -> !mode.is("Left") && !mode.is("Both"));
+	private final BooleanValue weaponOnly = new BooleanValue("Only Use Weapons", this, false, () -> !mode.is("Left") && !mode.is("Both"));
+	private final BooleanValue breakBlocks = new BooleanValue("Break Blocks", this, true, () -> !mode.is("Left") && !mode.is("Both"));
+	private BooleanValue invClicker = new BooleanValue("Auto-Click in Inventory", this, false, () -> !mode.is("Left") && !mode.is("Both"));
+	private final NumberValue invDelay = new NumberValue("Click Tick Delay", this, 5, 0, 10, 1, () -> !invClicker.getValue());
 
-	private final BooleanValue breakBlocks = new BooleanValue("Break Blocks", this, true, () -> !isButtonClick());
-	private final BooleanValue guiClicker = new BooleanValue("Gui Clicker", this, false, () -> !isButtonClick());
-	private final NumberValue clickDuration = new NumberValue("Click Duration", this, 2, 0, 5, 1, () -> !isButtonClick() || !guiClicker.getValue());
-	private final NumberValue randomizationFactor = new NumberValue("Click Randomization Factor", this, 0.1, 0.1, 1, 0.1, () -> !isButtonClick() || !guiClicker.getValue());
+	private final BoundsNumberValue rightCPS = new BoundsNumberValue("Right CPS", this, 12, 16, 1, 40, 1, () -> !mode.is("Right") && !mode.is("Both"));
+	private final BooleanValue onlyBlocks = new BooleanValue("Only Use Blocks", this, false, () -> !mode.is("Right") && !mode.is("Both"));
+	private final BooleanValue allowEat = new BooleanValue("Allow Eating & Drinking", this, true, () -> !mode.is("Right") && !mode.is("Both"));
+	private final BooleanValue allowBow = new BooleanValue("Allow Using Bow", this, true, () -> !mode.is("Right") && !mode.is("Both"));
 
-	private final StopWatch stopWatch = new StopWatch();
-	private int ticksDown;
-	private int attackTicks;
-	private int mouseDownTicks = 0;
-	private long nextSwing;
-
+	private boolean breakHeld;
+	private int invClick;
+	private long leftDelay = 50L;
+	private long leftLastSwing = 0L;
+	private long rightDelay = 0L;
+	private long rightLastSwing = 0L;
+	private int clickDelay = 0;
+	
 	@EventLink
-	public final Listener<TickEvent> onTick = event -> {
-		attackTicks++;
-		
-		HitSelect hitSelect = Sakura.instance.getModuleManager().get(HitSelect.class);
-		
-		if (hitSelect != null && stopWatch.finished(nextSwing) && (!hitSelect.isEnabled() || ((hitSelect.isEnabled() && attackTicks >= 10) || (mc.player != null && stopWatch.finished(nextSwing)))) && mc.currentScreen == null) {
-			final long clicks = (long) (this.cps.getRandomBetween().longValue() * randomization.getValue().doubleValue());
-			if (mc.gameSettings.keyBindAttack.isKeyDown()) {
-				ticksDown++;
-			} else {
-				ticksDown = 0;
-			}
-
-			switch (clickMode.getValue().getName()) {
-			case "Normal":
-				this.nextSwing = 1000 / clicks;
-				break;
-			case "ButterFly":
-				if (this.nextSwing >= 100) {
-					this.nextSwing = (long) (Math.random() * 100);
-				}
-				break;
-			case "Drag":
-				double base = 15;
-				double fluctuation = Math.random() * 10 - 5;
-				boolean pause = Math.random() < 0.05;
-
-				if (pause) {
-					this.nextSwing = (long) (base + 50 + fluctuation);
-				} else {
-					this.nextSwing = (long) (base + fluctuation);
-				}
-			}
-
-			switch (button.getValue().getName()) {
-			case "Left":
-				handleLeftClick();
-				break;
-			case "Right":
-				handleRightClick();
-				break;
-			case "Both":
-				handleLeftClick();
-				handleRightClick();
-				break;
-			}
-
-			this.stopWatch.reset();
+	public final Listener<Render3DEvent> onRender3D = event -> {
+		switch (mode.getValue().getName()) {
+		case "Left":
+			leftDelay();
+			break;
+		case "Right":
+			rightDelay();
+			break;
+		case "Both":
+			leftDelay();
+			rightDelay();
+			break;
 		}
 	};
 
 	@EventLink
 	public final Listener<PreMotionEvent> onMotion = event -> {
-		if (guiClicker.getValue()) {
-			inInvClick(mc.currentScreen);
+		if (invClicker.getValue()) {
+			shouldInvClick(mc.currentScreen);
 		}
 	};
+	
+	private void leftDelay() {
+		Mouse.poll();
 
-	@EventLink
-	public final Listener<AttackEvent> onAttack = event -> {
-		attackTicks = 0;
-	};
-
-	@EventLink
-	public final Listener<Render3DEvent> onRender3D = event -> {
-		mc.leftClickCounter = 0;
-	};
-
-	private void handleLeftClick() {
-		if (ticksDown > 1 && !mc.gameSettings.keyBindUseItem.isKeyDown() && (!breakBlocks.getValue() || mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)) {
-			mc.clickMouseEvent();
-		} else if (!breakBlocks.getValue()) {
-			mc.playerController.curBlockDamageMP = 0;
+		if (!mc.inGameHasFocus || checkScreen() || checkHit()) {
+			return;
 		}
-	}
 
-	private void handleRightClick() {
-		if (Mouse.isButtonDown(1) && mc.currentScreen == null) {
-			if (mc.gameSettings.keyBindUseItem.isKeyDown() && !mc.gameSettings.keyBindAttack.isKeyDown()) {
-				mc.rightClickMouse();
-				if (Math.random() > 0.9) {
-					mc.rightClickMouse();
-				}
-			}
-		}
-	}
 
-	private void inInvClick(GuiScreen gui) {
-		if (Keyboard.isKeyDown(42) && Mouse.isButtonDown(0)) {
-			if (gui == null)
+		if (Mouse.isButtonDown(0)) {
+			if (breakBlockLogic() || (this.weaponOnly.getValue() && !PlayerUtil.isHoldingWeapon())) {
 				return;
-	
-			int mouseX = Mouse.getX() * gui.width / mc.displayWidth;
-			int mouseY = gui.height - Mouse.getY() * gui.height / mc.displayHeight - 1;
+			}
 
-			try {
-				Method guiClicker = GuiScreen.class.getDeclaredMethod("mouseClicked", Integer.TYPE, Integer.TYPE, Integer.TYPE);
-				guiClicker.setAccessible(true);
-	
-				mouseDownTicks++;
-				if (mouseDownTicks > clickDuration.getValue().intValue() && Math.random() > randomizationFactor.getValue().intValue()) {
-					guiClicker.invoke(gui, mouseX, mouseY, 0);
-					mouseDownTicks = 0;
-				} else {
-					mouseDownTicks = 0;
-				}
-			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-				e.printStackTrace();
+			if (System.currentTimeMillis() - leftLastSwing >= leftDelay) {
+				leftLastSwing = System.currentTimeMillis();
+				leftDelay = getClickDelay();
+				KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
+				KeyBinding.onTick(mc.gameSettings.keyBindAttack.getKeyCode());
+			} else if (leftLastSwing > leftDelay * 1000) {
+				KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), false);
 			}
 		}
 	}
 
-	private boolean isButtonClick() {
-		return button.is("Left") || button.is("Both");
+	private void rightDelay() {
+		Mouse.poll();
+
+		if (checkScreen() || !mc.inGameHasFocus)
+			return;
+		
+		if (Mouse.isButtonDown(1)) {
+			if (!rightClickAllowed())
+				return;
+
+			if (System.currentTimeMillis() - rightLastSwing >= rightDelay) {
+				rightLastSwing = System.currentTimeMillis();
+				rightDelay = getClickDelay();
+				KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
+				KeyBinding.onTick(mc.gameSettings.keyBindUseItem.getKeyCode());
+			} else if (System.currentTimeMillis() - rightLastSwing > rightDelay * 1000) {
+				KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
+			}
+		}
+	}
+
+	private boolean breakBlockLogic() {
+		if (this.breakBlocks.getValue() && mc.objectMouseOver != null) {
+			BlockPos p = mc.objectMouseOver.getBlockPos();
+
+			if (p != null) {
+				Block bl = mc.theWorld.getBlockState(p).getBlock();
+				if (bl != Blocks.air && !(bl instanceof BlockLiquid)) {
+					if (!breakHeld) {
+						int e = mc.gameSettings.keyBindAttack.getKeyCode();
+						KeyBinding.setKeyBindState(e, true);
+						KeyBinding.onTick(e);
+						breakHeld = true;
+					}
+					return true;
+				}
+				if (breakHeld) {
+					breakHeld = false;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean rightClickAllowed() {
+		ItemStack item = mc.player.getHeldItem();
+		if (item != null) {
+
+			if (item.getItem() instanceof ItemSword) {
+				return false;
+			} else if (item.getItem() instanceof ItemFishingRod) {
+				return false;
+			} else if (item.getItem() instanceof ItemBow) {
+				return false;
+			}
+
+			if (allowEat.getValue()) {
+				if ((item.getItem() instanceof ItemFood) || item.getItem() instanceof ItemPotion
+						|| item.getItem() instanceof ItemBucketMilk) {
+					return false;
+				}
+			}
+
+			if (onlyBlocks.getValue()) {
+				if (!(item.getItem() instanceof ItemBlock)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	private int getClickDelay() {
+		switch (mode.getValue().getName()) {
+		case "Left":
+			setClickType(leftCPS.getValue().intValue(), leftCPS.getSecondValue().intValue());
+			break;
+		case "Right":
+			setClickType(rightCPS.getValue().intValue(), rightCPS.getSecondValue().intValue());
+			break;
+		case "Both":
+			setClickType(leftCPS.getValue().intValue(), leftCPS.getSecondValue().intValue());
+			setClickType(rightCPS.getValue().intValue(), rightCPS.getSecondValue().intValue());
+			break;
+		}
+		return clickDelay;
+	}
+
+	@SneakyThrows
+	private void shouldInvClick(GuiScreen gui) {
+		if (gui instanceof GuiContainer) {
+			if (Mouse.isButtonDown(0) && (Keyboard.isKeyDown(54) || Keyboard.isKeyDown(42))) {
+				invClick++;
+				int x = Mouse.getX() * gui.width / mc.displayWidth;
+				int y = gui.height - Mouse.getY() * gui.height / mc.displayHeight - 1;
+
+				if (invClick >= invDelay.getValue().intValue()) {
+					Method mouseClicked = GuiScreen.class.getDeclaredMethod("mouseClicked", int.class, int.class, int.class);
+					mouseClicked.setAccessible(true);
+			            
+					mouseClicked.invoke(gui, x, y, 0);
+					invClick = 0;
+				}
+				return;
+			}
+		}
+	}
+	
+	private void setClickType(int min, int max) {
+		clickDelay = MathUtil.randomClickDelay(min, max);
+	}
+	
+	public boolean checkScreen() {
+		return mc.currentScreen != null || mc.currentScreen instanceof GuiInventory || mc.currentScreen instanceof GuiChest;
+	}
+
+	public boolean checkHit() {
+		HitSelect hitSelect = (HitSelect) Sakura.instance.getModuleManager().get(HitSelect.class);
+		return hitSelect.isEnabled();
 	}
 }

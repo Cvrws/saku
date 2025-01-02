@@ -2642,7 +2642,7 @@ public class GameSettings {
             Config.waterOpacityChanged = true;
         }
 
-        ClearWater.updateWaterOpacity(this, this.mc.world);
+        ClearWater.updateWaterOpacity(this, this.mc.theWorld);
     }
 
     public void setAllAnimations(final boolean p_setAllAnimations_1_) {

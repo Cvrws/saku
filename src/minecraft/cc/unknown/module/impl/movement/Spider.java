@@ -96,7 +96,7 @@ public class Spider extends Module {
 	};
 
 	private boolean insideBlock(final AxisAlignedBB bb) {
-		final WorldClient world = mc.world;
+		final WorldClient world = mc.theWorld;
 		for (int x = MathHelper.floor_double(bb.minX); x < MathHelper.floor_double(bb.maxX) + 1; ++x) {
 			for (int y = MathHelper.floor_double(bb.minY); y < MathHelper.floor_double(bb.maxY) + 1; ++y) {
 				for (int z = MathHelper.floor_double(bb.minZ); z < MathHelper.floor_double(bb.maxZ) + 1; ++z) {

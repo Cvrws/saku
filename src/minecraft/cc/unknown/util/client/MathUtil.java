@@ -111,4 +111,8 @@ public class MathUtil {
 	public boolean shouldPerformAction(double chanceValue, double randomFactor) {
 	    return chanceValue >= 100.0D || ThreadLocalRandom.current().nextDouble(100.0D + randomFactor) < chanceValue;
 	}
+	
+    public int randomClickDelay(int minCPS, int maxCPS) {
+        return (int) (Math.random() * (1000 / minCPS - 1000 / maxCPS + 1) + 1000 / maxCPS);
+    }
 }

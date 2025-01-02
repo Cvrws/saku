@@ -29,7 +29,7 @@ public final class ItemESP extends Module {
 	    itemColors.put(Items.redstone, Color.RED);
 	    itemColors.put(Items.diamond, Color.CYAN);
 
-	    for (Entity entity : mc.world.loadedEntityList) {
+	    for (Entity entity : mc.theWorld.loadedEntityList) {
 	        if (entity instanceof EntityItem) {
 	            EntityItem item = (EntityItem) entity;
 	            ItemStack stack = item.getEntityItem();

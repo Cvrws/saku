@@ -17,7 +17,6 @@ import org.lwjgl.opengl.GL11;
 
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.player.AttackEvent;
-import cc.unknown.ui.theme.ThemeManager;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.blur.GaussianFilter;
 import cc.unknown.util.render.shader.Shaders;
@@ -27,7 +26,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -153,7 +151,7 @@ public final class RenderUtil implements Accessor {
     }
 
     public void scissor(double x, double y, double width, double height) {
-        final ScaledResolution sr = mc.scaledResolution;
+        final ScaledResolution sr = /*mc.scaledResolution*/ new ScaledResolution(mc);
         final double scale = sr.getScaleFactor();
 
         y = sr.getScaledHeight() - y;
@@ -447,6 +445,7 @@ public final class RenderUtil implements Accessor {
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
     }
+
     
     public static void drawBloomShadow(float x, float y, float width, float height, int blurRadius, Color color) {
         drawBloomShadow(x, y, width, height, blurRadius, 0, color);
@@ -506,28 +505,5 @@ public final class RenderUtil implements Accessor {
         glEnable(GL_CULL_FACE);
         glPopMatrix();
     }
-    
-    public void drawPolygon(final double n, final double n2, final double n3, final int n4, final int n5) {
-        if (n4 < 3) {
-            return;
-        }
-        final float n6 = (n5 >> 24 & 0xFF) / 255.0f;
-        final float n7 = (n5 >> 16 & 0xFF) / 255.0f;
-        final float n8 = (n5 >> 8 & 0xFF) / 255.0f;
-        final float n9 = (n5 & 0xFF) / 255.0f;
-        final Tessellator getInstance = Tessellator.getInstance();
-        final WorldRenderer getWorldRenderer = getInstance.getWorldRenderer();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GL11.glColor4f(n7, n8, n9, n6);
-        getWorldRenderer.begin(6, DefaultVertexFormats.POSITION);
-        for (int i = 0; i < n4; ++i) {
-            final double n10 = 6.283185307179586 * i / n4 + Math.toRadians(180.0);
-            getWorldRenderer.pos(n + Math.sin(n10) * n3, n2 + Math.cos(n10) * n3, 0.0).endVertex();
-        }
-        getInstance.draw();
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-    }
+
 }

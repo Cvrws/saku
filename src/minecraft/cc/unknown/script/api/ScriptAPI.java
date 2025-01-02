@@ -88,7 +88,7 @@ public class ScriptAPI {
     }
 
     public float[] getRotations(int entity) {
-        Vector2f rotations = RotationUtil.calculate(Minecraft.getMinecraft().world.getEntityByID(entity));
+        Vector2f rotations = RotationUtil.calculate(Minecraft.getMinecraft().theWorld.getEntityByID(entity));
 
         return new float[]{rotations.x, rotations.y};
     }
@@ -135,7 +135,7 @@ public class ScriptAPI {
     }
 
     public void displayChat(final String message) {
-    	PlayerUtil.display(message);
+    	PlayerUtil.displayInClient(message);
     }
 
     public long getSystemMillis() {
@@ -163,7 +163,7 @@ public class ScriptAPI {
     }
 
     public ScriptBlockPos newBlockPos(int x, int y, int z) {
-    	PlayerUtil.display("Please use world.newBlockPos(), instead of sakura.newBlockPos().");
+    	PlayerUtil.displayInClient("Please use world.newBlockPos(), instead of sakura.newBlockPos().");
         return null;
     }
 

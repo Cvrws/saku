@@ -17,7 +17,7 @@ public interface Accessor {
     }
     
     default boolean isInGame() {
-        return mc != null || mc.player != null || mc.world != null;
+        return mc != null || mc.player != null || mc.theWorld != null;
     }
     
     default RiceScreen getClickGUI() {

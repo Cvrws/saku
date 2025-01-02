@@ -23,7 +23,7 @@ public final class ExtraSensoryPerception extends Module {
 	
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		for (EntityPlayer player : mc.world.playerEntities) {
+		for (EntityPlayer player : mc.theWorld.playerEntities) {
 			String name = player.getName();
     			
 			if (name.contains("CLICK DERECHO") || name.contains("MEJORAS") || name.contains("CLIQUE PARA COMPRAR") || name.contains("[SHOP]") || name.contains("CLIQUE PARA ABRIR")) {

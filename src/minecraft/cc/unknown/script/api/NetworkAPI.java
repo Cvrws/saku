@@ -219,7 +219,7 @@ public class NetworkAPI extends API {
                 packet = (Packet<?>) Arrays.stream(serverbound[id].getConstructors()).filter(x -> x.getParameterCount() == params.length).findFirst().get().newInstance(params);
             }
         } catch (Exception ex) {
-        	PlayerUtil.display("Failed to instantiate packet!");
+        	PlayerUtil.displayInClient("Failed to instantiate packet!");
             throw new ScriptException(ex);
         }
         return packet;

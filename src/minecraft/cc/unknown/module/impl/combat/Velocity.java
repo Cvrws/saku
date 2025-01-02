@@ -1,49 +1,96 @@
 package cc.unknown.module.impl.combat;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.input.MoveInputEvent;
+import cc.unknown.event.impl.netty.PacketReceiveEvent;
+import cc.unknown.event.impl.player.AttackEvent;
+import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.player.MoveUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S12PacketEntityVelocity;
 
 @ModuleInfo(aliases = "Velocity", description = "Te vuelve un gordito come hamburguesas haciendo que no tengas kb.", category = Category.COMBAT)
 public final class Velocity extends Module {
 	
-	private final BooleanValue onSwing = new BooleanValue("Only Click", this, false);
-	private final NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
-
+	private final NumberValue vertical = new NumberValue("Vertical", this, 90, 0, 100, 1);
+	private final NumberValue horizontal = new NumberValue("Horizontal", this, 100, 0, 100, 1);
+	
+	private final BooleanValue delay = new BooleanValue("Delay", this, false);
+    private final NumberValue delayHorizontal = new NumberValue("Delayed Horizontal", this, 100, 0, 100, 1, () -> !delay.getValue());
+    private final NumberValue delayVertical = new NumberValue("Delayed Vertical", this, 90, 0, 100, 1, () -> !delay.getValue());
+    
+    private final BooleanValue attack = new BooleanValue("Attack", this, false);
+    private final NumberValue attackHorizontal = new NumberValue("Horizontal Attack", this, 100, 0, 100, 1, () -> !attack.getValue());
+    private final NumberValue attackVertical = new NumberValue("Vertical Attack", this, 90, 0, 100, 1, () -> !attack.getValue());
+    
+    private final BooleanValue onlyAir = new BooleanValue("Only in Air", this, false);
+	
+	private int ticks;
+	private double motionY, motionX, motionZ;
+	
 	@EventLink
-	public final Listener<MoveInputEvent> onMove = event -> {
-	    if (shouldSkipUpdate()) return;
-	    EntityPlayer player = mc.player;
-	    if (player == null) return;
+	public final Listener<PacketReceiveEvent> onReceive = event -> {
+		if (mc.player.onGround && onlyAir.getValue()) return;
+		
+		final Packet<?> packet = event.getPacket();
+        if (packet instanceof S12PacketEntityVelocity) {
+            final S12PacketEntityVelocity wrapper = (S12PacketEntityVelocity) packet;
+            final double horizontal = this.horizontal.getValue().doubleValue();
+            final double vertical = this.vertical.getValue().doubleValue();
 
-	    double chanceValue = chance.getValue().doubleValue();
-	    double randomFactor = getFactor(chanceValue);
-
-	    if (!shouldPerformAction(chanceValue, randomFactor)) return;
-	    
-		if (MoveUtil.isMoving() && player.hurtTime > 0 && player.motionY > 0 && (player.ticksSinceVelocity <= 14 || player.onGroundTicks <= 1)) {
-			event.setJump(true);
-		}
+            if (horizontal == 0.0 && vertical == 0.0) {
+                event.setCancelled();
+                return;
+            }
+            
+            wrapper.motionX *= horizontal / 100.0;
+            wrapper.motionY *= vertical / 100.0;
+            wrapper.motionZ *= horizontal / 100.0;
+            event.setPacket(wrapper);
+        }
 	};
 	
-	private boolean shouldSkipUpdate() {
-	    return onSwing.getValue() && !mc.player.isSwingInProgress;
-	}
+	@EventLink
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
+		 ticks++;
+		 
+         if (mc.player.hurtTime == 9) {
+             ticks = 0;
+         }
 
-	private double getFactor(double chanceValue) {
-	    return Math.abs(Math.sin(System.nanoTime() * Double.doubleToLongBits(chanceValue))) * 100.0;
-	}
+         assert mc.player != null;
+         
+         if (mc.player.hurtTime == 9) {
+             motionX = mc.player.motionX;
+             motionY = mc.player.motionY;
+             motionZ = mc.player.motionZ;
+         }
+         
+         final double horizontal = this.delayHorizontal.getValue().doubleValue();
+         final double vertical = this.delayVertical.getValue().doubleValue();
 
-	private boolean shouldPerformAction(double chanceValue, double randomFactor) {
-	    return chanceValue >= 100.0D || ThreadLocalRandom.current().nextDouble(100.0D + randomFactor) < chanceValue;
-	}
+         if (mc.player.hurtTime == 8) {
+             mc.player.motionX *= horizontal / 100;
+             mc.player.motionY *= vertical / 100;
+             mc.player.motionZ *= horizontal / 100;
+         }
+	};
+	
+	@EventLink
+	public final Listener<AttackEvent> onAttack = event -> {
+		if (mc.player.onGround && onlyAir.getValue()) return;
+		
+        final double horizontal = this.attackHorizontal.getValue().doubleValue();
+        final double vertical = this.attackVertical.getValue().doubleValue();
+		
+        if (mc.player.hurtTime > 0) {
+            mc.player.motionZ *= horizontal;
+            mc.player.motionY *= vertical;
+            mc.player.motionX *= horizontal;
+        }
+	};
 }

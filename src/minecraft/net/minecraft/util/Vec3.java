@@ -6,7 +6,6 @@ import net.minecraft.entity.player.EntityPlayer;
 
 @Getter
 public class Vec3 {
-    public static final Vec3 ZERO = new Vec3(0, 0, 0);
     public double xCoord;
 
     public double yCoord;

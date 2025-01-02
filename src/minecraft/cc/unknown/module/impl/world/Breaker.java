@@ -33,6 +33,7 @@ import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockBed;
+import net.minecraft.block.BlockDragonEgg;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
@@ -47,8 +48,9 @@ public class Breaker extends Module {
 	
     public final ModeValue mode = new ModeValue("Mode", this)
             .add(new SubMode("Through Walls"))
-            .add(new SubMode("Surroundings"))
-            .setDefault("Through Walls");
+            .add(new SubMode("Hypixel"))
+            .add(new SubMode("Legit"))
+            .setDefault("Legit");
     
     private final NumberValue Range = new NumberValue("Range", this, 4, 1, 5, 0.1);
 
@@ -121,7 +123,7 @@ public class Breaker extends Module {
             for (int y = -Range.getValue().intValue()+1; y <= Range.getValue().intValue()+1; y++) {
                 for (int z = -Range.getValue().intValue()+1; z <= Range.getValue().intValue()+1; z++) {
                     Block block = PlayerUtil.blockRelativeToPlayer(x, y, z);
-                    if (block instanceof BlockBed) {
+                    if (block instanceof BlockBed || block instanceof BlockDragonEgg) {
                         foundbed = true;
                         bedX = x;
                         bedY = y;
@@ -154,8 +156,7 @@ public class Breaker extends Module {
             for (int i = 0; i < nearblocks.size(); i++) {
                 BlockPos blockPos = nearblocks.get(i);
                 Block block = PlayerUtil.blockRelativeToPlayer(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                if (block instanceof BlockBed) {
-                    nearblocks.remove(i);
+                if (block instanceof BlockBed || block instanceof BlockDragonEgg) {                    nearblocks.remove(i);
                     nearblocks.add(new BlockPos(blockPos.getX() + 1, blockPos.getY(), blockPos.getZ()));
                     nearblocks.add(new BlockPos(blockPos.getX() - 1, blockPos.getY(), blockPos.getZ()));
                     nearblocks.add(new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ() + 1));
@@ -171,14 +172,22 @@ public class Breaker extends Module {
                     airblocks++;
                 }
             }
-            if (airblocks > 0 || !this.mode.getValue().getName().equals("Surroundings")) {
-                blockToBreak = coordsBed;
-            } else {
-                float minHardness = 99999999;
+            
+            if (mode.is("Through Walls")) {
+            	if (airblocks > 0)
+            		blockToBreak = coordsBed;
+            }
+            
+            if (mode.is("Legit")) {
+            	mc.player.swingItem();
+            }
+            
+            if (mode.is("Hypixel")) {
+            	float minHardness = 99999999;
 
                 for (BlockPos blockPos : nearblocks) {
                     Block block = PlayerUtil.blockRelativeToPlayer(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                    if (block.getBlockHardness() < minHardness && !(block instanceof BlockBed)) {
+                    if (block.getBlockHardness() < minHardness && !(block instanceof BlockBed) && !(block instanceof BlockDragonEgg)) {
                         minHardness = block.getBlockHardness();
                         if (damagetoblock <= 0) {
                             blockToBreak = new BlockPos(player.posX + blockPos.getX(), player.posY + blockPos.getY(), player.posZ + blockPos.getZ());
@@ -195,6 +204,7 @@ public class Breaker extends Module {
                     }
                 }
             }
+            
             if (blockToBreak.distance(player.getPosition()) <= Range.getValue().floatValue()) {
                 if (rotate.getValue()) {
                     rotate(blockToBreak);
@@ -202,8 +212,8 @@ public class Breaker extends Module {
 
                 int slot = SlotUtil.findTool(blockToBreak);
                 if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(slot));
-                if (slot != -1) hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, slot);
-                else hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, mc.player.inventory.currentItem);
+                if (slot != -1) hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.theWorld, blockToBreak, slot);
+                else hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.theWorld, blockToBreak, mc.player.inventory.currentItem);
                 if (!mc.player.onGround) hardness *= airMultipalyer.getValue().floatValue();
 
                 if (damagetoblock == 0) {
@@ -211,8 +221,15 @@ public class Breaker extends Module {
                 }
                 mc.player.swingItem();
                 damagetoblock += hardness;
-                mc.world.sendBlockBreakProgress(player.getEntityId(), blockToBreak, (int) (damagetoblock * 10 - 1));
-                if (damagetoblock >= (PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ()) instanceof BlockBed ? 1-fastBreakBed.getValue().floatValue() : 1-fastBreakNormal.getValue().floatValue())) {
+                mc.theWorld.sendBlockBreakProgress(player.getEntityId(), blockToBreak, (int) (damagetoblock * 10 - 1));
+                float breakSpeedModifier = 1 - fastBreakNormal.getValue().floatValue();
+                if (PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ()) instanceof BlockBed) {
+                    breakSpeedModifier = 1 - fastBreakBed.getValue().floatValue();
+                } else if (PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ()) instanceof BlockDragonEgg) {
+                    breakSpeedModifier = 1 - fastBreakBed.getValue().floatValue();
+                }
+
+                if (damagetoblock >= breakSpeedModifier) {
                     damagetoblock = 0;
 
                     PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.STOP_DESTROY_BLOCK, blockToBreak, EnumFacing.DOWN));

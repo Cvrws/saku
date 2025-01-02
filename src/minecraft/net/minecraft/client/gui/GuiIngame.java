@@ -253,7 +253,7 @@ public class GuiIngame extends Gui {
 			this.mc.mcProfiler.endSection();
 		}
 
-		Scoreboard scoreboard = this.mc.world.getScoreboard();
+		Scoreboard scoreboard = this.mc.theWorld.getScoreboard();
 		ScoreObjective scoreobjective = null;
 		ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(this.mc.player.getName());
 
@@ -481,7 +481,7 @@ public class GuiIngame extends Gui {
 						&& this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
 					BlockPos blockpos = this.mc.objectMouseOver.getBlockPos();
 
-					if (this.mc.world.getTileEntity(blockpos) instanceof IInventory) {
+					if (this.mc.theWorld.getTileEntity(blockpos) instanceof IInventory) {
 						return true;
 					}
 				}
@@ -825,7 +825,7 @@ public class GuiIngame extends Gui {
 		} else {
 			lightLevel = 1.0F - lightLevel;
 			lightLevel = MathHelper.clamp_float(lightLevel, 0.0F, 1.0F);
-			WorldBorder worldborder = this.mc.world.getWorldBorder();
+			WorldBorder worldborder = this.mc.theWorld.getWorldBorder();
 			float f = (float) worldborder.getClosestDistance(this.mc.player);
 			double d0 = Math.min(worldborder.getResizeSpeed() * (double) worldborder.getWarningTime() * 1000.0D,
 					Math.abs(worldborder.getTargetSize() - worldborder.getDiameter()));

@@ -8,6 +8,7 @@ import cc.unknown.component.impl.Component;
 import cc.unknown.component.impl.event.*;
 import cc.unknown.component.impl.hud.*;
 import cc.unknown.component.impl.patches.*;
+import cc.unknown.component.impl.performance.*;
 import cc.unknown.component.impl.player.*;
 import cc.unknown.component.impl.viamcp.*;
 
@@ -24,6 +25,9 @@ public final class ComponentManager {
         
         // patches
         this.add(new GuiClosePatchComponent());
+        
+        // perfomance
+        this.add(new ParticleDistanceComponent());
         
         // player
         this.add(new LastConnectionComponent());

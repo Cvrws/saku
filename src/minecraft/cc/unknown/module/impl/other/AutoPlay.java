@@ -45,8 +45,8 @@ public final class AutoPlay extends Module {
 	            String command = getCommandForMode();
 	            
 	            if (!command.isEmpty()) {
-	                PlayerUtil.send(command);
-	                PlayerUtil.display(StreamerUtil.red +  "[S] " + StreamerUtil.pink + "Joined a new game");
+	                PlayerUtil.sendInChat(command);
+	                PlayerUtil.displayInClient(StreamerUtil.red +  "[S] " + StreamerUtil.pink + "Joined a new game");
 	            }
 	        }
 	    }

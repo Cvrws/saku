@@ -1619,8 +1619,9 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 				++entityIn.ticksSincePlayerVelocity;
 				++entityIn.ticksSinceTeleport;
 				++entityIn.ticksSinceAttack;
+				++entityIn.ticksSincePlace;
 
-				if (entityIn.timer.finished(60)) {
+				/*if (entityIn.timer.finished(60)) {
 					entityIn.render = true;
 					entityIn.timer.reset();
 				}
@@ -1628,7 +1629,7 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 				if (entityIn.timerName.finished(60)) {
 					entityIn.renderNameTag = true;
 					entityIn.timerName.reset();
-				}
+				}*/
 
 				if (entityIn.ridingEntity != null) {
 					entityIn.updateRidden();

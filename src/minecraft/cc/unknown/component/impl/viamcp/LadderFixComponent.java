@@ -22,7 +22,7 @@ public final class LadderFixComponent extends Component {
 
             if (block instanceof BlockLadder) {
                 final BlockPos blockPos = event.getBlockPos();
-                final IBlockState iblockstate = mc.world.getBlockState(blockPos);
+                final IBlockState iblockstate = mc.theWorld.getBlockState(blockPos);
 
                 if (iblockstate.getBlock() == block) {
                     final float f = 0.125F + 0.0625f;

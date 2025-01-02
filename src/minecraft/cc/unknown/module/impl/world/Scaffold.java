@@ -589,7 +589,7 @@ public class Scaffold extends Module {
 
 	public boolean doesNotContainBlock(int down) {
 		return PlayerUtil.blockRelativeToPlayer(offset.getX(), -down + offset.getY(), offset.getZ())
-				.isReplaceable(mc.world, new BlockPos(mc.player).down(down));
+				.isReplaceable(mc.theWorld, new BlockPos(mc.player).down(down));
 	}
 
 	public Vec3 getHitVec() {
@@ -641,7 +641,7 @@ public class Scaffold extends Module {
 
 		if (rayCast.is("Strict")) {
 			mc.rightClickMouse();
-		} else if (mc.playerController.onPlayerRightClick(mc.player, mc.world, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
+		} else if (mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
 			//mc.clickMouseEvent();
 			PacketUtil.send(new C0APacketAnimation());
 		}
@@ -684,7 +684,7 @@ public class Scaffold extends Module {
 	            mc.rightClickMouse();
 	        } else {
 	            Vec3 hitVec = getHitVec();
-	            if (mc.playerController.onPlayerRightClick(mc.player, mc.world, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
+	            if (mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
 	                PacketUtil.send(new C0APacketAnimation());
 	            }
 	        }

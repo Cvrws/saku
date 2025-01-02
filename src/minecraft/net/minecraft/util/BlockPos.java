@@ -40,10 +40,6 @@ public class BlockPos extends Vec3i {
     public BlockPos(final Vec3i source) {
         this(source.getX(), source.getY(), source.getZ());
     }
-    
-    public static boolean isSamePos(BlockPos blockPos, BlockPos blockPos2) {
-        return blockPos == blockPos2 || blockPos.getX() == blockPos2.getX() && blockPos.getY() == blockPos2.getY() && blockPos.getZ() == blockPos2.getZ();
-    }
 
     /**
      * Add the given coordinates to the coordinates of this BlockPos

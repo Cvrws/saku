@@ -5,6 +5,7 @@ import java.util.Random;
 
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.player.BlockAABBEvent;
+import cc.unknown.module.impl.player.GhostHand;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockState;
@@ -487,6 +488,10 @@ public class Block {
      * Returns if this block is collidable (only used by Fire). Args: x, y, z
      */
     public boolean isCollidable() {
+    	GhostHand ghostHand = (GhostHand) Sakura.instance.getModuleManager().get(GhostHand.class);
+    	if (ghostHand.isEnabled() && ghostHand.block != null && Block.getIdFromBlock(ghostHand.block) != 0) {
+    	    return false;
+    	}
         return true;
     }
 

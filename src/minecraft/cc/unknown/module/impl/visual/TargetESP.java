@@ -23,10 +23,9 @@ import net.minecraft.util.AxisAlignedBB;
 public final class TargetESP extends Module {
 	
 	private final ModeValue mode = new ModeValue("Mode", this)
-			.add(new SubMode("Dotted"))
 			.add(new SubMode("Ring"))
 			.add(new SubMode("Rect"))
-			.setDefault("Dotted");
+			.setDefault("Ring");
 
 	private double animation;
 	private boolean direction;
