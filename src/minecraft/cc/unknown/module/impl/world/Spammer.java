@@ -54,9 +54,9 @@ public final class Spammer extends Module {
     private final BooleanValue Randoms = new BooleanValue("Mention Randoms", this, true);
     private final BooleanValue DifferentMessages = new BooleanValue("3 Messages", this, true);
     private final BooleanValue LunarFix = new BooleanValue("Lunar Fix", this, true);
-    private final StringValue msg1 = new StringValue("1-. Message: ", this, "MTF on top");
-    private final StringValue msg2 = new StringValue("2-. Message: ", this, "Que esperan zperras");
-    private final StringValue msg3 = new StringValue("3-. Message: ", this, "Unanse de una vez dc zornhub xyz");
+    private final StringValue msg1 = new StringValue("1-. Message: ", this, "uwu");
+    private final StringValue msg2 = new StringValue("2-. Message: ", this, "owo");
+    private final StringValue msg3 = new StringValue("3-. Message: ", this, ">w<");
     private boolean sent;
     
     @EventLink

@@ -80,19 +80,17 @@ public final class ModuleManager {
 
         // Other
         this.put(AntiCrash.class, new AntiCrash());
-        this.put(RemoteShop.class, new RemoteShop());
         this.put(AntiAFK.class, new AntiAFK());
         this.put(AutoPlay.class, new AutoPlay());
         this.put(AutoRefill.class, new AutoRefill());
         this.put(AutoText.class, new AutoText());
         this.put(FPSBoost.class, new FPSBoost());
-        this.put(InternetRelayChat.class, new InternetRelayChat());
+        //this.put(InternetRelayChat.class, new InternetRelayChat());
         this.put(AutoSword.class, new AutoSword());
         this.put(MidClick.class, new MidClick());
         this.put(Insults.class, new Insults());
         this.put(AutoLeave.class, new AutoLeave());
         this.put(AltGenerator.class, new AltGenerator());
-        this.put(AnticheatDetector.class, new AnticheatDetector());
         this.put(MurderMystery.class, new MurderMystery());
         this.put(ChatBypass.class, new ChatBypass());
         this.put(NoGuiClose.class, new NoGuiClose());

@@ -13,24 +13,20 @@ import cc.unknown.util.client.StopWatch;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.SubMode;
 
-@ModuleInfo(aliases = "Click GUI", description = "Abre la interfaz que permite encender/apagar módulos y editar su configuración.", category = Category.VISUALS, keyBind = Keyboard.KEY_RSHIFT)
+@ModuleInfo(aliases = "Click GUI", description = "Abre la interfaz que permite editar la configuración de cada modulo..", category = Category.VISUALS, keyBind = Keyboard.KEY_RSHIFT)
 public final class ClickGUI extends Module {
 	
 	private final ModeValue mode = new ModeValue("Mode", this)
-			.add(new SubMode("Old"))
-			.add(new SubMode("Beta [Bug]"))
-			.setDefault("Old");
+			.add(new SubMode("Rice"))
+			.setDefault("Rice");
 	
     private final StopWatch stopWatch = new StopWatch();
 
     @Override
     public void onEnable() {
-    	if (mode.is("Old")) {
+    	if (mode.is("Rice")) {
 	        mc.displayGuiScreen(Sakura.instance.getClickGui());
 	        stopWatch.reset();
-    	} else if (mode.is("Beta [Bug]")){
-    		mc.displayGuiScreen(Sakura.instance.getBetaGui());
-    		stopWatch.reset();
     	}
     }
 
@@ -46,10 +42,8 @@ public final class ClickGUI extends Module {
 
         if (event.getKeyCode() == this.getKey() || event.getKeyCode() == 1) {
             if (mc.currentScreen == null) {
-            	if (mode.is("Old")) {
+            	if (mode.is("Rice")) {
             		mc.displayGuiScreen(Sakura.instance.getClickGui());
-            	} else if (mode.is("Beta [Bug]")){
-            		mc.displayGuiScreen(Sakura.instance.getBetaGui());
             	}
                 this.toggle();
             } else {
