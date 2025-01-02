@@ -2,6 +2,7 @@ package cc.unknown.module.impl.world;
 
 import org.lwjgl.input.Keyboard;
 
+import cc.unknown.component.impl.player.SpoofComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.TickEvent;
@@ -35,6 +36,7 @@ public class LegitScaffold extends Module {
 	private final BooleanValue slotSwap = new BooleanValue("Block Switching", this, true);
 	private final BooleanValue blocksOnly = new BooleanValue("Blocks Only", this, true);
 	private final BooleanValue backwards = new BooleanValue("Backwards Movement Only", this, true);
+	private final BooleanValue spoof = new BooleanValue("Spoof Slot", this, true);
 
 	private boolean shouldBridge, isShifting = false;
 	private int lastSlot;
@@ -53,6 +55,7 @@ public class LegitScaffold extends Module {
 		}
 
 		mc.player.inventory.currentItem = lastSlot;
+		SpoofComponent.stopSpoofing();
 		shouldBridge = false;
 	}
 
@@ -160,6 +163,8 @@ public class LegitScaffold extends Module {
         if (slotSwap.getValue() && shouldSkipBlockCheck()) {
         	mc.player.inventory.currentItem = slot;
         }
+        
+        if (spoof.getValue()) SpoofComponent.startSpoofing(lastSlot);
 
 		if (mc.currentScreen == null || mc.player.getHeldItem() == null) return;
 

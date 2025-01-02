@@ -3,7 +3,11 @@ package cc.unknown.module.impl.combat;
 import java.util.Comparator;
 import java.util.List;
 
+import com.viaversion.viaversion.api.Via;
+import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import com.viaversion.viaversion.api.type.Type;
+import com.viaversion.viaversion.protocols.protocol1_9to1_8.Protocol1_9To1_8;
 
 import cc.unknown.Sakura;
 import cc.unknown.component.impl.player.RotationComponent;
@@ -514,10 +518,13 @@ public final class KillAura extends Module {
 				}
 			}
 			
-			if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) mc.gameSettings.keyBindUseItem.pressed = true;
-			else {
-				PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
-			}
+	        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
+	            PacketWrapper useItem = PacketWrapper.create(29, null, Via.getManager().getConnectionManager().getConnections().iterator().next());
+	            useItem.write(Type.VAR_INT, 1);
+	            com.viaversion.viarewind.utils.PacketUtil.sendToServer(useItem, Protocol1_9To1_8.class, true, true);
+	        } else {
+	        	PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
+	        }
 
 			blocking = true;
 		}

@@ -13,9 +13,6 @@ public class NoClickDelay extends Module {
 		
 	@EventLink
 	public final Listener<GameEvent> onGame = event -> {
-		if (mc.objectMouseOver.typeOfHit != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
-			mc.leftClickCounter = 0;
-		} else mc.leftClickCounter = 0;
-		
+		mc.leftClickCounter = 0;
 	};
 }

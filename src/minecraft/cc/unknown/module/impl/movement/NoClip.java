@@ -3,6 +3,7 @@ package cc.unknown.module.impl.movement;
 import java.awt.Color;
 
 import cc.unknown.component.impl.player.RotationComponent;
+import cc.unknown.component.impl.player.SpoofComponent;
 import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.CancellableEvent;
 import cc.unknown.event.Listener;
@@ -19,6 +20,7 @@ import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.SlotUtil;
+import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.block.BlockAir;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.AxisAlignedBB;
@@ -29,6 +31,8 @@ public class NoClip extends Module {
 
 	private int lastSlot;
 	
+	private BooleanValue spoof = new BooleanValue("Spoof Slot", this, true);
+	
 	@Override
 	public void onEnable() {
 		lastSlot = -1;
@@ -38,6 +42,7 @@ public class NoClip extends Module {
 	public void onDisable() {
 		mc.player.noClip = false;
     	mc.player.inventory.currentItem = lastSlot;
+    	SpoofComponent.stopSpoofing();
 	}
 
 	@EventLink
@@ -78,6 +83,7 @@ public class NoClip extends Module {
         }
         
         mc.player.inventory.currentItem = slot;
+        if (spoof.getValue()) SpoofComponent.startSpoofing(lastSlot);
 
         RotationComponent.setRotations(new Vector2f(mc.player.rotationYaw, 90), 2, MovementFix.SILENT);
 

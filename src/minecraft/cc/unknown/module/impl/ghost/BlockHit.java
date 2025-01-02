@@ -9,11 +9,10 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.packet.BlinkUtil;
+import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.NumberValue;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.Entity;
 
 @ModuleInfo(aliases = "Block Hit", description = "Block hitea automáticamente", category = Category.GHOST)
 public class BlockHit extends Module {
@@ -21,6 +20,7 @@ public class BlockHit extends Module {
 	private final BoundsNumberValue duration = new BoundsNumberValue("Block Duration", this, 20, 100, 1, 500, 1);
 	private final BoundsNumberValue distance = new BoundsNumberValue("Distance", this, 0, 3, 0, 6, 0.1);
 	private final NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
+	private final BooleanValue blink = new BooleanValue("Blink", this, true);
 
 	private boolean block;
 	private StopWatch stopWatch = new StopWatch();
@@ -33,7 +33,12 @@ public class BlockHit extends Module {
 		if (block) {
 			if ((stopWatch.hasFinished() || !Mouse.isButtonDown(0)) && duration.getValue().intValue() <= stopWatch.getElapsedTime()) {
 				block = false;
-				release();
+				mc.gameSettings.keyBindUseItem.pressed = false;
+				
+				if (blink.getValue()) {
+					block = false;
+					BlinkUtil.disable();
+				}
 			}
 			return;
 		}
@@ -46,15 +51,16 @@ public class BlockHit extends Module {
 			block = true;
 			stopWatch.setMillis(duration.getSecondValue().intValue());
 			stopWatch.reset();
-			press();
+			mc.gameSettings.keyBindUseItem.pressed = true;
+			
+			if (mc.gameSettings.keyBindUseItem.isPressed()) {
+				
+			}
+			
+			if (blink.getValue()) {
+				block = true;
+				BlinkUtil.enable();
+			}
 		}
 	};
-
-	private void release() {
-		mc.gameSettings.keyBindUseItem.pressed = false;
-	}
-
-	private void press() {
-		mc.gameSettings.keyBindUseItem.pressed = true;
-	}
 }

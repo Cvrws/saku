@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import org.lwjgl.input.Keyboard;
 
 import cc.unknown.component.impl.player.RotationComponent;
+import cc.unknown.component.impl.player.SpoofComponent;
 import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -109,6 +110,7 @@ public class Scaffold extends Module {
 	private final BooleanValue smoothRotation = new BooleanValue("Smooth Rotation", this, false);
     private final BoundsNumberValue placeDelay = new BoundsNumberValue("Place Delay", this, 0, 0, 0, 5, 1);
     private final BooleanValue safeWalk = new BooleanValue("Safe Walk", this, false);
+	private final BooleanValue spoof = new BooleanValue("Spoof Slot", this, true);
 	private final BoundsNumberValue timer = new BoundsNumberValue("Timer", this, 1, 1, 0.1, 10, 0.05);
 	private final NumberValue expand = new NumberValue("Expand", this, 0, 0, 5, 1);
 	
@@ -186,6 +188,7 @@ public class Scaffold extends Module {
 	public void onDisable() {
 		resetBinds();
 		mc.player.inventory.currentItem = lastSlot;
+		SpoofComponent.stopSpoofing();
 	}
 
 	@EventLink
@@ -327,6 +330,8 @@ public class Scaffold extends Module {
 	        }
 	        
 	        mc.player.inventory.currentItem = slot;
+	        
+	        if (spoof.getValue()) SpoofComponent.startSpoofing(lastSlot);
 	        
 			if (doesNotContainBlock(1) && (!sameY || (doesNotContainBlock(2) && doesNotContainBlock(3) && doesNotContainBlock(4)))) {
 				ticksOnAir++;

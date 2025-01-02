@@ -8,6 +8,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import cc.unknown.component.impl.player.SpoofComponent;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -357,8 +358,8 @@ public class GuiIngame extends Gui {
 			float f = this.zLevel;
 			this.zLevel = -90.0F;
 			this.drawTexturedModalRect(i - 91, sr.getScaledHeight() - 22, 0, 0, 182, 22);
-			this.drawTexturedModalRect(i - 91 - 1 + entityplayer.inventory.currentItem * 20,
-					sr.getScaledHeight() - 22 - 1, 0, 22, 24, 22);
+            this.drawTexturedModalRect(i - 91 - 1 + SpoofComponent.getSpoofedSlot() * 20, sr.getScaledHeight() - 22 - 1, 0, 22, 24, 22);
+			//this.drawTexturedModalRect(i - 91 - 1 + entityplayer.inventory.currentItem * 20, sr.getScaledHeight() - 22 - 1, 0, 22, 24, 22);
 			this.zLevel = f;
 			GlStateManager.enableRescaleNormal();
 			GlStateManager.enableBlend();

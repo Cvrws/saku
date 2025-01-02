@@ -3,6 +3,7 @@ package net.minecraft.client.renderer;
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.Sakura;
+import cc.unknown.component.impl.player.SpoofComponent;
 import cc.unknown.module.impl.visual.Animations;
 import cc.unknown.module.impl.visual.AntiBlind;
 import net.minecraft.block.Block;
@@ -24,7 +25,6 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.src.Config;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumWorldBlockLayer;
@@ -506,20 +506,21 @@ public class ItemRenderer {
 			return;
 		}
 
-		ItemStack itemstack = entityplayer.inventory.mainInventory[currentItem];
+		ItemStack itemstack = SpoofComponent.getSpoofedStack();
+		//ItemStack itemstack = entityplayer.inventory.mainInventory[currentItem];
 
 		boolean flag = false;
 
 		if (this.itemToRender != null && itemstack != null) {
 			if (!this.itemToRender.getIsItemStackEqual(itemstack)) {
 				if (Reflector.ForgeItem_shouldCauseReequipAnimation.exists()) {
-					final boolean flag1 = Reflector.callBoolean(this.itemToRender.getItem(),
-							Reflector.ForgeItem_shouldCauseReequipAnimation, this.itemToRender, itemstack,
-							Boolean.valueOf(this.equippedItemSlot != currentItem));
+					//final boolean flag1 = Reflector.callBoolean(this.itemToRender.getItem(), Reflector.ForgeItem_shouldCauseReequipAnimation, this.itemToRender, itemstack, Boolean.valueOf(this.equippedItemSlot != currentItem));
+                    boolean flag1 = Reflector.callBoolean(this.itemToRender.getItem(), Reflector.ForgeItem_shouldCauseReequipAnimation, this.itemToRender, itemstack, Boolean.valueOf(this.equippedItemSlot != SpoofComponent.getSpoofedSlot()));
 
 					if (!flag1) {
 						this.itemToRender = itemstack;
-						this.equippedItemSlot = currentItem;
+						this.equippedItemSlot = SpoofComponent.getSpoofedSlot();
+						//this.equippedItemSlot = currentItem;
 						return;
 					}
 				}
@@ -537,7 +538,8 @@ public class ItemRenderer {
 
 		if (this.equippedProgress < 0.1F) {
 			this.itemToRender = itemstack;
-			this.equippedItemSlot = currentItem;
+			 this.equippedItemSlot = SpoofComponent.getSpoofedSlot();
+			//this.equippedItemSlot = currentItem;
 
 			if (Config.isShaders()) {
 				Shaders.setItemToRenderMain(itemstack);

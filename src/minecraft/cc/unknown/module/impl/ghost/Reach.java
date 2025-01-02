@@ -26,7 +26,7 @@ import net.minecraft.util.Vec3;
 @ModuleInfo(aliases = "Reach", description = "Permite golpear más lejos", category = Category.GHOST)
 public class Reach extends Module {
 
-	public final BoundsNumberValue range = new BoundsNumberValue("Range", this, 3.0, 4.0, 3.0, 6.0, 0.01);
+	public final NumberValue range = new NumberValue("Range", this, 3.0, 3.0, 6.0, 0.01);
 	private final NumberValue chance = new NumberValue("Chance", this, 100, 1, 100, 1);
 	private final BooleanValue hitThroughBlocks = new BooleanValue("Hit through blocks", this, false);
 
@@ -51,7 +51,7 @@ public class Reach extends Module {
 				}
 			}
 
-			double reach = range.getRandomBetween().doubleValue();
+			double reach = range.getValue().doubleValue();
 			Object[] object = findEntitiesWithinReach(reach);
 			if (object == null) {
 				return false;
@@ -65,9 +65,7 @@ public class Reach extends Module {
 	}
 
 	private Object[] findEntitiesWithinReach(double reach) {
-		Reach reich = getModule(Reach.class);
-
-		if (!reich.isEnabled()) {
+		if (!this.isEnabled()) {
 			reach = mc.playerController.extendedReach() ? 6.0D : 3.0D;
 		}
 

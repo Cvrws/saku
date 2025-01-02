@@ -1,5 +1,6 @@
 package cc.unknown.module.impl.player;
 
+import cc.unknown.component.impl.player.SpoofComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.AttackEvent;
@@ -7,6 +8,7 @@ import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -17,6 +19,11 @@ public class AutoTool extends Module {
 	private int prevItem = 0;
 	private boolean mining = false;
 	private int bestSlot = 0;
+		
+	@Override
+	public void onDisable() {
+    	SpoofComponent.stopSpoofing();
+	}
     
 	@EventLink
 	public final Listener<AttackEvent> onAttack = event -> {
