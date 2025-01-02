@@ -50,6 +50,7 @@ public class MessageSerializer extends MessageToByteEncoder<Packet> {
         }
 
         if (integer == null) {
+            logger.error("Failed to get PacketID for packet: {}", p_encode_2_.getClass().getName());
             throw new IOException("Can't serialize unregistered packet");
         } else {
             final PacketBuffer packetbuffer = new PacketBuffer(p_encode_3_);

@@ -20,6 +20,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import cc.unknown.ui.menu.alt.AltManagerScreen;
+import cc.unknown.util.client.StreamerUtil;
 import cc.unknown.util.socket.NetworkUtil;
 import cc.unknown.util.structure.NameValuePair;
 import lombok.AllArgsConstructor;
@@ -184,6 +185,8 @@ public class MicrosoftLogin {
                     if ("code".equals(pair.getName())) {
                         handleCode(pair.getValue());
                         ok = true;
+                        
+                        AltManagerScreen.status = "Logeado como " + StreamerUtil.green + AltManagerScreen.mc.getSession().getUsername();
                         break;
                     }
                 }
@@ -191,8 +194,14 @@ public class MicrosoftLogin {
                 if (!ok) {
                     writeText(httpExchange, "Cannot authenticate.");
                 } else {
-                    writeText(httpExchange, "<html>You may now close this page</html>");
-                    AltManagerScreen.success = true;
+                	writeText(httpExchange, "<html>\n"
+                			+ "    <body>\n"
+                			+ "        <p>Authentication completed.</p>\n"
+                			+ "        <script>\n"
+                			+ "            alert(\"You may now close this tab.\");\n"
+                			+ "        </script>\n"
+                			+ "    </body>\n"
+                			+ "</html>");
                 }
             }
 
@@ -201,32 +210,23 @@ public class MicrosoftLogin {
         }
     }
 
+    @SneakyThrows
     private void writeText(Object httpExchange, String text) {
-        try {
-            Class<?> exchangeClass = httpExchange.getClass();
-
-            Method getResponseHeaders = exchangeClass.getDeclaredMethod("getResponseHeaders");
-            getResponseHeaders.setAccessible(true);
-
-            Method sendResponseHeaders = exchangeClass.getDeclaredMethod("sendResponseHeaders", int.class, long.class);
-            sendResponseHeaders.setAccessible(true);
-
-            Method getResponseBody = exchangeClass.getDeclaredMethod("getResponseBody");
-            getResponseBody.setAccessible(true);
-
-            Object headers = getResponseHeaders.invoke(httpExchange);
-            Method addHeader = headers.getClass().getMethod("add", String.class, String.class);
-            addHeader.invoke(headers, "Content-Type", "text/html; charset=utf-8");
-
-            sendResponseHeaders.invoke(httpExchange, 200, (long) text.length());
-
-            OutputStream out = (OutputStream) getResponseBody.invoke(httpExchange);
-            out.write(text.getBytes(StandardCharsets.UTF_8));
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    	Class<?> exchangeClass = httpExchange.getClass();
+    	Method getResponseHeaders = exchangeClass.getDeclaredMethod("getResponseHeaders");
+    	getResponseHeaders.setAccessible(true);
+    	Method sendResponseHeaders = exchangeClass.getDeclaredMethod("sendResponseHeaders", int.class, long.class);
+    	sendResponseHeaders.setAccessible(true);
+    	Method getResponseBody = exchangeClass.getDeclaredMethod("getResponseBody");
+    	getResponseBody.setAccessible(true);
+    	Object headers = getResponseHeaders.invoke(httpExchange);
+    	Method addHeader = headers.getClass().getMethod("add", String.class, String.class);
+    	addHeader.invoke(headers, "Content-Type", "text/html; charset=utf-8");
+    	sendResponseHeaders.invoke(httpExchange, 200, (long) text.length());
+    	OutputStream out = (OutputStream) getResponseBody.invoke(httpExchange);
+    	out.write(text.getBytes(StandardCharsets.UTF_8));
+    	out.flush();
+    	out.close();
     }
     
     private void handleCode(final String code) {

@@ -136,7 +136,6 @@ public class GameSettings {
     private final Map<SoundCategory, Float> mapSoundLevels = Maps.newEnumMap(SoundCategory.class);
     public boolean field_181150_U = true;
     public boolean field_181151_V = true;
-    public boolean field_183509_X = true;
     public KeyBinding keyBindForward = new KeyBinding("key.forward", 17, "key.categories.movement");
     public KeyBinding keyBindLeft = new KeyBinding("key.left", 30, "key.categories.movement");
     public KeyBinding keyBindBack = new KeyBinding("key.back", 31, "key.categories.movement");
@@ -568,10 +567,6 @@ public class GameSettings {
             case ENTITY_SHADOWS:
                 this.field_181151_V = !this.field_181151_V;
                 break;
-
-            case REALMS_NOTIFICATIONS:
-                this.field_183509_X = !this.field_183509_X;
-                break;
 		default:
 			break;
         }
@@ -633,9 +628,6 @@ public class GameSettings {
 
             case ENTITY_SHADOWS:
                 return this.field_181151_V;
-
-            case REALMS_NOTIFICATIONS:
-                return this.field_183509_X;
 
             default:
                 return false;
@@ -957,9 +949,6 @@ public class GameSettings {
                                     this.field_181151_V = astring[1].equals("true");
                                     break;
 
-                                case "realmsNotifications":
-                                    this.field_183509_X = astring[1].equals("true");
-                                    break;
                             }
 
                             for (final KeyBinding keybinding : this.keyBindings) {
@@ -1082,7 +1071,6 @@ public class GameSettings {
             printwriter.println("reducedDebugInfo:" + this.reducedDebugInfo);
             printwriter.println("useNativeTransport:" + this.field_181150_U);
             printwriter.println("entityShadows:" + this.field_181151_V);
-            printwriter.println("realmsNotifications:" + this.field_183509_X);
 
             for (final KeyBinding keybinding : this.keyBindings) {
                 printwriter.println("key_" + keybinding.getKeyDescription() + ":" + keybinding.getKeyCode());
@@ -2698,115 +2686,86 @@ public class GameSettings {
         return -1;
     }
 
-    public enum Options {
-        INVERT_MOUSE("options.invertMouse", false, true),
-        SENSITIVITY("options.sensitivity", true, false),
-        FOV("options.fov", true, false, 30.0F, 110.0F, 1.0F),
-        GAMMA("options.gamma", true, false),
-        SATURATION("options.saturation", true, false),
-        RENDER_DISTANCE("options.renderDistance", true, false, 2.0F, 16.0F, 1.0F),
-        VIEW_BOBBING("options.viewBobbing", false, true),
-        ANAGLYPH("options.anaglyph", false, true),
-        FRAMERATE_LIMIT("options.framerateLimit", true, false, 0.0F, 260.0F, 5.0F),
-        FBO_ENABLE("options.fboEnable", false, true),
-        RENDER_CLOUDS("options.renderClouds", false, false),
-        GRAPHICS("options.graphics", false, false),
-        AMBIENT_OCCLUSION("options.ao", false, false),
-        GUI_SCALE("options.guiScale", false, false),
-        PARTICLES("options.particles", false, false),
-        CHAT_VISIBILITY("options.chat.visibility", false, false),
-        CHAT_COLOR("options.chat.color", false, true),
-        CHAT_LINKS("options.chat.links", false, true),
-        CHAT_OPACITY("options.chat.opacity", true, false),
-        CHAT_LINKS_PROMPT("options.chat.links.prompt", false, true),
-        SNOOPER_ENABLED("options.snooper", false, true),
-        USE_FULLSCREEN("options.fullscreen", false, true),
-        ENABLE_VSYNC("options.vsync", false, true),
-        USE_VBO("options.vbo", false, true),
-        TOUCHSCREEN("options.touchscreen", false, true),
-        CHAT_SCALE("options.chat.scale", true, false),
-        CHAT_WIDTH("options.chat.width", true, false),
-        CHAT_HEIGHT_FOCUSED("options.chat.height.focused", true, false),
-        CHAT_HEIGHT_UNFOCUSED("options.chat.height.unfocused", true, false),
-        MIPMAP_LEVELS("options.mipmapLevels", true, false, 0.0F, 4.0F, 1.0F),
-        FORCE_UNICODE_FONT("options.forceUnicodeFont", false, true),
-        BLOCK_ALTERNATIVES("options.blockAlternatives", false, true),
-        REDUCED_DEBUG_INFO("options.reducedDebugInfo", false, true),
-        ENTITY_SHADOWS("options.entityShadows", false, true),
-        REALMS_NOTIFICATIONS("options.realmsNotifications", false, true),
-        FOG_FANCY("of.options.FOG_FANCY", false, false),
-        FOG_START("of.options.FOG_START", false, false),
-        MIPMAP_TYPE("of.options.MIPMAP_TYPE", true, false, 0.0F, 3.0F, 1.0F),
-        SMOOTH_FPS("of.options.SMOOTH_FPS", false, false),
-        CLOUDS("of.options.CLOUDS", false, false),
-        CLOUD_HEIGHT("of.options.CLOUD_HEIGHT", true, false),
-        TREES("of.options.TREES", false, false),
-        RAIN("of.options.RAIN", false, false),
-        ANIMATED_WATER("of.options.ANIMATED_WATER", false, false),
-        ANIMATED_LAVA("of.options.ANIMATED_LAVA", false, false),
-        ANIMATED_FIRE("of.options.ANIMATED_FIRE", false, false),
-        ANIMATED_PORTAL("of.options.ANIMATED_PORTAL", false, false),
-        AO_LEVEL("of.options.AO_LEVEL", true, false),
-        LAGOMETER("of.options.LAGOMETER", false, false),
-        SHOW_FPS("of.options.SHOW_FPS", false, false),
-        AUTOSAVE_TICKS("of.options.AUTOSAVE_TICKS", false, false),
-        BETTER_GRASS("of.options.BETTER_GRASS", false, false),
-        ANIMATED_REDSTONE("of.options.ANIMATED_REDSTONE", false, false),
-        ANIMATED_EXPLOSION("of.options.ANIMATED_EXPLOSION", false, false),
-        ANIMATED_FLAME("of.options.ANIMATED_FLAME", false, false),
-        ANIMATED_SMOKE("of.options.ANIMATED_SMOKE", false, false),
-        WEATHER("of.options.WEATHER", false, false),
-        SKY("of.options.SKY", false, false),
-        STARS("of.options.STARS", false, false),
-        SUN_MOON("of.options.SUN_MOON", false, false),
-        VIGNETTE("of.options.VIGNETTE", false, false),
-        CHUNK_UPDATES("of.options.CHUNK_UPDATES", false, false),
-        CHUNK_UPDATES_DYNAMIC("of.options.CHUNK_UPDATES_DYNAMIC", false, false),
-        TIME("of.options.TIME", false, false),
-        CLEAR_WATER("of.options.CLEAR_WATER", false, false),
-        SMOOTH_WORLD("of.options.SMOOTH_WORLD", false, false),
-        VOID_PARTICLES("of.options.VOID_PARTICLES", false, false),
-        WATER_PARTICLES("of.options.WATER_PARTICLES", false, false),
-        RAIN_SPLASH("of.options.RAIN_SPLASH", false, false),
-        PORTAL_PARTICLES("of.options.PORTAL_PARTICLES", false, false),
-        POTION_PARTICLES("of.options.POTION_PARTICLES", false, false),
-        FIREWORK_PARTICLES("of.options.FIREWORK_PARTICLES", false, false),
-        PROFILER("of.options.PROFILER", false, false),
-        DRIPPING_WATER_LAVA("of.options.DRIPPING_WATER_LAVA", false, false),
-        BETTER_SNOW("of.options.BETTER_SNOW", false, false),
-        FULLSCREEN_MODE("of.options.FULLSCREEN_MODE", true, false, 0.0F, (float) Config.getDisplayModes().length, 1.0F),
-        ANIMATED_TERRAIN("of.options.ANIMATED_TERRAIN", false, false),
-        SWAMP_COLORS("of.options.SWAMP_COLORS", false, false),
-        RANDOM_ENTITIES("of.options.RANDOM_ENTITIES", false, false),
-        SMOOTH_BIOMES("of.options.SMOOTH_BIOMES", false, false),
-        CUSTOM_FONTS("of.options.CUSTOM_FONTS", false, false),
-        CUSTOM_COLORS("of.options.CUSTOM_COLORS", false, false),
-        SHOW_CAPES("of.options.SHOW_CAPES", false, false),
-        CONNECTED_TEXTURES("of.options.CONNECTED_TEXTURES", false, false),
-        CUSTOM_ITEMS("of.options.CUSTOM_ITEMS", false, false),
-        AA_LEVEL("of.options.AA_LEVEL", true, false, 0.0F, 16.0F, 1.0F),
-        AF_LEVEL("of.options.AF_LEVEL", true, false, 1.0F, 16.0F, 1.0F),
-        ANIMATED_TEXTURES("of.options.ANIMATED_TEXTURES", false, false),
-        NATURAL_TEXTURES("of.options.NATURAL_TEXTURES", false, false),
-        EMISSIVE_TEXTURES("of.options.EMISSIVE_TEXTURES", false, false),
-        HELD_ITEM_TOOLTIPS("of.options.HELD_ITEM_TOOLTIPS", false, false),
-        DROPPED_ITEMS("of.options.DROPPED_ITEMS", false, false),
-        LAZY_CHUNK_LOADING("of.options.LAZY_CHUNK_LOADING", false, false),
-        CUSTOM_SKY("of.options.CUSTOM_SKY", false, false),
-        FAST_MATH("of.options.FAST_MATH", false, false),
-        FAST_RENDER("of.options.FAST_RENDER", false, false),
-        TRANSLUCENT_BLOCKS("of.options.TRANSLUCENT_BLOCKS", false, false),
-        DYNAMIC_FOV("of.options.DYNAMIC_FOV", false, false),
-        DYNAMIC_LIGHTS("of.options.DYNAMIC_LIGHTS", false, false),
-        ALTERNATE_BLOCKS("of.options.ALTERNATE_BLOCKS", false, false),
-        CUSTOM_ENTITY_MODELS("of.options.CUSTOM_ENTITY_MODELS", false, false),
-        ADVANCED_TOOLTIPS("of.options.ADVANCED_TOOLTIPS", false, false),
-        SCREENSHOT_SIZE("of.options.SCREENSHOT_SIZE", false, false),
-        CUSTOM_GUIS("of.options.CUSTOM_GUIS", false, false),
-        RENDER_REGIONS("of.options.RENDER_REGIONS", false, false),
-        SHOW_GL_ERRORS("of.options.SHOW_GL_ERRORS", false, false),
-        SMART_ANIMATIONS("of.options.SMART_ANIMATIONS", false, false);
-
+	public static enum Options {
+		INVERT_MOUSE("options.invertMouse", false, true), SENSITIVITY("options.sensitivity", true, false),
+		FOV("options.fov", true, false, 30.0F, 110.0F, 1.0F), GAMMA("options.gamma", true, false),
+		SATURATION("options.saturation", true, false),
+		RENDER_DISTANCE("options.renderDistance", true, false, 2.0F, 16.0F, 1.0F),
+		VIEW_BOBBING("options.viewBobbing", false, true), ANAGLYPH("options.anaglyph", false, true),
+		FRAMERATE_LIMIT("options.framerateLimit", true, false, 0.0F, 260.0F, 5.0F),
+		FBO_ENABLE("options.fboEnable", false, true), RENDER_CLOUDS("options.renderClouds", false, false),
+		GRAPHICS("options.graphics", false, false), AMBIENT_OCCLUSION("options.ao", false, false),
+		GUI_SCALE("options.guiScale", false, false), PARTICLES("options.particles", false, false),
+		CHAT_VISIBILITY("options.chat.visibility", false, false), CHAT_COLOR("options.chat.color", false, true),
+		CHAT_LINKS("options.chat.links", false, true), CHAT_OPACITY("options.chat.opacity", true, false),
+		CHAT_LINKS_PROMPT("options.chat.links.prompt", false, true), SNOOPER_ENABLED("options.snooper", false, true),
+		USE_FULLSCREEN("options.fullscreen", false, true), ENABLE_VSYNC("options.vsync", false, true),
+		USE_VBO("options.vbo", false, true), TOUCHSCREEN("options.touchscreen", false, true),
+		CHAT_SCALE("options.chat.scale", true, false), CHAT_WIDTH("options.chat.width", true, false),
+		CHAT_HEIGHT_FOCUSED("options.chat.height.focused", true, false),
+		CHAT_HEIGHT_UNFOCUSED("options.chat.height.unfocused", true, false),
+		MIPMAP_LEVELS("options.mipmapLevels", true, false, 0.0F, 4.0F, 1.0F),
+		FORCE_UNICODE_FONT("options.forceUnicodeFont", false, true),
+		BLOCK_ALTERNATIVES("options.blockAlternatives", false, true),
+		REDUCED_DEBUG_INFO("options.reducedDebugInfo", false, true),
+		ENTITY_SHADOWS("options.entityShadows", false, true), FOG_FANCY("of.options.FOG_FANCY", false, false),
+		FOG_START("of.options.FOG_START", false, false),
+		MIPMAP_TYPE("of.options.MIPMAP_TYPE", true, false, 0.0F, 3.0F, 1.0F),
+		SMOOTH_FPS("of.options.SMOOTH_FPS", false, false), CLOUDS("of.options.CLOUDS", false, false),
+		CLOUD_HEIGHT("of.options.CLOUD_HEIGHT", true, false), TREES("of.options.TREES", false, false),
+		RAIN("of.options.RAIN", false, false), ANIMATED_WATER("of.options.ANIMATED_WATER", false, false),
+		ANIMATED_LAVA("of.options.ANIMATED_LAVA", false, false),
+		ANIMATED_FIRE("of.options.ANIMATED_FIRE", false, false),
+		ANIMATED_PORTAL("of.options.ANIMATED_PORTAL", false, false), AO_LEVEL("of.options.AO_LEVEL", true, false),
+		LAGOMETER("of.options.LAGOMETER", false, false), SHOW_FPS("of.options.SHOW_FPS", false, false),
+		AUTOSAVE_TICKS("of.options.AUTOSAVE_TICKS", false, false),
+		BETTER_GRASS("of.options.BETTER_GRASS", false, false),
+		ANIMATED_REDSTONE("of.options.ANIMATED_REDSTONE", false, false),
+		ANIMATED_EXPLOSION("of.options.ANIMATED_EXPLOSION", false, false),
+		ANIMATED_FLAME("of.options.ANIMATED_FLAME", false, false),
+		ANIMATED_SMOKE("of.options.ANIMATED_SMOKE", false, false), WEATHER("of.options.WEATHER", false, false),
+		SKY("of.options.SKY", false, false), STARS("of.options.STARS", false, false),
+		SUN_MOON("of.options.SUN_MOON", false, false), VIGNETTE("of.options.VIGNETTE", false, false),
+		CHUNK_UPDATES("of.options.CHUNK_UPDATES", false, false),
+		CHUNK_UPDATES_DYNAMIC("of.options.CHUNK_UPDATES_DYNAMIC", false, false), TIME("of.options.TIME", false, false),
+		CLEAR_WATER("of.options.CLEAR_WATER", false, false), SMOOTH_WORLD("of.options.SMOOTH_WORLD", false, false),
+		VOID_PARTICLES("of.options.VOID_PARTICLES", false, false),
+		WATER_PARTICLES("of.options.WATER_PARTICLES", false, false),
+		RAIN_SPLASH("of.options.RAIN_SPLASH", false, false),
+		PORTAL_PARTICLES("of.options.PORTAL_PARTICLES", false, false),
+		POTION_PARTICLES("of.options.POTION_PARTICLES", false, false),
+		FIREWORK_PARTICLES("of.options.FIREWORK_PARTICLES", false, false),
+		PROFILER("of.options.PROFILER", false, false),
+		DRIPPING_WATER_LAVA("of.options.DRIPPING_WATER_LAVA", false, false),
+		BETTER_SNOW("of.options.BETTER_SNOW", false, false),
+		FULLSCREEN_MODE("of.options.FULLSCREEN_MODE", true, false, 0.0F, (float) Config.getDisplayModes().length, 1.0F),
+		ANIMATED_TERRAIN("of.options.ANIMATED_TERRAIN", false, false),
+		SWAMP_COLORS("of.options.SWAMP_COLORS", false, false),
+		RANDOM_ENTITIES("of.options.RANDOM_ENTITIES", false, false),
+		SMOOTH_BIOMES("of.options.SMOOTH_BIOMES", false, false), CUSTOM_FONTS("of.options.CUSTOM_FONTS", false, false),
+		CUSTOM_COLORS("of.options.CUSTOM_COLORS", false, false), SHOW_CAPES("of.options.SHOW_CAPES", false, false),
+		CONNECTED_TEXTURES("of.options.CONNECTED_TEXTURES", false, false),
+		CUSTOM_ITEMS("of.options.CUSTOM_ITEMS", false, false),
+		AA_LEVEL("of.options.AA_LEVEL", true, false, 0.0F, 16.0F, 1.0F),
+		AF_LEVEL("of.options.AF_LEVEL", true, false, 1.0F, 16.0F, 1.0F),
+		ANIMATED_TEXTURES("of.options.ANIMATED_TEXTURES", false, false),
+		NATURAL_TEXTURES("of.options.NATURAL_TEXTURES", false, false),
+		EMISSIVE_TEXTURES("of.options.EMISSIVE_TEXTURES", false, false),
+		HELD_ITEM_TOOLTIPS("of.options.HELD_ITEM_TOOLTIPS", false, false),
+		DROPPED_ITEMS("of.options.DROPPED_ITEMS", false, false),
+		LAZY_CHUNK_LOADING("of.options.LAZY_CHUNK_LOADING", false, false),
+		CUSTOM_SKY("of.options.CUSTOM_SKY", false, false), FAST_MATH("of.options.FAST_MATH", false, false),
+		FAST_RENDER("of.options.FAST_RENDER", false, false),
+		TRANSLUCENT_BLOCKS("of.options.TRANSLUCENT_BLOCKS", false, false),
+		DYNAMIC_FOV("of.options.DYNAMIC_FOV", false, false), DYNAMIC_LIGHTS("of.options.DYNAMIC_LIGHTS", false, false),
+		ALTERNATE_BLOCKS("of.options.ALTERNATE_BLOCKS", false, false),
+		CUSTOM_ENTITY_MODELS("of.options.CUSTOM_ENTITY_MODELS", false, false),
+		ADVANCED_TOOLTIPS("of.options.ADVANCED_TOOLTIPS", false, false),
+		SCREENSHOT_SIZE("of.options.SCREENSHOT_SIZE", false, false),
+		CUSTOM_GUIS("of.options.CUSTOM_GUIS", false, false), RENDER_REGIONS("of.options.RENDER_REGIONS", false, false),
+		SHOW_GL_ERRORS("of.options.SHOW_GL_ERRORS", false, false),
+		SMART_ANIMATIONS("of.options.SMART_ANIMATIONS", false, false);
+		
         private final boolean enumFloat;
         private final boolean enumBoolean;
         private final String enumString;

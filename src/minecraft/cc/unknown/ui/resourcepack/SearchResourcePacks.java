@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import cc.unknown.ui.menu.api.TextField;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.client.Minecraft;
@@ -12,7 +13,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiResourcePackAvailable;
 import net.minecraft.client.gui.GuiResourcePackSelected;
 import net.minecraft.client.gui.GuiScreenResourcePacks;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.ResourcePackListEntry;
 
@@ -41,7 +41,7 @@ public class SearchResourcePacks implements Accessor {
         parent.drawCenteredString(fontRendererObj, I18n.format("resourcePack.title"), width / 2, 16, 16777215);
     }
 
-    public GuiResourcePackAvailable updateList(GuiTextField search, GuiResourcePackAvailable clone, List<ResourcePackListEntry> available, Minecraft mc, int width, int height) {
+    public GuiResourcePackAvailable updateList(TextField search, GuiResourcePackAvailable clone, List<ResourcePackListEntry> available, Minecraft mc, int width, int height) {
         GuiResourcePackAvailable availableList;
         if (search == null || search.getText().isEmpty()) {
         	availableList = new GuiResourcePackAvailable(mc, 200, height, available);

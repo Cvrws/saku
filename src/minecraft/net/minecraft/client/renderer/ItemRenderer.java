@@ -165,73 +165,73 @@ public class ItemRenderer {
 		}
 	}
 
-	private void renderItemMap(final AbstractClientPlayer clientPlayer, final float p_178097_2_,
-			final float p_178097_3_, final float p_178097_4_) {
-		final float f = -0.4F * MathHelper.sin(MathHelper.sqrt_float(p_178097_4_) * (float) Math.PI);
-		final float f1 = 0.2F * MathHelper.sin(MathHelper.sqrt_float(p_178097_4_) * (float) Math.PI * 2.0F);
-		final float f2 = -0.2F * MathHelper.sin(p_178097_4_ * (float) Math.PI);
-		GlStateManager.translate(f, f1, f2);
-		final float f3 = this.func_178100_c(p_178097_2_);
-		GlStateManager.translate(0.0F, 0.04F, -0.72F);
-		GlStateManager.translate(0.0F, p_178097_3_ * -1.2F, 0.0F);
-		GlStateManager.translate(0.0F, f3 * -0.5F, 0.0F);
-		GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate(f3 * -85.0F, 0.0F, 0.0F, 1.0F);
-		GlStateManager.rotate(0.0F, 1.0F, 0.0F, 0.0F);
-		this.renderPlayerArms(clientPlayer);
-		final float f4 = MathHelper.sin(p_178097_4_ * p_178097_4_ * (float) Math.PI);
-		final float f5 = MathHelper.sin(MathHelper.sqrt_float(p_178097_4_) * (float) Math.PI);
-		GlStateManager.rotate(f4 * -20.0F, 0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate(f5 * -20.0F, 0.0F, 0.0F, 1.0F);
-		GlStateManager.rotate(f5 * -80.0F, 1.0F, 0.0F, 0.0F);
-		GlStateManager.scale(0.38F, 0.38F, 0.38F);
-		GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
-		GlStateManager.rotate(0.0F, 1.0F, 0.0F, 0.0F);
-		GlStateManager.translate(-1.0F, -1.0F, 0.0F);
-		GlStateManager.scale(0.015625F, 0.015625F, 0.015625F);
-		this.mc.getTextureManager().bindTexture(RES_MAP_BACKGROUND);
-		final Tessellator tessellator = Tessellator.getInstance();
-		final WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-		GL11.glNormal3f(0.0F, 0.0F, -1.0F);
-		worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-		worldrenderer.pos(-7.0D, 135.0D, 0.0D).tex(0.0D, 1.0D).endVertex();
-		worldrenderer.pos(135.0D, 135.0D, 0.0D).tex(1.0D, 1.0D).endVertex();
-		worldrenderer.pos(135.0D, -7.0D, 0.0D).tex(1.0D, 0.0D).endVertex();
-		worldrenderer.pos(-7.0D, -7.0D, 0.0D).tex(0.0D, 0.0D).endVertex();
-		tessellator.draw();
-		final MapData mapdata = Items.filled_map.getMapData(this.itemToRender, this.mc.theWorld);
+	private void renderItemMap(final AbstractClientPlayer clientPlayer, final float p_178097_2_, final float p_178097_3_, final float p_178097_4_) {
+        final float f = -0.4F * MathHelper.sin(MathHelper.sqrt_float(p_178097_4_) * (float) Math.PI);
+        final float f1 = 0.2F * MathHelper.sin(MathHelper.sqrt_float(p_178097_4_) * (float) Math.PI * 2.0F);
+        final float f2 = -0.2F * MathHelper.sin(p_178097_4_ * (float) Math.PI);
+        GlStateManager.translate(f, f1, f2);
+        final float f3 = this.func_178100_c(p_178097_2_);
+        GlStateManager.translate(0.0F, 0.04F, -0.72F);
+        GlStateManager.translate(0.0F, p_178097_3_ * -1.2F, 0.0F);
+        GlStateManager.translate(0.0F, f3 * -0.5F, 0.0F);
+        GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(f3 * -85.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.rotate(0.0F, 1.0F, 0.0F, 0.0F);
+        this.renderPlayerArms(clientPlayer);
+        final float f4 = MathHelper.sin(p_178097_4_ * p_178097_4_ * (float) Math.PI);
+        final float f5 = MathHelper.sin(MathHelper.sqrt_float(p_178097_4_) * (float) Math.PI);
+        GlStateManager.rotate(f4 * -20.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(f5 * -20.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.rotate(f5 * -80.0F, 1.0F, 0.0F, 0.0F);
+        GlStateManager.scale(0.38F, 0.38F, 0.38F);
+        GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.rotate(0.0F, 1.0F, 0.0F, 0.0F);
+        GlStateManager.translate(-1.0F, -1.0F, 0.0F);
+        GlStateManager.scale(0.015625F, 0.015625F, 0.015625F);
+        this.mc.getTextureManager().bindTexture(RES_MAP_BACKGROUND);
+        final Tessellator tessellator = Tessellator.getInstance();
+        final WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        GL11.glNormal3f(0.0F, 0.0F, -1.0F);
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        worldrenderer.pos(-7.0D, 135.0D, 0.0D).tex(0.0D, 1.0D).endVertex();
+        worldrenderer.pos(135.0D, 135.0D, 0.0D).tex(1.0D, 1.0D).endVertex();
+        worldrenderer.pos(135.0D, -7.0D, 0.0D).tex(1.0D, 0.0D).endVertex();
+        worldrenderer.pos(-7.0D, -7.0D, 0.0D).tex(0.0D, 0.0D).endVertex();
+        tessellator.draw();
+        final MapData mapdata = Items.filled_map.getMapData(this.itemToRender, this.mc.theWorld);
 
-		if (mapdata != null) {
-			this.mc.entityRenderer.getMapItemRenderer().renderMap(mapdata, false);
-		}
-	}
+        if (mapdata != null) {
+            this.mc.entityRenderer.getMapItemRenderer().renderMap(mapdata, false);
+        }
+    }
+
 
 	public void renderPlayerArm(final AbstractClientPlayer clientPlayer, final float p_178095_2_,
 			final float p_178095_3_) {
-		final float f = -0.3F * MathHelper.sin(MathHelper.sqrt_float(p_178095_3_) * (float) Math.PI);
-		final float f1 = 0.4F * MathHelper.sin(MathHelper.sqrt_float(p_178095_3_) * (float) Math.PI * 2.0F);
-		final float f2 = -0.4F * MathHelper.sin(p_178095_3_ * (float) Math.PI);
-		GlStateManager.translate(f, f1, f2);
-		GlStateManager.translate(0.64000005F, -0.6F, -0.71999997F);
-		GlStateManager.translate(0.0F, p_178095_2_ * -0.6F, 0.0F);
-		GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
-		final float f3 = MathHelper.sin(p_178095_3_ * p_178095_3_ * (float) Math.PI);
-		final float f4 = MathHelper.sin(MathHelper.sqrt_float(p_178095_3_) * (float) Math.PI);
-		GlStateManager.rotate(f4 * 70.0F, 0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate(f3 * -20.0F, 0.0F, 0.0F, 1.0F);
-		this.mc.getTextureManager().bindTexture(clientPlayer.getLocationSkin());
-		GlStateManager.translate(-1.0F, 3.6F, 3.5F);
-		GlStateManager.rotate(120.0F, 0.0F, 0.0F, 1.0F);
-		GlStateManager.rotate(200.0F, 1.0F, 0.0F, 0.0F);
-		GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
-		GlStateManager.scale(1.0F, 1.0F, 1.0F);
-		GlStateManager.translate(5.6F, 0.0F, 0.0F);
-		final Render<AbstractClientPlayer> render = this.renderManager.getEntityRenderObject(this.mc.player);
-		GlStateManager.disableCull();
-		final RenderPlayer renderplayer = (RenderPlayer) render;
-		renderplayer.renderRightArm(this.mc.player);
-		GlStateManager.enableCull();
+        final float f = -0.3F * MathHelper.sin(MathHelper.sqrt_float(p_178095_3_) * (float) Math.PI);
+        final float f1 = 0.4F * MathHelper.sin(MathHelper.sqrt_float(p_178095_3_) * (float) Math.PI * 2.0F);
+        final float f2 = -0.4F * MathHelper.sin(p_178095_3_ * (float) Math.PI);
+        GlStateManager.translate(f, f1, f2);
+        GlStateManager.translate(0.64000005F, -0.6F, -0.71999997F);
+        GlStateManager.translate(0.0F, p_178095_2_ * -0.6F, 0.0F);
+        GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
+        final float f3 = MathHelper.sin(p_178095_3_ * p_178095_3_ * (float) Math.PI);
+        final float f4 = MathHelper.sin(MathHelper.sqrt_float(p_178095_3_) * (float) Math.PI);
+        GlStateManager.rotate(f4 * 70.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(f3 * -20.0F, 0.0F, 0.0F, 1.0F);
+        this.mc.getTextureManager().bindTexture(clientPlayer.getLocationSkin());
+        GlStateManager.translate(-1.0F, 3.6F, 3.5F);
+        GlStateManager.rotate(120.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.rotate(200.0F, 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.scale(1.0F, 1.0F, 1.0F);
+        GlStateManager.translate(5.6F, 0.0F, 0.0F);
+        final Render<AbstractClientPlayer> render = this.renderManager.getEntityRenderObject(this.mc.player);
+        GlStateManager.disableCull();
+        final RenderPlayer renderplayer = (RenderPlayer) render;
+        renderplayer.renderRightArm(this.mc.player);
+        GlStateManager.enableCull();
 	}
 
 	public void doItemUsedTransformations(final float p_178105_1_) {
@@ -325,60 +325,56 @@ public class ItemRenderer {
         Animations animations = (Animations) Sakura.instance.getModuleManager().get(Animations.class);
 
 		if (!Config.isShaders() || !Shaders.isSkipRenderHand()) {
-	        float f = 1.0F - (this.prevEquippedProgress + (this.equippedProgress - this.prevEquippedProgress) * partialTicks);
-	        AbstractClientPlayer abstractclientplayer = mc.player;
-	        float f2 = abstractclientplayer.getSwingProgress(partialTicks);
-	        float f3 = abstractclientplayer.prevRotationPitch + (abstractclientplayer.rotationPitch - abstractclientplayer.prevRotationPitch) * partialTicks;
-	        float f4 = abstractclientplayer.prevRotationYaw + (abstractclientplayer.rotationYaw - abstractclientplayer.prevRotationYaw) * partialTicks;
-	        this.rotateArroundXAndY(f3, f4);
-	        this.setLightMapFromPlayer(abstractclientplayer);
-	        this.rotateWithPlayerRotations((EntityPlayerSP) abstractclientplayer, partialTicks);
-	        GlStateManager.enableRescaleNormal();
-	        GlStateManager.pushMatrix();
+            float animationProgression = 1.0F - (this.prevEquippedProgress + (this.equippedProgress - this.prevEquippedProgress) * partialTicks);
+            final AbstractClientPlayer abstractclientplayer = this.mc.player;
+            float swingProgress = abstractclientplayer.getSwingProgress(partialTicks);
+            final float f2 = abstractclientplayer.prevRotationPitch + (abstractclientplayer.rotationPitch - abstractclientplayer.prevRotationPitch) * partialTicks;
+            final float f3 = abstractclientplayer.prevRotationYaw + (abstractclientplayer.rotationYaw - abstractclientplayer.prevRotationYaw) * partialTicks;
+            this.rotateArroundXAndY(f2, f3);
+            this.setLightMapFromPlayer(abstractclientplayer);
+            this.rotateWithPlayerRotations((EntityPlayerSP) abstractclientplayer, partialTicks);
+            GlStateManager.enableRescaleNormal();
+            GlStateManager.pushMatrix();
 	        if (this.itemToRender != null) {
 	            if (this.itemToRender.getItem() instanceof ItemMap) {
-	                this.renderItemMap(abstractclientplayer, f4, f, f4);
+	            	this.renderItemMap(abstractclientplayer, f2, animationProgression, swingProgress);
 	            } else if (abstractclientplayer.getItemInUseCount() > 0) {
 	                EnumAction enumaction = this.itemToRender.getItemUseAction();
 	                boolean blockhit = animations.blockHit.getValue() && animations.isEnabled();
 	                boolean bow = animations.bow.getValue() && animations.isEnabled();
 	                switch (enumaction) {
 	                    case NONE:
-	                        this.transformFirstPersonItem(f, 0.0F);
+	                        this.transformFirstPersonItem(animationProgression, 0.0F);
 	                        break;
 	                    case EAT:
 	                    case DRINK:
 	                        this.performDrinking(abstractclientplayer, partialTicks);
-	                        this.transformFirstPersonItem(f, 0);
+	                        this.transformFirstPersonItem(animationProgression, 0);
 	                        if (animations.blockHit.getValue() && animations.isEnabled()) {
 	                            GlStateManager.translate(0.0F, 0.0F, -0.02F);
 	                            GlStateManager.rotate(1.0F, 0.0F, 0.0F, -0.1F);
 	                        }
 	                        break;
 	                    case BLOCK:
-	                        this.transformFirstPersonItem(f, (blockhit ? f2 : 0));
+	                        this.transformFirstPersonItem(animationProgression, (blockhit ? f2 : 0));
 	                        this.doBlockTransformations();
 	                        break;
 	                    case BOW:
-	                        this.transformFirstPersonItem(f, (bow ? f2 : 0));
+	                        this.transformFirstPersonItem(animationProgression, (bow ? f2 : 0));
 	                        this.doBowTransformations(partialTicks, abstractclientplayer);
 	                }
 	            } else {
 	            	this.doItemUsedTransformations(f2);
-	                this.transformFirstPersonItem(f, f2);
+	                this.transformFirstPersonItem(animationProgression, f2);
 	            }
 	            this.renderItem(abstractclientplayer, this.itemToRender, ItemCameraTransforms.TransformType.FIRST_PERSON);
 	        } else if (!abstractclientplayer.isInvisible()) {
-	            this.renderPlayerArm(abstractclientplayer, f, f2);
+	            this.renderPlayerArm(abstractclientplayer, animationProgression, f2);
 	        }
 	        GlStateManager.popMatrix();
 	        GlStateManager.disableRescaleNormal();
 	        RenderHelper.disableStandardItemLighting();
 	    }
-	}
-
-	public void renderOverlays(float partialTicks) {
-
 	}
 
 	private void renderBlockInHand(final float p_178108_1_, final TextureAtlasSprite p_178108_2_) {

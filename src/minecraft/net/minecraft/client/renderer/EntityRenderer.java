@@ -1008,7 +1008,6 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 			this.disableLightmap();
 
 			if (this.mc.gameSettings.thirdPersonView == 0 && !flag) {
-				this.itemRenderer.renderOverlays(p_renderHand_1_);
 				this.hurtCameraEffect(p_renderHand_1_);
 			}
 

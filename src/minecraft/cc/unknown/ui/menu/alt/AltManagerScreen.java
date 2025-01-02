@@ -17,6 +17,7 @@ import cc.unknown.util.Accessor;
 import cc.unknown.util.account.auth.MicrosoftAccount;
 import cc.unknown.util.account.auth.MicrosoftLogin;
 import cc.unknown.util.account.name.UsernameGenerator;
+import cc.unknown.util.client.StreamerUtil;
 import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.BackgroundUtil;
 import cc.unknown.util.render.animation.Animation;
@@ -31,8 +32,7 @@ import net.minecraft.util.Session.Type;
 public class AltManagerScreen extends GuiScreen implements Accessor {
     private static TextField usernameBox;
     private static GuiScreen reference;
-    public String status = yellow + "Idle...";
-    public static boolean success = false;
+    public static String status = yellow + "Idle...";
     private Animation animation;
     private static final Font FONT_RENDERER = Fonts.ROBOTO.get(20, Weight.LIGHT);
 
@@ -42,6 +42,7 @@ public class AltManagerScreen extends GuiScreen implements Accessor {
     
     @Override
     public void initGui() {
+    	status = yellow + "Idle...";
     	this.buttonList.clear();
         int boxWidth = 200;
         int boxHeight = 24;
@@ -116,15 +117,9 @@ public class AltManagerScreen extends GuiScreen implements Accessor {
             }
         	break;
         case 3:
-        	
-        	success = false;
+        	status = gray + "Abriendo navegador...";
         	
             MicrosoftAccount.create();
-            
-            if (success) {
-            	status = mc.getSession().getUsername();
-            }
-            
         	break;
         case 4:
         	mc.displayGuiScreen(new CookieScreen());

@@ -12,6 +12,7 @@ import org.lwjgl.Sys;
 
 import com.google.common.collect.Lists;
 
+import cc.unknown.ui.menu.api.TextField;
 import cc.unknown.ui.resourcepack.SearchResourcePacks;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.ResourcePackListEntry;
@@ -23,7 +24,7 @@ import net.minecraft.util.Util;
 public class GuiScreenResourcePacks extends GuiScreen {
     private static final Logger logger = LogManager.getLogger();
     private final GuiScreen parentScreen;
-    private GuiTextField searchField;
+    private TextField searchField;
     private List<ResourcePackListEntry> availableResourcePacks;
     private List<ResourcePackListEntry> selectedResourcePacks;
     private GuiResourcePackAvailable availableResourcePacksList;
@@ -41,6 +42,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
      * window resizes, the buttonList is cleared beforehand.
      */
+    @Override
     public void initGui() {
         String s1 = searchField == null ? "" : searchField.getText();
         
@@ -74,7 +76,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
         this.selectedResourcePacksList.registerScrollButtons(7, 8);
         
         this.availablePacksClone = this.availableResourcePacksList;
-        searchField = new GuiTextField(3, fontRendererObj, width / 2 - 4 - 200, height - 24, 200, 20);
+        searchField = new TextField(3, fontRendererObj, width / 2 - 4 - 200, height - 24, 200, 20);
         searchField.setText(s1);
         customGuiResourcePack.initGui(buttonList);
     }
@@ -82,6 +84,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
     /**
      * Handles mouse input.
      */
+    @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         this.selectedResourcePacksList.handleMouseInput();
@@ -107,6 +110,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
+    @Override
     protected void actionPerformed(final GuiButton button) throws IOException {
         if (button.enabled) {
             if (button.id == 2) {
@@ -183,6 +187,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
     /**
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
+    @Override
     protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         this.availableResourcePacksList.mouseClicked(mouseX, mouseY, mouseButton);
@@ -194,6 +199,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
     /**
      * Called when a mouse button is released.  Args : mouseX, mouseY, releaseButton
      */
+    @Override
     protected void mouseReleased(final int mouseX, final int mouseY, final int state) {
         super.mouseReleased(mouseX, mouseY, state);
     }
@@ -201,14 +207,8 @@ public class GuiScreenResourcePacks extends GuiScreen {
     /**
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
+    @Override
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
-        /*this.drawBackground(0);
-        this.availableResourcePacksList.drawScreen(mouseX, mouseY, partialTicks);
-        this.selectedResourcePacksList.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, I18n.format("resourcePack.title"), this.width / 2, 16, 16777215);
-        this.drawCenteredString(this.fontRendererObj, I18n.format("resourcePack.folderInfo"), this.width / 2 - 77, this.height - 26, 8421504);
-        super.drawScreen(mouseX, mouseY, partialTicks);*/
-    	
     	customGuiResourcePack.drawScreen(availableResourcePacksList, selectedResourcePacksList, mouseX, mouseY, partialTicks, fontRendererObj, width);
         searchField.drawTextBox();
         super.drawScreen(mouseX, mouseY, partialTicks);
