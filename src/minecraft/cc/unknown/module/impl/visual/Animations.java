@@ -15,6 +15,7 @@ public final class Animations extends Module {
 	public final BooleanValue blockHit = new BooleanValue("1.7 Block", this, true);
 	public final BooleanValue bow = new BooleanValue("1.7 Bow", this, true);
 	public final BooleanValue rod = new BooleanValue("1.7 Rod", this, true);
+	public final BooleanValue eat = new BooleanValue("1.7 Eat", this, true);
     public final NumberValue swingSpeed = new NumberValue("Swing Speed", this, 1, -200, 50, 1);
 
     @EventLink

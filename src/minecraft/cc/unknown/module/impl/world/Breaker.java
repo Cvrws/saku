@@ -48,9 +48,8 @@ public class Breaker extends Module {
 	
     public final ModeValue mode = new ModeValue("Mode", this)
             .add(new SubMode("Through Walls"))
-            .add(new SubMode("Hypixel"))
-            .add(new SubMode("Legit"))
-            .setDefault("Legit");
+            .add(new SubMode("Surroundings"))
+            .setDefault("Through Walls");
     
     private final NumberValue Range = new NumberValue("Range", this, 4, 1, 5, 0.1);
 
@@ -95,9 +94,6 @@ public class Breaker extends Module {
     @EventLink(value = Priority.VERY_HIGH)
     public final Listener<TeleportEvent> onTeleport = event -> {
         if (mc.player.getDistance(event.getPosX(), event.getPosY(), event.getPosZ()) > 30) {
-            if (notify) {
-                notify = false;
-            }
             teleport = new Vec3(event.getPosX(), event.getPosY(), event.getPosZ());
         }
     };
@@ -123,7 +119,7 @@ public class Breaker extends Module {
             for (int y = -Range.getValue().intValue()+1; y <= Range.getValue().intValue()+1; y++) {
                 for (int z = -Range.getValue().intValue()+1; z <= Range.getValue().intValue()+1; z++) {
                     Block block = PlayerUtil.blockRelativeToPlayer(x, y, z);
-                    if (block instanceof BlockBed || block instanceof BlockDragonEgg) {
+                    if (block instanceof BlockBed) {
                         foundbed = true;
                         bedX = x;
                         bedY = y;
@@ -156,7 +152,8 @@ public class Breaker extends Module {
             for (int i = 0; i < nearblocks.size(); i++) {
                 BlockPos blockPos = nearblocks.get(i);
                 Block block = PlayerUtil.blockRelativeToPlayer(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                if (block instanceof BlockBed || block instanceof BlockDragonEgg) {                    nearblocks.remove(i);
+                if (block instanceof BlockBed) {
+                    nearblocks.remove(i);
                     nearblocks.add(new BlockPos(blockPos.getX() + 1, blockPos.getY(), blockPos.getZ()));
                     nearblocks.add(new BlockPos(blockPos.getX() - 1, blockPos.getY(), blockPos.getZ()));
                     nearblocks.add(new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ() + 1));
@@ -172,22 +169,14 @@ public class Breaker extends Module {
                     airblocks++;
                 }
             }
-            
-            if (mode.is("Through Walls")) {
-            	if (airblocks > 0)
-            		blockToBreak = coordsBed;
-            }
-            
-            if (mode.is("Legit")) {
-            	mc.player.swingItem();
-            }
-            
-            if (mode.is("Hypixel")) {
-            	float minHardness = 99999999;
+            if (airblocks > 0 || !this.mode.is("Surroundings")) {
+                blockToBreak = coordsBed;
+            } else {
+                float minHardness = 99999999;
 
                 for (BlockPos blockPos : nearblocks) {
                     Block block = PlayerUtil.blockRelativeToPlayer(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                    if (block.getBlockHardness() < minHardness && !(block instanceof BlockBed) && !(block instanceof BlockDragonEgg)) {
+                    if (block.getBlockHardness() < minHardness && !(block instanceof BlockBed)) {
                         minHardness = block.getBlockHardness();
                         if (damagetoblock <= 0) {
                             blockToBreak = new BlockPos(player.posX + blockPos.getX(), player.posY + blockPos.getY(), player.posZ + blockPos.getZ());
@@ -204,12 +193,11 @@ public class Breaker extends Module {
                     }
                 }
             }
-            
             if (blockToBreak.distance(player.getPosition()) <= Range.getValue().floatValue()) {
                 if (rotate.getValue()) {
                     rotate(blockToBreak);
                 }
-
+                
                 int slot = SlotUtil.findTool(blockToBreak);
                 if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(slot));
                 if (slot != -1) hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.theWorld, blockToBreak, slot);
@@ -222,20 +210,12 @@ public class Breaker extends Module {
                 mc.player.swingItem();
                 damagetoblock += hardness;
                 mc.theWorld.sendBlockBreakProgress(player.getEntityId(), blockToBreak, (int) (damagetoblock * 10 - 1));
-                float breakSpeedModifier = 1 - fastBreakNormal.getValue().floatValue();
-                if (PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ()) instanceof BlockBed) {
-                    breakSpeedModifier = 1 - fastBreakBed.getValue().floatValue();
-                } else if (PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ()) instanceof BlockDragonEgg) {
-                    breakSpeedModifier = 1 - fastBreakBed.getValue().floatValue();
-                }
-
-                if (damagetoblock >= breakSpeedModifier) {
+                if (damagetoblock >= (PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ()) instanceof BlockBed ? 1-fastBreakBed.getValue().floatValue() : 1-fastBreakNormal.getValue().floatValue())) {
                     damagetoblock = 0;
 
                     PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.STOP_DESTROY_BLOCK, blockToBreak, EnumFacing.DOWN));
                     mc.playerController.onPlayerDestroyBlock(blockToBreak, EnumFacing.UP);
                 }
-                
                 if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
             }
         } else {
@@ -269,7 +249,6 @@ public class Breaker extends Module {
         if (breaking) {
             final ScaledResolution scaledResolution = event.getScaledResolution();
             final double y = scaledResolution.getScaledHeight() * 0.80;
-
             RenderUtil.drawRoundedGradientRectTest((scaledResolution.getScaledWidth() - (mc.playerController.curBlockDamageMP * 100)) / 2, y, mc.playerController.curBlockDamageMP * 100, 10, 4,
                     getTheme().getFirstColor(), getTheme().getSecondColor(), getTheme().getFirstColor());
             RenderUtil.color(Color.WHITE);
@@ -302,7 +281,6 @@ public class Breaker extends Module {
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
         GL11.glLineWidth(2.0f);
         GL11.glBegin(GL11.GL_LINES);
-        
         if (coordsBed == blockToBreak) {
             GL11.glColor3f(255, 0, 0);
         } else {

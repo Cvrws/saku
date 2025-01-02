@@ -6,8 +6,6 @@ import cc.unknown.Sakura;
 import cc.unknown.module.impl.visual.Animations;
 import cc.unknown.module.impl.visual.AntiBlind;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -26,6 +24,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.src.Config;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumWorldBlockLayer;
@@ -64,8 +63,9 @@ public class ItemRenderer {
 		this.itemRenderer = mcIn.getRenderItem();
 	}
 
-	public void renderItem(final EntityLivingBase entityIn, final ItemStack heldStack,
-			final ItemCameraTransforms.TransformType transform) {
+	public void renderItem(final EntityLivingBase entityIn, final ItemStack heldStack, final ItemCameraTransforms.TransformType transform) {
+		Animations animations = (Animations) Sakura.instance.getModuleManager().get(Animations.class);
+		
 		if (heldStack != null) {
 			final Item item = heldStack.getItem();
 			final Block block = Block.getBlockFromItem(item);
@@ -80,7 +80,6 @@ public class ItemRenderer {
 			}
 
 			this.itemRenderer.renderItemModelForEntity(heldStack, entityIn, transform);
-
 			if (this.isBlockTranslucent(block)) {
 				GlStateManager.depthMask(true);
 			}
@@ -315,10 +314,20 @@ public class ItemRenderer {
 	}
 
 	public void doBlockTransformations() {
-		GlStateManager.translate(-0.5F, 0.2F, 0.0F);
-		GlStateManager.rotate(30.0F, 0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate(-80.0F, 1.0F, 0.0F, 0.0F);
-		GlStateManager.rotate(60.0F, 0.0F, 1.0F, 0.0F);
+		Animations animations = (Animations) Sakura.instance.getModuleManager().get(Animations.class);
+
+		if (animations.isEnabled() && animations.blockHit.getValue()) {
+            GlStateManager.translate(-0.24F, 0.17F, 0.0F);
+            GlStateManager.rotate(30.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(-80.0F, 1.0F, 0.0F, 0.0F);
+            GlStateManager.rotate(60.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.translate(0.0F, 0.18F, 0.00F);
+		} else {
+			GlStateManager.translate(-0.5F, 0.2F, 0.0F);
+			GlStateManager.rotate(30.0F, 0.0F, 1.0F, 0.0F);
+			GlStateManager.rotate(-80.0F, 1.0F, 0.0F, 0.0F);
+			GlStateManager.rotate(60.0F, 0.0F, 1.0F, 0.0F);
+		}
 	}
 
 	public void renderItemInFirstPerson(float partialTicks) {
@@ -342,38 +351,36 @@ public class ItemRenderer {
 	                EnumAction enumaction = this.itemToRender.getItemUseAction();
 	                boolean blockhit = animations.blockHit.getValue() && animations.isEnabled();
 	                boolean bow = animations.bow.getValue() && animations.isEnabled();
+	                boolean eat = animations.eat.getValue() && animations.isEnabled();
 	                switch (enumaction) {
 	                    case NONE:
-	                        this.transformFirstPersonItem(animationProgression, 0.0F);
+	                    	this.transformFirstPersonItem(animationProgression, 0.0F);
 	                        break;
 	                    case EAT:
 	                    case DRINK:
-	                        this.performDrinking(abstractclientplayer, partialTicks);
-	                        this.transformFirstPersonItem(animationProgression, 0);
-	                        if (animations.blockHit.getValue() && animations.isEnabled()) {
-	                            GlStateManager.translate(0.0F, 0.0F, -0.02F);
-	                            GlStateManager.rotate(1.0F, 0.0F, 0.0F, -0.1F);
-	                        }
+                            this.performDrinking(abstractclientplayer, partialTicks);
+	                    	this.transformFirstPersonItem(animationProgression, (eat ? swingProgress : 0));
 	                        break;
 	                    case BLOCK:
-	                        this.transformFirstPersonItem(animationProgression, (blockhit ? f2 : 0));
+	                        this.transformFirstPersonItem(animationProgression, (blockhit ? swingProgress : 0));
 	                        this.doBlockTransformations();
 	                        break;
 	                    case BOW:
-	                        this.transformFirstPersonItem(animationProgression, (bow ? f2 : 0));
+	                        this.transformFirstPersonItem(animationProgression, (bow ? swingProgress : 0));
 	                        this.doBowTransformations(partialTicks, abstractclientplayer);
+	                        break;
 	                }
 	            } else {
-	            	this.doItemUsedTransformations(f2);
-	                this.transformFirstPersonItem(animationProgression, f2);
+	                this.doItemUsedTransformations(swingProgress);
+                    this.transformFirstPersonItem(animationProgression, swingProgress);
 	            }
-	            this.renderItem(abstractclientplayer, this.itemToRender, ItemCameraTransforms.TransformType.FIRST_PERSON);
+                this.renderItem(abstractclientplayer, this.itemToRender, ItemCameraTransforms.TransformType.FIRST_PERSON);
 	        } else if (!abstractclientplayer.isInvisible()) {
-	            this.renderPlayerArm(abstractclientplayer, animationProgression, f2);
+	            this.renderPlayerArm(abstractclientplayer, animationProgression, swingProgress);
 	        }
-	        GlStateManager.popMatrix();
-	        GlStateManager.disableRescaleNormal();
-	        RenderHelper.disableStandardItemLighting();
+            GlStateManager.popMatrix();
+            GlStateManager.disableRescaleNormal();
+            RenderHelper.disableStandardItemLighting();
 	    }
 	}
 
