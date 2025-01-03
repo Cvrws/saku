@@ -37,7 +37,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 
 @Getter
-public class RiceScreen extends GuiScreen implements Accessor {
+public class RiceGui extends GuiScreen implements Accessor {
 
     public Vector2f position = new Vector2f(-1, -1);
     public Vector2f scale = new Vector2f(320 * 1.3f, 260 * 1.3f);

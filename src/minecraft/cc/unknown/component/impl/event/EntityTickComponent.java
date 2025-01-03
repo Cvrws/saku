@@ -17,8 +17,9 @@ public class EntityTickComponent extends Component {
 	@EventLink(value = Priority.VERY_LOW)
 	public final Listener<PreMotionEvent> onPre = event -> {
 		if (mc.player.hurtTime == 9 && mc.player.motionY / 8000.0D > 0.1 && Math.hypot(mc.player.motionZ / 8000.0D, mc.player.motionX / 8000.0D) > 0.2) {
-			mc.player.ticksSinceVelocity++;
+			mc.player.ticksSinceVelocity = 0;
 		}
+		mc.player.ticksSinceVelocity++;
 	};
 	
 	@EventLink(value = Priority.VERY_LOW)

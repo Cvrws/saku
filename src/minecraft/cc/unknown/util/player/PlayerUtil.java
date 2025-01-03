@@ -23,18 +23,20 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityEgg;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBucketMilk;
-import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemPotion;
+import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.C01PacketChatMessage;
@@ -664,7 +666,7 @@ public class PlayerUtil implements Accessor {
         }
     }
     
-    public static double[] getPredictedPos(float forward, float strafe, double motionX, double motionY, double motionZ, double posX, double posY, double posZ, boolean isJumping) {
+    public double[] getPredictedPos(float forward, float strafe, double motionX, double motionY, double motionZ, double posX, double posY, double posZ, boolean isJumping) {
        strafe *= 0.98F;
        forward *= 0.98F;
        float f4 = 0.91F;
@@ -745,4 +747,97 @@ public class PlayerUtil implements Accessor {
     public ItemStack getItemStack() {
         return (mc.player == null || mc.player.inventoryContainer == null ? null : mc.player.inventoryContainer.getSlot(mc.player.inventory.currentItem + 36).getStack());
     }
+    
+    public int findTool(final BlockPos blockPos) {
+        float bestSpeed = 1;
+        int bestSlot = -1;
+
+        final IBlockState blockState = mc.theWorld.getBlockState(blockPos);
+
+        for (int i = 0; i < 9; i++) {
+            final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
+
+            if (itemStack == null) {
+                continue;
+            }
+
+            final float speed = itemStack.getStrVsBlock(blockState.getBlock());
+
+            if (speed > bestSpeed) {
+                bestSpeed = speed;
+                bestSlot = i;
+            }
+        }
+
+        return bestSlot;
+    }
+    
+	public ItemStack getBestSword() {
+		int size = mc.player.inventoryContainer.getInventory().size();
+		ItemStack lastSword = null;
+		for (int i = 0; i < size; i++) {
+			ItemStack stack = mc.player.inventoryContainer.getInventory().get(i);
+			if (stack != null && stack.getItem() instanceof ItemSword)
+				if (lastSword == null) {
+					lastSword = stack;
+				} else if (isBetterSword(stack, lastSword)) {
+					lastSword = stack;
+				}
+		}
+		return lastSword;
+	}
+
+	public ItemStack getBestAxe() {
+		int size = mc.player.inventoryContainer.getInventory().size();
+		ItemStack lastAxe = null;
+		for (int i = 0; i < size; i++) {
+			ItemStack stack = mc.player.inventoryContainer.getInventory().get(i);
+			if (stack != null && stack.getItem() instanceof ItemAxe)
+				if (lastAxe == null) {
+					lastAxe = stack;
+				} else if (isBetterTool(stack, lastAxe, Blocks.planks)) {
+					lastAxe = stack;
+				}
+		}
+		return lastAxe;
+	}
+
+	public ItemStack getBestPickaxe() {
+		int size = mc.player.inventoryContainer.getInventory().size();
+		ItemStack lastPickaxe = null;
+		for (int i = 0; i < size; i++) {
+			ItemStack stack = mc.player.inventoryContainer.getInventory().get(i);
+			if (stack != null && stack.getItem() instanceof ItemPickaxe)
+				if (lastPickaxe == null) {
+					lastPickaxe = stack;
+				} else if (isBetterTool(stack, lastPickaxe, Blocks.stone)) {
+					lastPickaxe = stack;
+				}
+		}
+		return lastPickaxe;
+	}
+
+	public boolean isBetterTool(ItemStack better, ItemStack than, Block versus) {
+		return (getToolDigEfficiency(better, versus) > getToolDigEfficiency(than, versus));
+	}
+
+	public boolean isBetterSword(ItemStack better, ItemStack than) {
+		return (getSwordDamage((ItemSword) better.getItem(), better) > getSwordDamage((ItemSword) than.getItem(),
+				than));
+	}
+
+	public float getSwordDamage(ItemSword sword, ItemStack stack) {
+		float base = sword.getMaxDamage();
+		return base + EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, stack) * 1.25F;
+	}
+
+	public float getToolDigEfficiency(ItemStack stack, Block block) {
+		float f = stack.getStrVsBlock(block);
+		if (f > 1.0F) {
+			int i = EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, stack);
+			if (i > 0)
+				f += (i * i + 1);
+		}
+		return f;
+	}
 }

@@ -11,7 +11,7 @@ import cc.unknown.Sakura;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
 import cc.unknown.module.api.Category;
-import cc.unknown.ui.clickgui.rice.RiceScreen;
+import cc.unknown.ui.clickgui.rice.RiceGui;
 import cc.unknown.ui.clickgui.rice.screen.Colors;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.ColorUtil;
@@ -43,7 +43,7 @@ public final class SidebarComponent implements Accessor {
 
     public void renderSidebar(final float mouseX, final float mouseY) {
         /* ClickGUI */
-        final RiceScreen clickGUI = Sakura.instance.getClickGui();
+        final RiceGui clickGUI = Sakura.instance.getClickGui();
 
         /* Animations */
         final long time = System.currentTimeMillis();

@@ -43,7 +43,7 @@ public class AutoArmor extends Module {
 	        }
 
 	        if (stopWatch.elapse(speed.getValue().doubleValue(), false)) {
-	            if (mode.is("Open Inv") && !(mc.currentScreen instanceof GuiInventory)) {
+	            if (!(mc.currentScreen instanceof GuiInventory)) {
 	                return;
 	            }
 
@@ -52,9 +52,7 @@ public class AutoArmor extends Module {
 		    	        if (mc.player.inventoryContainer.getSlot(4 + type).getHasStack()) {
 		    	            ItemStack is = mc.player.inventoryContainer.getSlot(4 + type).getStack();
 		    	            if (!InventoryUtil.isBestArmor(is, type)) {
-		    	                InventoryUtil.openInv(mode.getValue().getName());
 		    	                InventoryUtil.drop(4 + type);
-		    	                InventoryUtil.closeInv(mode.getValue().getName());
 	
 		    	                stopWatch.reset();
 		    	                if (speed.getValue().doubleValue() != 0) {
@@ -70,9 +68,7 @@ public class AutoArmor extends Module {
 	    	                if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
 	    	                    ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
 	    	                    if (isValidArmor(is, type)) {
-	    	                        InventoryUtil.openInv(mode.getValue().getName());
 	    	                        InventoryUtil.shiftClick(i);
-	    	                        InventoryUtil.closeInv(mode.getValue().getName());
 
 	    	                        stopWatch.reset();
 	    	                        if (speed.getValue().doubleValue() != 0) {
@@ -84,12 +80,6 @@ public class AutoArmor extends Module {
 	    	        }
 	    	    }
 	        }
-
-	        if (stopWatch.elapse(55.0D, false)) {
-	            InventoryUtil.closeInv(mode.getValue().getName());
-	        }
-	    } else {
-	        InventoryUtil.closeInv(mode.getValue().getName());
 	    }
 	};
 	

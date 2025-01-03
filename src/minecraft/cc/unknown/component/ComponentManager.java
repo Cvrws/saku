@@ -33,6 +33,7 @@ public final class ComponentManager {
         this.add(new LastConnectionComponent());
         this.add(new RotationComponent());
         this.add(new SpoofComponent());
+        this.add(new PingSpoofComponent());
         this.add(new TargetComponent());
         this.add(new GameComponent());
 

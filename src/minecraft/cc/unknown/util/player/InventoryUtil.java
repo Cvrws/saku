@@ -87,6 +87,7 @@ public class InventoryUtil implements Accessor {
 				Blocks.stone_button, Blocks.tnt, Blocks.wooden_button, Blocks.lever, Blocks.crafting_table,
 				Blocks.furnace, Blocks.stone_slab, Blocks.wooden_slab, Blocks.stone_slab2, Blocks.brown_mushroom,
 				Blocks.red_mushroom, Blocks.gold_block, Blocks.red_flower, Blocks.yellow_flower, Blocks.flower_pot);
+		
 		moveKeys = new KeyBinding[] { mc.gameSettings.keyBindForward, mc.gameSettings.keyBindBack,
 				mc.gameSettings.keyBindLeft, mc.gameSettings.keyBindRight, mc.gameSettings.keyBindJump,
 				mc.gameSettings.keyBindSneak };
@@ -182,102 +183,6 @@ public class InventoryUtil implements Accessor {
 	    return item;
 	}
 
-	public int getCobwebSlot() {
-		int item = -1;
-
-		for (int i = 36; i < 45; ++i) {
-			if (mc.player.inventoryContainer.getSlot(i).getStack() != null
-					&& mc.player.inventoryContainer.getSlot(i).getStack().getItem() instanceof ItemBlock) {
-				ItemBlock block = (ItemBlock) mc.player.inventoryContainer.getSlot(i).getStack().getItem();
-				if (block.getBlock() == Blocks.web) {
-					item = i - 36;
-					int var4 = mc.player.inventoryContainer.getSlot(i).getStack().stackSize;
-				}
-			}
-		}
-
-		return item;
-	}
-
-	public int getBucketSlot() {
-		int item = -1;
-
-		for (int i = 36; i < 45; ++i) {
-			if (mc.player.inventoryContainer.getSlot(i).getStack() != null
-					&& mc.player.inventoryContainer.getSlot(i).getStack().getItem() == Items.water_bucket) {
-				item = i - 36;
-				int var3 = mc.player.inventoryContainer.getSlot(i).getStack().stackSize;
-			}
-		}
-
-		return item;
-	}
-
-	public int getEmptyBucketSlot() {
-		int item = -1;
-
-		for (int i = 36; i < 45; ++i) {
-			if (mc.player.inventoryContainer.getSlot(i).getStack() != null
-					&& mc.player.inventoryContainer.getSlot(i).getStack().getItem() == Items.bucket) {
-				item = i - 36;
-				int var3 = mc.player.inventoryContainer.getSlot(i).getStack().stackSize;
-			}
-		}
-
-		return item;
-	}
-
-	public ItemStack getBucketSlotInventory() {
-		ItemStack item = null;
-
-		for (int i = 9; i < 45; ++i) {
-			if (mc.player.inventoryContainer.getSlot(i).getStack() != null
-					&& mc.player.inventoryContainer.getSlot(i).getStack().getItem() == Items.water_bucket) {
-				item = mc.player.inventoryContainer.getSlot(i).getStack();
-				int var3 = mc.player.inventoryContainer.getSlot(i).getStack().stackSize;
-			}
-		}
-
-		return item;
-	}
-
-	public int getProjectileSlot() {
-		int item = -1;
-		int stacksize = 0;
-
-		for (int i = 36; i < 45; ++i) {
-			if (mc.player.inventoryContainer.getSlot(i).getStack() != null
-					&& (mc.player.inventoryContainer.getSlot(i).getStack().getItem() instanceof ItemSnowball
-							|| mc.player.inventoryContainer.getSlot(i).getStack().getItem() instanceof ItemEgg
-							|| mc.player.inventoryContainer.getSlot(i).getStack()
-									.getItem() instanceof ItemFishingRod)
-					&& mc.player.inventoryContainer.getSlot(i).getStack().stackSize >= stacksize) {
-				item = i - 36;
-				stacksize = mc.player.inventoryContainer.getSlot(i).getStack().stackSize;
-			}
-		}
-
-		return item;
-	}
-
-	public ItemStack getProjectileSlotInventory() {
-		ItemStack item = null;
-		int stacksize = 0;
-
-		for (int i = 9; i < 45; ++i) {
-			if (mc.player.inventoryContainer.getSlot(i).getStack() != null
-					&& (mc.player.inventoryContainer.getSlot(i).getStack().getItem() instanceof ItemSnowball
-							|| mc.player.inventoryContainer.getSlot(i).getStack().getItem() instanceof ItemEgg
-							|| mc.player.inventoryContainer.getSlot(i).getStack()
-									.getItem() instanceof ItemFishingRod)
-					&& mc.player.inventoryContainer.getSlot(i).getStack().stackSize >= stacksize) {
-				item = mc.player.inventoryContainer.getSlot(i).getStack();
-				stacksize = mc.player.inventoryContainer.getSlot(i).getStack().stackSize;
-			}
-		}
-
-		return item;
-	}
 
 	public float getProtection(ItemStack stack) {
 		float prot = 0.0F;
@@ -382,20 +287,12 @@ public class InventoryUtil implements Accessor {
 				if (is.getItem() instanceof ItemPickaxe && is != bestPick() && (preferSword || is != bestWeapon())) {
 					return true;
 				}
-
-				if (is.getItem() instanceof ItemSpade && is != bestShovel()) {
-					return true;
-				}
 			} else {
 				if (is.getItem() instanceof ItemAxe && (preferSword || is != bestWeapon())) {
 					return true;
 				}
 
 				if (is.getItem() instanceof ItemPickaxe && (preferSword || is != bestWeapon())) {
-					return true;
-				}
-
-				if (is.getItem() instanceof ItemSpade) {
 					return true;
 				}
 			}
@@ -448,21 +345,12 @@ public class InventoryUtil implements Accessor {
 						&& (preferSword || getWeaponSkill(is) <= bestWeaponSkill())) {
 					return true;
 				}
-
-				if (is.getItem() instanceof ItemSpade && getToolSkill(is) <= bestShovelSkill()
-						&& (preferSword || getWeaponSkill(is) <= bestWeaponSkill())) {
-					return true;
-				}
 			} else {
 				if (is.getItem() instanceof ItemAxe && (preferSword || getWeaponSkill(is) <= bestWeaponSkill())) {
 					return true;
 				}
 
 				if (is.getItem() instanceof ItemPickaxe && (preferSword || getWeaponSkill(is) <= bestWeaponSkill())) {
-					return true;
-				}
-
-				if (is.getItem() instanceof ItemSpade && (preferSword || getWeaponSkill(is) <= bestWeaponSkill())) {
 					return true;
 				}
 			}
@@ -561,24 +449,6 @@ public class InventoryUtil implements Accessor {
 			if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
 				ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
 				if (is.getItem() instanceof ItemPickaxe) {
-					float toolSkill = getToolRating(is);
-					if (toolSkill >= itemSkill) {
-						itemSkill = getToolRating(is);
-					}
-				}
-			}
-		}
-
-		return itemSkill;
-	}
-
-	public float bestShovelSkill() {
-		float itemSkill = -1.0F;
-
-		for (int i = 9; i < 45; ++i) {
-			if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
-				ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
-				if (is.getItem() instanceof ItemSpade) {
 					float toolSkill = getToolRating(is);
 					if (toolSkill >= itemSkill) {
 						itemSkill = getToolRating(is);
@@ -691,25 +561,6 @@ public class InventoryUtil implements Accessor {
 		return bestTool;
 	}
 
-	public ItemStack bestShovel() {
-		ItemStack bestTool = null;
-		float itemSkill = -1.0F;
-
-		for (int i = 9; i < 45; ++i) {
-			if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
-				ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
-				if (is.getItem() instanceof ItemSpade) {
-					float toolSkill = getToolRating(is);
-					if (toolSkill >= itemSkill) {
-						itemSkill = getToolRating(is);
-						bestTool = is;
-					}
-				}
-			}
-		}
-
-		return bestTool;
-	}
 
 	public float getToolRating(ItemStack itemStack) {
 		float damage = getToolMaterialRating(itemStack, false);

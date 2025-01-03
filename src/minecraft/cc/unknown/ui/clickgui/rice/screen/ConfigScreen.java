@@ -7,7 +7,7 @@ import java.util.Iterator;
 import cc.unknown.Sakura;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.ui.clickgui.rice.RiceScreen;
+import cc.unknown.ui.clickgui.rice.RiceGui;
 import cc.unknown.ui.clickgui.rice.screen.impl.Element;
 import cc.unknown.ui.clickgui.rice.screen.impl.Row;
 import cc.unknown.util.Accessor;
@@ -43,7 +43,7 @@ public final class ConfigScreen implements Screen, Accessor {
             registered = true;
         }
 
-        RiceScreen clickGUI = this.getClickGUI();
+        RiceGui clickGUI = this.getClickGUI();
         Vector2f position = new Vector2f(getClickGUI().getPosition().x - 28, getClickGUI().getPosition().y);
         Vector2f scale = new Vector2f(getClickGUI().getScale().x, getClickGUI().getScale().y);
 

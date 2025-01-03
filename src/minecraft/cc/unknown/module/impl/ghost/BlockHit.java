@@ -53,10 +53,6 @@ public class BlockHit extends Module {
 			stopWatch.reset();
 			mc.gameSettings.keyBindUseItem.pressed = true;
 			
-			if (mc.gameSettings.keyBindUseItem.isPressed()) {
-				
-			}
-			
 			if (blink.getValue()) {
 				block = true;
 				BlinkUtil.enable();

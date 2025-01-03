@@ -7,7 +7,7 @@ import java.util.Arrays;
 import cc.unknown.Sakura;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.ui.clickgui.rice.RiceScreen;
+import cc.unknown.ui.clickgui.rice.RiceGui;
 import cc.unknown.ui.clickgui.rice.impl.ModuleComponent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
@@ -34,7 +34,7 @@ public final class HomeScreen implements Screen, Accessor {
 
     @Override
     public void onRender(final int mouseX, final int mouseY, final float partialTicks) {
-        final RiceScreen clickGUI = this.getClickGUI();
+        final RiceGui clickGUI = this.getClickGUI();
 
         /* Setting searchbar color to clickgui fontcolor */
         if (scrollUtil.getTarget() < 0) {

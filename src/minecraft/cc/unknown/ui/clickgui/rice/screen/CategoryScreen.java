@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import cc.unknown.Sakura;
 import cc.unknown.module.api.Category;
-import cc.unknown.ui.clickgui.rice.RiceScreen;
+import cc.unknown.ui.clickgui.rice.RiceGui;
 import cc.unknown.ui.clickgui.rice.impl.ModuleComponent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
@@ -27,7 +27,7 @@ public final class CategoryScreen implements Screen, Accessor {
     public void onRender(final int mouseX, final int mouseY, final float partialTicks) {
         if (this.category == null) return;
 
-        final RiceScreen clickGUI = this.getClickGUI();
+        final RiceGui clickGUI = this.getClickGUI();
 
         /* Scroll */
         scrollUtil.onRender();

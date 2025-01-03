@@ -9,7 +9,7 @@ import java.util.ConcurrentModificationException;
 
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.ui.clickgui.rice.RiceScreen;
+import cc.unknown.ui.clickgui.rice.RiceGui;
 import cc.unknown.ui.clickgui.rice.screen.ConfigScreen;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.geometry.Vector2f;
@@ -41,7 +41,7 @@ public class Row extends ArrayList<Element> implements Accessor {
 
     public void render(Vector2f position) {
         try {
-            RiceScreen clickGUI = getClickGUI();
+            RiceGui clickGUI = getClickGUI();
             this.position = new Vector2f(position.x, position.y);
             Fonts.ROBOTO.get(18, Weight.LIGHT).draw(name, this.position.x, this.position.y, Color.WHITE.getRGB());
 

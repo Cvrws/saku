@@ -20,7 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 
-public class KeroScreen extends GuiScreen {
+public class KeroGui extends GuiScreen {
     private int settingsLeft, settingsTop, settingsRight, settingsBottom;
     private List<CategoryButton> categoryButtons;
     private List<ModuleButton> moduleButtons;
@@ -34,7 +34,7 @@ public class KeroScreen extends GuiScreen {
     private List<ValueComponent> valueComponents;
 
 
-    public KeroScreen() {
+    public KeroGui() {
         this.categoryButtons = new ArrayList<>();
         this.moduleButtons = new ArrayList<>();
         this.selectedCategory = null;

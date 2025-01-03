@@ -120,7 +120,7 @@ public class ChunkProviderServer implements IChunkProvider {
             this.id2ChunkMap.add(i, chunk);
             this.loadedChunks.add(chunk);
             chunk.onChunkLoad();
-            chunk.populateChunk(this, this, p_73158_1_, p_73158_2_);
+            chunk.func_186030_a(this, this, p_73158_1_, p_73158_2_);
         }
 
         return chunk;

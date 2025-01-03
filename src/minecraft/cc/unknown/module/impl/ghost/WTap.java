@@ -80,8 +80,7 @@ public class WTap extends Module {
 	                mc.gameSettings.keyBindForward.pressed = false;
 	                break;
 	            case "Fast":
-	                mc.gameSettings.keyBindForward.pressed = false;
-	                mc.gameSettings.keyBindBack.pressed = true;
+	            	 mc.player.sprintingTicksLeft = 0;
 	                break;
 	        }
 	    } else if (ticks == hits.getValue().intValue()) {
@@ -90,8 +89,7 @@ public class WTap extends Module {
                 mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
                 break;
             case "Fast":
-                mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
-                mc.gameSettings.keyBindBack.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindBack);
+            	 mc.player.sprintingTicksLeft = 0;
                 break;
 	        }
 	    }

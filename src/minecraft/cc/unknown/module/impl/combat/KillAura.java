@@ -84,10 +84,10 @@ public final class KillAura extends Module {
 
 	public final NumberValue range = new NumberValue("Range", this, 3, 3, 6, 0.1);
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 10, 15, 1, 20, 1);
-	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 1.5, 2, 0.1);
+	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 0, 2, 0.1);
 
 	private final BoundsNumberValue rotationSpeed = new BoundsNumberValue("Rotation speed", this, 5, 10, 0, 10, 1);
-	private final ListValue<MovementFix> movementCorrection = new ListValue<>("Movement correction", this);
+	private final ListValue<MovementFix> movementCorrection = new ListValue<>("Move Fix", this);
 
 	private final BooleanValue keepSprint = new BooleanValue("Keep sprint", this, false);
 	private final BooleanValue defCheck = new BooleanValue("Deffensive Check", this, false, () -> !keepSprint.getValue());
@@ -332,19 +332,9 @@ public final class KillAura extends Module {
 	public final Listener<MouseOverEvent> onMouseOver = event -> event
 			.setRange(event.getRange() + range.getValue().doubleValue() - 3);
 
-	public Tuple<Boolean, Double> getDelay() {
-		double delay = -1;
-		boolean flag = false;
-		return new Tuple<>(flag, delay);
-	}
 
 	private void doAttack(final List<EntityLivingBase> targets) {
-		Tuple<Boolean, Double> tuple = getDelay();
-		final double delay = tuple.getSecond();
-		final boolean flag = tuple.getFirst();
-
-		if (attackStopWatch.finished(this.nextSwing) && target != null
-				&& (clickStopWatch.finished((long) (delay * 50)) || flag)) {
+		if (attackStopWatch.finished(this.nextSwing) && target != null) {
 			final long clicks = (long) (this.cps.getRandomBetween().longValue() * randomization.getValue().doubleValue());
 			this.nextSwing = 1000 / clicks;
 
@@ -410,9 +400,6 @@ public final class KillAura extends Module {
 
 			event.setCancelled();
 			break;
-		default:
-			event.setCancelled();
-			break;
 		}
 	};
 
@@ -430,9 +417,8 @@ public final class KillAura extends Module {
 	private void postAttackBlock() {
 		switch (autoBlock.getValue().getName()) {
 		case "Vanilla ReBlock":
-			if (this.hitTicks == 1) {
-				this.block(true);
-				mc.player.setItemInUse(PlayerUtil.getItemStack(), 1);
+			if (this.hitTicks == 2) {
+				mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
 			}
 			break;
 		case "Post":
@@ -440,12 +426,11 @@ public final class KillAura extends Module {
 			
 			if (PlayerUtil.isHoldingWeapon()) {
 				mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
-			} else {
-				furry = true;
 			}
 			
+			furry = true;
+			
 			if (furry) {
-				mc.player.setItemInUse(PlayerUtil.getItemStack(), 0);
 				PacketUtil.sendNoEvent(new C07PacketPlayerDigging(
 						C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
 			}
@@ -478,10 +463,9 @@ public final class KillAura extends Module {
 			mc.player.swingItem();
 		}
 
-		AttackOrder.sendLegitFixedKillAuraAttack(mc.player, target);
-		
+		mc.playerController.attackEntity(mc.player, target);
+		this.hitTicks++;
 		this.clickStopWatch.reset();
-		this.hitTicks = 0;
 	}
 
 	public boolean canBlock() {
@@ -498,11 +482,7 @@ public final class KillAura extends Module {
 
 	private void unblock() {
 		if (blocking) {
-			if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) mc.gameSettings.keyBindUseItem.pressed = false;
-			else {
-				PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
-				mc.gameSettings.keyBindUseItem.pressed = false;
-			}
+			PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
 			blocking = false;
 		}
 	}
@@ -512,10 +492,7 @@ public final class KillAura extends Module {
 			MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationComponent.lastRotations, 3);
 
 			if (interact && movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
-				if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) mc.gameSettings.keyBindUseItem.pressed = false;
-				else {
-					interact(movingObjectPosition);
-				}
+				interact(movingObjectPosition);
 			}
 			
 	        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {

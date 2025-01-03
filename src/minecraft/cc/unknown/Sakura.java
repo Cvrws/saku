@@ -15,8 +15,8 @@ import cc.unknown.event.Event;
 import cc.unknown.event.bus.impl.EventBus;
 import cc.unknown.module.api.manager.ModuleManager;
 import cc.unknown.script.ScriptManager;
-import cc.unknown.ui.clickgui.kerosene.KeroScreen;
-import cc.unknown.ui.clickgui.rice.RiceScreen;
+import cc.unknown.ui.clickgui.kerosene.KeroGui;
+import cc.unknown.ui.clickgui.rice.RiceGui;
 import cc.unknown.ui.menu.MainMenu;
 import cc.unknown.ui.theme.ThemeManager;
 import cc.unknown.util.file.FileManager;
@@ -33,7 +33,7 @@ public enum Sakura {
     instance;
 
     public static final String NAME = "Sakura";
-    public static final String VERSION_FULL = "5.5";
+    public static final String VERSION_FULL = "5.6";
 
     private EventBus<Event> eventBus;
     private ModuleManager moduleManager;
@@ -50,8 +50,8 @@ public enum Sakura {
     private BindableManager bindableManager;
     private ScriptManager scriptManager;
 
-    private RiceScreen clickGui;
-    private KeroScreen betaGui;
+    private RiceGui clickGui;
+    private KeroGui betaGui;
     public boolean firstLogin;
     
     private final ScheduledExecutorService ex = Executors.newScheduledThreadPool(4);
@@ -82,7 +82,7 @@ public enum Sakura {
         friendManager.init();
         enemyManager.init();
 
-        clickGui = new RiceScreen();
+        clickGui = new RiceGui();
         
         clickGui.initGui();
         

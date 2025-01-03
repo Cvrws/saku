@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
 import cc.unknown.module.Module;
-import cc.unknown.ui.clickgui.rice.RiceScreen;
+import cc.unknown.ui.clickgui.rice.RiceGui;
 import cc.unknown.ui.clickgui.rice.screen.Colors;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
@@ -60,7 +60,7 @@ public class ModuleComponent implements Accessor {
         {
             if (!render) break handle;
 
-            final RiceScreen clickGUI = this.getClickGUI();
+            final RiceGui clickGUI = this.getClickGUI();
 
             // ROBOTO module background
             RenderUtil.roundedRectangle(position.x - 28, position.y, scale.x, scale.y, 6, Colors.OVERLAY.get());

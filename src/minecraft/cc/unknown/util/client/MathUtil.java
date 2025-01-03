@@ -115,4 +115,24 @@ public class MathUtil {
     public int randomClickDelay(int minCPS, int maxCPS) {
         return (int) (Math.random() * (1000 / minCPS - 1000 / maxCPS + 1) + 1000 / maxCPS);
     }
+    
+    public static float getAdvancedRandom(float min, float max) {
+        SecureRandom random = new SecureRandom();
+
+        long finalSeed = System.nanoTime();
+
+        for (int i = 0; i < 3; ++i) {
+            long seed = (long) (Math.random() * 1_000_000_000);
+
+            seed ^= (seed << 13);
+            seed ^= (seed >>> 17);
+            seed ^= (seed << 15);
+
+            finalSeed += seed;
+        }
+
+        random.setSeed(finalSeed);
+
+        return random.nextFloat() * (max - min) + min;
+    }
 }

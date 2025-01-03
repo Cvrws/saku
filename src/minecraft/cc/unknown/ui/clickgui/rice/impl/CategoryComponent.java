@@ -9,7 +9,7 @@ import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.impl.visual.ClickGUI;
-import cc.unknown.ui.clickgui.rice.RiceScreen;
+import cc.unknown.ui.clickgui.rice.RiceGui;
 import cc.unknown.ui.clickgui.rice.screen.Screen;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.geometry.Vector2d;
@@ -34,7 +34,7 @@ public final class CategoryComponent implements Accessor {
     }
 
     public void render(final double offset, final double sidebarWidth, final double opacity, final Screen selectedScreen) {
-        final RiceScreen clickGUI = Sakura.instance.getClickGui();
+        final RiceGui clickGUI = Sakura.instance.getClickGui();
 
         if (System.currentTimeMillis() - lastTime > 300) lastTime = System.currentTimeMillis();
         final long time = System.currentTimeMillis();
