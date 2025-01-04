@@ -38,7 +38,7 @@ public class ModelAdapterEnderCrystal extends ModelAdapter {
     }
 
     public IEntityRenderer makeEntityRender(final ModelBase modelBase, final float shadowSize) {
-        final RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+        final RenderManager rendermanager = Minecraft.getInstance().getRenderManager();
         final Render render = rendermanager.getEntityRenderMap().get(EntityEnderCrystal.class);
 
         if (!(render instanceof RenderEnderCrystal)) {

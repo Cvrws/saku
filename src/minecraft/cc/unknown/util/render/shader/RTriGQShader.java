@@ -1,11 +1,9 @@
-package cc.unknown.util.render.shader.impl;
+package cc.unknown.util.render.shader;
 
 import java.awt.Color;
 
 import org.lwjgl.opengl.GL11;
 
-import cc.unknown.util.render.shader.base.ShaderProgram;
-import cc.unknown.util.render.shader.base.ShaderUniforms;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 
@@ -22,7 +20,7 @@ public final class RTriGQShader {
         ShaderUniforms.uniform4f(programId, "u_second_color", secondColor.getRed() / 255.0F, secondColor.getGreen() / 255.0F, secondColor.getBlue() / 255.0F, secondColor.getAlpha() / 255.0F);
         ShaderUniforms.uniform4f(programId, "u_third_color", thirdColor.getRed() / 255.0F, thirdColor.getGreen() / 255.0F, thirdColor.getBlue() / 255.0F, thirdColor.getAlpha() / 255.0F);
         ShaderUniforms.uniform1i(programId, "u_direction", vertical ? 1 : 0);
-        ShaderUniforms.uniform1f(programId, "u_time", (System.currentTimeMillis() - Minecraft.getMinecraft().getStartMillisTime()) / 1000F);
+        ShaderUniforms.uniform1f(programId, "u_time", (System.currentTimeMillis() - Minecraft.getInstance().getStartMillisTime()) / 1000F);
         ShaderUniforms.uniform4f(programId, "u_edges", leftTop ? 1.0F : 0.0F, rightTop ? 1.0F : 0.0F, rightBottom ? 1.0F : 0.0F, leftBottom ? 1.0F : 0.0F);
 
         GlStateManager.enableBlend();

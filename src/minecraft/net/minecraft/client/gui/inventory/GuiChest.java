@@ -22,7 +22,7 @@ public class GuiChest extends GuiContainer {
     private final int inventoryRows;
 
     public GuiChest(final IInventory upperInv, final IInventory lowerInv) {
-        super(new ContainerChest(upperInv, lowerInv, Minecraft.getMinecraft().player));
+        super(new ContainerChest(upperInv, lowerInv, Minecraft.getInstance().player));
         this.upperChestInventory = upperInv;
         this.lowerChestInventory = lowerInv;
         this.allowUserInput = false;

@@ -39,7 +39,7 @@ public class ChunkRenderWorker implements Runnable {
                 return;
             } catch (final Throwable throwable) {
                 final CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Batching chunks");
-                Minecraft.getMinecraft().crashed(Minecraft.getMinecraft().addGraphicsAndWorldToCrashReport(crashreport));
+                Minecraft.getInstance().crashed(Minecraft.getInstance().addGraphicsAndWorldToCrashReport(crashreport));
                 return;
             }
         }
@@ -62,7 +62,7 @@ public class ChunkRenderWorker implements Runnable {
             generator.getLock().unlock();
         }
 
-        final Entity lvt_2_1_ = Minecraft.getMinecraft().getRenderViewEntity();
+        final Entity lvt_2_1_ = Minecraft.getInstance().getRenderViewEntity();
 
         if (lvt_2_1_ == null) {
             generator.finish();
@@ -143,7 +143,7 @@ public class ChunkRenderWorker implements Runnable {
                     ChunkRenderWorker.this.freeRenderBuilder(generator);
 
                     if (!(p_onFailure_1_ instanceof CancellationException) && !(p_onFailure_1_ instanceof InterruptedException)) {
-                        Minecraft.getMinecraft().crashed(CrashReport.makeCrashReport(p_onFailure_1_, "Rendering chunk"));
+                        Minecraft.getInstance().crashed(CrashReport.makeCrashReport(p_onFailure_1_, "Rendering chunk"));
                     }
                 }
             });

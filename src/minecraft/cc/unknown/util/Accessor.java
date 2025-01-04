@@ -9,7 +9,7 @@ import cc.unknown.ui.theme.Themes;
 import net.minecraft.client.Minecraft;
 
 public interface Accessor {
-    Minecraft mc = Minecraft.getMinecraft();
+    Minecraft mc = Minecraft.getInstance();
 
     default Sakura getInstance() {
         return Sakura.instance;

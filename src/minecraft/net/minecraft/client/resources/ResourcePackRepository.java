@@ -182,7 +182,7 @@ public class ResourcePackRepository {
             this.func_183028_i();
             final GuiScreenWorking guiscreenworking = new GuiScreenWorking();
             final Map<String, String> map = Minecraft.getSessionInfo();
-            final Minecraft minecraft = Minecraft.getMinecraft();
+            final Minecraft minecraft = Minecraft.getInstance();
             Futures.getUnchecked(minecraft.addScheduledTask(new Runnable() {
                 public void run() {
                     minecraft.displayGuiScreen(guiscreenworking);
@@ -223,7 +223,7 @@ public class ResourcePackRepository {
 
     public ListenableFuture<Object> setResourcePackInstance(final File p_177319_1_) {
         this.resourcePackInstance = new FileResourcePack(p_177319_1_);
-        return Minecraft.getMinecraft().scheduleResourcesRefresh();
+        return Minecraft.getInstance().scheduleResourcesRefresh();
     }
 
     /**
@@ -245,7 +245,7 @@ public class ResourcePackRepository {
 
             if (this.resourcePackInstance != null) {
                 this.resourcePackInstance = null;
-                Minecraft.getMinecraft().scheduleResourcesRefresh();
+                Minecraft.getInstance().scheduleResourcesRefresh();
             }
         } finally {
             this.lock.unlock();

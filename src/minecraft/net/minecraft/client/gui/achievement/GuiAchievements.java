@@ -33,7 +33,7 @@ public class GuiAchievements extends GuiScreen implements IProgressMeter {
     private static final ResourceLocation ACHIEVEMENT_BACKGROUND = new ResourceLocation("textures/gui/achievement/achievement_background.png");
     protected GuiScreen parentScreen;
 
-    private static final Minecraft mc = Minecraft.getMinecraft();
+    private static final Minecraft mc = Minecraft.getInstance();
 
     protected int field_146555_f = 256;
     protected int field_146557_g = 202;
@@ -458,7 +458,7 @@ public class GuiAchievements extends GuiScreen implements IProgressMeter {
     }
 
     private TextureAtlasSprite func_175371_a(final Block p_175371_1_) {
-        return Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(p_175371_1_.getDefaultState());
+        return Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getTexture(p_175371_1_.getDefaultState());
     }
 
     /**

@@ -1,9 +1,7 @@
-package cc.unknown.util.render.shader.impl;
+package cc.unknown.util.render.shader;
 
 import java.awt.Color;
 
-import cc.unknown.util.render.shader.base.ShaderProgram;
-import cc.unknown.util.render.shader.base.ShaderUniforms;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class RQShader {

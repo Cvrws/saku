@@ -196,22 +196,22 @@ public class SlotUtil implements Accessor {
                 speedMultiplier = 1;
             } else if (id == 359 && (block instanceof BlockWeb || block instanceof BlockLeaves)) {
                 speedMultiplier = 15;
-            } else if (id == 359 && block.getBlockHardness(Minecraft.getMinecraft().theWorld, blockIn) == 0.8) {
+            } else if (id == 359 && block.getBlockHardness(Minecraft.getInstance().theWorld, blockIn) == 0.8) {
                 speedMultiplier = 5;
             }
             if (!canHeldItemHarvest(block, slot)) {
                 speedMultiplier = 1;
-            } else if (EnchantmentHelper.getEfficiencyModifier(Minecraft.getMinecraft().player) != 0) {
-                speedMultiplier += EnchantmentHelper.getEfficiencyModifier(Minecraft.getMinecraft().player) ^ 2 + 1;
+            } else if (EnchantmentHelper.getEfficiencyModifier(Minecraft.getInstance().player) != 0) {
+                speedMultiplier += EnchantmentHelper.getEfficiencyModifier(Minecraft.getInstance().player) ^ 2 + 1;
             }
         }
-        if (Minecraft.getMinecraft().player.isPotionActive(Potion.digSpeed))
-            speedMultiplier *= 0.2 * Minecraft.getMinecraft().player.getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1;
+        if (Minecraft.getInstance().player.isPotionActive(Potion.digSpeed))
+            speedMultiplier *= 0.2 * Minecraft.getInstance().player.getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1;
 
-        if (Minecraft.getMinecraft().player.isPotionActive(Potion.digSlowdown)) {
+        if (Minecraft.getInstance().player.isPotionActive(Potion.digSlowdown)) {
             final float f1;
 
-            switch (Minecraft.getMinecraft().player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) {
+            switch (Minecraft.getInstance().player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) {
                 case 0:
                     f1 = 0.3F;
                     break;
@@ -230,7 +230,7 @@ public class SlotUtil implements Accessor {
             }
             speedMultiplier *= f1;
         }
-        if (Minecraft.getMinecraft().player.isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(Minecraft.getMinecraft().player)) {
+        if (Minecraft.getInstance().player.isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(Minecraft.getInstance().player)) {
             speedMultiplier /= 5.0F;
         }
 

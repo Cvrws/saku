@@ -34,7 +34,7 @@ public class RotationUtil implements Accessor {
 	}
 
 	public float[] getFixedRotation(final float[] rotations, final float[] lastRotations) {
-		final Minecraft mc = Minecraft.getMinecraft();
+		final Minecraft mc = Minecraft.getInstance();
 
 		final float yaw = rotations[0];
 		final float pitch = rotations[1];

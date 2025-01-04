@@ -19,7 +19,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class TileEntityPistonRenderer extends TileEntitySpecialRenderer<TileEntityPiston> {
-    private final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+    private final BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
 
     public void renderTileEntityAt(final TileEntityPiston te, final double x, final double y, final double z, final float partialTicks, final int destroyStage) {
         final BlockPos blockpos = te.getPos();

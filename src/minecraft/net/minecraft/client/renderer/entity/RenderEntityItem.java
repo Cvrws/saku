@@ -98,7 +98,7 @@ public class RenderEntityItem extends Render<EntityItem> {
                 entity.rotationPitch += rotation;
             }
 
-            final Minecraft mc = Minecraft.getMinecraft();
+            final Minecraft mc = Minecraft.getInstance();
 
             //ItemPhysics pro rendering
             rotation = 2;
@@ -108,8 +108,8 @@ public class RenderEntityItem extends Render<EntityItem> {
             final int i = itemstack != null && itemstack.getItem() != null ? Item.getIdFromItem(itemstack.getItem()) + itemstack.getMetadata() : 187;
             RANDOM.setSeed(i);
 
-            Minecraft.getMinecraft().getTextureManager().bindTexture(getEntityTexture(entity));
-            Minecraft.getMinecraft().getTextureManager().getTexture(getEntityTexture(entity))
+            Minecraft.getInstance().getTextureManager().bindTexture(getEntityTexture(entity));
+            Minecraft.getInstance().getTextureManager().getTexture(getEntityTexture(entity))
                     .setBlurMipmap(false, false);
 
             GlStateManager.enableRescaleNormal();
@@ -174,8 +174,8 @@ public class RenderEntityItem extends Render<EntityItem> {
             GlStateManager.popMatrix();
             GlStateManager.disableRescaleNormal();
             GlStateManager.disableBlend();
-            Minecraft.getMinecraft().getTextureManager().bindTexture(getEntityTexture(entity));
-            Minecraft.getMinecraft().getTextureManager().getTexture(getEntityTexture(entity)).restoreLastBlurMipmap();
+            Minecraft.getInstance().getTextureManager().bindTexture(getEntityTexture(entity));
+            Minecraft.getInstance().getTextureManager().getTexture(getEntityTexture(entity)).restoreLastBlurMipmap();
         } else {
             final ItemStack itemstack = entity.getEntityItem();
             this.field_177079_e.setSeed(187L);

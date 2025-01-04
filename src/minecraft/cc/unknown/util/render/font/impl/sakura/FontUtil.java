@@ -14,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 public class FontUtil {
     public Font getResource(final String resource, final int size) {
         try {
-            return Font.createFont(Font.TRUETYPE_FONT, Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(resource)).getInputStream()).deriveFont((float) size);
+            return Font.createFont(Font.TRUETYPE_FONT, Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(resource)).getInputStream()).deriveFont((float) size);
         } catch (final FontFormatException | IOException ignored) {
             return null;
         }

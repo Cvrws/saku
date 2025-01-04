@@ -38,11 +38,7 @@ import net.minecraft.util.Vec3;
 
 @ModuleInfo(aliases = "Aim Assist", description = "Te ayuda a apuntar", category = Category.GHOST)
 public final class AimAssist extends Module {
-	
-	private final ModeValue mode = new ModeValue("Mode", this)
-			.add(new SubMode("Advanced"))
-			.setDefault("Advanced");
-	
+
 	private final NumberValue horizontalSpeed = new NumberValue("Horizontal Speed", this, 45.0, 5.0, 100.0, 1.0);
 	private final NumberValue horizontalCompl = new NumberValue("Horizontal Complement", this, 35.0, 2.0, 97.0, 1.0);
 	

@@ -89,6 +89,10 @@ public final class ColorUtil {
 				afloat[2] * f + afloat1[2] * f1);
 	}
 	
+    public Color blend(Color color1, Color color2) {
+        return blend(color1, color2, 0.5);
+    }
+	
 	public int getTeamColor(EntityPlayer player) {
 		String name = player.getDisplayName().getFormattedText();
 		name = removeFormatCodes(name);
@@ -132,5 +136,10 @@ public final class ColorUtil {
 	
     private String removeFormatCodes(String str) {
         return str.replace("§k", "").replace("§l", "").replace("§m", "").replace("§n", "").replace("§o", "").replace("§r", "");
+    }
+    
+    public Color colorFromInt(int color) {
+        Color c = new Color(color);
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), 255);
     }
 }

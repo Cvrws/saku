@@ -24,7 +24,7 @@ public class ScissorUtil {
     }
     
     public void scissor(double x, double y, double width, double height) {
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+        ScaledResolution sr = new ScaledResolution(Minecraft.getInstance());
         final double scale = sr.getScaleFactor();
         y = sr.getScaledHeight() - y;
         x *= scale;

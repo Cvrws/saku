@@ -33,7 +33,7 @@ public class ModelAdapterWitherSkull extends ModelAdapter {
     }
 
     public IEntityRenderer makeEntityRender(final ModelBase modelBase, final float shadowSize) {
-        final RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+        final RenderManager rendermanager = Minecraft.getInstance().getRenderManager();
         final RenderWitherSkull renderwitherskull = new RenderWitherSkull(rendermanager);
 
         if (!Reflector.RenderWitherSkull_model.exists()) {

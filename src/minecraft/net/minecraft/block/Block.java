@@ -449,7 +449,7 @@ public class Block {
     public void addCollisionBoxesToList(final World worldIn, final BlockPos pos, final IBlockState state, final AxisAlignedBB mask, final List<AxisAlignedBB> list, final Entity collidingEntity) {
         final AxisAlignedBB axisalignedbb = this.getCollisionBoundingBox(worldIn, pos, state);
 
-        if (collidingEntity == Minecraft.getMinecraft().player) {
+        if (collidingEntity == Minecraft.getInstance().player) {
             final BlockAABBEvent event = new BlockAABBEvent(worldIn, this, pos, axisalignedbb, mask);
             Sakura.instance.getEventBus().handle(event);
 

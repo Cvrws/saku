@@ -24,7 +24,7 @@ public class RenderTNTPrimed extends Render<EntityTNTPrimed> {
      * @param entityYaw The yaw rotation of the passed entity
      */
     public void doRender(final EntityTNTPrimed entity, final double x, final double y, final double z, final float entityYaw, final float partialTicks) {
-        final BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        final BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x, (float) y + 0.5F, (float) z);
 

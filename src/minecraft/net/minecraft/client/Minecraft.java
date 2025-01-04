@@ -736,7 +736,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	 * Wrapper around displayCrashReportInternal
 	 */
 	public void displayCrashReport(final CrashReport crashReportIn) {
-		final File file1 = new File(getMinecraft().mcDataDir, "crash-reports");
+		final File file1 = new File(getInstance().mcDataDir, "crash-reports");
 		final File file2 = new File(file1,
 				"crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
 		Bootstrap.printToSYSOUT(crashReportIn.getCompleteReport());
@@ -2428,7 +2428,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	/**
 	 * Return the singleton Minecraft instance for the game
 	 */
-	public static Minecraft getMinecraft() {
+	public static Minecraft getInstance() {
 		return theMinecraft;
 	}
 
@@ -2867,8 +2867,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 	public static Map<String, String> getSessionInfo() {
 		final Map<String, String> map = Maps.newHashMap();
-		map.put("X-Minecraft-Username", getMinecraft().getSession().getUsername());
-		map.put("X-Minecraft-UUID", getMinecraft().getSession().getPlayerID());
+		map.put("X-Minecraft-Username", getInstance().getSession().getUsername());
+		map.put("X-Minecraft-UUID", getInstance().getSession().getPlayerID());
 		map.put("X-Minecraft-Version", "1.8.9");
 		return map;
 	}

@@ -16,7 +16,7 @@ public class GuiLanguage extends GuiScreen {
      * The parent Gui screen
      */
     protected GuiScreen parentScreen;
-    private static final Minecraft mc = Minecraft.getMinecraft();
+    private static final Minecraft mc = Minecraft.getInstance();
 
     /**
      * The List GuiSlot object reference.

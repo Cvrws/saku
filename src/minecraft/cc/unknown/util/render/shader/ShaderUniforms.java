@@ -1,4 +1,4 @@
-package cc.unknown.util.render.shader.base;
+package cc.unknown.util.render.shader;
 
 import java.nio.FloatBuffer;
 

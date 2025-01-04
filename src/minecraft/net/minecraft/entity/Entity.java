@@ -1202,7 +1202,7 @@ public abstract class Entity implements ICommandSender {
      * Used in both water and by flying objects
      */
     public void moveFlying(float strafe, float forward, float friction) {
-        boolean player = this == Minecraft.getMinecraft().player;
+        boolean player = this == Minecraft.getInstance().player;
         float yaw = this.rotationYaw;
 
         if (player) {

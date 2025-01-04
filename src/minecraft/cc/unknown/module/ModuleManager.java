@@ -87,6 +87,7 @@ public final class ModuleManager {
         this.put(AutoText.class, new AutoText());
         this.put(FPSBoost.class, new FPSBoost());
         this.put(AutoSword.class, new AutoSword());
+        this.put(InternetRelayChat.class, new InternetRelayChat());
         this.put(MidClick.class, new MidClick());
         this.put(Insults.class, new Insults());
         this.put(AutoLeave.class, new AutoLeave());
@@ -144,6 +145,7 @@ public final class ModuleManager {
         this.put(MusicPlayer.class, new MusicPlayer());
         this.put(Tracers.class, new Tracers());
         this.put(UnlimitedChat.class, new UnlimitedChat());
+        this.put(ChinaHat.class, new ChinaHat());
 
         this.getAll().stream().filter(module -> module.getModuleInfo().autoEnabled()).forEach(module -> module.setEnabled(true));
         Sakura.instance.getEventBus().register(this);

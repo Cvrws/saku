@@ -1,10 +1,9 @@
-package cc.unknown.util.render.shader.base;
+package cc.unknown.util.render.shader;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.render.shader.ShaderUtil;
 import net.minecraft.client.gui.ScaledResolution;
 
 public class ShaderProgram implements Accessor {

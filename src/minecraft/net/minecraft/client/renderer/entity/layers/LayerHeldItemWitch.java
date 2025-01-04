@@ -36,7 +36,7 @@ public class LayerHeldItemWitch implements LayerRenderer<EntityWitch> {
             ((ModelWitch) this.witchRenderer.getMainModel()).villagerNose.postRender(0.0625F);
             GlStateManager.translate(-0.0625F, 0.53125F, 0.21875F);
             final Item item = itemstack.getItem();
-            final Minecraft minecraft = Minecraft.getMinecraft();
+            final Minecraft minecraft = Minecraft.getInstance();
 
             if (item instanceof ItemBlock && minecraft.getBlockRendererDispatcher().isRenderTypeChest(Block.getBlockFromItem(item), itemstack.getMetadata())) {
                 GlStateManager.translate(0.0F, 0.0625F, -0.25F);

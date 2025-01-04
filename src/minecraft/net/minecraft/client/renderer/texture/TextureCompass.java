@@ -16,7 +16,7 @@ public class TextureCompass extends TextureAtlasSprite {
 	}
 
 	public void updateAnimation() {
-		Minecraft minecraft = Minecraft.getMinecraft();
+		Minecraft minecraft = Minecraft.getInstance();
 
 		if (minecraft.theWorld != null && minecraft.player != null) {
 			this.updateCompass(minecraft.theWorld, minecraft.player.posX, minecraft.player.posZ,

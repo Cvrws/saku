@@ -8,7 +8,7 @@ import net.minecraft.client.resources.I18n;
 public class GuiErrorScreen extends GuiScreen {
     private final String field_146313_a;
     private final String field_146312_f;
-    private static final Minecraft mc = Minecraft.getMinecraft();
+    private static final Minecraft mc = Minecraft.getInstance();
 
     public GuiErrorScreen(final String p_i46319_1_, final String p_i46319_2_) {
         this.field_146313_a = p_i46319_1_;

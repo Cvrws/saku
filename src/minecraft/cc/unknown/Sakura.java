@@ -1,15 +1,7 @@
 package cc.unknown;
 
-import java.awt.AWTException;
-import java.awt.Image;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.io.IOException;
-import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
-import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +28,7 @@ import cc.unknown.script.ScriptManager;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.menu.MainMenu;
 import cc.unknown.ui.theme.ThemeManager;
+import cc.unknown.util.discord.DiscordInfo;
 import cc.unknown.util.file.FileManager;
 import cc.unknown.util.file.config.ConfigManager;
 import cc.unknown.util.file.enemy.EnemyManager;
@@ -67,36 +60,41 @@ public class Sakura {
     private ConfigManager configManager;
     private BindableManager bindableManager;
     private ScriptManager scriptManager;
-
+    private DiscordInfo discordRP;
+    
     private RiceGui clickGui = new RiceGui();
-    private TrayIcon trayIcon;
     public boolean firstLogin;
     
     private final ScheduledExecutorService ex = Executors.newScheduledThreadPool(4);
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    protected Minecraft mc = Minecraft.getInstance();
 
     public void init() {
     	Display.setTitle(NAME + " " + VERSION);
     	Runtime.getRuntime().addShutdownHook(new Thread(ex::shutdown));
-    	Minecraft mc = Minecraft.getMinecraft();
     	
-    	initAutoOptimization(mc);
+    	initAutoOptimization();
     	initManagers();
     	initHandler();
     	initVia();
-    	setupSystemTray();
-
+    	setupDiscordRPC();
         
     	mc.displayGuiScreen(new MainMenu());
     	LOGGER.info("{} {} initialized successfully.", NAME, VERSION);
     }
 
-    public void terminate() {
+    public void terminate() {    	
     	if (getConfigManager().get("latest") != null) {
         	getConfigManager().get("latest").write();
         }
     	
+        if (discordRP != null) {
+            discordRP.stop();
+            LOGGER.info("Discord Rich Presence stopped.");
+        }
+    	
         System.gc();
+        LOGGER.info("Client Terminated.");
     }
     
     private void initHandler() {
@@ -139,9 +137,21 @@ public class Sakura {
         configManager.init();
         bindableManager.init();
         clickGui.initGui();
+        
+        LOGGER.info("Managers initialized.");
     }
     
-    private void initAutoOptimization(Minecraft mc) {
+    private void setupDiscordRPC() {
+        try {
+            discordRP = new DiscordInfo();
+            discordRP.init();
+            LOGGER.info("Discord Rich Presence initialized.");
+        } catch (Throwable throwable) {
+            LOGGER.error("Failed to set up Discord RPC.", throwable);
+        }
+    }
+    
+    private void initAutoOptimization() {
     	mc.gameSettings.ofFastRender = Config.isShaders() ? false : true;
 		mc.gameSettings.ofChunkUpdatesDynamic = true;
 		mc.gameSettings.ofSmartAnimations = true;
@@ -151,31 +161,5 @@ public class Sakura {
         mc.gameSettings.ofFastMath = true;
         mc.gameSettings.useVbo = true;
         mc.gameSettings.guiScale = 2;
-    }
-    
-
-    private void setupSystemTray() {
-        if (isWindows() && SystemTray.isSupported()) {
-            try {
-                Image trayImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/assets/minecraft/sakura/images/sakura.png")));
-                trayIcon = new TrayIcon(trayImage, NAME);
-                trayIcon.setImageAutoSize(true);
-                trayIcon.setToolTip(NAME);
-
-                SystemTray.getSystemTray().add(trayIcon);
-                trayIcon.displayMessage(NAME, "Client started successfully.", TrayIcon.MessageType.INFO);
-
-                LOGGER.info("System tray icon added.");
-            } catch (IOException | AWTException | NullPointerException e) {
-                LOGGER.error("Failed to create or add TrayIcon.", e);
-            }
-        } else {
-            LOGGER.warn("System tray not supported or not running on Windows.");
-        }
-    }
-    
-    private boolean isWindows() {
-        String osName = System.getProperty("os.name").toLowerCase();
-        return osName.contains("windows");
     }
 }

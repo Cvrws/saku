@@ -11,7 +11,7 @@ public class ScreenChatOptions extends GuiScreen {
     private final GuiScreen parentScreen;
     private final GameSettings game_settings;
     private String field_146401_i;
-    private static final Minecraft mc = Minecraft.getMinecraft();
+    private static final Minecraft mc = Minecraft.getInstance();
 
     public ScreenChatOptions(final GuiScreen parentScreenIn, final GameSettings gameSettingsIn) {
         this.parentScreen = parentScreenIn;

@@ -2731,7 +2731,7 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 		final Block block = this.getBlockState(pos).getBlock();
 		final AxisAlignedBB axisalignedbb = p_175716_3_ ? null
 				: blockIn.getCollisionBoundingBox(this, pos, blockIn.getDefaultState());
-		return (axisalignedbb == null || Minecraft.getMinecraft().player.noClip
+		return (axisalignedbb == null || Minecraft.getInstance().player.noClip
 				|| this.checkNoEntityCollision(axisalignedbb, entityIn))
 				&& (block.getMaterial() == Material.circuits && blockIn == Blocks.anvil
 						|| block.getMaterial().isReplaceable() && blockIn.canReplace(this, pos, side, itemStackIn));

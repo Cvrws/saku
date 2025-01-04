@@ -38,7 +38,7 @@ public class LayerMooshroomMushroom implements LayerRenderer<EntityMooshroom> {
 
     public void doRenderLayer(final EntityMooshroom entitylivingbaseIn, final float p_177141_2_, final float p_177141_3_, final float partialTicks, final float p_177141_5_, final float p_177141_6_, final float p_177141_7_, final float scale) {
         if (!entitylivingbaseIn.isChild() && !entitylivingbaseIn.isInvisible()) {
-            final BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+            final BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
 
             if (hasTextureMushroom) {
                 this.mooshroomRenderer.bindTexture(LOCATION_MUSHROOM_RED);

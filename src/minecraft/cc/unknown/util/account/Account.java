@@ -27,7 +27,7 @@ public class Account {
     }
 
     public boolean login() {
-        Minecraft.getMinecraft().setSession(new Session(name, uuid, accessToken, "mojang"));
+        Minecraft.getInstance().setSession(new Session(name, uuid, accessToken, "mojang"));
         return true;
     }
 

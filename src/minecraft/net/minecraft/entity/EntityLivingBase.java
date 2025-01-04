@@ -1187,7 +1187,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
         Sakura.instance.getEventBus().handle(swingAnimationEvent);
         swingAnimationEnd = swingAnimationEvent.getAnimationEnd();
 
-        return (int) (swingAnimationEnd * Minecraft.getMinecraft().timer.timerSpeed);
+        return (int) (swingAnimationEnd * Minecraft.getInstance().timer.timerSpeed);
     }
 
     /**
@@ -1397,7 +1397,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
             jumpMotion += (float) (this.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F;
         }
 
-        if (this == Minecraft.getMinecraft().player) {
+        if (this == Minecraft.getInstance().player) {
             final JumpEvent event = new JumpEvent(jumpMotion, this.movementYaw);
             Sakura.instance.getEventBus().handle(event);
             jumpMotion = event.getJumpMotion();
@@ -1415,7 +1415,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
         if (this.isSprinting()) {
             float f = this.movementYaw * 0.017453292F;
 
-            final Minecraft mc = Minecraft.getMinecraft();
+            final Minecraft mc = Minecraft.getInstance();
             if (mc.player.omniSprint) {
                 f = (float) (MoveUtil.direction() * (180 / Math.PI));
                 f *= 0.017453292F;
@@ -1641,8 +1641,8 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
 
         float yaw = this.rotationYaw;
         
-        assert Minecraft.getMinecraft().player != null;
-        if (this == Minecraft.getMinecraft().player) yaw = RotationHandler.rotations.x;
+        assert Minecraft.getInstance().player != null;
+        if (this == Minecraft.getInstance().player) yaw = RotationHandler.rotations.x;
 
         final double d0 = this.posX - this.prevPosX;
         final double d1 = this.posZ - this.prevPosZ;
@@ -1712,7 +1712,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
     protected float func_110146_f(final float p_110146_1_, float p_110146_2_) {
         float yaw = this.rotationYaw;
         try {
-        	if (this == Minecraft.getMinecraft().player) yaw = RotationHandler.rotations.x;
+        	if (this == Minecraft.getInstance().player) yaw = RotationHandler.rotations.x;
         } catch (NullPointerException e) {}
 
         final float f = MathHelper.wrapAngleTo180_float(p_110146_1_ - this.renderYawOffset);
@@ -1767,7 +1767,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
         }
 
         double minimumMotion = 0.005D;
-        if (this == Minecraft.getMinecraft().player) {
+        if (this == Minecraft.getInstance().player) {
             final MinimumMotionEvent minimumMotionEvent = new MinimumMotionEvent(minimumMotion);
             Sakura.instance.getEventBus().handle(minimumMotionEvent);
             minimumMotion = minimumMotionEvent.getMinimumMotion();

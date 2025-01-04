@@ -128,9 +128,9 @@ public class ModelBiped extends ModelBase {
     public void setRotationAngles(final float p_78087_1_, final float p_78087_2_, final float p_78087_3_, final float p_78087_4_, final float p_78087_5_, final float p_78087_6_, final Entity entityIn) {
         this.bipedHead.rotateAngleY = p_78087_4_ / (180F / (float) Math.PI);
         this.bipedHead.rotateAngleX = p_78087_5_ / (180F / (float) Math.PI);
-        final EntityPlayerSP entityPlayer = Minecraft.getMinecraft().player;
+        final EntityPlayerSP entityPlayer = Minecraft.getInstance().player;
         if (entityIn == entityPlayer) {
-            this.bipedHead.rotateAngleX = (entityPlayer.prevRenderPitchHead + (entityPlayer.renderPitchHead - entityPlayer.prevRenderPitchHead) * Minecraft.getMinecraft().timer.renderPartialTicks) / (180.0F / (float) Math.PI);
+            this.bipedHead.rotateAngleX = (entityPlayer.prevRenderPitchHead + (entityPlayer.renderPitchHead - entityPlayer.prevRenderPitchHead) * Minecraft.getInstance().timer.renderPartialTicks) / (180.0F / (float) Math.PI);
         }
         this.bipedRightArm.rotateAngleX = MathHelper.cos(p_78087_1_ * 0.6662F + (float) Math.PI) * 2.0F * p_78087_2_ * 0.5F;
         this.bipedLeftArm.rotateAngleX = MathHelper.cos(p_78087_1_ * 0.6662F) * 2.0F * p_78087_2_ * 0.5F;

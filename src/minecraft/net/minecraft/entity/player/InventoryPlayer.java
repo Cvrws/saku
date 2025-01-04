@@ -58,7 +58,7 @@ public class InventoryPlayer implements IInventory, Accessor {
      * Returns the item stack currently held by the player.
      */
     public ItemStack getCurrentItem() {
-        if (player == Minecraft.getMinecraft().player) {
+        if (player == Minecraft.getInstance().player) {
             return mc.player.inventory.currentItem < 9 && mc.player.inventory.currentItem >= 0 ? this.mainInventory[mc.player.inventory.currentItem] : null;
         } else {
             return this.currentItem < 9 && this.currentItem >= 0 ? this.mainInventory[this.currentItem] : null;

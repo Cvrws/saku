@@ -17,7 +17,7 @@ public class ModelAdapterEnderman extends ModelAdapterBiped {
     }
 
     public IEntityRenderer makeEntityRender(final ModelBase modelBase, final float shadowSize) {
-        final RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+        final RenderManager rendermanager = Minecraft.getInstance().getRenderManager();
         final RenderEnderman renderenderman = new RenderEnderman(rendermanager);
         renderenderman.mainModel = modelBase;
         renderenderman.shadowSize = shadowSize;

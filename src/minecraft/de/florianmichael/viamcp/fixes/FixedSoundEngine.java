@@ -34,7 +34,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class FixedSoundEngine {
-    private final static Minecraft mc = Minecraft.getMinecraft();
+    private final static Minecraft mc = Minecraft.getInstance();
 
     /**
      * Fix for block breaking sounds on protocols above 1.8.x

@@ -75,7 +75,7 @@ public class EntityFootStepFX extends EntityFX {
 
     public static class Factory implements IParticleFactory {
         public EntityFX getEntityFX(final int particleID, final World worldIn, final double xCoordIn, final double yCoordIn, final double zCoordIn, final double xSpeedIn, final double ySpeedIn, final double zSpeedIn, final int... p_178902_15_) {
-            return new EntityFootStepFX(Minecraft.getMinecraft().getTextureManager(), worldIn, xCoordIn, yCoordIn, zCoordIn);
+            return new EntityFootStepFX(Minecraft.getInstance().getTextureManager(), worldIn, xCoordIn, yCoordIn, zCoordIn);
         }
     }
 }

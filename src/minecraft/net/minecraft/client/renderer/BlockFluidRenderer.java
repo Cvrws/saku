@@ -25,7 +25,7 @@ public class BlockFluidRenderer {
     }
 
     protected void initAtlasSprites() {
-        final TextureMap texturemap = Minecraft.getMinecraft().getTextureMapBlocks();
+        final TextureMap texturemap = Minecraft.getInstance().getTextureMapBlocks();
         this.atlasSpritesLava[0] = texturemap.getAtlasSprite("minecraft:blocks/lava_still");
         this.atlasSpritesLava[1] = texturemap.getAtlasSprite("minecraft:blocks/lava_flow");
         this.atlasSpritesWater[0] = texturemap.getAtlasSprite("minecraft:blocks/water_still");

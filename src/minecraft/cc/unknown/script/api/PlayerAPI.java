@@ -175,26 +175,26 @@ public class PlayerAPI extends ScriptEntityLiving {
     }
 
     public boolean isUsingItem() {
-        return Minecraft.getMinecraft().player.isUsingItem();
+        return Minecraft.getInstance().player.isUsingItem();
     }
 
     public boolean isHoldingSword() {
-        ItemStack itemStack = Minecraft.getMinecraft().player.getHeldItem();
+        ItemStack itemStack = Minecraft.getInstance().player.getHeldItem();
         return itemStack != null && itemStack.getItem() instanceof ItemSword;
     }
 
     public boolean isHoldingTool() {
-        ItemStack itemStack = Minecraft.getMinecraft().player.getHeldItem();
+        ItemStack itemStack = Minecraft.getInstance().player.getHeldItem();
         return itemStack != null && itemStack.getItem() instanceof ItemTool;
     }
 
     public boolean isHoldingBlock() {
-        ItemStack itemStack = Minecraft.getMinecraft().player.getHeldItem();
+        ItemStack itemStack = Minecraft.getInstance().player.getHeldItem();
         return itemStack != null && itemStack.getItem() instanceof ItemBlock;
     }
 
     public boolean isHoldingFood() {
-        ItemStack itemStack = Minecraft.getMinecraft().player.getHeldItem();
+        ItemStack itemStack = Minecraft.getInstance().player.getHeldItem();
         return itemStack != null && itemStack.getItem() instanceof ItemFood;
     }
 

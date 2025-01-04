@@ -109,7 +109,7 @@ public class SpectatorMenu {
         }
 
         public void func_178663_a(final float p_178663_1_, final int alpha) {
-            Minecraft.getMinecraft().getTextureManager().bindTexture(GuiSpectator.field_175269_a);
+            Minecraft.getInstance().getTextureManager().bindTexture(GuiSpectator.field_175269_a);
             Gui.drawModalRectWithCustomSizedTexture(0, 0, 128.0F, 0.0F, 16, 16, 256.0F, 256.0F);
         }
 
@@ -136,7 +136,7 @@ public class SpectatorMenu {
         }
 
         public void func_178663_a(final float p_178663_1_, final int alpha) {
-            Minecraft.getMinecraft().getTextureManager().bindTexture(GuiSpectator.field_175269_a);
+            Minecraft.getInstance().getTextureManager().bindTexture(GuiSpectator.field_175269_a);
 
             if (this.field_178666_a < 0) {
                 Gui.drawModalRectWithCustomSizedTexture(0, 0, 144.0F, 0.0F, 16, 16, 256.0F, 256.0F);

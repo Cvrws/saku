@@ -438,7 +438,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 	public void renderModel(T entitylivingbaseIn, float p_77036_2_, float p_77036_3_, float p_77036_4_,
 			float p_77036_5_, float p_77036_6_, float scaleFactor) {
 		boolean flag = !entitylivingbaseIn.isInvisible();
-		boolean flag1 = !flag && !entitylivingbaseIn.isInvisibleToPlayer(Minecraft.getMinecraft().player);
+		boolean flag1 = !flag && !entitylivingbaseIn.isInvisibleToPlayer(Minecraft.getInstance().player);
 
 		if (flag || flag1) {
 			if (!this.bindEntityTexture(entitylivingbaseIn)) {
@@ -771,7 +771,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 	}
 
 	protected boolean canRenderName(final T entity) {
-		final EntityPlayerSP entityplayersp = Minecraft.getMinecraft().player;
+		final EntityPlayerSP entityplayersp = Minecraft.getInstance().player;
 
 		if (entity instanceof EntityPlayer && entity != entityplayersp) {
 			final Team team = entity.getTeam();

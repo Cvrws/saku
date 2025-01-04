@@ -30,7 +30,7 @@ public enum RenderEntityParameterBool implements IExpressionBool {
 
     RenderEntityParameterBool(final String name) {
         this.name = name;
-        this.renderManager = Minecraft.getMinecraft().getRenderManager();
+        this.renderManager = Minecraft.getInstance().getRenderManager();
     }
 
     public String getName() {

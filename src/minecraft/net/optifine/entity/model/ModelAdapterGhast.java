@@ -53,7 +53,7 @@ public class ModelAdapterGhast extends ModelAdapter {
     }
 
     public IEntityRenderer makeEntityRender(final ModelBase modelBase, final float shadowSize) {
-        final RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+        final RenderManager rendermanager = Minecraft.getInstance().getRenderManager();
         final RenderGhast renderghast = new RenderGhast(rendermanager);
         renderghast.mainModel = modelBase;
         renderghast.shadowSize = shadowSize;

@@ -60,7 +60,7 @@ public class ChestStealer extends Module {
 	@EventLink
 	public final Listener<TickEvent> onTick = event -> {
 		if (mc.currentScreen instanceof GuiChest) {
-			if (startDelayTime.reached((long) (getRandomStartDelay()))) {
+			if (startDelayTime.finished((long) (getRandomStartDelay()))) {
 				ArrayList<Integer> itemPos = new ArrayList<>();
 				GuiChest chest = (GuiChest) mc.currentScreen;
 

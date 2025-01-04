@@ -33,7 +33,7 @@ public class ModelAdapterBoat extends ModelAdapter {
     }
 
     public IEntityRenderer makeEntityRender(final ModelBase modelBase, final float shadowSize) {
-        final RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+        final RenderManager rendermanager = Minecraft.getInstance().getRenderManager();
         final RenderBoat renderboat = new RenderBoat(rendermanager);
 
         if (!Reflector.RenderBoat_modelBoat.exists()) {

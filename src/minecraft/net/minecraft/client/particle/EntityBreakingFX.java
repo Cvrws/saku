@@ -25,7 +25,7 @@ public class EntityBreakingFX extends EntityFX {
 
     protected EntityBreakingFX(final World worldIn, final double posXIn, final double posYIn, final double posZIn, final Item p_i1196_8_, final int p_i1196_9_) {
         super(worldIn, posXIn, posYIn, posZIn, 0.0D, 0.0D, 0.0D);
-        this.setParticleIcon(Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getParticleIcon(p_i1196_8_, p_i1196_9_));
+        this.setParticleIcon(Minecraft.getInstance().getRenderItem().getItemModelMesher().getParticleIcon(p_i1196_8_, p_i1196_9_));
         this.particleRed = this.particleGreen = this.particleBlue = 1.0F;
         this.particleGravity = Blocks.snow.blockParticleGravity;
         this.particleScale /= 2.0F;

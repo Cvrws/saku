@@ -12,7 +12,7 @@ import net.minecraft.util.IChatComponent;
 
 public class GuiUtilRenderComponents {
     public static String func_178909_a(final String p_178909_0_, final boolean p_178909_1_) {
-        return !p_178909_1_ && !Minecraft.getMinecraft().gameSettings.chatColours ? ChatFormatting.getTextWithoutFormattingCodes(p_178909_0_) : p_178909_0_;
+        return !p_178909_1_ && !Minecraft.getInstance().gameSettings.chatColours ? ChatFormatting.getTextWithoutFormattingCodes(p_178909_0_) : p_178909_0_;
     }
 
     public static List<IChatComponent> func_178908_a(final IChatComponent p_178908_0_, final int p_178908_1_, final FontRenderer p_178908_2_, final boolean p_178908_3_, final boolean p_178908_4_) {

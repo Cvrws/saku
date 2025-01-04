@@ -33,7 +33,7 @@ public final class FPSBoost extends Module {
 				before = -1;
 			} else if (!Display.isActive()) {
 				if (before == -1)
-					before = Minecraft.getMinecraft().gameSettings.limitFramerate;
+					before = Minecraft.getInstance().gameSettings.limitFramerate;
 				mc.gameSettings.limitFramerate = 15;
 			}
 		}

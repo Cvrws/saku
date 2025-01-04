@@ -64,7 +64,7 @@ public class GuiAchievement extends Gui {
     }
 
     public void updateAchievementWindow() {
-        if (this.theAchievement != null && this.notificationTime != 0L && Minecraft.getMinecraft().player != null) {
+        if (this.theAchievement != null && this.notificationTime != 0L && Minecraft.getInstance().player != null) {
             double d0 = (double) (Minecraft.getSystemTime() - this.notificationTime) / 3000.0D;
 
             if (!this.permanentNotification) {

@@ -198,7 +198,7 @@ public class CustomItems {
     public static void updateModels() {
         for (final CustomItemProperties customitemproperties : getAllProperties()) {
             if (customitemproperties.type == 1) {
-                final TextureMap texturemap = Minecraft.getMinecraft().getTextureMapBlocks();
+                final TextureMap texturemap = Minecraft.getInstance().getTextureMapBlocks();
                 customitemproperties.updateModelTexture(texturemap, itemModelGenerator);
                 customitemproperties.updateModelsFull();
             }

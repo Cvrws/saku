@@ -31,7 +31,7 @@ import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.util.MovingObjectPosition;
 
 public class AttackOrder {
-	private final static Minecraft mc = Minecraft.getMinecraft();
+	private final static Minecraft mc = Minecraft.getInstance();
 
 	public static void sendConditionalSwing(MovingObjectPosition mop) {
 		if (mop != null && mop.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) {

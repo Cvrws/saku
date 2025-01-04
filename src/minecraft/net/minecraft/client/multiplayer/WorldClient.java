@@ -56,7 +56,7 @@ public class WorldClient extends World {
     private ChunkProviderClient clientChunkProvider;
     private final Set<Entity> entityList = Sets.newHashSet();
     private final Set<Entity> entitySpawnQueue = Sets.newHashSet();
-    private final Minecraft mc = Minecraft.getMinecraft();
+    private final Minecraft mc = Minecraft.getInstance();
     private final Set<ChunkCoordIntPair> previousActiveChunkSet = Sets.newHashSet();
     private boolean playerUpdate = false;
 

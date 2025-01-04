@@ -43,12 +43,12 @@ public class PacketAPI extends API {
     }
 
     public void sendUseEntity(final int entityID, final String action) {
-        PacketUtil.send(new C02PacketUseEntity(Minecraft.getMinecraft().theWorld.getEntityByID(entityID),
+        PacketUtil.send(new C02PacketUseEntity(Minecraft.getInstance().theWorld.getEntityByID(entityID),
                 C02PacketUseEntity.Action.valueOf(action)));
     }
 
     public void sendUseEntity(final int entityID, ScriptVector3d vector) {
-        PacketUtil.send(new C02PacketUseEntity(Minecraft.getMinecraft().theWorld.getEntityByID(entityID),
+        PacketUtil.send(new C02PacketUseEntity(Minecraft.getInstance().theWorld.getEntityByID(entityID),
                 new Vec3(vector.getX(), vector.getY(), vector.getZ())));
     }
 
@@ -96,7 +96,7 @@ public class PacketAPI extends API {
     }
 
     public void sendEntityAction(int entityID, String action) {
-        PacketUtil.send(new C0BPacketEntityAction(Minecraft.getMinecraft().theWorld.getEntityByID(entityID),
+        PacketUtil.send(new C0BPacketEntityAction(Minecraft.getInstance().theWorld.getEntityByID(entityID),
                 C0BPacketEntityAction.Action.valueOf(action)));
     }
 
@@ -109,7 +109,7 @@ public class PacketAPI extends API {
     }
 
     public void sendCloseWindow() {
-        PacketUtil.send(new C0DPacketCloseWindow(Minecraft.getMinecraft().player.openContainer.windowId));
+        PacketUtil.send(new C0DPacketCloseWindow(Minecraft.getInstance().player.openContainer.windowId));
     }
 
     public void sendEnchantItem(int windowId, int enchantment) {
@@ -117,7 +117,7 @@ public class PacketAPI extends API {
     }
 
     public void sendEnchantItem(int enchantment) {
-        PacketUtil.send(new C11PacketEnchantItem(Minecraft.getMinecraft().player.openContainer.windowId, enchantment));
+        PacketUtil.send(new C11PacketEnchantItem(Minecraft.getInstance().player.openContainer.windowId, enchantment));
     }
 
     public void sendTransaction(int windowId, short actionNumber, boolean accepted) {
@@ -125,7 +125,7 @@ public class PacketAPI extends API {
     }
 
     public void sendAbilities() {
-        PacketUtil.send(new C13PacketPlayerAbilities(Minecraft.getMinecraft().player.capabilities));
+        PacketUtil.send(new C13PacketPlayerAbilities(Minecraft.getInstance().player.capabilities));
     }
 
     public void sendAbilities(boolean flying, boolean allowFlying, boolean creativeMode) {

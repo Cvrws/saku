@@ -1576,7 +1576,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
                     public void run() {
                         NetHandlerPlayClient.this.gameController.displayGuiScreen(new GuiYesNo(new GuiYesNoCallback() {
                             public void confirmClicked(final boolean result, final int id) {
-                                NetHandlerPlayClient.this.gameController = Minecraft.getMinecraft();
+                                NetHandlerPlayClient.this.gameController = Minecraft.getInstance();
 
                                 if (result) {
                                     if (NetHandlerPlayClient.this.gameController.getCurrentServerData() != null) {

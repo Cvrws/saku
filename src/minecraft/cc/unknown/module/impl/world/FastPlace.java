@@ -40,21 +40,21 @@ public class FastPlace extends Module {
 				if (mc.objectMouseOver.typeOfHit == null || mc.objectMouseOver == null) return;
 				if (blocks.getValue() && item instanceof ItemBlock && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
 					long random = blockDelay.getValue().longValue() == 0.0 ? 0L : blockDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
-					if (stopWatch.reached(random)) {
+					if (stopWatch.finished(random)) {
 						mc.rightClickMouse();
 						stopWatch.reset();
 					}
 					event.setCancelled();
 				} else if (projectiles.getValue() && item instanceof ItemSnowball || item instanceof ItemEgg) {
 					long random = projectileDelay.getValue().longValue() == 0.0 ? 0L : projectileDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
-					if (stopWatch.reached(random)) {
+					if (stopWatch.finished(random)) {
 						mc.rightClickMouse();
 						stopWatch.reset();
 					}
 					event.setCancelled();
 				} else if (xpBottle.getValue() && item instanceof ItemExpBottle) {
 					long random = xpBottleDelay.getValue().longValue() == 0.0 ? 0L : xpBottleDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
-					if (stopWatch.reached(random)) {
+					if (stopWatch.finished(random)) {
 						mc.rightClickMouse();
 						stopWatch.reset();
 					}

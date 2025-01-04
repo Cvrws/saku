@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
 public class ServerListEntryLanScan implements GuiListExtended.IGuiListEntry {
-    private final Minecraft mc = Minecraft.getMinecraft();
+    private final Minecraft mc = Minecraft.getInstance();
 
     public void drawEntry(final int slotIndex, final int x, final int y, final int listWidth, final int slotHeight, final int mouseX, final int mouseY, final boolean isSelected) {
         final int i = y + slotHeight / 2 - this.mc.fontRendererObj.FONT_HEIGHT / 2;

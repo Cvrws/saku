@@ -19,7 +19,7 @@ public class LayerIronGolemFlower implements LayerRenderer<EntityIronGolem> {
 
     public void doRenderLayer(final EntityIronGolem entitylivingbaseIn, final float p_177141_2_, final float p_177141_3_, final float partialTicks, final float p_177141_5_, final float p_177141_6_, final float p_177141_7_, final float scale) {
         if (entitylivingbaseIn.getHoldRoseTick() != 0) {
-            final BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+            final BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
             GlStateManager.enableRescaleNormal();
             GlStateManager.pushMatrix();
             GlStateManager.rotate(5.0F + 180.0F * ((ModelIronGolem) this.ironGolemRenderer.getMainModel()).ironGolemRightArm.rotateAngleX / (float) Math.PI, 1.0F, 0.0F, 0.0F);

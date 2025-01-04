@@ -23,7 +23,7 @@ public class RadioPlayer {
     private final StopWatch timer = new StopWatch();
 
     public void start(final String url) {
-        if (this.timer.reached(2000L)) {
+        if (this.timer.finished(50L)) {
             (this.thread = new Thread(() -> {
                 try {
                     SSLContext sslContext = SSLContext.getInstance("TLS");

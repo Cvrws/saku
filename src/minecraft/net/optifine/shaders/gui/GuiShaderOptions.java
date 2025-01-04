@@ -28,7 +28,7 @@ public class GuiShaderOptions extends GuiScreenOF {
     public static final String OPTION_PROFILE = "<profile>";
     public static final String OPTION_EMPTY = "<empty>";
     public static final String OPTION_REST = "*";
-    private static final Minecraft mc = Minecraft.getMinecraft();
+    private static final Minecraft mc = Minecraft.getInstance();
 
     public GuiShaderOptions(final GuiScreen guiscreen, final GameSettings gamesettings) {
         this.tooltipManager = new TooltipManager(this, new TooltipProviderShaderOptions());

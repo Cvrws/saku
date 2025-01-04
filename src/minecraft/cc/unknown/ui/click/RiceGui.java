@@ -127,7 +127,7 @@ public class RiceGui extends GuiScreen implements Accessor {
         
         scale = new Vector2f(390, 300);
 
-        final Minecraft mc = Minecraft.getMinecraft();
+        final Minecraft mc = Minecraft.getInstance();
 
         final int mouseX = (int) mouse.x;
         final int mouseY = (int) mouse.y;

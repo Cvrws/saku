@@ -142,7 +142,7 @@ public class GuiNewChat extends Gui {
 	public void printChatMessage(IChatComponent chatComponent) {
         String text = fixString(chatComponent.getFormattedText());
         if (text.equals(this.lastMessage)) {
-            (Minecraft.getMinecraft()).ingameGUI.getChatGUI().deleteChatLine(this.line);
+            (Minecraft.getInstance()).ingameGUI.getChatGUI().deleteChatLine(this.line);
             this.sameMessageAmount++;
             this.lastMessage = text;
             chatComponent.appendText(ChatFormatting.WHITE + " (" + "x" + this.sameMessageAmount + ")");

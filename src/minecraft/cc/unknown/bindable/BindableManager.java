@@ -38,7 +38,7 @@ public class BindableManager {
     
     @EventLink(value = Priority.VERY_LOW)
     public final Listener<MouseEvent> onMouse = event -> {
-        if (Minecraft.getMinecraft().currentScreen != null || event.isCancelled()) return;
+        if (Minecraft.getInstance().currentScreen != null || event.isCancelled()) return;
 
         for (int i = 0; i < inputs.length; i++) {
             int input = inputs[i];

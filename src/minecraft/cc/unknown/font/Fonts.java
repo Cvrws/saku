@@ -19,7 +19,7 @@ public enum Fonts {
     ROBOTO("Roboto-%s", getExt()),
     ICONS_1("Icon-1", "ttf"),
     ICONS_2("Icon-2", "ttf"),
-    MINECRAFT("Minecraft", () -> Minecraft.getMinecraft().fontRendererObj);
+    MINECRAFT("Minecraft", () -> Minecraft.getInstance().fontRendererObj);
 	
     Supplier<Font> get;
     Font font;

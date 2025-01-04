@@ -61,7 +61,7 @@ public class Profiler {
      * Start section
      */
     public void startSection(final String name) {
-        if (!Minecraft.getMinecraft().gameSettings.showDebugInfo) {
+        if (!Minecraft.getInstance().gameSettings.showDebugInfo) {
             return;
         }
 
@@ -105,7 +105,7 @@ public class Profiler {
      * End section
      */
     public void endSection() {
-        if (!Minecraft.getMinecraft().gameSettings.showDebugInfo) {
+        if (!Minecraft.getInstance().gameSettings.showDebugInfo) {
             return;
         }
         try {
@@ -203,7 +203,7 @@ public class Profiler {
      * End current section and start a new section
      */
     public void endStartSection(final String name) {
-        if (!Minecraft.getMinecraft().gameSettings.showDebugInfo) {
+        if (!Minecraft.getInstance().gameSettings.showDebugInfo) {
             return;
         }
 

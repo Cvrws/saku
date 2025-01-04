@@ -91,7 +91,7 @@ public class PlayerConfigurationParser {
         final String s = HttpUtils.getPlayerItemsUrl() + "/" + texturePath;
 
         try {
-            final byte[] abyte = HttpPipeline.get(s, Minecraft.getMinecraft().getProxy());
+            final byte[] abyte = HttpPipeline.get(s, Minecraft.getInstance().getProxy());
             final BufferedImage bufferedimage = ImageIO.read(new ByteArrayInputStream(abyte));
             return bufferedimage;
         } catch (final IOException ioexception) {
@@ -104,7 +104,7 @@ public class PlayerConfigurationParser {
         final String s = HttpUtils.getPlayerItemsUrl() + "/" + modelPath;
 
         try {
-            final byte[] abyte = HttpPipeline.get(s, Minecraft.getMinecraft().getProxy());
+            final byte[] abyte = HttpPipeline.get(s, Minecraft.getInstance().getProxy());
             final String s1 = new String(abyte, StandardCharsets.US_ASCII);
             final JsonParser jsonparser = new JsonParser();
             final JsonObject jsonobject = (JsonObject) jsonparser.parse(s1);

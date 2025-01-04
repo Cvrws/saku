@@ -826,7 +826,7 @@ public class EntityPlayerSP extends AbstractClientPlayer implements Accessor {
     public void moveEntity(double x, double y, double z) {
         final MoveEvent moveEvent = new MoveEvent(x, y, z);
 
-        if (this == Minecraft.getMinecraft().player) {
+        if (this == Minecraft.getInstance().player) {
             Sakura.instance.getEventBus().handle(moveEvent);
 
             if (moveEvent.isCancelled()) {

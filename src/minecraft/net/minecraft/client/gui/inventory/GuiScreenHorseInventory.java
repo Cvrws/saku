@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiScreenHorseInventory extends GuiContainer {
     private static final ResourceLocation horseGuiTextures = new ResourceLocation("textures/gui/container/horse.png");
-    private static final Minecraft mc = Minecraft.getMinecraft();
+    private static final Minecraft mc = Minecraft.getInstance();
 
     /**
      * The player inventory bound to this GUI.
@@ -37,7 +37,7 @@ public class GuiScreenHorseInventory extends GuiContainer {
     private float mousePosY;
 
     public GuiScreenHorseInventory(final IInventory playerInv, final IInventory horseInv, final EntityHorse horse) {
-        super(new ContainerHorseInventory(playerInv, horseInv, horse, Minecraft.getMinecraft().player));
+        super(new ContainerHorseInventory(playerInv, horseInv, horse, Minecraft.getInstance().player));
         this.playerInventory = playerInv;
         this.horseInventory = horseInv;
         this.horseEntity = horse;

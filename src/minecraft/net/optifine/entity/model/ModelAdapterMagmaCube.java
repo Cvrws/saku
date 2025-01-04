@@ -53,7 +53,7 @@ public class ModelAdapterMagmaCube extends ModelAdapter {
     }
 
     public IEntityRenderer makeEntityRender(final ModelBase modelBase, final float shadowSize) {
-        final RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+        final RenderManager rendermanager = Minecraft.getInstance().getRenderManager();
         final RenderMagmaCube rendermagmacube = new RenderMagmaCube(rendermanager);
         rendermagmacube.mainModel = modelBase;
         rendermagmacube.shadowSize = shadowSize;

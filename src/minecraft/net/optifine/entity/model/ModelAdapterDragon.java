@@ -32,7 +32,7 @@ public class ModelAdapterDragon extends ModelAdapter {
     }
 
     public IEntityRenderer makeEntityRender(final ModelBase modelBase, final float shadowSize) {
-        final RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+        final RenderManager rendermanager = Minecraft.getInstance().getRenderManager();
         final RenderDragon renderdragon = new RenderDragon(rendermanager);
         renderdragon.mainModel = modelBase;
         renderdragon.shadowSize = shadowSize;

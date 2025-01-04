@@ -63,7 +63,7 @@ public class WTap extends Module {
     	switch (mode.getValue().getName()) {
     	case "Normal":
     	case "Fast":
-    		if (stopWatch.reached(delay.getValue().intValue())) {
+    		if (stopWatch.finished(delay.getValue().intValue())) {
     			stopWatch.reset();
     			ticks = hits.getSecondValue().intValue();
         	}

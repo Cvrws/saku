@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.render.shader.Shaders;
+import cc.unknown.util.interfaces.Shaders;
 import cc.unknown.util.render.shader.bloom.GaussianFilter;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.Gui;

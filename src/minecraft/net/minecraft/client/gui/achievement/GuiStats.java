@@ -41,7 +41,7 @@ public class GuiStats extends GuiScreen implements IProgressMeter {
     private final StatFileWriter field_146546_t;
     private GuiSlot displaySlot;
 
-    private static final Minecraft mc = Minecraft.getMinecraft();
+    private static final Minecraft mc = Minecraft.getInstance();
 
     /**
      * When true, the game will be paused when the gui is shown

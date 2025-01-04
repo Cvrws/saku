@@ -57,7 +57,7 @@ public class BlockAliases {
         reset();
 
         if (shaderPack != null) {
-            if (Reflector.Loader_getActiveModList.exists() && Minecraft.getMinecraft().getResourcePackRepository() == null) {
+            if (Reflector.Loader_getActiveModList.exists() && Minecraft.getInstance().getResourcePackRepository() == null) {
                 Config.dbg("[Shaders] Delayed loading of block mappings after resources are loaded");
                 updateOnResourcesReloaded = true;
             } else {

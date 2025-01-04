@@ -72,7 +72,7 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
                     ResourceLocation resourcelocation = DefaultPlayerSkin.getDefaultSkinLegacy();
 
                     if (p_180543_7_ != null) {
-                        final Minecraft minecraft = Minecraft.getMinecraft();
+                        final Minecraft minecraft = Minecraft.getInstance();
                         final Map<Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(p_180543_7_);
 
                         if (map.containsKey(Type.SKIN)) {

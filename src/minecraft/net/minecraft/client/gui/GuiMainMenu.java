@@ -55,7 +55,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Accessor
      * Adds Singleplayer and Multiplayer buttons on Main Menu for players who have bought the game.
      */
     private void addSingleplayerMultiplayerButtons(final int p_73969_1_, final int p_73969_2_) {
-    	ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+    	ScaledResolution sr = new ScaledResolution(Minecraft.getInstance());
         this.buttonList.add(new GuiButton(1, sr.getScaledWidth() / 2 - 350, sr.getScaledHeight() / 2 + 50 * 2 - 100, I18n.format("menu.singleplayer")));
         this.buttonList.add(new GuiButton(2, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.format("menu.multiplayer")));
         this.buttonList.add(new GuiButton(3, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, "Alts"));

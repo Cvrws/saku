@@ -212,7 +212,7 @@ public class IntegratedServer extends MinecraftServer {
     public void tick() {
         this.onTick();
         final boolean flag = this.isGamePaused;
-        this.isGamePaused = Minecraft.getMinecraft().getNetHandler() != null && Minecraft.getMinecraft().isGamePaused();
+        this.isGamePaused = Minecraft.getInstance().getNetHandler() != null && Minecraft.getInstance().isGamePaused();
 
         if (!flag && this.isGamePaused) {
             logger.info("Saving and pausing game...");
@@ -363,7 +363,7 @@ public class IntegratedServer extends MinecraftServer {
      * Returns whether snooping is enabled or not.
      */
     public boolean isSnooperEnabled() {
-        return Minecraft.getMinecraft().isSnooperEnabled();
+        return Minecraft.getInstance().isSnooperEnabled();
     }
 
     /**

@@ -25,7 +25,7 @@ public class HttpUtils {
 
         try {
             final URL url = new URL(urlStr);
-            httpurlconnection = (HttpURLConnection) url.openConnection(Minecraft.getMinecraft().getProxy());
+            httpurlconnection = (HttpURLConnection) url.openConnection(Minecraft.getInstance().getProxy());
             httpurlconnection.setDoInput(true);
             httpurlconnection.setDoOutput(false);
             httpurlconnection.connect();
@@ -72,7 +72,7 @@ public class HttpUtils {
 
         try {
             final URL url = new URL(urlStr);
-            httpurlconnection = (HttpURLConnection) url.openConnection(Minecraft.getMinecraft().getProxy());
+            httpurlconnection = (HttpURLConnection) url.openConnection(Minecraft.getInstance().getProxy());
             httpurlconnection.setRequestMethod("POST");
 
             if (headers != null) {
@@ -121,7 +121,7 @@ public class HttpUtils {
                 final boolean flag = Config.parseBoolean(System.getProperty("player.models.local"), false);
 
                 if (flag) {
-                    final File file1 = Minecraft.getMinecraft().mcDataDir;
+                    final File file1 = Minecraft.getInstance().mcDataDir;
                     final File file2 = new File(file1, "playermodels");
                     playerItemsUrl = file2.toURI().toURL().toExternalForm();
                 }

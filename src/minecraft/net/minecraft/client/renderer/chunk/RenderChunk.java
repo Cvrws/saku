@@ -175,7 +175,7 @@ public class RenderChunk {
             final ChunkCacheOF chunkcacheof = this.makeChunkCacheOF(blockpos);
             chunkcacheof.renderStart();
             final boolean[] aboolean = new boolean[ENUM_WORLD_BLOCK_LAYERS.length];
-            final BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+            final BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
             final boolean flag = Reflector.ForgeBlock_canRenderInLayer.exists();
             final boolean flag1 = Reflector.ForgeHooksClient_setRenderLayer.exists();
 

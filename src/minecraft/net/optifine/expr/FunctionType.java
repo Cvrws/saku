@@ -210,7 +210,7 @@ public enum FunctionType {
                 return f2 - f3 * (float) MathHelper.floor_float(f2 / f3);
 
             case TIME:
-                final Minecraft minecraft = Minecraft.getMinecraft();
+                final Minecraft minecraft = Minecraft.getInstance();
                 final World world = minecraft.theWorld;
 
                 if (world == null) {

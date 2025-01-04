@@ -41,12 +41,12 @@ public class PerfectCriticals extends Module {
 		if (mc.player.onGround)
 			hitGround = true;
 
-		if (!stopWatch.reached(delay.getValue().longValue()) && onAir) {
+		if (!stopWatch.finished(delay.getValue().longValue()) && onAir) {
 			event.setCancelled();
 			packets.add(packet);
 		}
 
-		if (stopWatch.reached(delay.getValue().longValue()) && onAir) {
+		if (stopWatch.finished(delay.getValue().longValue()) && onAir) {
 			onAir = false;
 			releasePackets();
 		}

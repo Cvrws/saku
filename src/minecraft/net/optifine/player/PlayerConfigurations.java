@@ -24,7 +24,7 @@ public class PlayerConfigurations {
 
     public static synchronized PlayerConfiguration getPlayerConfiguration(final AbstractClientPlayer player) {
         if (reloadPlayerItems && System.currentTimeMillis() > timeReloadPlayerItemsMs + 5000L) {
-            final AbstractClientPlayer abstractclientplayer = Minecraft.getMinecraft().player;
+            final AbstractClientPlayer abstractclientplayer = Minecraft.getInstance().player;
 
             if (abstractclientplayer != null) {
                 setPlayerConfiguration(abstractclientplayer.getNameClear(), null);
