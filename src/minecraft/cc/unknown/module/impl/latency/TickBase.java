@@ -7,17 +7,16 @@ import java.util.List;
 
 import com.google.common.base.Predicates;
 
-import cc.unknown.component.impl.player.FriendComponent;
-import cc.unknown.component.impl.player.RotationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketSendEvent;
 import cc.unknown.event.impl.player.HitEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.combat.KillAura;
 import cc.unknown.module.impl.ghost.AimAssist;
 import cc.unknown.module.impl.world.LegitScaffold;
@@ -26,6 +25,7 @@ import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.geometry.Doble;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RotationUtil;
@@ -122,7 +122,7 @@ public class TickBase extends Module {
 
     private boolean shouldStart() {
         if (System.currentTimeMillis() - lastLagTime < delay.getValue().longValue()) return false;
-        EntityPlayer target = mc.theWorld.playerEntities.stream().filter(p -> p != mc.player).filter(p -> !checkTeams.getValue() || !PlayerUtil.sameTeam(p)).filter(p -> !FriendComponent.isFriend(p)).map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p))).min(Comparator.comparing(Doble::getSecond)).map(Doble::getFirst).orElse(null);
+        EntityPlayer target = mc.theWorld.playerEntities.stream().filter(p -> p != mc.player).filter(p -> !checkTeams.getValue() || !PlayerUtil.sameTeam(p)).filter(p -> !FriendUtil.isFriend(p)).map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p))).min(Comparator.comparing(Doble::getSecond)).map(Doble::getFirst).orElse(null);
         if (target == null) return false;
         double distance = new Vec3(target).distanceTo(mc.player);
         return distance >= 3.0 && distance <= range.getValue().doubleValue();
@@ -171,7 +171,7 @@ public class TickBase extends Module {
     }
 
     private boolean isTargetCloseOrVisible() {
-       Entity rayTracedEntity = raycast(3, new Vector2f(RotationComponent.lastRotations.x, RotationComponent.lastRotations.y));
+       Entity rayTracedEntity = raycast(3, new Vector2f(RotationHandler.lastRotations.x, RotationHandler.lastRotations.y));
        return rayTracedEntity != null && RotationUtil.getDistanceToEntityBox(rayTracedEntity) <= 3.0D;
     }
     

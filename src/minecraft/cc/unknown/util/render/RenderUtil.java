@@ -1,11 +1,5 @@
 package cc.unknown.util.render;
 
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -18,8 +12,8 @@ import org.lwjgl.opengl.GL11;
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.render.blur.GaussianFilter;
 import cc.unknown.util.render.shader.Shaders;
+import cc.unknown.util.render.shader.bloom.GaussianFilter;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -151,7 +145,7 @@ public final class RenderUtil implements Accessor {
     }
 
     public void scissor(double x, double y, double width, double height) {
-        final ScaledResolution sr = /*mc.scaledResolution*/ new ScaledResolution(mc);
+        final ScaledResolution sr = new ScaledResolution(mc);
         final double scale = sr.getScaleFactor();
 
         y = sr.getScaledHeight() - y;
@@ -192,16 +186,6 @@ public final class RenderUtil implements Accessor {
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
         color(Color.WHITE);
-    }
-
-    public boolean isInViewFrustrum(final Entity entity) {
-        return (isInViewFrustrum(entity.getEntityBoundingBox()) || entity.ignoreFrustumCheck);
-    }
-
-    private boolean isInViewFrustrum(final AxisAlignedBB bb) {
-        final Entity current = mc.getRenderViewEntity();
-        FRUSTUM.setPosition(current.posX, current.posY, current.posZ);
-        return FRUSTUM.isBoundingBoxInFrustum(bb);
     }
 
     public void roundedRect(final double x, final double y, final double width, final double height, final double radius, final int color) {
@@ -278,7 +262,7 @@ public final class RenderUtil implements Accessor {
         GL11.glPopMatrix();
     }
     
-    public void drawSimpleItemBox(final TileEntity tileEntity, final Color color) {
+    public void drawChestBox(final TileEntity tileEntity, final Color color) {
         BlockPos position = tileEntity.getPos();
 
         GL11.glPushMatrix();
@@ -447,11 +431,11 @@ public final class RenderUtil implements Accessor {
     }
 
     
-    public static void drawBloomShadow(float x, float y, float width, float height, int blurRadius, Color color) {
+    public void drawBloomShadow(float x, float y, float width, float height, int blurRadius, Color color) {
         drawBloomShadow(x, y, width, height, blurRadius, 0, color);
     }
 
-    public static void drawBloomShadow(float x, float y, float width, float height, int blurRadius, int roundRadius, Color color) {
+    public void drawBloomShadow(float x, float y, float width, float height, int blurRadius, int roundRadius, Color color) {
         width = width + blurRadius * 2;
         height = height + blurRadius * 2;
         x -= blurRadius + 0.75f;
@@ -474,27 +458,27 @@ public final class RenderUtil implements Accessor {
     }
 
     public void drawImage(int image, float x, float y, float width, float height, int color) {
-        glPushMatrix();
+    	GL11.glPushMatrix();
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.01f);
-        glEnable(GL11.GL_TEXTURE_2D);
-        glDisable(GL_CULL_FACE);
-        glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_CULL_FACE);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
         GlStateManager.enableBlend();
         GlStateManager.bindTexture(image);
 
         ColorUtil.glColor(color);
 
         GL11.glBegin(GL11.GL_QUADS);
-        GL11.glTexCoord2f(0, 0); // top left
+        GL11.glTexCoord2f(0, 0);
         GL11.glVertex2f(x, y);
 
-        GL11.glTexCoord2f(0, 1); // bottom left
+        GL11.glTexCoord2f(0, 1);
         GL11.glVertex2f(x, y + height);
 
-        GL11.glTexCoord2f(1, 1); // bottom right
+        GL11.glTexCoord2f(1, 1);
         GL11.glVertex2f(x + width, y + height);
 
-        GL11.glTexCoord2f(1, 0); // top right
+        GL11.glTexCoord2f(1, 0);
         GL11.glVertex2f(x + width, y);
         GL11.glEnd();
 
@@ -502,8 +486,8 @@ public final class RenderUtil implements Accessor {
         GlStateManager.disableBlend();
         GlStateManager.resetColor();
 
-        glEnable(GL_CULL_FACE);
-        glPopMatrix();
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glPopMatrix();
     }
 
 }

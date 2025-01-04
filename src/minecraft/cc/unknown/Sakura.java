@@ -10,12 +10,11 @@ import com.google.gson.GsonBuilder;
 
 import cc.unknown.bindable.BindableManager;
 import cc.unknown.command.CommandManager;
-import cc.unknown.component.ComponentManager;
 import cc.unknown.event.Event;
 import cc.unknown.event.bus.impl.EventBus;
-import cc.unknown.module.api.manager.ModuleManager;
+import cc.unknown.handlers.*;
+import cc.unknown.module.ModuleManager;
 import cc.unknown.script.ScriptManager;
-import cc.unknown.ui.clickgui.kerosene.KeroGui;
 import cc.unknown.ui.clickgui.rice.RiceGui;
 import cc.unknown.ui.menu.MainMenu;
 import cc.unknown.ui.theme.ThemeManager;
@@ -37,7 +36,6 @@ public enum Sakura {
 
     private EventBus<Event> eventBus;
     private ModuleManager moduleManager;
-    private ComponentManager componentManager;
     private CommandManager commandManager;
     private ThemeManager themeManager;
 
@@ -50,8 +48,7 @@ public enum Sakura {
     private BindableManager bindableManager;
     private ScriptManager scriptManager;
 
-    private RiceGui clickGui;
-    private KeroGui betaGui;
+    private RiceGui clickGui = new RiceGui();
     public boolean firstLogin;
     
     private final ScheduledExecutorService ex = Executors.newScheduledThreadPool(4);
@@ -60,10 +57,40 @@ public enum Sakura {
     public void init() {
     	Display.setTitle(NAME + " " + VERSION_FULL);
     	Runtime.getRuntime().addShutdownHook(new Thread(ex::shutdown));
-    	optimize(Minecraft.getMinecraft());
     	
+    	initAutoOptimization(Minecraft.getMinecraft());
+    	initManagers();
+    	
+    	initHandler();
+        
+        ViaMCP.INSTANCE.initAsyncSlider();
+        ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);
+        
+        Minecraft.getMinecraft().displayGuiScreen(new MainMenu());
+    }
+
+    public void terminate() {
+    	if (getConfigManager().get("latest") != null) {
+        	getConfigManager().get("latest").write();
+        }
+    	
+        System.gc();
+    }
+    
+    private void initHandler() {
+    	eventBus.register(new ViaVersionHandler());
+    	eventBus.register(new SpoofHandler());
+    	eventBus.register(new AutoJoinHandler());
+    	eventBus.register(new SinceTickHandler());
+    	eventBus.register(new DragHandler());
+    	eventBus.register(new NetworkingHandler());
+    	eventBus.register(new ConnectionHandler());
+    	eventBus.register(new RotationHandler());
+    	eventBus.register(new FixHandler());
+    }
+    
+    private void initManagers() {
         moduleManager = new ModuleManager();
-        componentManager = new ComponentManager();
         commandManager = new CommandManager();
         fileManager = new FileManager();
         configManager = new ConfigManager();
@@ -77,33 +104,15 @@ public enum Sakura {
         fileManager.init();
         moduleManager.init();
         scriptManager.init();
-        componentManager.init();
         commandManager.init();
         friendManager.init();
         enemyManager.init();
-
-        clickGui = new RiceGui();
-        
-        clickGui.initGui();
-        
-        ViaMCP.INSTANCE.initAsyncSlider();
-        ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);
-
         configManager.init();
         bindableManager.init();
-        
-        Minecraft.getMinecraft().displayGuiScreen(new MainMenu());
-    }
-
-    public void terminate() {
-    	if (getConfigManager().get("latest") != null) {
-        	getConfigManager().get("latest").write();
-        }
-    	
-        System.gc();
+        clickGui.initGui();
     }
     
-    private void optimize(Minecraft mc) {
+    private void initAutoOptimization(Minecraft mc) {
     	mc.gameSettings.ofFastRender = Config.isShaders() ? false : true;
 		mc.gameSettings.ofChunkUpdatesDynamic = true;
 		mc.gameSettings.ofSmartAnimations = true;

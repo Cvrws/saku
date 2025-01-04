@@ -12,8 +12,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import cc.unknown.component.impl.player.FriendComponent;
 import cc.unknown.util.file.FileType;
+import cc.unknown.util.player.FriendUtil;
 
 public class FriendFile extends cc.unknown.util.file.File {
 
@@ -36,14 +36,13 @@ public class FriendFile extends cc.unknown.util.file.File {
                 return false;
             }
 
-            FriendComponent friendComponent = new FriendComponent();
-            friendComponent.getFriends().clear();
+            FriendUtil.getFriends().clear();
 
             JsonArray array = jsonObject.getAsJsonArray("friends");
             if (array != null) {
                 for (int i = 0; i < array.size(); ++i) {
                     String friend = array.get(i).getAsString();
-                    friendComponent.addFriend(friend);
+                    FriendUtil.addFriend(friend);
                 }
             }
 
@@ -63,8 +62,7 @@ public class FriendFile extends cc.unknown.util.file.File {
             JsonObject jsonObject = new JsonObject();
             JsonArray array = new JsonArray();
 
-            FriendComponent friendComponent = new FriendComponent();
-            for (String friend : friendComponent.getFriends()) {
+            for (String friend : FriendUtil.getFriends()) {
                 array.add(new JsonPrimitive(friend));
             }
 

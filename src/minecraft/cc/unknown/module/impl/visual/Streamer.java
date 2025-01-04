@@ -6,14 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.FriendComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.render.RenderTextEvent;
-import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
+import cc.unknown.util.player.FriendUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.StringValue;

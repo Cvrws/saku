@@ -4,7 +4,7 @@ import java.util.function.Function;
 
 import cc.unknown.Sakura;
 import cc.unknown.event.Event;
-import cc.unknown.module.Module;
+import cc.unknown.module.impl.Module;
 import cc.unknown.script.api.wrapper.ScriptHandlerWrapper;
 import cc.unknown.script.api.wrapper.impl.event.ScriptEvent;
 import cc.unknown.value.Value;

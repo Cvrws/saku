@@ -1,13 +1,13 @@
 package cc.unknown.script.api;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.TargetComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.script.api.wrapper.impl.ScriptBlockPos;
 import cc.unknown.script.api.wrapper.impl.ScriptEntityLiving;
 import cc.unknown.script.api.wrapper.impl.ScriptWorld;
+import cc.unknown.util.player.TargetUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.BlockPos;
 
@@ -38,7 +38,7 @@ public class WorldAPI extends ScriptWorld {
     }
 
     public ScriptEntityLiving getTargetEntity(int range) {
-        EntityLivingBase entityLivingBase = TargetComponent.getTarget(range);
+        EntityLivingBase entityLivingBase = TargetUtil.getTarget(range);
         return entityLivingBase != null ? new ScriptEntityLiving(entityLivingBase) : null;
     }
 

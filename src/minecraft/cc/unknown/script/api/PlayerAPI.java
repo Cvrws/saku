@@ -1,11 +1,10 @@
 package cc.unknown.script.api;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.TickEvent;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.script.api.wrapper.impl.ScriptEntity;
 import cc.unknown.script.api.wrapper.impl.ScriptEntityLiving;
 import cc.unknown.script.api.wrapper.impl.ScriptInventory;
@@ -19,6 +18,7 @@ import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.util.player.RotationUtil;
+import cc.unknown.util.player.rotation.MoveFix;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -140,7 +140,7 @@ public class PlayerAPI extends ScriptEntityLiving {
     }
 
     public void setRotation(ScriptVector2f rotations, double rotationSpeed, boolean movementFix) {
-        RotationComponent.setRotations(new Vector2f(rotations.getX(), rotations.getY()), rotationSpeed, movementFix ? MovementFix.SILENT : MovementFix.OFF);
+        RotationHandler.setRotations(new Vector2f(rotations.getX(), rotations.getY()), rotationSpeed, movementFix ? MoveFix.SILENT : MoveFix.OFF);
     }
 
     public void setHeldItem(int slot, boolean render) {
@@ -210,7 +210,7 @@ public class PlayerAPI extends ScriptEntityLiving {
     }
 
     public boolean mouseOverEntity(ScriptEntity entity, int range) {
-        MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationComponent.rotations, range);
+        MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationHandler.rotations, range);
 
         if (movingObjectPosition == null || movingObjectPosition.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) {
             return false;

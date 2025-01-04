@@ -8,9 +8,9 @@ import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.TeleportEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
-import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.value.impl.BooleanValue;
 
 @ModuleInfo(aliases = "Free Look", description = "Le permite mirar a su alrededor sin cambiar de dirección", category = Category.VISUALS, keyBind = Keyboard.KEY_LMENU)

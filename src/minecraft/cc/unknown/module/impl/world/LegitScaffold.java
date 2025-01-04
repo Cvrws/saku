@@ -2,15 +2,15 @@ package cc.unknown.module.impl.world;
 
 import org.lwjgl.input.Keyboard;
 
-import cc.unknown.component.impl.player.SpoofComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.SlotUtil;
@@ -55,7 +55,7 @@ public class LegitScaffold extends Module {
 		}
 
 		mc.player.inventory.currentItem = lastSlot;
-		SpoofComponent.stopSpoofing();
+		SpoofHandler.stopSpoofing();
 		shouldBridge = false;
 	}
 
@@ -164,7 +164,7 @@ public class LegitScaffold extends Module {
         	mc.player.inventory.currentItem = slot;
         }
         
-        if (spoof.getValue()) SpoofComponent.startSpoofing(lastSlot);
+        if (spoof.getValue()) SpoofHandler.startSpoofing(lastSlot);
 
 		if (mc.currentScreen == null || mc.player.getHeldItem() == null) return;
 

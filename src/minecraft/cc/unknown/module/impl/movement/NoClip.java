@@ -2,9 +2,6 @@ package cc.unknown.module.impl.movement;
 
 import java.awt.Color;
 
-import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.SpoofComponent;
-import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.CancellableEvent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -12,14 +9,17 @@ import cc.unknown.event.impl.player.BlockAABBEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.player.PushOutOfBlockEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.RotationHandler;
+import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.combat.KillAura;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.SlotUtil;
+import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.block.BlockAir;
 import net.minecraft.client.gui.ScaledResolution;
@@ -42,7 +42,7 @@ public class NoClip extends Module {
 	public void onDisable() {
 		mc.player.noClip = false;
     	mc.player.inventory.currentItem = lastSlot;
-    	SpoofComponent.stopSpoofing();
+    	SpoofHandler.stopSpoofing();
 	}
 
 	@EventLink
@@ -83,11 +83,11 @@ public class NoClip extends Module {
         }
         
         mc.player.inventory.currentItem = slot;
-        if (spoof.getValue()) SpoofComponent.startSpoofing(lastSlot);
+        if (spoof.getValue()) SpoofHandler.startSpoofing(lastSlot);
 
-        RotationComponent.setRotations(new Vector2f(mc.player.rotationYaw, 90), 2, MovementFix.SILENT);
+        RotationHandler.setRotations(new Vector2f(mc.player.rotationYaw, 90), 2, MoveFix.SILENT);
 
-        if (RotationComponent.rotations.y >= 89 && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && mc.player.posY == mc.objectMouseOver.getBlockPos().up().getY()) {
+        if (RotationHandler.rotations.y >= 89 && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && mc.player.posY == mc.objectMouseOver.getBlockPos().up().getY()) {
 
             mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(),  mc.objectMouseOver.getBlockPos(), mc.objectMouseOver.sideHit, mc.objectMouseOver.hitVec);
 

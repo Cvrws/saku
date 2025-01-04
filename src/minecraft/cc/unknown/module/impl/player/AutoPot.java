@@ -1,20 +1,20 @@
 package cc.unknown.module.impl.player;
 
-import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.NumberValue;
 import net.minecraft.item.Item;
@@ -91,11 +91,11 @@ public class AutoPot extends Module {
                 final double minRotationSpeed = this.rotationSpeed.getValue().doubleValue();
                 final double maxRotationSpeed = this.rotationSpeed.getSecondValue().doubleValue();
                 final float rotationSpeed = (float) MathUtil.getRandom(minRotationSpeed, maxRotationSpeed);
-                RotationComponent.setRotations(new Vector2f((float) (mc.player.rotationYaw + (Math.random() - 0.5) * 3), (float) (87 + Math.random() * 3)), rotationSpeed, MovementFix.SILENT);
+                RotationHandler.setRotations(new Vector2f((float) (mc.player.rotationYaw + (Math.random() - 0.5) * 3), (float) (87 + Math.random() * 3)), rotationSpeed, MoveFix.SILENT);
                 
     	        mc.player.inventory.currentItem = i;
 
-                if (RotationComponent.rotations.y > 85) {
+                if (RotationHandler.rotations.y > 85) {
                     mc.playerController.syncCurrentPlayItem();
                     PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
 

@@ -1442,7 +1442,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			} else {
 				switch (this.objectMouseOver.typeOfHit) {
 				case ENTITY:
-                    AttackOrder.sendFixedAttack(this.player, this.objectMouseOver.entityHit);
+                    AttackOrder.sendFixedAttack(this.player, this.objectMouseOver.entityHit, false);
 					break;
 
 				case BLOCK:

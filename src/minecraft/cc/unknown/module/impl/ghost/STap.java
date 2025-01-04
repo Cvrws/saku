@@ -1,17 +1,17 @@
 package cc.unknown.module.impl.ghost;
 
-import cc.unknown.component.impl.player.TargetComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.MoveInputEvent;
 import cc.unknown.event.impl.other.GameEvent;
-import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RotationUtil;
+import cc.unknown.util.player.TargetUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
@@ -35,7 +35,7 @@ public final class STap extends Module {
 
     @EventLink
     public final Listener<MoveInputEvent> onMovementInput = event -> {
-        EntityLivingBase target = TargetComponent.getTarget(10);
+        EntityLivingBase target = TargetUtil.getTarget(10);
         double range = this.range.getValue().doubleValue();
 
         if (mc.player == null) return;

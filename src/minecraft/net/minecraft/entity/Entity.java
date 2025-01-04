@@ -206,7 +206,7 @@ public abstract class Entity implements ICommandSender {
     /**
      * The distance that has to be exceeded in order to triger a new step sound and an onEntityWalking event on a block
      */
-    private int nextStepDistance;
+    public int nextStepDistance;
 
     /**
      * The entity's X coordinate at the previous tick, used to calculate position during rendering routines
@@ -268,7 +268,7 @@ public abstract class Entity implements ICommandSender {
      * The amount of ticks you have to stand inside of fire before be set on fire
      */
     public int fireResistance;
-    private int fire;
+    public int fire;
 
     /**
      * Whether this entity is currently inside of water (if it handles water movement that is)

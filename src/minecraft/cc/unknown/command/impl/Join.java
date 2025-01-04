@@ -3,7 +3,7 @@ package cc.unknown.command.impl;
 import java.util.HashMap;
 
 import cc.unknown.command.Command;
-import cc.unknown.component.impl.player.GameComponent;
+import cc.unknown.handlers.AutoJoinHandler;
 import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -56,7 +56,7 @@ public class Join extends Command {
 	        return;
 	    }
 
-	    GameComponent.init(hashMap.get(gameName), lobbyNumber);
+	    AutoJoinHandler.init(hashMap.get(gameName), lobbyNumber);
 	}
 
     private String getList() {

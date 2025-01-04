@@ -5,9 +5,9 @@ import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.PreLivingUpdateEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
-import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.MoveUtil;
@@ -55,7 +55,6 @@ public class WTap extends Module {
         if (ignoreTeammates.getValue() && PlayerUtil.isTeam((EntityPlayer) event.getTarget(), true, true)) {
         	return;
         }
-
 
 	    if (onlyMove.getValue() && (!MoveUtil.isMoving() || (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f))) {
 	        return;

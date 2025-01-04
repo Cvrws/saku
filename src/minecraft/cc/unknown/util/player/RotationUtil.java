@@ -1,6 +1,6 @@
 package cc.unknown.util.player;
 
-import cc.unknown.component.impl.player.RotationComponent;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.geometry.Vector3d;
@@ -172,7 +172,7 @@ public class RotationUtil implements Accessor {
 	}
 
 	public Vector2f move(final Vector2f targetRotation, final double speed) {
-		return move(RotationComponent.lastRotations, targetRotation, speed);
+		return move(RotationHandler.lastRotations, targetRotation, speed);
 	}
 
 	public Vector2f move(final Vector2f lastRotation, final Vector2f targetRotation, double speed) {
@@ -198,7 +198,7 @@ public class RotationUtil implements Accessor {
 	}
 
 	public Vector2f smooth(final Vector2f targetRotation, final double speed) {
-		return smooth(RotationComponent.lastRotations, targetRotation, speed);
+		return smooth(RotationHandler.lastRotations, targetRotation, speed);
 	}
 
 	public Vector2f smooth(final Vector2f lastRotation, final Vector2f targetRotation, final double speed) {

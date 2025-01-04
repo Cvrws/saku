@@ -2,6 +2,9 @@ package cc.unknown.util.structure;
 
 import java.util.concurrent.atomic.AtomicLongArray;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 public class CPSHelper {
 
     private static final int MAX_CPS = 500;
@@ -34,17 +37,11 @@ public class CPSHelper {
         return count;
     }
 
+    @Getter
+    @RequiredArgsConstructor
     public enum MouseButton {
         LEFT(0), MIDDLE(1), RIGHT(2);
 
-        private int index;
-
-        MouseButton(int index) {
-            this.index = index;
-        }
-
-        public int getIndex() {
-            return index;
-        }
+        private final int index;
     }
 }

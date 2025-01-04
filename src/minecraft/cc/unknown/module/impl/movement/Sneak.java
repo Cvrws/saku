@@ -7,9 +7,9 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PostMotionEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
-import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.util.packet.PacketUtil;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 

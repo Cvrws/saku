@@ -2,7 +2,7 @@ package cc.unknown.module.impl.visual.api;
 
 import java.awt.Color;
 
-import cc.unknown.module.Module;
+import cc.unknown.module.impl.Module;
 import cc.unknown.util.geometry.Vector2d;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

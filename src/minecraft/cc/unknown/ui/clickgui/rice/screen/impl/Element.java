@@ -11,7 +11,7 @@ import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.render.animation.Easing;
-import cc.unknown.util.render.dragging.Mouse;
+import cc.unknown.util.render.drag.Mouse;
 import cc.unknown.util.render.font.Font;
 import cc.unknown.util.render.gui.GUIUtil;
 import lombok.Getter;

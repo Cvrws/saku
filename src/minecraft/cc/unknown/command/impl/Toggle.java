@@ -5,7 +5,7 @@ import static cc.unknown.util.client.StreamerUtil.red;
 
 import cc.unknown.Sakura;
 import cc.unknown.command.Command;
-import cc.unknown.module.Module;
+import cc.unknown.module.impl.Module;
 import cc.unknown.util.player.PlayerUtil;
 
 public final class Toggle extends Command {

@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.collect.Lists;
 
 import cc.unknown.Sakura;
-import cc.unknown.module.Module;
+import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.visual.UnlimitedChat;
 import cc.unknown.util.render.RenderUtil;
 import net.minecraft.client.Minecraft;

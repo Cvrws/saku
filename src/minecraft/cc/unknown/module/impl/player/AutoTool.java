@@ -1,12 +1,12 @@
 package cc.unknown.module.impl.player;
 
-import cc.unknown.component.impl.player.SpoofComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.TickEvent;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.util.MovingObjectPosition;
@@ -26,7 +26,7 @@ public class AutoTool extends Module {
             wasDigging = false;
         }
         
-        SpoofComponent.stopSpoofing();
+        SpoofHandler.stopSpoofing();
     }
     
 	@EventLink
@@ -35,14 +35,14 @@ public class AutoTool extends Module {
             if (!wasDigging) {
                 oldSlot = mc.player.inventory.currentItem;
                 if (spoof.getValue()) {
-                	SpoofComponent.startSpoofing(oldSlot);
+                	SpoofHandler.startSpoofing(oldSlot);
                 }
             }
             mc.player.inventory.currentItem = PlayerUtil.findTool(mc.objectMouseOver.getBlockPos());
             wasDigging = true;
         } else if (wasDigging && (switchBack.getValue() || spoof.getValue())) {
             mc.player.inventory.currentItem = oldSlot;
-            SpoofComponent.stopSpoofing();
+            SpoofHandler.stopSpoofing();
             wasDigging = false;
         } else {
             oldSlot = mc.player.inventory.currentItem;

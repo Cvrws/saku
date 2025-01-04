@@ -2,7 +2,7 @@ package net.minecraft.client.gui;
 
 import java.io.IOException;
 
-import cc.unknown.component.impl.player.LastConnectionComponent;
+import cc.unknown.handlers.ConnectionHandler;
 import cc.unknown.ui.menu.MainMenu;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
@@ -77,7 +77,7 @@ public class GuiIngameMenu extends GuiScreen {
 
             case 8:
                 this.mc.leaveServer();
-                this.mc.displayGuiScreen(new GuiConnecting(new GuiMultiplayer(new MainMenu()), this.mc, new ServerData("", LastConnectionComponent.ip, false)));
+                this.mc.displayGuiScreen(new GuiConnecting(new GuiMultiplayer(new MainMenu()), this.mc, new ServerData("", ConnectionHandler.ip, false)));
                 break;
         }
     }

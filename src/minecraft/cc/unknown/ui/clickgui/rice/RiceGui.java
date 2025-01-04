@@ -8,8 +8,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.Sakura;
-import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
+import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.visual.ClickGUI;
 import cc.unknown.ui.clickgui.rice.impl.BoundsNumberValueComponent;
 import cc.unknown.ui.clickgui.rice.impl.ModuleComponent;

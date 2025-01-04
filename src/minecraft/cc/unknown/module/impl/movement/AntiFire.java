@@ -1,7 +1,5 @@
 package cc.unknown.module.impl.movement;
 
-import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
@@ -9,11 +7,13 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.LookEvent;
 import cc.unknown.event.impl.render.RenderRotationEvent;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.player.rotation.MoveFix;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -29,7 +29,7 @@ public class AntiFire extends Module {
 	@EventLink(value = Priority.HIGH)
 	public final Listener<PreUpdateEvent> onHighPreUpdate = event -> {		
 		if (canWork) {
-			RotationComponent.setRotations(new Vector2f(mc.player.rotationYaw, 90.0f), 2, MovementFix.SILENT);
+			RotationHandler.setRotations(new Vector2f(mc.player.rotationYaw, 90.0f), 2, MoveFix.SILENT);
 		}
 	};
 
@@ -68,9 +68,9 @@ public class AntiFire extends Module {
 		}
 
 		if (this.canWork) {
-			event.setRotation(new Vector2f(RotationComponent.lastServerRotations.x, 90.0f));
-			RotationComponent.lastServerRotations.x = this.mc.player.rotationYaw;
-			RotationComponent.lastServerRotations.y = 90.0F;
+			event.setRotation(new Vector2f(RotationHandler.lastServerRotations.x, 90.0f));
+			RotationHandler.lastServerRotations.x = this.mc.player.rotationYaw;
+			RotationHandler.lastServerRotations.y = 90.0F;
 			if (!this.done) {
 				this.mc.rightClickMouse();
 			}
@@ -115,8 +115,8 @@ public class AntiFire extends Module {
 		if (canWork) {
 			done = false;
 			canWork = false;
-			RotationComponent.lastServerRotations.x = mc.player.rotationYaw;
-			RotationComponent.lastServerRotations.y = mc.player.rotationPitch;;
+			RotationHandler.lastServerRotations.x = mc.player.rotationYaw;
+			RotationHandler.lastServerRotations.y = mc.player.rotationPitch;;
 		}
 	}
 }

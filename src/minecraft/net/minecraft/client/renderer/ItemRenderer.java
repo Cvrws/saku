@@ -3,7 +3,7 @@ package net.minecraft.client.renderer;
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.SpoofComponent;
+import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.impl.visual.Animations;
 import cc.unknown.module.impl.visual.AntiBlind;
 import net.minecraft.block.Block;
@@ -506,7 +506,7 @@ public class ItemRenderer {
 			return;
 		}
 
-		ItemStack itemstack = SpoofComponent.getSpoofedStack();
+		ItemStack itemstack = SpoofHandler.getSpoofedStack();
 		//ItemStack itemstack = entityplayer.inventory.mainInventory[currentItem];
 
 		boolean flag = false;
@@ -515,11 +515,11 @@ public class ItemRenderer {
 			if (!this.itemToRender.getIsItemStackEqual(itemstack)) {
 				if (Reflector.ForgeItem_shouldCauseReequipAnimation.exists()) {
 					//final boolean flag1 = Reflector.callBoolean(this.itemToRender.getItem(), Reflector.ForgeItem_shouldCauseReequipAnimation, this.itemToRender, itemstack, Boolean.valueOf(this.equippedItemSlot != currentItem));
-                    boolean flag1 = Reflector.callBoolean(this.itemToRender.getItem(), Reflector.ForgeItem_shouldCauseReequipAnimation, this.itemToRender, itemstack, Boolean.valueOf(this.equippedItemSlot != SpoofComponent.getSpoofedSlot()));
+                    boolean flag1 = Reflector.callBoolean(this.itemToRender.getItem(), Reflector.ForgeItem_shouldCauseReequipAnimation, this.itemToRender, itemstack, Boolean.valueOf(this.equippedItemSlot != SpoofHandler.getSpoofedSlot()));
 
 					if (!flag1) {
 						this.itemToRender = itemstack;
-						this.equippedItemSlot = SpoofComponent.getSpoofedSlot();
+						this.equippedItemSlot = SpoofHandler.getSpoofedSlot();
 						//this.equippedItemSlot = currentItem;
 						return;
 					}
@@ -538,7 +538,7 @@ public class ItemRenderer {
 
 		if (this.equippedProgress < 0.1F) {
 			this.itemToRender = itemstack;
-			 this.equippedItemSlot = SpoofComponent.getSpoofedSlot();
+			 this.equippedItemSlot = SpoofHandler.getSpoofedSlot();
 			//this.equippedItemSlot = currentItem;
 
 			if (Config.isShaders()) {

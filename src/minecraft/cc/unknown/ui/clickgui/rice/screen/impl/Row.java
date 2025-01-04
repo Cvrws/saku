@@ -13,7 +13,7 @@ import cc.unknown.ui.clickgui.rice.RiceGui;
 import cc.unknown.ui.clickgui.rice.screen.ConfigScreen;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.geometry.Vector2f;
-import cc.unknown.util.render.dragging.Mouse;
+import cc.unknown.util.render.drag.Mouse;
 import cc.unknown.util.render.gui.GUIUtil;
 import cc.unknown.util.render.gui.ScrollUtil;
 import lombok.Getter;

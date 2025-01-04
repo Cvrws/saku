@@ -5,9 +5,9 @@ import java.awt.Color;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.render.Render3DEvent;
-import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.tileentity.TileEntity;
@@ -24,10 +24,10 @@ public final class ChestESP extends Module {
 			
 			if (tileEntity instanceof TileEntityChest) {
 				color = new Color(255, 255, 0).getRGB();
-				RenderUtil.drawSimpleItemBox(tileEntity, new Color(color));
+				RenderUtil.drawChestBox(tileEntity, new Color(color));
 			} else if (tileEntity instanceof TileEntityEnderChest) {
 				color = new Color(128, 0, 128).getRGB();
-				RenderUtil.drawSimpleItemBox(tileEntity, new Color(color));
+				RenderUtil.drawChestBox(tileEntity, new Color(color));
 			}
 		}
 	};

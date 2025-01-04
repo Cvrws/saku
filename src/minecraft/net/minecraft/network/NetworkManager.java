@@ -23,7 +23,6 @@ import com.viaversion.viaversion.protocol.ProtocolPipelineImpl;
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.event.impl.netty.PacketSendEvent;
-import cc.unknown.util.packet.BlinkUtil;
 import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import de.florianmichael.vialoadingbase.netty.event.CompressionReorderEvent;
 import de.florianmichael.viamcp.MCPVLBPipeline;
@@ -165,8 +164,6 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
                     return;
                 }
                 
-                if (BlinkUtil.handleReceivePacket(event)) return;
-
                 p_channelRead0_2_.processPacket(this.packetListener);
             } catch (final ThreadQuickExitException var4) {
             }
@@ -183,8 +180,6 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
                     return;
                 }
                 
-                if (BlinkUtil.handleReceivePacket(event)) return;
-
                 packet.processPacket(this.packetListener);
             } catch (final ThreadQuickExitException var4) {
             }
@@ -268,8 +263,6 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
             return;
         }
         
-        if (BlinkUtil.handleSendPacket(event)) return;
-
         final EnumConnectionState enumconnectionstate = EnumConnectionState.getFromPacket(event.getPacket());
         final EnumConnectionState enumconnectionstate1 = this.channel.attr(attrKeyConnectionState).get();
 

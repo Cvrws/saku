@@ -2,14 +2,14 @@ package cc.unknown.module.impl.visual;
 
 import java.awt.Color;
 
-import cc.unknown.component.impl.player.EnemyComponent;
-import cc.unknown.component.impl.player.FriendComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.render.RenderLabelEvent;
-import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
+import cc.unknown.util.player.EnemyUtil;
+import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.DescValue;
@@ -124,9 +124,9 @@ public final class NameTags extends Module {
 	    	}
 	    }
 	    
-	    if (FriendComponent.isFriend(player)) {
+	    if (FriendUtil.isFriend(player)) {
 	        RenderUtil.drawOutline(-compactWidth / 2 + 1, -4.0F, compactWidth / 2 - 3, mc.fontRendererObj.FONT_HEIGHT + 2, 2, friendColor);
-	    } else if (EnemyComponent.isEnemy(player)) {
+	    } else if (EnemyUtil.isEnemy(player)) {
 	        RenderUtil.drawOutline(-compactWidth / 2 + 1, -4.0F, compactWidth / 2 - 3, mc.fontRendererObj.FONT_HEIGHT + 2, 2, enemyColor);
 	    }
 	    

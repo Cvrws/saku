@@ -8,13 +8,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import cc.unknown.component.impl.player.FriendComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.MouseEvent;
-import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
+import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.SubMode;
@@ -60,11 +60,11 @@ public final class MidClick extends Module {
 		if (!x.get() && event.getCode() == 2) {
 			if (mode.is("Add/Remove friend") && mc.objectMouseOver.entityHit instanceof EntityPlayer) {
 				EntityPlayer playerHit = (EntityPlayer) mc.objectMouseOver.entityHit;
-				if (!FriendComponent.isFriend(playerHit)) {
-					FriendComponent.addFriend(playerHit);
+				if (!FriendUtil.isFriend(playerHit)) {
+					FriendUtil.addFriend(playerHit);
 					PlayerUtil.displayInClient(ChatFormatting.GRAY + playerHit.getName() + " was added to your friends.");
 				} else {
-					FriendComponent.removeFriend(playerHit);
+					FriendUtil.removeFriend(playerHit);
 					PlayerUtil.displayInClient(ChatFormatting.GRAY + playerHit.getName() + " was removed from your friends.");
 				}
 			}

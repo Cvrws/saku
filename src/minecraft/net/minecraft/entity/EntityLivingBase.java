@@ -12,10 +12,10 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.RotationComponent;
 import cc.unknown.event.impl.player.JumpEvent;
 import cc.unknown.event.impl.player.MinimumMotionEvent;
 import cc.unknown.event.impl.render.SwingAnimationEvent;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.impl.visual.AntiBlind;
 import cc.unknown.util.player.MoveUtil;
 import net.minecraft.block.Block;
@@ -1642,7 +1642,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
         float yaw = this.rotationYaw;
         
         assert Minecraft.getMinecraft().player != null;
-        if (this == Minecraft.getMinecraft().player) yaw = RotationComponent.rotations.x;
+        if (this == Minecraft.getMinecraft().player) yaw = RotationHandler.rotations.x;
 
         final double d0 = this.posX - this.prevPosX;
         final double d1 = this.posZ - this.prevPosZ;
@@ -1712,7 +1712,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
     protected float func_110146_f(final float p_110146_1_, float p_110146_2_) {
         float yaw = this.rotationYaw;
         try {
-        	if (this == Minecraft.getMinecraft().player) yaw = RotationComponent.rotations.x;
+        	if (this == Minecraft.getMinecraft().player) yaw = RotationHandler.rotations.x;
         } catch (NullPointerException e) {}
 
         final float f = MathHelper.wrapAngleTo180_float(p_110146_1_ - this.renderYawOffset);

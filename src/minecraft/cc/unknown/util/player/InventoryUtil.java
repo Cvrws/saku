@@ -73,9 +73,7 @@ import net.minecraft.network.play.client.C16PacketClientStatus;
 
 @UtilityClass
 public class InventoryUtil implements Accessor {
-	public boolean isInventoryOpen;
 	public List<Block> invalidBlocks;
-	KeyBinding[] moveKeys;
 
 	{
 		invalidBlocks = Arrays.asList(Blocks.enchanting_table, Blocks.carpet, Blocks.glass_pane, Blocks.ladder,
@@ -88,9 +86,6 @@ public class InventoryUtil implements Accessor {
 				Blocks.furnace, Blocks.stone_slab, Blocks.wooden_slab, Blocks.stone_slab2, Blocks.brown_mushroom,
 				Blocks.red_mushroom, Blocks.gold_block, Blocks.red_flower, Blocks.yellow_flower, Blocks.flower_pot);
 		
-		moveKeys = new KeyBinding[] { mc.gameSettings.keyBindForward, mc.gameSettings.keyBindBack,
-				mc.gameSettings.keyBindLeft, mc.gameSettings.keyBindRight, mc.gameSettings.keyBindJump,
-				mc.gameSettings.keyBindSneak };
 	}
 
 	public int getBlockSlot(boolean hypixel) {
@@ -631,32 +626,6 @@ public class InventoryUtil implements Accessor {
 	    }
 
 	    return baseRating;
-	}
-
-	public void openInv(String mode) {
-		if (mode.equalsIgnoreCase("Spoof") && !isInventoryOpen && !(mc.currentScreen instanceof GuiInventory)) {
-			PacketUtil.sendNoEvent(
-					new C16PacketClientStatus(C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT));
-			isInventoryOpen = true;
-		}
-
-	}
-
-	public void closeInv(String mode) {
-	    if (mode != null && mode.equalsIgnoreCase("Spoof") && isInventoryOpen && mc != null && mc.currentScreen != null && !(mc.currentScreen instanceof GuiInventory) && mc.player != null && mc.player.inventoryContainer != null) {
-
-	        PacketUtil.sendNoEvent(new C0DPacketCloseWindow(mc.player.inventoryContainer.windowId));
-
-	        if (moveKeys != null) {
-	            for (KeyBinding bind : moveKeys) {
-	                if (bind != null) {
-	                    KeyBinding.setKeyBindState(bind.getKeyCode(), Keyboard.isKeyDown(bind.getKeyCode()));
-	                }
-	            }
-	        }
-
-	        isInventoryOpen = false;
-	    }
 	}
 	
     public boolean canBePlaced(ItemBlock itemBlock) {

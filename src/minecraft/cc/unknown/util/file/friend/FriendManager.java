@@ -9,20 +9,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.FriendComponent;
 import cc.unknown.util.file.FileManager;
 import cc.unknown.util.file.FileType;
+import cc.unknown.util.file.enemy.EnemyFile;
+import cc.unknown.util.player.EnemyUtil;
+import cc.unknown.util.player.FriendUtil;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class FriendManager {
     public static final File FRIEND_DIRECTORY = new File(FileManager.DIRECTORY, "friends");
-    private FriendComponent friendComponent;
 
     public void init() {
         if (!FRIEND_DIRECTORY.exists()) {
             FRIEND_DIRECTORY.mkdir();
         }
-        friendComponent = new FriendComponent();
     }
 
     public FriendFile getFriendFile() {
@@ -39,14 +39,14 @@ public class FriendManager {
 
     public void addFriend(String friend) {
         if (friend != null && !friend.isEmpty()) {
-            friendComponent.addFriend(friend);
+            FriendUtil.addFriend(friend);
             update();
         }
     }
     
     public void removeFriend(String friend) {
         if (friend != null && !friend.isEmpty()) {
-            friendComponent.removeFriend(friend);
+            FriendUtil.removeFriend(friend);
             update();
         }
     }
@@ -56,39 +56,24 @@ public class FriendManager {
     }
 
     public List<String> getFriends() {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        
-        Future<List<String>> future = executor.submit(() -> {
-            FriendFile friendFile = Sakura.instance.getFriendManager().getFriendFile();
-            
-            if (friendFile.read()) {
-                return friendComponent.getFriends();
-            }
-            
-            return new ArrayList<String>();
-        });
-        
-        try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        } finally {
-            executor.shutdown();
+        EnemyFile friendFile = Sakura.instance.getEnemyManager().getEnemyFile();        
+        if (friendFile.read()) {
+            return FriendUtil.getFriends();
         }
         
         return new ArrayList<>();
     }
     
     public void removeFriends() {
-        friendComponent.removeFriends();
+        FriendUtil.removeFriends();
         update();
     }
     
     public boolean isFriend(String friend) {
-        return friendComponent.getFriends().contains(friend);
+        return FriendUtil.getFriends().contains(friend);
     }
     
     public boolean isFriend(EntityPlayer entityPlayer) {
-        return !friendComponent.getFriends().isEmpty() && friendComponent.getFriends().contains(entityPlayer.getName().toLowerCase());
+        return !FriendUtil.getFriends().isEmpty() && FriendUtil.getFriends().contains(entityPlayer.getName().toLowerCase());
     }
 }

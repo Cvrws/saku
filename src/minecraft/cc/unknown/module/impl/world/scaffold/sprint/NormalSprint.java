@@ -1,11 +1,11 @@
 package cc.unknown.module.impl.world.scaffold.sprint;
 
-import cc.unknown.component.impl.player.RotationComponent;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreStrafeEvent;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.value.Mode;
 import net.minecraft.util.MathHelper;

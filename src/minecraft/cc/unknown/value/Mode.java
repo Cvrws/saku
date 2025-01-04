@@ -5,7 +5,7 @@ import java.util.List;
 
 import cc.unknown.Sakura;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.client.toggle.Toggleable;
+import cc.unknown.util.interfaces.Toggleable;
 import lombok.Getter;
 
 @Getter

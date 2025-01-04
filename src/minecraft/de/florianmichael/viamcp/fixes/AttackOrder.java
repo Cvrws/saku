@@ -20,11 +20,14 @@ package de.florianmichael.viamcp.fixes;
 
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
+import cc.unknown.util.packet.PacketUtil;
 import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.play.client.C02PacketUseEntity;
+import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.util.MovingObjectPosition;
 
 public class AttackOrder {
@@ -36,21 +39,21 @@ public class AttackOrder {
 		}
 	}
 
-	public static void sendFixedAttack(EntityPlayer entityIn, Entity target) {
+	public static void sendFixedAttack(EntityPlayer entityIn, Entity target, boolean packetSwing) {
 		if (ViaLoadingBase.getInstance().getTargetVersion().isOlderThanOrEqualTo(ProtocolVersion.v1_8)) {
-			mc.player.swingItem();
+			if (packetSwing) {
+				PacketUtil.send(new C0APacketAnimation());
+			} else {
+				mc.player.swingItem();
+			}
 			mc.playerController.attackEntity(entityIn, target);
 		} else {
 			mc.playerController.attackEntity(entityIn, target);
-			mc.player.swingItem();
-		}
-
-	}
-
-	public static void sendLegitFixedKillAuraAttack(EntityPlayerSP entityIn, Entity target) {
-		if (mc.leftClickCounter <= 0) {
-			sendConditionalSwing(mc.objectMouseOver);
-			sendFixedAttack(entityIn, target);
+			if (packetSwing) {
+				PacketUtil.send(new C0APacketAnimation());
+			} else {
+				mc.player.swingItem();
+			}
 		}
 	}
 }

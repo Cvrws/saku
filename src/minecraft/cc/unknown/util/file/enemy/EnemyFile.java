@@ -11,8 +11,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import cc.unknown.component.impl.player.EnemyComponent;
 import cc.unknown.util.file.FileType;
+import cc.unknown.util.player.EnemyUtil;
 
 public class EnemyFile extends cc.unknown.util.file.File {
 
@@ -35,14 +35,13 @@ public class EnemyFile extends cc.unknown.util.file.File {
                 return false;
             }
 
-            EnemyComponent enemyComponent = new EnemyComponent();
-            enemyComponent.getEnemy().clear();
+            EnemyUtil.getEnemy().clear();
 
             JsonArray array = jsonObject.getAsJsonArray("enemys");
             if (array != null) {
                 for (int i = 0; i < array.size(); ++i) {
                     String enemy = array.get(i).getAsString();
-                    enemyComponent.addEnemy(enemy);
+                    EnemyUtil.addEnemy(enemy);
                 }
             }
 
@@ -62,8 +61,7 @@ public class EnemyFile extends cc.unknown.util.file.File {
             JsonObject jsonObject = new JsonObject();
             JsonArray array = new JsonArray();
 
-            EnemyComponent enemyComponent = new EnemyComponent();
-            for (String enemy : enemyComponent.getEnemy()) {
+            for (String enemy : EnemyUtil.getEnemy()) {
                 array.add(new JsonPrimitive(enemy));
             }
 

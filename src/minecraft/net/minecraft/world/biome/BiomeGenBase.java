@@ -173,7 +173,7 @@ public abstract class BiomeGenBase {
     /**
      * Set to true if snow is enabled for this biome.
      */
-    protected boolean enableSnow;
+    public boolean enableSnow;
 
     /**
      * Is true (default) if the biome support rain (desert and nether can't have rain)

@@ -1,14 +1,14 @@
 package cc.unknown.module.impl.player;
 
-import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
+import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 
@@ -33,5 +33,5 @@ public class Derp extends Module {
     };
     
     @EventLink
-    public final Listener<PreUpdateEvent> onPreUpdate = event -> RotationComponent.setCorrectMovement(movefix.getValue() ? MovementFix.SILENT : MovementFix.OFF);
+    public final Listener<PreUpdateEvent> onPreUpdate = event -> RotationHandler.setCorrectMovement(movefix.getValue() ? MoveFix.SILENT : MoveFix.OFF);
 }

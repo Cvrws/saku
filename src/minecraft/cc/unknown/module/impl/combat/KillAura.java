@@ -10,9 +10,6 @@ import com.viaversion.viaversion.api.type.Type;
 import com.viaversion.viaversion.protocols.protocol1_9to1_8.Protocol1_9To1_8;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.TargetComponent;
-import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
@@ -24,9 +21,10 @@ import cc.unknown.event.impl.player.HitSlowDownEvent;
 import cc.unknown.event.impl.player.PostMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.geometry.Vector2f;
@@ -34,6 +32,8 @@ import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.util.player.RotationUtil;
+import cc.unknown.util.player.TargetUtil;
+import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.util.structure.EvictingList;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
@@ -87,7 +87,7 @@ public final class KillAura extends Module {
 	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 0, 2, 0.1);
 
 	private final BoundsNumberValue rotationSpeed = new BoundsNumberValue("Rotation speed", this, 5, 10, 0, 10, 1);
-	private final ListValue<MovementFix> movementCorrection = new ListValue<>("Move Fix", this);
+	private final ListValue<MoveFix> movementCorrection = new ListValue<>("Move Fix", this);
 
 	private final BooleanValue keepSprint = new BooleanValue("Keep sprint", this, false);
 	private final BooleanValue defCheck = new BooleanValue("Deffensive Check", this, false, () -> !keepSprint.getValue());
@@ -136,11 +136,11 @@ public final class KillAura extends Module {
 	private final EvictingList<EntityLivingBase> pastTargets = new EvictingList<>(9);
 
 	public KillAura() {
-		for (MovementFix movementFix : MovementFix.values()) {
+		for (MoveFix movementFix : MoveFix.values()) {
 			movementCorrection.add(movementFix);
 		}
 
-		movementCorrection.setDefault(MovementFix.OFF);
+		movementCorrection.setDefault(MoveFix.OFF);
 	}
 
 	@EventLink
@@ -194,7 +194,7 @@ public final class KillAura extends Module {
 	public void getTargets() {
 		double range = this.range.getValue().doubleValue();
 
-		targets = TargetComponent.getTargets(range);
+		targets = TargetUtil.getTargets(range);
 
 		if (attackMode.is("Switch")) {
 			targets.removeAll(pastTargets);
@@ -208,7 +208,7 @@ public final class KillAura extends Module {
 
 		if (targets.isEmpty()) {
 			pastTargets.clear();
-			targets = TargetComponent.getTargets(range + expandRange);
+			targets = TargetUtil.getTargets(range + expandRange);
 		}
 
 		switch (sorting.getValue().getName()) {
@@ -243,7 +243,7 @@ public final class KillAura extends Module {
 
 	@EventLink(value = Priority.HIGH)
 	public final Listener<PreUpdateEvent> onHighPreUpdate = event -> {
-		if (!smoothRotation.getValue() && RotationComponent.isSmoothed()) {
+		if (!smoothRotation.getValue() && RotationHandler.isSmoothed()) {
 			return;
 		}
 
@@ -300,8 +300,8 @@ public final class KillAura extends Module {
 		final float rotationSpeed = this.rotationSpeed.getRandomBetween().floatValue();
         Vector2f targetRotations = RotationUtil.calculate(target, true, range.getValue().doubleValue());
 
-        if (rotationSpeed != 0) RotationComponent.setRotations(targetRotations, rotationSpeed,
-                movementCorrection.getValue() == MovementFix.OFF ? MovementFix.OFF : movementCorrection.getValue(),
+        if (rotationSpeed != 0) RotationHandler.setRotations(targetRotations, rotationSpeed,
+                movementCorrection.getValue() == MoveFix.OFF ? MoveFix.OFF : movementCorrection.getValue(),
                 rotations -> {
                     MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(rotations, range.getValue().floatValue(), -0.1f);
 
@@ -341,8 +341,8 @@ public final class KillAura extends Module {
 			if (Math.sin(nextSwing) + 1 > Math.random() || attackStopWatch.finished(this.nextSwing + 500) || Math.random() > 0.5) {
 				if (this.allowAttack) {
 					final double range = this.range.getValue().doubleValue();
-					final Vec3 rotationVector = mc.player.getVectorForRotation(RotationComponent.rotations.getY(), RotationComponent.rotations.getX());
-					MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationComponent.rotations, range);
+					final Vec3 rotationVector = mc.player.getVectorForRotation(RotationHandler.rotations.getY(), RotationHandler.rotations.getX());
+					MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationHandler.rotations, range);
 
 					if (throughWalls.getValue()) {
 						Vec3 eyes = mc.player.getPositionEyes(1);
@@ -456,14 +456,7 @@ public final class KillAura extends Module {
 	private void attack(final EntityLivingBase target) {
 		final AttackEvent event = new AttackEvent(target);
 		Sakura.instance.getEventBus().handle(event);
-
-		if (noSwing.getValue()) {
-			PacketUtil.send(new C0APacketAnimation());
-		} else {
-			mc.player.swingItem();
-		}
-
-		mc.playerController.attackEntity(mc.player, target);
+		AttackOrder.sendFixedAttack(mc.player, target, noSwing.getValue());
 		this.hitTicks++;
 		this.clickStopWatch.reset();
 	}
@@ -489,19 +482,13 @@ public final class KillAura extends Module {
 
 	private void block(final boolean interact) {
 		if (!blocking) {
-			MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationComponent.lastRotations, 3);
+			MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationHandler.lastRotations, 3);
 
 			if (interact && movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
 				interact(movingObjectPosition);
 			}
 			
-	        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
-	            PacketWrapper useItem = PacketWrapper.create(29, null, Via.getManager().getConnectionManager().getConnections().iterator().next());
-	            useItem.write(Type.VAR_INT, 1);
-	            com.viaversion.viarewind.utils.PacketUtil.sendToServer(useItem, Protocol1_9To1_8.class, true, true);
-	        } else {
-	        	PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
-	        }
+			PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
 
 			blocking = true;
 		}

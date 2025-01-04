@@ -3,7 +3,7 @@ package cc.unknown.value.impl;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-import cc.unknown.module.Module;
+import cc.unknown.module.impl.Module;
 import cc.unknown.ui.clickgui.rice.impl.BooleanValueComponent;
 import cc.unknown.value.Mode;
 import cc.unknown.value.Value;

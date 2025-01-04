@@ -5,9 +5,6 @@ import java.util.function.BiConsumer;
 
 import org.lwjgl.input.Keyboard;
 
-import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.SpoofComponent;
-import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.KeyboardInputEvent;
@@ -17,9 +14,11 @@ import cc.unknown.event.impl.other.TeleportEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreStrafeEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.RotationHandler;
+import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.movement.Speed;
 import cc.unknown.module.impl.world.scaffold.sprint.BypassSprint;
 import cc.unknown.module.impl.world.scaffold.sprint.DisabledSprint;
@@ -38,6 +37,7 @@ import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.util.player.RotationUtil;
 import cc.unknown.util.player.SlotUtil;
+import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.DescValue;
@@ -188,7 +188,7 @@ public class Scaffold extends Module {
 	public void onDisable() {
 		resetBinds();
 		mc.player.inventory.currentItem = lastSlot;
-		SpoofComponent.stopSpoofing();
+		SpoofHandler.stopSpoofing();
 	}
 
 	@EventLink
@@ -313,7 +313,7 @@ public class Scaffold extends Module {
 				}
 			}
 			
-			RotationComponent.setSmoothed(smoothRotation.getValue());
+			RotationHandler.setSmoothed(smoothRotation.getValue());
 
 			sameY = ((!this.sameYValue.is("Off") || this.getModule(Speed.class).isEnabled()) && !mc.gameSettings.keyBindJump.isKeyDown()) && MoveUtil.isMoving();
 
@@ -331,7 +331,7 @@ public class Scaffold extends Module {
 	        
 	        mc.player.inventory.currentItem = slot;
 	        
-	        if (spoof.getValue()) SpoofComponent.startSpoofing(lastSlot);
+	        if (spoof.getValue()) SpoofHandler.startSpoofing(lastSlot);
 	        
 			if (doesNotContainBlock(1) && (!sameY || (doesNotContainBlock(2) && doesNotContainBlock(3) && doesNotContainBlock(4)))) {
 				ticksOnAir++;
@@ -459,7 +459,7 @@ public class Scaffold extends Module {
 		final double maxRotationSpeed = this.rotationSpeed.getSecondValue().doubleValue();
 		float rotationSpeed = (float) MathUtil.getRandom(minRotationSpeed, maxRotationSpeed);
 
-		MovementFix movementFix = this.movementCorrection.getValue() ? MovementFix.SILENT : MovementFix.OFF;
+		MoveFix movementFix = this.movementCorrection.getValue() ? MoveFix.SILENT : MoveFix.OFF;
 
 		/* Calculating target rotations */
 		switch (rotationMode.getValue().getName()) {
@@ -480,7 +480,7 @@ public class Scaffold extends Module {
 		    
 		    if (mc.player.onGround) {
 		        boolean isAirTick = ticksOnAir > 0 && !RayCastUtil.overBlock(
-		            RotationComponent.rotations, enumFacing.getEnumFacing(), blockFace, rayCast.is("Normal"));
+		            RotationHandler.rotations, enumFacing.getEnumFacing(), blockFace, rayCast.is("Normal"));
 
 		        if (!isAirTick)
 		        	targetYaw = (float) Math.toDegrees(MoveUtil.direction(mc.player.rotationYaw, forward, strafe)) - yawOffset;
@@ -516,7 +516,7 @@ public class Scaffold extends Module {
 				        staticYaw += 90;
 				    }
 
-				    movementFix = MovementFix.SILENT;
+				    movementFix = MoveFix.SILENT;
 
 				    if (!straight) {
 				        staticYaw += 90;
@@ -538,7 +538,7 @@ public class Scaffold extends Module {
 					mc.rightClickMouse();
 
 				if (time >= 3 && mc.player.offGroundTicks <= (sameYValue.is("Off") ? 7 : 10)) {
-					if (!RayCastUtil.overBlock(RotationComponent.rotations, enumFacing.getEnumFacing(), blockFace,
+					if (!RayCastUtil.overBlock(RotationHandler.rotations, enumFacing.getEnumFacing(), blockFace,
 							rayCast.is("Strict"))) {
 						getRotations(0);
 					}
@@ -560,10 +560,10 @@ public class Scaffold extends Module {
         	targetYaw = (mc.player.rotationYaw - mc.player.rotationYaw % 90) - 180 + 45 * (mc.player.rotationYaw > 0 ? 1 : -1);
         	targetPitch = 73.5f;
 		            
-        	movementFix = MovementFix.SILENT;
+        	movementFix = MoveFix.SILENT;
 		
         	directionalChange++;
-        	if (Math.abs(MathHelper.wrapAngleTo180_double(targetYaw - RotationComponent.lastServerRotations.getX())) > 10) {
+        	if (Math.abs(MathHelper.wrapAngleTo180_double(targetYaw - RotationHandler.lastServerRotations.getX())) > 10) {
         		directionalChange = (int) (Math.random() * 4);
         		yawDrift = (float) (Math.random() - 0.5) / 10f;
         		pitchDrift = (float) (Math.random() - 0.5) / 10f;
@@ -588,7 +588,7 @@ public class Scaffold extends Module {
 		}
 
 		if (rotationSpeed != 0 && blockFace != null && enumFacing != null) {
-			RotationComponent.setRotations(new Vector2f(targetYaw, targetPitch), rotationSpeed, movementFix);
+			RotationHandler.setRotations(new Vector2f(targetYaw, targetPitch), rotationSpeed, movementFix);
 		}
 	}
 
@@ -601,7 +601,7 @@ public class Scaffold extends Module {
 		/* Correct HitVec */
 		Vec3 hitVec = new Vec3(blockFace.getX(), blockFace.getY(), blockFace.getZ());
 
-		final MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationComponent.rotations, mc.playerController.getBlockReachDistance());
+		final MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationHandler.rotations, mc.playerController.getBlockReachDistance());
 
 		switch (enumFacing.getEnumFacing()) {
 		case DOWN:

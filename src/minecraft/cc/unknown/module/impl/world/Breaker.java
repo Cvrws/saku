@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
-import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
@@ -16,14 +14,16 @@ import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RotationUtil;
 import cc.unknown.util.player.SlotUtil;
+import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
@@ -333,7 +333,7 @@ public class Breaker extends Module {
     public void rotate(BlockPos block) {
         if (!this.rotate.getValue()) return;
         final Vector2f rotations = RotationUtil.calculate(block);
-        RotationComponent.setRotations(rotations, 10, movementCorrection.getValue() ? MovementFix.SILENT : MovementFix.OFF);
+        RotationHandler.setRotations(rotations, 10, movementCorrection.getValue() ? MoveFix.SILENT : MoveFix.OFF);
         mc.objectMouseOver.setBlockPos(block);
         mc.objectMouseOver.sideHit = EnumFacing.UP;
         mc.objectMouseOver.hitVec = new Vec3(Math.random(), 1, Math.random());

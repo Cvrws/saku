@@ -11,7 +11,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.player.RotationComponent;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.impl.ghost.AutoClicker;
 import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.util.Accessor;
@@ -489,7 +489,7 @@ public class PlayerUtil implements Accessor {
 		possibleFacings.sort(Comparator.comparingDouble(enumFacing -> {
 			double enumFacingRotations = Math
 					.toDegrees(Math.atan2(enumFacing.getOffset().zCoord, enumFacing.getOffset().xCoord)) % 360;
-			double rotations = RotationComponent.rotations.x % 360 + 90;
+			double rotations = RotationHandler.rotations.x % 360 + 90;
 
 			return Math.abs(MathUtil.wrappedDifference(enumFacingRotations, rotations));
 		}));

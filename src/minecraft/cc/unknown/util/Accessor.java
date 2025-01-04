@@ -3,8 +3,7 @@ package cc.unknown.util;
 import com.google.gson.Gson;
 
 import cc.unknown.Sakura;
-import cc.unknown.component.impl.Component;
-import cc.unknown.module.Module;
+import cc.unknown.module.impl.Module;
 import cc.unknown.ui.clickgui.rice.RiceGui;
 import cc.unknown.ui.theme.Themes;
 import net.minecraft.client.Minecraft;
@@ -22,10 +21,6 @@ public interface Accessor {
     
     default RiceGui getClickGUI() {
         return getInstance().getClickGui();
-    }
-
-    default <T extends Component> T getComponent(Class<T> component) {
-        return getInstance().getComponentManager().get(component);
     }
 
     default Themes getTheme() {

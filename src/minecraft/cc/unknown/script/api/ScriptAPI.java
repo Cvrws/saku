@@ -9,9 +9,8 @@ import javax.script.ScriptException;
 
 import cc.unknown.Sakura;
 import cc.unknown.command.Command;
-import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.RotationHandler;
+import cc.unknown.module.impl.Module;
 import cc.unknown.script.api.wrapper.impl.ScriptBlockPos;
 import cc.unknown.script.api.wrapper.impl.ScriptCommand;
 import cc.unknown.script.api.wrapper.impl.ScriptModule;
@@ -22,6 +21,7 @@ import cc.unknown.util.geometry.Vector2f;
 import cc.unknown.util.geometry.Vector3d;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RotationUtil;
+import cc.unknown.util.player.rotation.MoveFix;
 import jdk.nashorn.api.scripting.JSObject;
 import net.minecraft.client.Minecraft;
 
@@ -84,7 +84,7 @@ public class ScriptAPI {
     }
 
     public void rotate(float yaw, float pitch, double speed) {
-        RotationComponent.setRotations(new Vector2f(yaw, pitch), speed, MovementFix.OFF);
+        RotationHandler.setRotations(new Vector2f(yaw, pitch), speed, MoveFix.OFF);
     }
 
     public float[] getRotations(int entity) {

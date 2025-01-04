@@ -3,10 +3,13 @@ package cc.unknown.module.impl.combat;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.AttackEvent;
+import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
-import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
+import cc.unknown.module.impl.ghost.AimAssist;
+import cc.unknown.module.impl.movement.Stuck;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.packet.PacketUtil;
 import cc.unknown.value.impl.ModeValue;
@@ -23,6 +26,7 @@ public final class Criticals extends Module {
             .add(new SubMode("Packet"))
             .add(new SubMode("Verus"))
             .add(new SubMode("Balance"))
+            .add(new SubMode("Freeze"))
             .add(new SubMode("Legit"))
             .setDefault("Balance");
     
@@ -41,6 +45,12 @@ public final class Criticals extends Module {
     
     private boolean attacked;
     private int ticks;
+    public static boolean stuckEnabled;
+    
+    @Override
+    public void onEnable() {
+        stuckEnabled = false;
+    }
     
     @Override
     public void onDisable() {
@@ -92,6 +102,19 @@ public final class Criticals extends Module {
         				mc.player.jump();
         		}
         		break;
+            case "Freeze":
+                if ((getModule(KillAura.class).target != null || getModule(AimAssist.class).target != null) && mc.player.onGround) {
+                    mc.player.jump();
+                }
+                if (mc.player.fallDistance > 0) {
+                    getModule(Stuck.class).setEnabled(true);
+                    stuckEnabled = true;
+                }
+                if ((getModule(KillAura.class).target == null || getModule(AimAssist.class).target == null) && stuckEnabled) {
+                    getModule(Stuck.class).setEnabled(false);
+                    stuckEnabled = false;
+                }
+            	break;
         }
     };
 

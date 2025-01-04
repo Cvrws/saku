@@ -1,13 +1,12 @@
 package cc.unknown.module.impl.player;
 
-import cc.unknown.component.impl.player.RotationComponent;
-import cc.unknown.component.impl.player.rotationcomponent.MovementFix;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreUpdateEvent;
-import cc.unknown.module.Module;
+import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.geometry.Vector2f;
@@ -18,6 +17,7 @@ import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.util.player.RotationUtil;
 import cc.unknown.util.player.SlotUtil;
+import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.value.impl.BoundsNumberValue;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
@@ -55,7 +55,7 @@ public class Clutch extends Module {
 	}
 
     public void calculateRotations() {
-        if (ticksOnAir > 0 && !RayCastUtil.overBlock(RotationComponent.rotations, enumFacing.getEnumFacing(), blockFace, true)) {
+        if (ticksOnAir > 0 && !RayCastUtil.overBlock(RotationHandler.rotations, enumFacing.getEnumFacing(), blockFace, true)) {
             getRotations(0);
         }
 
@@ -65,7 +65,7 @@ public class Clutch extends Module {
         float rotationSpeed = (float) MathUtil.getRandom(minRotationSpeed, maxRotationSpeed);
 
         if (rotationSpeed != 0) {
-            RotationComponent.setRotations(new Vector2f(targetYaw, targetPitch), rotationSpeed, MovementFix.SILENT);
+            RotationHandler.setRotations(new Vector2f(targetYaw, targetPitch), rotationSpeed, MoveFix.SILENT);
         }
     }
 
@@ -124,7 +124,7 @@ public class Clutch extends Module {
             if (ticksOnAir > MathUtil.getRandom(placeDelay.getValue().intValue(), placeDelay.getSecondValue().intValue()) &&
                     (RayCastUtil.overBlock(enumFacing.getEnumFacing(), blockFace, true))) {
 
-                Vec3 hitVec = RayCastUtil.rayCast(RotationComponent.rotations, mc.playerController.getBlockReachDistance()).hitVec;
+                Vec3 hitVec = RayCastUtil.rayCast(RotationHandler.rotations, mc.playerController.getBlockReachDistance()).hitVec;
 
                 if (mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
                     PacketUtil.send(new C0APacketAnimation());

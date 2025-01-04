@@ -445,16 +445,6 @@ public class PlayerControllerMP implements Accessor {
     /**
      * Attacks an entity
      */
-    /*public void attackEntity(final EntityPlayer playerIn, final Entity targetEntity) {
-    	CPSHelper.registerClick(CPSHelper.MouseButton.LEFT);
-        this.syncCurrentPlayItem();
-        this.netClientHandler.addToSendQueue(new C02PacketUseEntity(targetEntity, C02PacketUseEntity.Action.ATTACK));
-
-        if (this.currentGameType != WorldSettings.GameType.SPECTATOR) {
-            playerIn.attackTargetEntityWithCurrentItem(targetEntity);
-        }
-    }*/
-    
     public void attackEntity(EntityPlayer playerIn, Entity targetEntity) {
     	CPSHelper.registerClick(CPSHelper.MouseButton.LEFT);
     	
