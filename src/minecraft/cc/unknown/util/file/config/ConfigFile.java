@@ -212,7 +212,7 @@ public class ConfigFile extends cc.unknown.util.file.File {
 
             // Add some extra information to the config
             final JsonObject metadataJsonObject = new JsonObject();
-            metadataJsonObject.addProperty("version", Sakura.VERSION_FULL);
+            metadataJsonObject.addProperty("version", Sakura.VERSION);
             metadataJsonObject.addProperty("creationDate", DATE_FORMATTER.format(new Date()));
             jsonObject.add("Metadata", metadataJsonObject);
 

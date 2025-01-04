@@ -1,8 +1,18 @@
 package cc.unknown;
 
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import javax.imageio.ImageIO;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.Display;
 
 import com.google.gson.Gson;
@@ -12,7 +22,15 @@ import cc.unknown.bindable.BindableManager;
 import cc.unknown.command.CommandManager;
 import cc.unknown.event.Event;
 import cc.unknown.event.bus.impl.EventBus;
-import cc.unknown.handlers.*;
+import cc.unknown.handlers.AutoJoinHandler;
+import cc.unknown.handlers.ConnectionHandler;
+import cc.unknown.handlers.DragHandler;
+import cc.unknown.handlers.FixHandler;
+import cc.unknown.handlers.NetworkingHandler;
+import cc.unknown.handlers.RotationHandler;
+import cc.unknown.handlers.SinceTickHandler;
+import cc.unknown.handlers.SpoofHandler;
+import cc.unknown.handlers.ViaVersionHandler;
 import cc.unknown.module.ModuleManager;
 import cc.unknown.script.ScriptManager;
 import cc.unknown.ui.click.RiceGui;
@@ -28,12 +46,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.Config;
 
 @Getter
-public enum Sakura {
-    instance;
+public class Sakura {
 
     public static final String NAME = "Sakura";
-    public static final String VERSION_FULL = "5.6";
+    public static final String VERSION = "5.6";
 
+    public static final Sakura instance = new Sakura();
+    public static final Logger LOGGER = LogManager.getLogger(Sakura.class);
+    
     private EventBus<Event> eventBus;
     private ModuleManager moduleManager;
     private CommandManager commandManager;
@@ -49,24 +69,26 @@ public enum Sakura {
     private ScriptManager scriptManager;
 
     private RiceGui clickGui = new RiceGui();
+    private TrayIcon trayIcon;
     public boolean firstLogin;
     
     private final ScheduledExecutorService ex = Executors.newScheduledThreadPool(4);
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public void init() {
-    	Display.setTitle(NAME + " " + VERSION_FULL);
+    	Display.setTitle(NAME + " " + VERSION);
     	Runtime.getRuntime().addShutdownHook(new Thread(ex::shutdown));
+    	Minecraft mc = Minecraft.getMinecraft();
     	
-    	initAutoOptimization(Minecraft.getMinecraft());
+    	initAutoOptimization(mc);
     	initManagers();
-    	
     	initHandler();
+    	initVia();
+    	setupSystemTray();
+
         
-        ViaMCP.INSTANCE.initAsyncSlider();
-        ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);
-        
-        Minecraft.getMinecraft().displayGuiScreen(new MainMenu());
+    	mc.displayGuiScreen(new MainMenu());
+    	LOGGER.info("{} {} initialized successfully.", NAME, VERSION);
     }
 
     public void terminate() {
@@ -87,6 +109,13 @@ public enum Sakura {
     	eventBus.register(new ConnectionHandler());
     	eventBus.register(new RotationHandler());
     	eventBus.register(new FixHandler());
+    	LOGGER.info("Event handlers registered.");
+    }
+    
+    private void initVia() {
+        ViaMCP.INSTANCE.initAsyncSlider();
+        ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);
+    	LOGGER.info("ViaMCP initialized.");
     }
     
     private void initManagers() {
@@ -122,5 +151,31 @@ public enum Sakura {
         mc.gameSettings.ofFastMath = true;
         mc.gameSettings.useVbo = true;
         mc.gameSettings.guiScale = 2;
+    }
+    
+
+    private void setupSystemTray() {
+        if (isWindows() && SystemTray.isSupported()) {
+            try {
+                Image trayImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/assets/minecraft/sakura/images/sakura.png")));
+                trayIcon = new TrayIcon(trayImage, NAME);
+                trayIcon.setImageAutoSize(true);
+                trayIcon.setToolTip(NAME);
+
+                SystemTray.getSystemTray().add(trayIcon);
+                trayIcon.displayMessage(NAME, "Client started successfully.", TrayIcon.MessageType.INFO);
+
+                LOGGER.info("System tray icon added.");
+            } catch (IOException | AWTException | NullPointerException e) {
+                LOGGER.error("Failed to create or add TrayIcon.", e);
+            }
+        } else {
+            LOGGER.warn("System tray not supported or not running on Windows.");
+        }
+    }
+    
+    private boolean isWindows() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        return osName.contains("windows");
     }
 }
