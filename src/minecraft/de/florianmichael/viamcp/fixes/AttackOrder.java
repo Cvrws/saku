@@ -20,7 +20,7 @@ package de.florianmichael.viamcp.fixes;
 
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
-import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.netty.PacketUtil;
 import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

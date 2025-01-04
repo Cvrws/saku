@@ -7,7 +7,8 @@ import com.google.common.base.Predicates;
 
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.MathUtil;
-import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.player.rotation.RotationUtil;
+import cc.unknown.util.structure.geometry.Vector2f;
 import lombok.experimental.UtilityClass;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

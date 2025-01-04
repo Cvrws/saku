@@ -74,52 +74,7 @@ public class SlotUtil implements Accessor {
 	private boolean containsItem(ItemStack itemStack, Item item) {
 		return itemStack != null && itemStack.getItem() == item;
 	}
-    
-    /**
-     * Gets and returns a slot of the best sword
-     *
-     * @return slot
-     */
-    public int findSword() {
-        int bestDurability = -1;
-        float bestDamage = -1;
-        int bestSlot = -1;
 
-        for (int i = 0; i < 9; i++) {
-            final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
-
-            if (itemStack == null) {
-                continue;
-            }
-
-            if (itemStack.getItem() instanceof ItemSword) {
-                final ItemSword sword = (ItemSword) itemStack.getItem();
-
-                final int sharpnessLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, itemStack);
-                final float damage = sword.getDamageVsEntity() + sharpnessLevel * 1.25F;
-                final int durability = sword.getMaxDamage();
-
-                if (bestDamage < damage) {
-                    bestDamage = damage;
-                    bestDurability = durability;
-                    bestSlot = i;
-                }
-
-                if (damage == bestDamage && durability > bestDurability) {
-                    bestDurability = durability;
-                    bestSlot = i;
-                }
-            }
-        }
-
-        return bestSlot;
-    }
-
-    /**
-     * Gets and returns the slot of the specified item if you have the item
-     *
-     * @return slot
-     */
     public int findItem(final Item item) {
         for (int i = 0; i < 9; i++) {
             final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);

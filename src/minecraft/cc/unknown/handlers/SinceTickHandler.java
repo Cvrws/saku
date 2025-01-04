@@ -10,9 +10,9 @@ import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.TickEndEvent;
 import cc.unknown.module.impl.Module;
-import cc.unknown.ui.clickgui.rice.RiceGui;
+import cc.unknown.ui.click.RiceGui;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.geometry.Vector3d;
+import cc.unknown.util.structure.geometry.Vector3d;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 

@@ -7,7 +7,7 @@ import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.util.player.MoveUtil;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.inventory.GuiContainer;

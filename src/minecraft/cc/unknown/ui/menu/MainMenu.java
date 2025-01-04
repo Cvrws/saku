@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.ui.menu.alt.AltManagerScreen;
+import cc.unknown.ui.menu.alt.AltManager;
 import cc.unknown.ui.menu.api.Button;
 import cc.unknown.ui.menu.api.RainSystem;
 import cc.unknown.util.render.font.Font;
@@ -30,7 +30,7 @@ public class MainMenu extends GuiMainMenu {
         fontRenderer = Fonts.ROBOTO.get(18, Weight.LIGHT);
         buttonActions.put(0, button -> mc.displayGuiScreen(new GuiSelectWorld(this)));
         buttonActions.put(1, button -> mc.displayGuiScreen(new GuiMultiplayer(this)));
-        buttonActions.put(2, button -> mc.displayGuiScreen(new AltManagerScreen()));
+        buttonActions.put(2, button -> mc.displayGuiScreen(new AltManager()));
         buttonActions.put(3, button -> mc.displayGuiScreen(new GuiOptions(this, mc.gameSettings)));
     }
 

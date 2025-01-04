@@ -7,11 +7,11 @@ import org.lwjgl.input.Mouse;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.font.Font;
 import cc.unknown.util.render.gui.box.TextAlign;
+import cc.unknown.util.structure.geometry.Vector2d;
 import lombok.Getter;
 import lombok.Setter;
 

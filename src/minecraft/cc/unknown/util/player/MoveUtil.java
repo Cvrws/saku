@@ -8,7 +8,7 @@ import cc.unknown.event.impl.player.MoveEvent;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.MathUtil;
-import cc.unknown.util.geometry.Vector2d;
+import cc.unknown.util.structure.geometry.Vector2d;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.enchantment.EnchantmentHelper;

@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import cc.unknown.util.packet.custom.RawPacket;
+import cc.unknown.util.netty.packet.RawPacket;
 import de.florianmichael.vialoadingbase.netty.handler.VLBViaEncodeHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

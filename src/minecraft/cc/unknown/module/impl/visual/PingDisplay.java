@@ -10,10 +10,10 @@ import cc.unknown.font.Weight;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.Module;
-import cc.unknown.util.geometry.Vector2d;
-import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.netty.NetworkUtil;
 import cc.unknown.util.render.RenderUtil;
-import cc.unknown.util.socket.NetworkUtil;
+import cc.unknown.util.structure.geometry.Vector2d;
+import cc.unknown.util.structure.geometry.Vector2f;
 import cc.unknown.value.impl.DragValue;
 
 @ModuleInfo(aliases = "Ping Display", description = "Muestra la latencia de tu conexión actual.", category = Category.VISUALS)

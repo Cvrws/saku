@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.ColorUtil;
+import cc.unknown.util.structure.geometry.Vector2d;
 import lombok.Getter;
 import net.minecraft.util.ChatFormatting;
 
@@ -130,7 +130,6 @@ public enum Themes {
         return getAccentColor(new Vector2d(0.0, 0.0));
     }
 
-    @Deprecated
     public int getRound() {
         return 4;
     }

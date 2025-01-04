@@ -7,7 +7,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.Module;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 import net.minecraft.network.play.client.C03PacketPlayer;

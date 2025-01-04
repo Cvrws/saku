@@ -1,7 +1,7 @@
 package cc.unknown.util.render.gui;
 
-import cc.unknown.util.geometry.Vector2d;
-import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.structure.geometry.Vector2d;
+import cc.unknown.util.structure.geometry.Vector2f;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

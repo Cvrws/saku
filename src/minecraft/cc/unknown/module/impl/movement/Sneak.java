@@ -10,7 +10,7 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.Module;
-import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.netty.PacketUtil;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 
 @ModuleInfo(aliases = "Sneak", description = "Te hace shiftear siempre o a veces sin frenar [BETA]", category = Category.MOVEMENT)

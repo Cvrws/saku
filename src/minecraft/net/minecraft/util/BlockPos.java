@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import com.google.common.collect.AbstractIterator;
 
-import cc.unknown.util.geometry.Vector3d;
+import cc.unknown.util.structure.geometry.Vector3d;
 import net.minecraft.entity.Entity;
 
 public class BlockPos extends Vec3i {

@@ -19,7 +19,7 @@ import cc.unknown.event.impl.player.PreStrafeEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.impl.combat.KillAura;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.packet.custom.impl.PlayPongC2SPacket;
+import cc.unknown.util.netty.packet.PlayPongC2SPacket;
 import cc.unknown.util.player.PlayerUtil;
 import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import net.minecraft.block.Block;
@@ -45,8 +45,7 @@ public class ViaVersionHandler implements Accessor {
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
-			if (PlayerUtil.getItemStack() != null
-					&& PlayerUtil.getItemStack().getItem() instanceof ItemSword && (mc.gameSettings.keyBindUseItem.isPressed() || getModule(KillAura.class).blocking)) {
+			if (PlayerUtil.getItemStack() != null && PlayerUtil.getItemStack().getItem() instanceof ItemSword && (mc.gameSettings.keyBindUseItem.isPressed() || getModule(KillAura.class).blocking)) {
                 PacketWrapper useItem = PacketWrapper.create(29, null, Via.getManager().getConnectionManager().getConnections().iterator().next());
                 useItem.write(Type.VAR_INT, 1);
                 PacketUtil.sendToServer(useItem, Protocol1_8To1_9.class, true, true);
@@ -111,7 +110,7 @@ public class ViaVersionHandler implements Accessor {
                 if (event.getPacket() instanceof C0FPacketConfirmTransaction) {
                     C0FPacketConfirmTransaction transaction = (C0FPacketConfirmTransaction) event.getPacket();
 
-                    cc.unknown.util.packet.PacketUtil.send(new PlayPongC2SPacket(transaction.getUid()));
+                    cc.unknown.util.netty.PacketUtil.send(new PlayPongC2SPacket(transaction.getUid()));
 
                     event.setCancelled();
                 }

@@ -17,11 +17,11 @@ import cc.unknown.script.api.wrapper.impl.ScriptModule;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector2f;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector3d;
 import cc.unknown.script.util.ScriptModuleInfo;
-import cc.unknown.util.geometry.Vector2f;
-import cc.unknown.util.geometry.Vector3d;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.player.RotationUtil;
 import cc.unknown.util.player.rotation.MoveFix;
+import cc.unknown.util.player.rotation.RotationUtil;
+import cc.unknown.util.structure.geometry.Vector2f;
+import cc.unknown.util.structure.geometry.Vector3d;
 import jdk.nashorn.api.scripting.JSObject;
 import net.minecraft.client.Minecraft;
 

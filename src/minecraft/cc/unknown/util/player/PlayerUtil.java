@@ -16,8 +16,9 @@ import cc.unknown.module.impl.ghost.AutoClicker;
 import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.MathUtil;
-import cc.unknown.util.geometry.Vector2f;
-import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.netty.PacketUtil;
+import cc.unknown.util.player.rotation.RotationUtil;
+import cc.unknown.util.structure.geometry.Vector2f;
 import lombok.experimental.UtilityClass;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -110,7 +111,7 @@ public class PlayerUtil implements Accessor {
 		return onEdgeX || onEdgeZ;
 	}
 
-	public Block block(final cc.unknown.util.geometry.Vector3d pos) {
+	public Block block(final cc.unknown.util.structure.geometry.Vector3d pos) {
 		return block(pos.getX(), pos.getY(), pos.getZ());
 	}
 

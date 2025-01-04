@@ -3,7 +3,7 @@ package cc.unknown.util.client;
 import org.lwjgl.input.Mouse;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.geometry.Vector2d;
+import cc.unknown.util.structure.geometry.Vector2d;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.ScaledResolution;
 

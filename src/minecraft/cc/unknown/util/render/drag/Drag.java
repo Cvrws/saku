@@ -1,8 +1,8 @@
 package cc.unknown.util.render.drag;
 
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.gui.GUIUtil;
+import cc.unknown.util.structure.geometry.Vector2d;
 
 public class Drag {
     public Vector2d position, targetPosition, scale, offset = new Vector2d(0, 0);

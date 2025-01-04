@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import cc.unknown.module.impl.Module;
-import cc.unknown.ui.clickgui.rice.impl.BooleanValueComponent;
+import cc.unknown.ui.click.component.BooleanValueComponent;
 import cc.unknown.value.Mode;
 import cc.unknown.value.Value;
 import lombok.Getter;

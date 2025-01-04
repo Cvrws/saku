@@ -8,8 +8,8 @@ import java.util.function.BooleanSupplier;
 
 import cc.unknown.module.impl.Module;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.geometry.Vector2d;
 import cc.unknown.util.render.animation.Animation;
+import cc.unknown.util.structure.geometry.Vector2d;
 import cc.unknown.value.Mode;
 import cc.unknown.value.Value;
 import lombok.Getter;

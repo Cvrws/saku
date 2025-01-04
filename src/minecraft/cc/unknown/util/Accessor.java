@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import cc.unknown.Sakura;
 import cc.unknown.module.impl.Module;
-import cc.unknown.ui.clickgui.rice.RiceGui;
+import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.theme.Themes;
 import net.minecraft.client.Minecraft;
 

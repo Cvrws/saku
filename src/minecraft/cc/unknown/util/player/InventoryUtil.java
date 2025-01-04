@@ -8,7 +8,7 @@ import java.util.Map;
 import org.lwjgl.input.Keyboard;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.netty.PacketUtil;
 import lombok.experimental.UtilityClass;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAnvil;

@@ -13,7 +13,7 @@ import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.Module;
-import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C19PacketResourcePackStatus;

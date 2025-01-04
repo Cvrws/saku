@@ -15,7 +15,7 @@ import cc.unknown.event.bus.impl.EventBus;
 import cc.unknown.handlers.*;
 import cc.unknown.module.ModuleManager;
 import cc.unknown.script.ScriptManager;
-import cc.unknown.ui.clickgui.rice.RiceGui;
+import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.menu.MainMenu;
 import cc.unknown.ui.theme.ThemeManager;
 import cc.unknown.util.file.FileManager;

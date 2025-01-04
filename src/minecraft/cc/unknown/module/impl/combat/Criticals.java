@@ -11,7 +11,7 @@ import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.ghost.AimAssist;
 import cc.unknown.module.impl.movement.Stuck;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;

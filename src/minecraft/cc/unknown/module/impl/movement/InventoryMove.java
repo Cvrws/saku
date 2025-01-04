@@ -13,7 +13,7 @@ import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.Module;
-import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;

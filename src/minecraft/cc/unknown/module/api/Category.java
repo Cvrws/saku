@@ -1,7 +1,7 @@
 package cc.unknown.module.api;
 
 import cc.unknown.font.Fonts;
-import cc.unknown.ui.clickgui.rice.screen.*;
+import cc.unknown.ui.click.screen.*;
 import cc.unknown.util.render.font.Font;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

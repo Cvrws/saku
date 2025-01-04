@@ -12,7 +12,7 @@ import cc.unknown.event.impl.player.PushOutOfBlockEvent;
 import cc.unknown.event.impl.player.SlowDownEvent;
 import cc.unknown.module.impl.movement.Sprint;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.geometry.Vector2f;
+import cc.unknown.util.structure.geometry.Vector2f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSoundMinecartRiding;
 import net.minecraft.client.audio.PositionedSoundRecord;

@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 import cc.unknown.Sakura;
 import cc.unknown.module.impl.Module;
-import cc.unknown.ui.clickgui.rice.impl.ValueComponent;
+import cc.unknown.ui.click.component.ValueComponent;
 import cc.unknown.util.interfaces.Toggleable;
 import lombok.Getter;
 import lombok.Setter;

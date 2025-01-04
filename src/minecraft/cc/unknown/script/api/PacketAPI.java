@@ -3,7 +3,7 @@ package cc.unknown.script.api;
 import cc.unknown.script.api.wrapper.impl.ScriptEntity;
 import cc.unknown.script.api.wrapper.impl.ScriptItemStack;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector3d;
-import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerCapabilities;

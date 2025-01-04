@@ -10,7 +10,7 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.Module;
-import cc.unknown.util.geometry.Doble;
+import cc.unknown.util.structure.geometry.Doble;
 import net.minecraft.client.settings.GameSettings;
 
 @ModuleInfo(aliases = "Anti AFK", description = "Previene kickeos al quedarte AFK", category = Category.OTHER)

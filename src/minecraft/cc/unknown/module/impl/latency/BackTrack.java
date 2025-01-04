@@ -13,7 +13,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.packet.PacketUtil;
+import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.value.impl.NumberValue;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.network.NetworkManager.InboundHandlerTuplePacketListener;
