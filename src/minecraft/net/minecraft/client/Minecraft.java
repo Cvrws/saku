@@ -67,6 +67,7 @@ import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.TickEndEvent;
+import cc.unknown.module.impl.latency.TickBase;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.player.NoClickDelay;
 import cc.unknown.module.impl.visual.FreeLook;
@@ -1011,10 +1012,15 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.mcProfiler.endSection();
 		final long l = System.nanoTime();
 		this.mcProfiler.startSection("tick");
+        TickBase tickBase = Sakura.instance.getModuleManager().get(TickBase.class);
+
 
 		Lagometer.timerTick.start();
 
 		for (int j = 0; j < this.timer.elapsedTicks; ++j) {
+			if (tickBase.handleTick()) {
+				continue;
+			}
 			timer.timerSpeed = 1;
 
 			TickEvent tickEvent = new TickEvent();
@@ -1051,7 +1057,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 		this.mcProfiler.endSection();
 
-		if (!this.skipRenderWorld) {
+		if (!this.skipRenderWorld && !tickBase.freezeAnim()) {
 			this.mcProfiler.endStartSection("gameRenderer");
 			this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks, i);
 			this.mcProfiler.endSection();

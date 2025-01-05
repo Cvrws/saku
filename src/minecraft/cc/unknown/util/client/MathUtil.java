@@ -10,25 +10,25 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class MathUtil {
 
-	public static int nextInt(int origin, int bound) {
+	public int nextInt(int origin, int bound) {
 		return origin == bound ? origin : ThreadLocalRandom.current().nextInt(origin, bound);
 	}
 
-	public static long nextLong(long origin, long bound) {
+	public long nextLong(long origin, long bound) {
 		return origin == bound ? origin : ThreadLocalRandom.current().nextLong(origin, bound);
 	}
 
-	public static float nextFloat(double origin, double bound) {
+	public float nextFloat(double origin, double bound) {
 		return origin == bound ? (float) origin
 				: (float) ThreadLocalRandom.current().nextDouble((double) ((float) origin), (double) ((float) bound));
 	}
 
-	public static float nextFloat(float origin, float bound) {
+	public float nextFloat(float origin, float bound) {
 		return origin == bound ? origin
 				: (float) ThreadLocalRandom.current().nextDouble((double) origin, (double) bound);
 	}
 
-	public static double nextDouble(double origin, double bound) {
+	public double nextDouble(double origin, double bound) {
 		return origin == bound ? origin : ThreadLocalRandom.current().nextDouble(origin, bound);
 	}
 
@@ -116,7 +116,7 @@ public class MathUtil {
         return (int) (Math.random() * (1000 / minCPS - 1000 / maxCPS + 1) + 1000 / maxCPS);
     }
     
-    public static float getAdvancedRandom(float min, float max) {
+    public float getAdvancedRandom(float min, float max) {
         SecureRandom random = new SecureRandom();
 
         long finalSeed = System.nanoTime();
@@ -134,5 +134,9 @@ public class MathUtil {
         random.setSeed(finalSeed);
 
         return random.nextFloat() * (max - min) + min;
+    }
+    
+    public boolean inBetween(double min, double max, double value) {
+        return value >= min && value <= max;
     }
 }

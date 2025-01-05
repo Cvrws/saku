@@ -289,4 +289,46 @@ public class RotationUtil implements Accessor {
         double ez = MathHelper.clamp_double(positionEyes.zCoord, entityBoundingBox.minZ, entityBoundingBox.maxZ);
         return new Vec3(ex, ey - 0.4D, ez);
     }
+    
+    public float getRotationDifference(final Entity entity,final Entity entity2) {
+        float[] target = getRotations(entity.posX,entity.posY + entity.getEyeHeight(),entity.posZ);
+        float[] target2 = getRotations(entity2.posX,entity2.posY + entity2.getEyeHeight(),entity2.posZ);
+        return (float) Math.hypot(Math.abs(getAngleDifference(target[0], target2[0])), Math.abs(target[1] - target2[1]));
+    }
+    
+    public float[] getRotations(BlockPos blockPos, EnumFacing enumFacing) {
+        return getRotations(blockPos, enumFacing, 0.25, 0.25);
+    }
+
+    public float[] getRotations(BlockPos blockPos, EnumFacing enumFacing, double xz, double y) {
+        double d = blockPos.getX() + 0.5 - mc.player.posX + enumFacing.getFrontOffsetX() * xz;
+        double d2 = blockPos.getZ() + 0.5 - mc.player.posZ + enumFacing.getFrontOffsetZ() * xz;
+        double d3 = mc.player.posY + mc.player.getEyeHeight() - blockPos.getY() - enumFacing.getFrontOffsetY() * y;
+        double d4 = MathHelper.sqrt_double(d * d + d2 * d2);
+        float f = (float) (Math.atan2(d2, d) * 180.0 / Math.PI) - 90.0f;
+        float f2 = (float) (Math.atan2(d3, d4) * 180.0 / Math.PI);
+        return new float[]{MathHelper.wrapAngleTo180_float(f), f2};
+    }
+
+    public float[] getRotations(double rotX, double rotY, double rotZ, double startX, double startY, double startZ) {
+        double x = rotX - startX;
+        double y = rotY - startY;
+        double z = rotZ - startZ;
+        double dist = MathHelper.sqrt_double(x * x + z * z);
+        float yaw = (float)(Math.atan2(z, x) * 180.0 / Math.PI) - 90.0F;
+        float pitch = (float)(-(Math.atan2(y, dist) * 180.0 / Math.PI));
+        return new float[]{yaw, pitch};
+    }
+
+    public float[] getRotations(double posX, double posY, double posZ) {
+        return getRotations(posX, posY, posZ, mc.player.posX, mc.player.posY + (double)mc.player.getEyeHeight(), mc.player.posZ);
+    }
+
+    public float[] getRotations(Vec3 vec) {
+        return getRotations(vec.xCoord, vec.yCoord, vec.zCoord);
+    }
+    
+    public float getAngleDifference(float a, float b) {
+        return MathHelper.wrapAngleTo180_float(a - b);
+    }
 }

@@ -16,7 +16,11 @@ import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.util.player.rotation.RotationUtil;
 import cc.unknown.util.structure.geometry.Vector2f;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 
 public final class RotationHandler implements Accessor {
 	private static boolean active, smoothed;

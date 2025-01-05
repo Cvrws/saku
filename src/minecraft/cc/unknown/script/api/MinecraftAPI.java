@@ -21,7 +21,7 @@ public class MinecraftAPI extends API {
     }
 
     public float getPartialTicks() {
-        return MC.timer.elapsedPartialTicks;
+        return MC.timer.partialTicks;
     }
 
     public float getRenderPartialTicks() {

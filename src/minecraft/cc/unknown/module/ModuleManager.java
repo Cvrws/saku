@@ -50,6 +50,7 @@ public final class ModuleManager {
         this.put(PingSpoof.class, new PingSpoof());
         this.put(BackTrack.class, new BackTrack());
         this.put(FakeLag.class, new FakeLag());
+        this.put(LagRange.class, new LagRange());
         this.put(TickBase.class, new TickBase());
         this.put(PerfectCriticals.class, new PerfectCriticals());
         
