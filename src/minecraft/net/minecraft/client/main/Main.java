@@ -96,7 +96,6 @@ public class Main {
             final GameConfiguration gameconfiguration = new GameConfiguration(new GameConfiguration.UserInformation(session, propertymap, propertymap1, proxy), new GameConfiguration.DisplayInformation(i, j, flag, flag1), new GameConfiguration.FolderInformation(file1, file3, file2, s5), new GameConfiguration.GameInformation(s3), new GameConfiguration.ServerInformation(s6, integer));
             Runtime.getRuntime().addShutdownHook(new Thread("Client Shutdown Thread") {
                 public void run() {
-                    Sakura.instance.terminate();
                     Minecraft.stopIntegratedServer();
                 }
             });

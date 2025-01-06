@@ -1,4 +1,4 @@
-package cc.unknown.script;
+package cc.unknown.managers;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -17,9 +17,11 @@ import javax.script.SimpleBindings;
 
 import org.apache.commons.io.FileUtils;
 
+import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.WorldChangeEvent;
+import cc.unknown.script.Script;
 import cc.unknown.script.api.GameSettingsAPI;
 import cc.unknown.script.api.MinecraftAPI;
 import cc.unknown.script.api.NetworkAPI;
@@ -30,19 +32,18 @@ import cc.unknown.script.api.ScriptAPI;
 import cc.unknown.script.api.WorldAPI;
 import cc.unknown.script.util.ScriptClassFilter;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.file.FileManager;
 import cc.unknown.util.player.PlayerUtil;
 import jdk.nashorn.api.scripting.ClassFilter;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 @Getter
 public final class ScriptManager implements Accessor {
 
     public static final File SCRIPT_DIRECTORY = new File(FileManager.DIRECTORY, "scripts");
 
-    private static final FilenameFilter SCRIPT_FILE_FILTER =
-            (file, name) -> name.toLowerCase(Locale.ENGLISH).endsWith(".js");
+    private static final FilenameFilter SCRIPT_FILE_FILTER = (file, name) -> name.toLowerCase(Locale.ENGLISH).endsWith(".js");
 
     private static final ClassFilter SCRIPT_CLASS_FILTER = new ScriptClassFilter();
 
@@ -51,33 +52,28 @@ public final class ScriptManager implements Accessor {
     private Bindings globalBindings;
 
     private final List<Script> scripts = new ArrayList<>();
-
-    @EventLink
-    public final Listener<WorldChangeEvent> onWorldChange = event -> loadBindings();
-
-    public void init() {
+    
+    public ScriptManager() {
         this.unloadScripts();
 
         this.engineFactory = new NashornScriptEngineFactory();
 
         this.loadBindings();
 
-        try {
-            this.loadScripts();
-        } catch (final IOException ex) {
-            ex.printStackTrace();
-        }
+        this.loadScripts();
 
-        getInstance().getEventBus().register(this);
+        Sakura.instance.getEventBus().register(this);
     }
+
+    @EventLink
+    public final Listener<WorldChangeEvent> onWorldChange = event -> loadBindings();
 
     public Script getScript(final String name) {
-        return this.scripts.stream()
-                .filter(module -> module.getName().equalsIgnoreCase(name))
-                .findAny().orElse(null);
+        return this.scripts.stream().filter(module -> module.getName().equalsIgnoreCase(name)).findAny().orElse(null);
     }
 
-    public void loadScripts() throws IOException {
+    @SneakyThrows
+    public void loadScripts() {
         this.loadScriptFiles();
 
         this.scripts.removeIf(script -> {
@@ -163,22 +159,19 @@ public final class ScriptManager implements Accessor {
     }
 
     public ScriptEngine createEngine() {
-        // Get a new ScriptEngine that uses our ClassFilter
         final ScriptEngine engine = this.engineFactory.getScriptEngine();
+        assert engine != null;
 
-        // Give the engine our global bindings
         engine.setBindings(this.globalBindings, ScriptContext.GLOBAL_SCOPE);
 
         return engine;
     }
 
     public Script parseScript(final String code, final File file) {
-        // Provide defaults for the optional metadata values
         String author = "Unknown author";
         String version = "Unknown version";
         String description = "No description provided";
 
-        // Parse some optional metadata about the script if present
         for (String line : code.split("\n")) {
             line = line.trim();
 

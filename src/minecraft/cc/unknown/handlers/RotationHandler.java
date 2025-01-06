@@ -38,12 +38,6 @@ public final class RotationHandler implements Accessor {
 			final MoveFix correctMovement) {
 		setRotations(rotations, rotationSpeed, correctMovement, null);
 	}
-	
-	public static void setRotations(final Vector2f rotations, final int rotationSpeed,
-			final MoveFix correctMovement) {
-		setRotations(rotations, rotationSpeed, correctMovement, null);
-	}
-
 	/*
 	 * This method must be called on Pre Update Event to work correctly
 	 */
@@ -69,13 +63,6 @@ public final class RotationHandler implements Accessor {
 		if (active) {
 			smooth();
 		}
-
-		/*if (correctMovement == MovementFix.BACKWARDS_SPRINT && active) {
-			if (Math.abs(rotations.x % 360 - Math.toDegrees(MoveUtil.direction()) % 360) > 45) {
-				mc.gameSettings.keyBindSprint.setPressed(false);
-				mc.player.setSprinting(false);
-			}
-		}*/
 	};
 
 	@EventLink(value = Priority.LOW)

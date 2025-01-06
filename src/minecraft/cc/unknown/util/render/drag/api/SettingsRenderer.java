@@ -2,7 +2,7 @@ package cc.unknown.util.render.drag.api;
 
 import java.util.ArrayList;
 
-import cc.unknown.module.impl.Module;
+import cc.unknown.module.Module;
 import cc.unknown.ui.click.component.BooleanValueComponent;
 import cc.unknown.ui.click.component.BoundsNumberValueComponent;
 import cc.unknown.ui.click.component.DescValueComponent;

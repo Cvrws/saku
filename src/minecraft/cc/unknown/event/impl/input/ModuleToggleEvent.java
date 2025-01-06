@@ -1,7 +1,7 @@
 package cc.unknown.event.impl.input;
 
 import cc.unknown.event.Event;
-import cc.unknown.module.impl.Module;
+import cc.unknown.module.Module;
 import cc.unknown.script.api.wrapper.impl.event.ScriptEvent;
 import cc.unknown.script.api.wrapper.impl.event.impl.input.ScriptModuleToggleEvent;
 import lombok.AllArgsConstructor;

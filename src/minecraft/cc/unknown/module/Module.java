@@ -1,4 +1,4 @@
-package cc.unknown.module.impl;
+package cc.unknown.module;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,13 +9,13 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 import cc.unknown.Sakura;
-import cc.unknown.bindable.Bindable;
 import cc.unknown.event.impl.input.ModuleToggleEvent;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.visual.ClickGUI;
 import cc.unknown.module.impl.visual.HUD;
 import cc.unknown.util.Accessor;
+import cc.unknown.util.interfaces.Bindable;
 import cc.unknown.util.interfaces.Toggleable;
 import cc.unknown.value.Value;
 import cc.unknown.value.impl.BooleanValue;

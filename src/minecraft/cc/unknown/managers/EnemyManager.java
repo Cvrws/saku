@@ -1,19 +1,19 @@
-package cc.unknown.util.file.enemy;
+package cc.unknown.managers;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import cc.unknown.Sakura;
-import cc.unknown.util.file.FileManager;
 import cc.unknown.util.file.FileType;
+import cc.unknown.util.file.enemy.EnemyFile;
 import cc.unknown.util.player.EnemyUtil;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class EnemyManager {
     public static final File ENEMY_DIRECTORY = new File(FileManager.DIRECTORY, "enemys");
 
-    public void init() {
+    public EnemyManager() {
         if (!ENEMY_DIRECTORY.exists()) {
         	ENEMY_DIRECTORY.mkdir();
         }

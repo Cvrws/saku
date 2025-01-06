@@ -10,7 +10,7 @@ import javax.script.ScriptException;
 import cc.unknown.Sakura;
 import cc.unknown.command.Command;
 import cc.unknown.handlers.RotationHandler;
-import cc.unknown.module.impl.Module;
+import cc.unknown.module.Module;
 import cc.unknown.script.api.wrapper.impl.ScriptBlockPos;
 import cc.unknown.script.api.wrapper.impl.ScriptCommand;
 import cc.unknown.script.api.wrapper.impl.ScriptModule;
@@ -114,13 +114,13 @@ public class ScriptAPI {
         };
 
         scriptCommandReference.set(getCommand(command));
-        Sakura.instance.getCommandManager().getCommandList().add(command);
+        Sakura.instance.getCommandManager().commandList.add(command);
 
         return scriptCommandReference.get();
     }
 
     public ScriptCommand[] getCommands() {
-        final List<Command> commands = Sakura.instance.getCommandManager().getCommandList();
+        final List<Command> commands = Sakura.instance.getCommandManager().commandList;
         final ScriptCommand[] scriptCommands = new ScriptCommand[commands.size()];
 
         for (int i = 0; i < commands.size(); ++i) {

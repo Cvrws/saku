@@ -1,4 +1,4 @@
-package cc.unknown.util.file.friend;
+package cc.unknown.managers;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,17 +9,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import cc.unknown.Sakura;
-import cc.unknown.util.file.FileManager;
 import cc.unknown.util.file.FileType;
 import cc.unknown.util.file.enemy.EnemyFile;
+import cc.unknown.util.file.friend.FriendFile;
 import cc.unknown.util.player.EnemyUtil;
 import cc.unknown.util.player.FriendUtil;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class FriendManager {
     public static final File FRIEND_DIRECTORY = new File(FileManager.DIRECTORY, "friends");
-
-    public void init() {
+    
+    public FriendManager() {
         if (!FRIEND_DIRECTORY.exists()) {
             FRIEND_DIRECTORY.mkdir();
         }

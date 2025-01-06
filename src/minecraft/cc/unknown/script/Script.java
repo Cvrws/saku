@@ -71,7 +71,6 @@ public final class Script {
         }
     }
 
-
     public void unload() throws ScriptException {
         try {
             this.call("onUnload");

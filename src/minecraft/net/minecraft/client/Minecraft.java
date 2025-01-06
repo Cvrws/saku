@@ -959,14 +959,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	 */
 	public void shutdownMinecraftApplet() {
 		try {
+			Sakura.instance.terminate();
 			logger.info("Stopping!");
-
 			try {
 				this.loadWorld(null);
 			} catch (final Throwable var5) {
 				;
 			}
-
 			this.mcSoundHandler.unloadSounds();
 		} finally {
 			Display.destroy();

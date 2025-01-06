@@ -11,7 +11,7 @@ public final class ScriptCommand extends ScriptHandlerWrapper<Command> {
     }
 
     public void unregister() {
-    	Sakura.instance.getCommandManager().getCommandList().remove(this.wrapped);
+    	Sakura.instance.getCommandManager().commandList.remove(this.wrapped);
     }
 
     public String getName() {

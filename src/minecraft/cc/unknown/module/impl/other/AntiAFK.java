@@ -7,9 +7,9 @@ import java.util.function.BooleanSupplier;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.module.impl.Module;
 import cc.unknown.util.structure.geometry.Doble;
 import net.minecraft.client.settings.GameSettings;
 

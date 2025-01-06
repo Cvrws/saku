@@ -15,7 +15,7 @@ import java.util.Optional;
 import com.google.gson.JsonObject;
 
 import cc.unknown.Sakura;
-import cc.unknown.module.impl.Module;
+import cc.unknown.module.Module;
 import cc.unknown.module.impl.visual.ClickGUI;
 import cc.unknown.ui.theme.Themes;
 import cc.unknown.util.file.FileType;

@@ -9,7 +9,7 @@ import cc.unknown.event.impl.other.TeleportEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.TickEndEvent;
-import cc.unknown.module.impl.Module;
+import cc.unknown.module.Module;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.structure.geometry.Vector3d;

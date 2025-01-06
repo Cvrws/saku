@@ -12,7 +12,7 @@ import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.GuiClickEvent;
 import cc.unknown.event.impl.input.GuiMouseReleaseEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
-import cc.unknown.module.impl.Module;
+import cc.unknown.module.Module;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.MouseUtil;
 import cc.unknown.util.client.StopWatch;

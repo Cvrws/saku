@@ -4,9 +4,9 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.module.impl.Module;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.value.impl.BoundsNumberValue;
 

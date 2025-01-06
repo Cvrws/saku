@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.module.impl.Module;
+import cc.unknown.module.Module;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.click.screen.Colors;
 import cc.unknown.util.Accessor;

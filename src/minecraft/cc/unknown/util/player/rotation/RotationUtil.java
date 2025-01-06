@@ -32,6 +32,14 @@ public class RotationUtil implements Accessor {
 						(entity.getEntityBoundingBox().maxY - entity.getEntityBoundingBox().minY) * 0.9)),
 				0));
 	}
+	
+    public float i(final double n, final double n2) {
+        return (float) (Math.atan2(n - mc.player.posX, n2 - mc.player.posZ) * 57.295780181884766 * -1.0);
+    }
+	
+    public double distanceFromYaw(final Entity entity) {
+        return Math.abs(MathHelper.wrapAngleTo180_double(i(entity.posX, entity.posZ) - mc.player.rotationYaw));
+    }
 
 	public float[] getFixedRotation(final float[] rotations, final float[] lastRotations) {
 		final Minecraft mc = Minecraft.getInstance();

@@ -1,4 +1,4 @@
-package cc.unknown.bindable;
+package cc.unknown.util.interfaces;
 
 public interface Bindable {
     int getKey();

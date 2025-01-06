@@ -1,8 +1,8 @@
 package cc.unknown.module.impl.player;
 
+import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.module.impl.Module;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 

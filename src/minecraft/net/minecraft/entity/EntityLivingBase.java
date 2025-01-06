@@ -1641,7 +1641,7 @@ public abstract class EntityLivingBase extends Entity implements java.io.Seriali
 
         float yaw = this.rotationYaw;
         
-        assert Minecraft.getInstance().player != null;
+        assert Minecraft.getInstance().player != null || Minecraft.getInstance().theWorld != null;
         if (this == Minecraft.getInstance().player) yaw = RotationHandler.rotations.x;
 
         final double d0 = this.posX - this.prevPosX;

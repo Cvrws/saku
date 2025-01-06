@@ -8,8 +8,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.Sakura;
+import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
-import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.visual.ClickGUI;
 import cc.unknown.ui.click.component.BoundsNumberValueComponent;
 import cc.unknown.ui.click.component.ModuleComponent;
@@ -85,7 +85,7 @@ public class RiceGui extends GuiScreen implements Accessor {
         scaleAnimation.reset();
         scaleAnimation.setValue(0);
 
-        ScaledResolution scaledResolution = /*mc.scaledResolution*/ new ScaledResolution(mc);
+        ScaledResolution scaledResolution = new ScaledResolution(mc);
 
         lastScreen = selectedScreen;
         timeInCategory.reset();

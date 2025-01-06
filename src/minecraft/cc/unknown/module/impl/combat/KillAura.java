@@ -3,6 +3,7 @@ package cc.unknown.module.impl.combat;
 import java.util.Comparator;
 import java.util.List;
 
+import com.viaversion.viarewind.protocol.protocol1_8to1_9.Protocol1_8To1_9;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
@@ -22,9 +23,9 @@ import cc.unknown.event.impl.player.PostMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
 import cc.unknown.handlers.RotationHandler;
+import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.netty.PacketUtil;
@@ -48,6 +49,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.item.ItemSword;
+import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.client.C0APacketAnimation;
@@ -80,6 +82,8 @@ public final class KillAura extends Module {
 			.add(new SubMode("Distance"))
 			.add(new SubMode("Health"))
 			.add(new SubMode("Hurt Time"))
+			.add(new SubMode("Armor"))
+			.add(new SubMode("Fov"))
 			.setDefault("Distance");
 
 	public final NumberValue range = new NumberValue("Range", this, 3, 3, 6, 0.1);
@@ -144,27 +148,6 @@ public final class KillAura extends Module {
 	}
 
 	@EventLink
-	public final Listener<GameEvent> onPreMotion = event -> {
-
-		this.hitTicks++;
-
-		if (PlayerUtil.getItemStack() == null || !(PlayerUtil.getItemStack().getItem() instanceof ItemSword)) {
-			blocking = false;
-		}
-
-		if (mc.currentScreen instanceof GuiContainer) {
-			this.unblock();
-			target = null;
-			return;
-		}
-
-		if (target == null || mc.player.isDead || getModule(Scaffold.class).isEnabled()) {
-			this.unblock();
-			target = null;
-		}
-	};
-
-	@EventLink
 	public final Listener<PostMotionEvent> onPostMotion = event -> {
 		if (target != null && this.canBlock()) {
 			this.postBlock();
@@ -217,14 +200,21 @@ public final class KillAura extends Module {
 			sortByTargets();
 			break;
 		case "Distance":
-			targets.sort(Comparator.comparingDouble(entity -> mc.player.getDistanceSqToEntity(entity)));
+			targets.sort(Comparator.comparingDouble(mc.player::getDistanceToEntity));
 			sortByTargets();
 			break;
-
 		case "Hurt Time":
-			targets.sort(Comparator.comparingDouble(entity -> entity.hurtTime));
+            targets.sort(Comparator.comparingInt(entity -> entity.hurtTime));
 			sortByTargets();
 			break;
+        case "Armor":
+            targets.sort(Comparator.comparingInt(EntityLivingBase::getTotalArmorValue));
+            sortByTargets();
+            break;
+        case "FOV":
+            targets.sort(Comparator.comparingDouble(RotationUtil::distanceFromYaw));
+            sortByTargets();
+            break;
 		}
 	}
 
@@ -258,8 +248,9 @@ public final class KillAura extends Module {
 		if (getModule(Scaffold.class).isEnabled() && attackWhilstScaffolding.getValue()) {
 			return;
 		}
-
+		
 		this.attack = Math.max(Math.min(this.attack, this.attack - 2), 0);
+		this.hitTicks++;
 
 		/*
 		 * Heuristic fix
@@ -269,6 +260,7 @@ public final class KillAura extends Module {
 		}
 
 		if (mc.currentScreen instanceof GuiContainer) {
+			this.unblock();
 			allowAttack = false;
 			target = null;
 			return;
@@ -391,15 +383,13 @@ public final class KillAura extends Module {
 	public final Listener<RightClickEvent> onRightClick = event -> {
 		if (target == null || PlayerUtil.getItemStack() == null || !(PlayerUtil.getItemStack().getItem() instanceof ItemSword))
 			return;
-
-		switch (autoBlock.getValue().getName()) {
-		case "Fake":
+		
+		if (autoBlock.is("Fake")) {
 			if (!preventServerSideBlocking.getValue() || PlayerUtil.getItemStack() == null || !(PlayerUtil.getItemStack().getItem() instanceof ItemSword)) {
 				return;
 			}
 
 			event.setCancelled();
-			break;
 		}
 	};
 
@@ -417,22 +407,19 @@ public final class KillAura extends Module {
 	private void postAttackBlock() {
 		switch (autoBlock.getValue().getName()) {
 		case "Vanilla ReBlock":
-			if (this.hitTicks == 2) {
-				mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
-			}
+			block(false);
 			break;
 		case "Post":
 			boolean furry = false;
 			
 			if (PlayerUtil.isHoldingWeapon()) {
-				mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
+				block(false);
 			}
 			
 			furry = true;
 			
 			if (furry) {
-				PacketUtil.sendNoEvent(new C07PacketPlayerDigging(
-						C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
+				unblock();
 			}
 			break;
 		}
@@ -441,8 +428,7 @@ public final class KillAura extends Module {
 	private void preBlock() {
 		switch (autoBlock.getValue().getName()) {
 		case "Post":
-		case "Beta":
-			allowAttack = true;
+			//allowAttack = true;
 			break;
 		}
 	}
@@ -457,7 +443,6 @@ public final class KillAura extends Module {
 		final AttackEvent event = new AttackEvent(target);
 		Sakura.instance.getEventBus().handle(event);
 		AttackOrder.sendFixedAttack(mc.player, target, noSwing.getValue());
-		this.hitTicks++;
 		this.clickStopWatch.reset();
 	}
 
@@ -467,30 +452,31 @@ public final class KillAura extends Module {
 				&& PlayerUtil.getItemStack().getItem() instanceof ItemSword;
 	}
 
-	public void interact(MovingObjectPosition mouse) {
-		if (!mc.playerController.isPlayerRightClickingOnEntity(mc.player, mouse.entityHit, mouse)) {
-			mc.playerController.interactWithEntitySendPacket(mc.player, mouse.entityHit);
-		}
-	}
+    public void unblock() {
+        if (blocking) {
+        	mc.gameSettings.keyBindUseItem.pressed = false;
+        	blocking = false;
+        }
+    }
+    
+    private void interact(MovingObjectPosition mouse) {
+        if (!mc.playerController.isPlayerRightClickingOnEntity(mc.player, mouse.entityHit, mouse)) {
+            mc.playerController.interactWithEntitySendPacket(mc.player, mouse.entityHit);
+        }
+    }
+    
+    public void block(boolean interact) {
+        if (!blocking) {
 
-	private void unblock() {
-		if (blocking) {
-			PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
-			blocking = false;
-		}
-	}
+            MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationHandler.lastRotations, 3);
 
-	private void block(final boolean interact) {
-		if (!blocking) {
-			MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationHandler.lastRotations, 3);
+            if (interact && movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
+                this.interact(movingObjectPosition);
+            }
 
-			if (interact && movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
-				interact(movingObjectPosition);
-			}
-			
-			PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
-
-			blocking = true;
-		}
-	}
+            mc.gameSettings.keyBindUseItem.pressed = true;
+            
+            blocking = true;
+        }
+    }
 }

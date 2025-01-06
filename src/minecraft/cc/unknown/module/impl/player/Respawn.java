@@ -3,9 +3,9 @@ package cc.unknown.module.impl.player;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreUpdateEvent;
+import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.module.impl.Module;
 import cc.unknown.value.impl.BooleanValue;
 
 @ModuleInfo(aliases = "Respawn", description = "Auto Respawn", category = Category.PLAYER)

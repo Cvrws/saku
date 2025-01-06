@@ -1,20 +1,16 @@
-package cc.unknown.util.file.config;
+package cc.unknown.managers;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import cc.unknown.util.file.FileManager;
 import cc.unknown.util.file.FileType;
+import cc.unknown.util.file.config.ConfigFile;
 
-/**
- * @author Patrick
- * @since 10/19/2021
- */
 public class ConfigManager extends ArrayList<ConfigFile> {
 
     public static final File CONFIG_DIRECTORY = new File(FileManager.DIRECTORY, "configs");
 
-    public void init() {
+    public ConfigManager() {
         if (!CONFIG_DIRECTORY.exists()) {
             CONFIG_DIRECTORY.mkdir();
         }

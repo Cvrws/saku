@@ -32,7 +32,7 @@ public class DiscordInfo implements Accessor {
     public String serverAddresses;
     public Map<String, ServerData> serverDataMap = new HashMap<>();
 
-    public void init() {
+    public DiscordInfo() {
         this.timeElapsed = System.currentTimeMillis();
         DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(discordUser -> {
             if (discordUser.userId != null) {

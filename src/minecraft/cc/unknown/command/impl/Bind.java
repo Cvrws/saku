@@ -4,9 +4,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import cc.unknown.Sakura;
-import cc.unknown.bindable.Bindable;
 import cc.unknown.command.Command;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.managers.BindableManager;
+import cc.unknown.util.interfaces.Bindable;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
@@ -20,7 +20,7 @@ public final class Bind extends Command {
     @Override
     public void execute(final String[] args) {
         if (args.length == 3) {
-            final Bindable bindable = getInstance().getBindableManager().get(args[1]);
+            final Bindable bindable = Sakura.instance.getBindableManager().get(args[1]);
 
             if (bindable == null) {
             	error("Invalid module");
@@ -47,7 +47,7 @@ public final class Bind extends Command {
             bindable.setKey(keyCode);
             success("Bound " + bindable.getName() + " to " + (keyCode >= 100 ? "Mouse_" + (keyCode - 100) : Keyboard.getKeyName(keyCode)) + ".");
         } else if (args.length == 2 && args[1].equalsIgnoreCase("list")) {
-            getInstance().getBindableManager().getBinds().forEach(module -> {
+        	getInstance().getBindableManager().getBinds().forEach(module -> {
                 if (module.getKey() != 0) {
                     final String color = getTheme().getChatAccentColor().toString();
                     final String keyName = module.getKey() >= 100 ? "Mouse_" + (module.getKey() - 100) : Keyboard.getKeyName(module.getKey());

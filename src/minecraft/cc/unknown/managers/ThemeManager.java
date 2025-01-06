@@ -1,5 +1,6 @@
-package cc.unknown.ui.theme;
+package cc.unknown.managers;
 
+import cc.unknown.ui.theme.Themes;
 import lombok.Getter;
 import lombok.Setter;
 

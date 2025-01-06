@@ -1,4 +1,4 @@
-package cc.unknown.module;
+package cc.unknown.managers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import cc.unknown.Sakura;
+import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
-import cc.unknown.module.impl.Module;
 import cc.unknown.module.impl.combat.*;
 import cc.unknown.module.impl.exploit.*;
 import cc.unknown.module.impl.ghost.*;
@@ -22,8 +22,9 @@ import cc.unknown.util.structure.AdaptiveMap;
 public final class ModuleManager {
 
     private AdaptiveMap<Class<Module>, Module> moduleMap = new AdaptiveMap<>();
+    private boolean initialized = false;
     
-    public void init() {
+    public ModuleManager() {
         moduleMap = new AdaptiveMap<>();
 
         // Combat
@@ -148,8 +149,8 @@ public final class ModuleManager {
         this.put(UnlimitedChat.class, new UnlimitedChat());
         this.put(ChinaHat.class, new ChinaHat());
 
-        this.getAll().stream().filter(module -> module.getModuleInfo().autoEnabled()).forEach(module -> module.setEnabled(true));
-        Sakura.instance.getEventBus().register(this);
+        //this.getAll().stream().filter(module -> module.getModuleInfo().autoEnabled()).forEach(module -> module.setEnabled(true));
+        //Sakura.instance.getEventBus().register(this);
     }
 
     public ArrayList<Module> getAll() {

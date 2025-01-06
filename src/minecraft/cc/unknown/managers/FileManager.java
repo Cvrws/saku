@@ -1,4 +1,4 @@
-package cc.unknown.util.file;
+package cc.unknown.managers;
 
 import java.io.File;
 
@@ -9,7 +9,7 @@ public class FileManager {
 
     public static final File DIRECTORY = new File(Accessor.mc.mcDataDir, Sakura.NAME);
 
-    public void init() {
+    public FileManager() {
         if (!DIRECTORY.exists()) {
             DIRECTORY.mkdir();
         }

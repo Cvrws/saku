@@ -1,4 +1,4 @@
-package cc.unknown.bindable;
+package cc.unknown.managers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +12,7 @@ import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.KeyboardInputEvent;
 import cc.unknown.event.impl.input.MouseEvent;
+import cc.unknown.util.interfaces.Bindable;
 import net.minecraft.client.Minecraft;
 
 public class BindableManager {

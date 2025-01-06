@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import cc.unknown.Sakura;
 import cc.unknown.command.Command;
-import cc.unknown.script.ScriptManager;
+import cc.unknown.managers.ScriptManager;
 import cc.unknown.util.player.PlayerUtil;
 
 public final class Script extends Command {

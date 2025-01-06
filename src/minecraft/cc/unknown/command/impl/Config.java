@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 import cc.unknown.command.Command;
+import cc.unknown.managers.ConfigManager;
 import cc.unknown.util.file.config.ConfigFile;
-import cc.unknown.util.file.config.ConfigManager;
 import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;

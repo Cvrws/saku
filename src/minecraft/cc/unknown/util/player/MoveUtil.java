@@ -56,6 +56,37 @@ public class MoveUtil implements Accessor {
         return mc.player != null && mc.player.moveForward != 0 || mc.player.moveStrafing != 0;
     }
     
+    public static boolean isMovingStraight() {
+        float direction = getRawDirection() + 180;
+        float movingYaw = Math.round(direction / 45) * 45;
+        return movingYaw % 90 == 0f;
+    }
+    
+    public static float getRawDirection() {
+        return getRawDirectionRotation(mc.player.rotationYaw, mc.player.moveStrafing, mc.player.moveForward);
+    }
+    
+    public static float getRawDirectionRotation(float yaw, float pStrafe, float pForward) {
+        float rotationYaw = yaw;
+
+        if (pForward < 0F)
+            rotationYaw += 180F;
+
+        float forward = 1F;
+        if (pForward < 0F)
+            forward = -0.5F;
+        else if (pForward > 0F)
+            forward = 0.5F;
+
+        if (pStrafe > 0F)
+            rotationYaw -= 90F * forward;
+
+        if (pStrafe < 0F)
+            rotationYaw += 90F * forward;
+
+        return rotationYaw;
+    }
+    
     public boolean isMoving2() {
         return isMoving2(mc.player);
     }

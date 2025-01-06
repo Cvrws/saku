@@ -45,10 +45,11 @@ public class ViaVersionHandler implements Accessor {
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
-			if (PlayerUtil.getItemStack() != null && PlayerUtil.getItemStack().getItem() instanceof ItemSword && (mc.gameSettings.keyBindUseItem.isPressed() || getModule(KillAura.class).blocking)) {
-                PacketWrapper useItem = PacketWrapper.create(29, null, Via.getManager().getConnectionManager().getConnections().iterator().next());
-                useItem.write(Type.VAR_INT, 1);
-                PacketUtil.sendToServer(useItem, Protocol1_8To1_9.class, true, true);
+			if (PlayerUtil.getItemStack() != null && PlayerUtil.getItemStack().getItem() instanceof ItemSword && (mc.gameSettings.keyBindUseItem.isKeyDown() || getModule(KillAura.class).blocking)) {
+	         	mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
+            	PacketWrapper useItem = PacketWrapper.create(29, null, Via.getManager().getConnectionManager().getConnections().iterator().next());
+            	useItem.write(Type.VAR_INT, 1);
+            	com.viaversion.viarewind.utils.PacketUtil.sendToServer(useItem, Protocol1_8To1_9.class, true, true);
 			}
 		}
 	};

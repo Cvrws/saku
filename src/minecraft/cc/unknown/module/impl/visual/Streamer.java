@@ -10,9 +10,9 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.render.RenderTextEvent;
+import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.module.impl.Module;
 import cc.unknown.util.player.FriendUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
@@ -67,7 +67,7 @@ public final class Streamer extends Module {
         String newName = replacement.getValue();
         ChatFormatting color = ranks.get(spoofMode);
         
-        if (text.startsWith("/") || text.startsWith(Sakura.instance.getCommandManager().getPrefix())) {
+        if (text.startsWith("/") || text.startsWith(Sakura.instance.getCommandManager().prefix)) {
             return;
         }
 

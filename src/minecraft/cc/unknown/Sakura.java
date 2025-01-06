@@ -1,5 +1,7 @@
 package cc.unknown;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -10,29 +12,14 @@ import org.lwjgl.opengl.Display;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import cc.unknown.bindable.BindableManager;
-import cc.unknown.command.CommandManager;
 import cc.unknown.event.Event;
 import cc.unknown.event.bus.impl.EventBus;
-import cc.unknown.handlers.AutoJoinHandler;
-import cc.unknown.handlers.ConnectionHandler;
-import cc.unknown.handlers.DragHandler;
-import cc.unknown.handlers.FixHandler;
-import cc.unknown.handlers.NetworkingHandler;
-import cc.unknown.handlers.RotationHandler;
-import cc.unknown.handlers.SinceTickHandler;
-import cc.unknown.handlers.SpoofHandler;
-import cc.unknown.handlers.ViaVersionHandler;
-import cc.unknown.module.ModuleManager;
-import cc.unknown.script.ScriptManager;
+import cc.unknown.handlers.*;
+import cc.unknown.managers.*;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.menu.MainMenu;
-import cc.unknown.ui.theme.ThemeManager;
+import cc.unknown.util.client.CustomLogger;
 import cc.unknown.util.discord.DiscordInfo;
-import cc.unknown.util.file.FileManager;
-import cc.unknown.util.file.config.ConfigManager;
-import cc.unknown.util.file.enemy.EnemyManager;
-import cc.unknown.util.file.friend.FriendManager;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -45,7 +32,7 @@ public class Sakura {
     public static final String VERSION = "5.6";
 
     public static final Sakura instance = new Sakura();
-    public static final Logger LOGGER = LogManager.getLogger(Sakura.class);
+    private static final CustomLogger LOGGER = new CustomLogger(Sakura.class);
     
     private EventBus<Event> eventBus;
     private ModuleManager moduleManager;
@@ -57,14 +44,15 @@ public class Sakura {
     private FriendManager friendManager;
     private EnemyManager enemyManager;
 
-    private ConfigManager configManager;
     private BindableManager bindableManager;
+    private ConfigManager configManager;
     private ScriptManager scriptManager;
     private DiscordInfo discordRP;
     
     private RiceGui clickGui = new RiceGui();
     public boolean firstLogin;
     
+    public static final List<Object> registered = new ArrayList<Object>();
     private final ScheduledExecutorService ex = Executors.newScheduledThreadPool(4);
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     protected Minecraft mc = Minecraft.getInstance();
@@ -80,7 +68,7 @@ public class Sakura {
     	setupDiscordRPC();
         
     	mc.displayGuiScreen(new MainMenu());
-    	LOGGER.info("{} {} initialized successfully.", NAME, VERSION);
+    	LOGGER.info("Initialized successfully.");
     }
 
     public void terminate() {    	
@@ -98,16 +86,22 @@ public class Sakura {
     }
     
     private void initHandler() {
-    	eventBus.register(new ViaVersionHandler());
-    	eventBus.register(new SpoofHandler());
-    	eventBus.register(new AutoJoinHandler());
-    	eventBus.register(new SinceTickHandler());
-    	eventBus.register(new DragHandler());
-    	eventBus.register(new NetworkingHandler());
-    	eventBus.register(new ConnectionHandler());
-    	eventBus.register(new RotationHandler());
-    	eventBus.register(new FixHandler());
-    	LOGGER.info("Event handlers registered.");
+    	LOGGER.info("Handlers initialized.");
+
+    	register(
+    			new ViaVersionHandler(),
+    			new SpoofHandler(),
+    			new AutoJoinHandler(),
+    			new SinceTickHandler(),
+    			new DragHandler(),
+    			new NetworkingHandler(),
+    			new ConnectionHandler(),
+    			new RotationHandler(),
+    			new FixHandler(),
+    			new CommandHandler(),
+    			new TransactionHandler());
+    	
+    	LOGGER.info("Handlers registered.");
     }
     
     private void initVia() {
@@ -118,33 +112,24 @@ public class Sakura {
     
     private void initManagers() {
         moduleManager = new ModuleManager();
-        commandManager = new CommandManager();
         fileManager = new FileManager();
+        commandManager = new CommandManager();
         configManager = new ConfigManager();
         friendManager = new FriendManager();
         enemyManager = new EnemyManager();
         themeManager = new ThemeManager();
         eventBus = new EventBus<>();
-        bindableManager = new BindableManager();
         scriptManager = new ScriptManager();
-
-        fileManager.init();
-        moduleManager.init();
-        scriptManager.init();
-        commandManager.init();
-        friendManager.init();
-        enemyManager.init();
-        configManager.init();
+        bindableManager = new BindableManager();
+        
         bindableManager.init();
         clickGui.initGui();
-        
         LOGGER.info("Managers initialized.");
     }
     
     private void setupDiscordRPC() {
         try {
             discordRP = new DiscordInfo();
-            discordRP.init();
             LOGGER.info("Discord Rich Presence initialized.");
         } catch (Throwable throwable) {
             LOGGER.error("Failed to set up Discord RPC.", throwable);
@@ -162,4 +147,18 @@ public class Sakura {
         mc.gameSettings.useVbo = true;
         mc.gameSettings.guiScale = 2;
     }
+    
+
+	private void register(Object... handlers) {
+	    for (Object handler : handlers) {
+	        try {
+	            registered.add(handler);
+	            eventBus.register(handler);
+	            LOGGER.info(handler.getClass().getSimpleName() + " registered.");
+	        } catch (Exception e) {
+	            LOGGER.error("Failed to register handler: " + handler.getClass().getSimpleName(), e);
+	        }
+	    }
+	}
+
 }

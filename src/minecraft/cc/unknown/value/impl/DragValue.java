@@ -6,7 +6,7 @@ import static cc.unknown.util.render.animation.Easing.LINEAR;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-import cc.unknown.module.impl.Module;
+import cc.unknown.module.Module;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.structure.geometry.Vector2d;
