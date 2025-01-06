@@ -98,7 +98,6 @@ public class Sakura {
     			new ConnectionHandler(),
     			new RotationHandler(),
     			new FixHandler(),
-    			new CommandHandler(),
     			new TransactionHandler());
     	
     	LOGGER.info("Handlers registered.");
@@ -122,7 +121,9 @@ public class Sakura {
         scriptManager = new ScriptManager();
         bindableManager = new BindableManager();
         
+        commandManager.init();
         bindableManager.init();
+        moduleManager.init();
         clickGui.initGui();
         LOGGER.info("Managers initialized.");
     }

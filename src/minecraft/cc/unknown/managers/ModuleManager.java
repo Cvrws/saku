@@ -24,7 +24,7 @@ public final class ModuleManager {
     private AdaptiveMap<Class<Module>, Module> moduleMap = new AdaptiveMap<>();
     private boolean initialized = false;
     
-    public ModuleManager() {
+    public void init() {
         moduleMap = new AdaptiveMap<>();
 
         // Combat
@@ -149,8 +149,8 @@ public final class ModuleManager {
         this.put(UnlimitedChat.class, new UnlimitedChat());
         this.put(ChinaHat.class, new ChinaHat());
 
-        //this.getAll().stream().filter(module -> module.getModuleInfo().autoEnabled()).forEach(module -> module.setEnabled(true));
-        //Sakura.instance.getEventBus().register(this);
+        this.getAll().stream().filter(module -> module.getModuleInfo().autoEnabled()).forEach(module -> module.setEnabled(true));
+        Sakura.instance.getEventBus().register(this);
     }
 
     public ArrayList<Module> getAll() {

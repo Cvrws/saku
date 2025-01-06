@@ -23,7 +23,7 @@ public final class CommandManager {
     public static final List<Command> commandList = new ArrayList<>();
     public static final String prefix = ".";
 
-    public CommandManager() {
+    public void init() {
         this.add(new Bind());
         this.add(new Config());
         this.add(new Friend());
@@ -34,6 +34,8 @@ public final class CommandManager {
         this.add(new Toggle());
         this.add(new Target());
         this.add(new Transaction());
+        
+        Sakura.instance.getEventBus().register(this);
     }
 
     public void add(Command command) {
@@ -43,4 +45,32 @@ public final class CommandManager {
     public <T extends Command> T get(final String name) {
         return (T) this.commandList.stream().filter(command -> Arrays.stream(command.getExpressions()).anyMatch(expression -> expression.equalsIgnoreCase(name))).findAny().orElse(null);
     }
+    
+    @EventLink
+    public final Listener<ChatInputEvent> onChatInput = event -> {
+        String message = event.getMessage();
+
+        if (!message.startsWith(CommandManager.prefix)) return;
+
+        message = message.substring(1);
+        final String[] args = message.split(" ");
+
+        final AtomicBoolean commandFound = new AtomicBoolean(false);
+
+        try {
+        	CommandManager.commandList.stream()
+                    .filter(command ->
+                    Arrays.stream(command.getExpressions())
+                    .anyMatch(expression ->
+                    expression.equalsIgnoreCase(args[0])))
+                    .forEach(command -> {
+                    	commandFound.set(true);
+                        command.execute(args);
+                    });
+        } catch (final Exception ex) {
+            ex.printStackTrace();
+        }
+
+        event.setCancelled();
+    };
 }
