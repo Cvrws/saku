@@ -31,7 +31,7 @@ public class WTap extends Module {
 	private NumberValue delay = new NumberValue("Delay", this, 500, 50, 1000, 10);
 	private NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
 	private NumberValue hurtTime = new NumberValue("HurtTime", this, 10, 1, 10, 10);
-	private BoundsNumberValue hits = new BoundsNumberValue("Hits", this, 1, 2, 0, 10, 1, () -> !isTwo());
+	private BoundsNumberValue hits = new BoundsNumberValue("Hits", this, 1, 2, 0, 10, 1, () -> !mode.is("Normal") && !mode.is("Fast"));
 	private BooleanValue debug = new BooleanValue("Debug", this, false, () -> !isTwo());
 	private BooleanValue onlyGround = new BooleanValue("Only Ground", this, false);
 	private BooleanValue onlyMove = new BooleanValue("Only Move", this, false);

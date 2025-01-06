@@ -119,7 +119,7 @@ public class Breaker extends Module {
             for (int y = -Range.getValue().intValue()+1; y <= Range.getValue().intValue()+1; y++) {
                 for (int z = -Range.getValue().intValue()+1; z <= Range.getValue().intValue()+1; z++) {
                     Block block = PlayerUtil.blockRelativeToPlayer(x, y, z);
-                    if (block instanceof BlockBed) {
+                    if (block instanceof BlockBed || block instanceof BlockDragonEgg) {
                         foundbed = true;
                         bedX = x;
                         bedY = y;
@@ -152,7 +152,7 @@ public class Breaker extends Module {
             for (int i = 0; i < nearblocks.size(); i++) {
                 BlockPos blockPos = nearblocks.get(i);
                 Block block = PlayerUtil.blockRelativeToPlayer(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                if (block instanceof BlockBed) {
+                if (block instanceof BlockBed || block instanceof BlockDragonEgg) {
                     nearblocks.remove(i);
                     nearblocks.add(new BlockPos(blockPos.getX() + 1, blockPos.getY(), blockPos.getZ()));
                     nearblocks.add(new BlockPos(blockPos.getX() - 1, blockPos.getY(), blockPos.getZ()));
@@ -176,7 +176,7 @@ public class Breaker extends Module {
 
                 for (BlockPos blockPos : nearblocks) {
                     Block block = PlayerUtil.blockRelativeToPlayer(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                    if (block.getBlockHardness() < minHardness && !(block instanceof BlockBed)) {
+                    if (block.getBlockHardness() < minHardness && !(block instanceof BlockBed || block instanceof BlockDragonEgg)) {
                         minHardness = block.getBlockHardness();
                         if (damagetoblock <= 0) {
                             blockToBreak = new BlockPos(player.posX + blockPos.getX(), player.posY + blockPos.getY(), player.posZ + blockPos.getZ());
@@ -215,6 +215,12 @@ public class Breaker extends Module {
 
                     PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.STOP_DESTROY_BLOCK, blockToBreak, EnumFacing.DOWN));
                     mc.playerController.onPlayerDestroyBlock(blockToBreak, EnumFacing.UP);
+                }
+                if (damagetoblock >= (PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ()) instanceof BlockDragonEgg ? 1-fastBreakBed.getValue().floatValue() : 1-fastBreakNormal.getValue().floatValue())) {
+                	damagetoblock = 0;
+                	
+                	PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.STOP_DESTROY_BLOCK, blockToBreak, EnumFacing.DOWN));
+                	mc.playerController.onPlayerDestroyBlock(blockToBreak, EnumFacing.UP);
                 }
                 if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
             }

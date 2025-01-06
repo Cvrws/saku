@@ -5,7 +5,8 @@ import static org.apache.commons.lang3.RandomUtils.nextFloat;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.lwjgl.opengl.GL11;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -17,8 +18,10 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.render.ColorUtil;
+import cc.unknown.util.player.rotation.RotationUtil;
 import cc.unknown.util.render.RenderUtil;
+import cc.unknown.util.render.animation.Animation;
+import cc.unknown.util.render.animation.Easing;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
@@ -26,8 +29,6 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
@@ -72,6 +73,9 @@ public final class AimAssist extends Module {
 	private boolean direction;
 	private Random random = new Random();
 	private StopWatch stopWatch = new StopWatch();
+    private @Nullable Animation animationX;
+    private @Nullable Animation animationY;
+    private @Nullable Animation animationZ;
 	
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
@@ -123,50 +127,9 @@ public final class AimAssist extends Module {
 	
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		if (target != null && targetIndicator.getValue()) {
-            GL11.glPushMatrix();
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glDepthMask(false);
-            GlStateManager.disableCull();
-            GL11.glShadeModel(GL11.GL_SMOOTH);
-
-            double x = target.prevPosX + (target.posX - target.prevPosX) * event.getPartialTicks() - mc.getRenderManager().viewerPosX;
-            double y = target.prevPosY + (target.posY - target.prevPosY) * event.getPartialTicks() - mc.getRenderManager().viewerPosY;
-            double z = target.prevPosZ + (target.posZ - target.prevPosZ) * event.getPartialTicks() - mc.getRenderManager().viewerPosZ;
-            double size = (double)(target.width / 2.0F);
-            
-            animation += direction ? -0.02D : 0.02D;
-            if (Math.abs(animation) > target.height / 2.0F) {
-                direction = !direction;
-            }
-            
-            GL11.glPointSize(10.0F);
-            GL11.glTranslated(x, y, z);
-            GL11.glRotatef((mc.player.ticksExisted + event.getPartialTicks()) * 8.0F, 0.0F, 1.0F, 0.0F);
-            GL11.glTranslated(-x, -y, -z);
-            
-            GL11.glBegin(GL11.GL_POINTS);
-            for (double angle = 0.0D; angle <= 360.0D; angle += 40.0D) {
-            	double offsetX = Math.sin(angle * Math.PI / 180.0D) * target.width;
-            	double offsetZ = Math.cos(angle * Math.PI / 180.0D) * target.width;
-            	double pointY = y + animation + target.height / 2.0F;
-            	
-            	RenderUtil.color(ColorUtil.withAlpha(getTheme().getFirstColor(), (int) (255 * 0.25)));
-            	GL11.glVertex3d(x + offsetX, pointY, z + offsetZ);
-            }
-            GL11.glEnd();
-            	
-            GL11.glShadeModel(GL11.GL_FLAT);
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-            GL11.glDisable(GL11.GL_BLEND);
-            GL11.glDepthMask(true);
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GlStateManager.enableCull();
-            GL11.glPopMatrix();
-		}
+        if (targetIndicator.getValue() && target != null && RotationUtil.getDistanceToEntityBox(target) < distance.getValue().doubleValue()) {
+  
+        }
 	};
 	
 	@Override
@@ -202,10 +165,6 @@ public final class AimAssist extends Module {
 	            }
 	            validTargets++;
 	        }
-	    }
-	
-	    if (validTargets == 1) {
-	        //maxAngle.setValue(180);
 	    }
 	
 	    target = potentialTarget;
@@ -265,4 +224,12 @@ public final class AimAssist extends Module {
 	private boolean isYawFov(double fov) {
 		return fov > 1.0D || fov < -1.0D;
 	}
+	
+    private void drawDot(@NotNull Vec3 pos, double size, int color) {
+        double d = size / 2;
+        AxisAlignedBB bbox = new AxisAlignedBB(pos.xCoord - d, pos.yCoord - d, pos.zCoord - d, pos.xCoord + d, pos.yCoord + d, pos.zCoord + d);
+
+        AxisAlignedBB axis = new AxisAlignedBB(bbox.minX - mc.player.posX, bbox.minY - mc.player.posY, bbox.minZ - mc.player.posZ, bbox.maxX - mc.player.posX, bbox.maxY - mc.player.posY, bbox.maxZ - mc.player.posZ);
+        RenderUtil.drawAxisAlignedBB(axis, true, color);
+    }
 }

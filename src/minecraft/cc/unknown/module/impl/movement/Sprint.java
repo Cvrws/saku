@@ -22,7 +22,6 @@ import cc.unknown.value.impl.BooleanValue;
 public class Sprint extends Module {
 
 	public final BooleanValue legit = new BooleanValue("Legit", this, true);
-	private final BooleanValue omniLegit = new BooleanValue("Omni Legit", this, false, () -> !legit.getValue());
 	
     private float forward = 0;
     private float strafe = 0;
@@ -46,35 +45,4 @@ public class Sprint extends Module {
         mc.player.setSprinting(mc.gameSettings.keyBindSprint.isKeyDown());
         mc.player.omniSprint = false;
     }
-
-    @EventLink(value = Priority.HIGH)
-    public final Listener<MoveInputEvent> moveInput = event -> {
-    	if (prevent()) return;
-    	
-    	if (omniLegit.getValue()) {
-	        forward = event.getForward();
-	        strafe = event.getStrafe();
-    	}
-    };
-    
-    @EventLink(value = Priority.LOW)
-    public final Listener<PreUpdateEvent> onPreMotion = event -> {
-    	if (prevent()) return;
-    	
-    	if (omniLegit.getValue()) {
-	        RotationHandler.setRotations(new Vector2f((float) Math.toDegrees(MoveUtil.direction(forward, strafe)), mc.player.rotationPitch),
-	                10, MoveFix.SILENT);
-    	}
-    };
-    
-    private boolean prevent() {
-        KillAura killAura = getModule(KillAura.class);
-        AimAssist aimAssist = getModule(AimAssist.class);
-        boolean isKillAura = killAura.isEnabled() && killAura.target != null;
-        boolean isAimAssist = aimAssist.isEnabled() && aimAssist.target != null;
-        boolean isScaffold = getModule(Scaffold.class).isEnabled();
-
-        return isKillAura || isScaffold || isAimAssist;
-    }
-
 }

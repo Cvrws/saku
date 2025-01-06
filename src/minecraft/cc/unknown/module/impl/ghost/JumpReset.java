@@ -14,6 +14,7 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.player.MoveUtil;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
@@ -48,7 +49,7 @@ public class JumpReset extends Module {
 	    if (!shouldPerformAction(chanceValue, randomFactor)) return;
 	    
 		if (MoveUtil.isMoving() && mc.player.hurtTime > 0 && mc.player.motionY > 0 && (mc.player.ticksSinceVelocity <= 14 || mc.player.onGroundTicks <= 1)) {
-			event.setJump(true);			
+			event.setJump(true);
 		}
 	};
 

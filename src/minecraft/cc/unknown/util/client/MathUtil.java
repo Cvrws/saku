@@ -32,6 +32,10 @@ public class MathUtil {
 		return origin == bound ? origin : ThreadLocalRandom.current().nextDouble(origin, bound);
 	}
 
+	public static double interpolate(double old, double now, float partialTicks) {
+		return old + (now - old) * partialTicks;
+	}
+
 	public double getRandom(double min, double max) {
 		if (min == max) {
 			return min;
@@ -87,7 +91,7 @@ public class MathUtil {
 			return origin + secureRandom.nextDouble() * difference;
 		}
 	}
-	
+
 	public int nextSecureInt(int origin, int bound) {
 		if (origin == bound) {
 			return origin;
@@ -97,46 +101,46 @@ public class MathUtil {
 			return origin + secureRandom.nextInt() * difference;
 		}
 	}
-	
+
 	public long getSafeRandom(long min, long max) {
 		double randomPercent = ThreadLocalRandom.current().nextDouble(0.7, 1.3);
 		long delay = (long) (randomPercent * ThreadLocalRandom.current().nextLong(min, max + 1));
 		return delay;
 	}
-	
+
 	public double getRandomFactor(double chanceValue) {
-	    return Math.abs(Math.sin(System.nanoTime() * Double.doubleToLongBits(chanceValue))) * 100.0;
+		return Math.abs(Math.sin(System.nanoTime() * Double.doubleToLongBits(chanceValue))) * 100.0;
 	}
 
 	public boolean shouldPerformAction(double chanceValue, double randomFactor) {
-	    return chanceValue >= 100.0D || ThreadLocalRandom.current().nextDouble(100.0D + randomFactor) < chanceValue;
+		return chanceValue >= 100.0D || ThreadLocalRandom.current().nextDouble(100.0D + randomFactor) < chanceValue;
 	}
-	
-    public int randomClickDelay(int minCPS, int maxCPS) {
-        return (int) (Math.random() * (1000 / minCPS - 1000 / maxCPS + 1) + 1000 / maxCPS);
-    }
-    
-    public float getAdvancedRandom(float min, float max) {
-        SecureRandom random = new SecureRandom();
 
-        long finalSeed = System.nanoTime();
+	public int randomClickDelay(int minCPS, int maxCPS) {
+		return (int) (Math.random() * (1000 / minCPS - 1000 / maxCPS + 1) + 1000 / maxCPS);
+	}
 
-        for (int i = 0; i < 3; ++i) {
-            long seed = (long) (Math.random() * 1_000_000_000);
+	public float getAdvancedRandom(float min, float max) {
+		SecureRandom random = new SecureRandom();
 
-            seed ^= (seed << 13);
-            seed ^= (seed >>> 17);
-            seed ^= (seed << 15);
+		long finalSeed = System.nanoTime();
 
-            finalSeed += seed;
-        }
+		for (int i = 0; i < 3; ++i) {
+			long seed = (long) (Math.random() * 1_000_000_000);
 
-        random.setSeed(finalSeed);
+			seed ^= (seed << 13);
+			seed ^= (seed >>> 17);
+			seed ^= (seed << 15);
 
-        return random.nextFloat() * (max - min) + min;
-    }
-    
-    public boolean inBetween(double min, double max, double value) {
-        return value >= min && value <= max;
-    }
+			finalSeed += seed;
+		}
+
+		random.setSeed(finalSeed);
+
+		return random.nextFloat() * (max - min) + min;
+	}
+
+	public boolean inBetween(double min, double max, double value) {
+		return value >= min && value <= max;
+	}
 }
