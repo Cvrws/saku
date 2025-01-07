@@ -14,7 +14,7 @@ public enum Category {
     MOVEMENT("Movement", Fonts.ICONS_1.get(17), "b", 0x3, new CategoryScreen()),
     PLAYER("Player", Fonts.ICONS_1.get(17), "c", 0x4, new CategoryScreen()),
     LATENCY("Latency", Fonts.ICONS_2.get(17), "o", 0x5, new CategoryScreen()),
-    GHOST("Ghost", Fonts.ICONS_1.get(17), "f", 0x6, new CategoryScreen()),
+    GHOST("Legit", Fonts.ICONS_1.get(17), "f", 0x6, new CategoryScreen()),
     OTHER("Other", Fonts.ICONS_2.get(17), "c", 0x7, new CategoryScreen()),
     VISUALS("Visuals", Fonts.ICONS_1.get(17), "g", 0x7, new CategoryScreen()),
     WORLD("World", Fonts.ICONS_2.get(17), "h", 0x7, new CategoryScreen()),

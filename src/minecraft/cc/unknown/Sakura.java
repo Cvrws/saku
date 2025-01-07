@@ -19,7 +19,6 @@ import cc.unknown.managers.*;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.menu.MainMenu;
 import cc.unknown.util.client.CustomLogger;
-import cc.unknown.util.discord.DiscordInfo;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -47,11 +46,11 @@ public class Sakura {
     private BindableManager bindableManager;
     private ConfigManager configManager;
     private ScriptManager scriptManager;
-    private DiscordInfo discordRP;
     
-    private RiceGui clickGui = new RiceGui();
+    private RiceGui clickGui;
     public boolean firstLogin;
     
+    private DiscordHandler discordHandler = new DiscordHandler();
     public static final List<Object> registered = new ArrayList<Object>();
     private final ScheduledExecutorService ex = Executors.newScheduledThreadPool(4);
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -76,8 +75,8 @@ public class Sakura {
         	getConfigManager().get("latest").write();
         }
     	
-        if (discordRP != null) {
-            discordRP.stop();
+        if (discordHandler != null) {
+        	discordHandler.stop();
             LOGGER.info("Discord Rich Presence stopped.");
         }
     	
@@ -121,16 +120,20 @@ public class Sakura {
         scriptManager = new ScriptManager();
         bindableManager = new BindableManager();
         
+        scriptManager.init();
         commandManager.init();
         bindableManager.init();
         moduleManager.init();
+        
+        clickGui = new RiceGui();
         clickGui.initGui();
+        
         LOGGER.info("Managers initialized.");
     }
     
     private void setupDiscordRPC() {
         try {
-            discordRP = new DiscordInfo();
+        	discordHandler.init();
             LOGGER.info("Discord Rich Presence initialized.");
         } catch (Throwable throwable) {
             LOGGER.error("Failed to set up Discord RPC.", throwable);

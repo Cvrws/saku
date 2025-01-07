@@ -56,7 +56,7 @@ public class FriendManager {
     }
 
     public List<String> getFriends() {
-        EnemyFile friendFile = Sakura.instance.getEnemyManager().getEnemyFile();        
+        FriendFile friendFile = getFriendFile();        
         if (friendFile.read()) {
             return FriendUtil.getFriends();
         }

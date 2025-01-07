@@ -50,7 +50,7 @@ public class EnemyManager {
     }
 
     public List<String> getEnemy() {
-        EnemyFile enemyFile = Sakura.instance.getEnemyManager().getEnemyFile();        
+        EnemyFile enemyFile = getEnemyFile();        
         if (enemyFile.read()) {
             return EnemyUtil.getEnemy();
         }

@@ -1,4 +1,4 @@
-package cc.unknown.util.discord;
+package cc.unknown.handlers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.util.ResourceLocation;
 
-public class DiscordInfo implements Accessor {
+public class DiscordHandler implements Accessor {
     private boolean running = true;
     private long timeElapsed = 0;
     private String discordUser = "";
@@ -32,7 +32,7 @@ public class DiscordInfo implements Accessor {
     public String serverAddresses;
     public Map<String, ServerData> serverDataMap = new HashMap<>();
 
-    public DiscordInfo() {
+    public void init() {
         this.timeElapsed = System.currentTimeMillis();
         DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(discordUser -> {
         	this.discordUser = discordUser.username;
