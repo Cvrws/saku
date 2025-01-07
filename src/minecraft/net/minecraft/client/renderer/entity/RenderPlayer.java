@@ -40,7 +40,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 		this.addLayer(new LayerDeadmau5Head(this));
 		this.addLayer(new LayerCape(this));
 		this.addLayer(new LayerCustomHead(this.getMainModel().bipedHead));
-		
+
 		CosmeticController.addModels(this);
 	}
 
@@ -58,8 +58,8 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 	 *
 	 * @param entityYaw The yaw rotation of the passed entity
 	 */
-	public void doRender(final AbstractClientPlayer entity, final double x, final double y, final double z,
-			final float entityYaw, final float partialTicks) {
+	public void doRender(AbstractClientPlayer entity, double x, double y, double z, float entityYaw,
+			float partialTicks) {
 		if (!entity.isUser() || this.renderManager.livingPlayer == entity) {
 			double d0 = y;
 

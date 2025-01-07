@@ -2726,15 +2726,10 @@ public abstract class World implements IBlockAccess, Accessor, java.io.Serializa
 		this.unloadedEntityList.addAll(entityCollection);
 	}
 
-	public boolean canBlockBePlaced(final Block blockIn, final BlockPos pos, final boolean p_175716_3_,
-			final EnumFacing side, final Entity entityIn, final ItemStack itemStackIn) {
+	public boolean canBlockBePlaced(final Block blockIn, final BlockPos pos, final boolean p_175716_3_, final EnumFacing side, final Entity entityIn, final ItemStack itemStackIn) {
 		final Block block = this.getBlockState(pos).getBlock();
-		final AxisAlignedBB axisalignedbb = p_175716_3_ ? null
-				: blockIn.getCollisionBoundingBox(this, pos, blockIn.getDefaultState());
-		return (axisalignedbb == null || Minecraft.getInstance().player.noClip
-				|| this.checkNoEntityCollision(axisalignedbb, entityIn))
-				&& (block.getMaterial() == Material.circuits && blockIn == Blocks.anvil
-						|| block.getMaterial().isReplaceable() && blockIn.canReplace(this, pos, side, itemStackIn));
+		final AxisAlignedBB axisalignedbb = p_175716_3_ ? null : blockIn.getCollisionBoundingBox(this, pos, blockIn.getDefaultState());
+		return (axisalignedbb == null || Minecraft.getInstance().player.noClip || this.checkNoEntityCollision(axisalignedbb, entityIn)) && (block.getMaterial() == Material.circuits && blockIn == Blocks.anvil || block.getMaterial().isReplaceable() && blockIn.canReplace(this, pos, side, itemStackIn));
 	}
 
 	public int func_181545_F() {

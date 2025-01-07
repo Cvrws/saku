@@ -225,22 +225,28 @@ public class RenderItemFrame extends Render<EntityItemFrame> {
 		}
 	}
 
-	private boolean isRenderItem(EntityItemFrame p_isRenderItem_1_) {
-		if (Shaders.isShadowPass) {
-			return false;
-		} else {
-			if (!Config.zoomMode) {
-				Entity entity = this.mc.getRenderViewEntity();
-				double d0 = p_isRenderItem_1_.getDistanceSq(entity.posX, entity.posY, entity.posZ);
+    private boolean isRenderItem(EntityItemFrame p_isRenderItem_1_)
+    {
+        if (Shaders.isShadowPass)
+        {
+            return false;
+        }
+        else
+        {
+            if (!Config.zoomMode)
+            {
+                Entity entity = this.mc.getRenderViewEntity();
+                double d0 = p_isRenderItem_1_.getDistanceSq(entity.posX, entity.posY, entity.posZ);
 
-				if (d0 > itemRenderDistanceSq) {
-					return false;
-				}
-			}
+                if (d0 > itemRenderDistanceSq)
+                {
+                    return false;
+                }
+            }
 
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 
 	public static void updateItemRenderDistance() {
 		Minecraft minecraft = Config.getMinecraft();

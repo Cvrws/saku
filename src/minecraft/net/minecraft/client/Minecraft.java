@@ -1624,6 +1624,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			--this.rightClickDelayTimer;
 		}
 
+		this.mcProfiler.startSection("gui");
+
 		if (!this.isGamePaused) {
 			this.ingameGUI.updateTick();
 		}
@@ -1633,6 +1635,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 		if (!this.isGamePaused && this.theWorld != null) {
 			this.playerController.updateController();
+		}
+
+		this.mcProfiler.endStartSection("textures");
+
+		if (!this.isGamePaused) {
+			this.renderEngine.tick();
 		}
 
 		if (this.currentScreen == null && this.player != null) {

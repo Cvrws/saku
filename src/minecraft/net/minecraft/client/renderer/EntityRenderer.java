@@ -744,8 +744,8 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 				final Block block = iblockstate.getBlock();
 
 				if (Reflector.ForgeHooksClient_orientBedCamera.exists()) {
-					Reflector.callVoid(Reflector.ForgeHooksClient_orientBedCamera, this.mc.theWorld, blockpos, iblockstate,
-							entity);
+					Reflector.callVoid(Reflector.ForgeHooksClient_orientBedCamera, this.mc.theWorld, blockpos,
+							iblockstate, entity);
 				} else if (block == Blocks.bed) {
 					final int j = iblockstate.getValue(BlockBed.FACING).getHorizontalIndex();
 					GlStateManager.rotate((float) (j * 90), 0.0F, 1.0F, 0.0F);
@@ -1299,7 +1299,8 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 					GlStateManager.disableLighting();
 					GlStateManager.enableAlpha();
 
-					Sakura.instance.getEventBus().handle(new Render2DEvent(/*mc.scaledResolution*/ new ScaledResolution(mc), partialTicks));
+					Sakura.instance.getEventBus().handle(
+							new Render2DEvent(/* mc.scaledResolution */ new ScaledResolution(mc), partialTicks));
 
 					if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo) {
 						Config.drawFps();
@@ -2103,7 +2104,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 	 * Setup orthogonal projection for rendering GUI screen overlays
 	 */
 	public void setupOverlayRendering() {
-		final ScaledResolution scaledresolution = /*mc.scaledResolution*/ new ScaledResolution(mc);
+		final ScaledResolution scaledresolution = /* mc.scaledResolution */ new ScaledResolution(mc);
 		GlStateManager.clear(256);
 		GlStateManager.matrixMode(5889);
 		GlStateManager.loadIdentity();
