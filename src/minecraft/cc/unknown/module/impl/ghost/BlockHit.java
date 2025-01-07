@@ -9,6 +9,7 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.NumberValue;
 
@@ -28,14 +29,14 @@ public class BlockHit extends Module {
 			return;
 
 		if (block) {
-			if ((stopWatch.hasFinished() || !Mouse.isButtonDown(0)) && duration.getValue().intValue() <= stopWatch.getElapsedTime()) {
+			if (PlayerUtil.isHoldingWeapon() && (stopWatch.hasFinished() || !Mouse.isButtonDown(0)) && duration.getValue().intValue() <= stopWatch.getElapsedTime()) {
 				block = false;
 				mc.gameSettings.keyBindUseItem.pressed = false;
 			}
 			return;
 		}
 
-		if (Mouse.isButtonDown(0) && mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null
+		if (PlayerUtil.isHoldingWeapon() && Mouse.isButtonDown(0) && mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null
 				&& mc.player.getDistanceToEntity(mc.objectMouseOver.entityHit) >= distance.getValue().floatValue()
 				&& mc.objectMouseOver.entityHit != null
 				&& mc.player.getDistanceToEntity(mc.objectMouseOver.entityHit) <= distance.getSecondValue().floatValue()
@@ -43,7 +44,7 @@ public class BlockHit extends Module {
 			block = true;
 			stopWatch.setMillis(duration.getSecondValue().intValue());
 			stopWatch.reset();
-			mc.gameSettings.keyBindUseItem.pressed = true;
+			mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
 		}
 	};
 }

@@ -35,9 +35,7 @@ public class DiscordInfo implements Accessor {
     public DiscordInfo() {
         this.timeElapsed = System.currentTimeMillis();
         DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(discordUser -> {
-            if (discordUser.userId != null) {
-            	this.discordUser = discordUser.username + (discordUser.discriminator.equals("0") ? "" : discordUser.discriminator);
-            }
+        	this.discordUser = discordUser.username;
         }).build();
 
         DiscordRPC.discordInitialize("1305938480802828350", handlers, true);
@@ -48,9 +46,9 @@ public class DiscordInfo implements Accessor {
                     if (mc.player != null) {
                         
                         if (mc.isSingleplayer()) {
-                            update("User: " + discordUser, "in SinglePlayer");
+                            update("", "in SinglePlayer");
                         } else if (fetchAndFindServerData(mc.getCurrentServerData().serverIP)) {
-                        	update("User: " + discordUser, "Cheating on " + serverName);
+                        	update("", "Cheating on " + serverName);
                             
                         } else if (mc.currentScreen instanceof GuiDownloadTerrain) {
                             update("Loading World...", "");

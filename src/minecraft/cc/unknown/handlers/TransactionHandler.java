@@ -30,8 +30,7 @@ public class TransactionHandler implements Accessor {
         
         if (packet instanceof S32PacketConfirmTransaction) {
             final S32PacketConfirmTransaction wrapper = (S32PacketConfirmTransaction) packet;
-            PlayerUtil.displayInClient(yellow + "[" + green + "*" + yellow + "] " + reset + String.format(red + "Transaction " + reset + 
-                    " (ID: %s) (WindowID: %s)", wrapper.actionNumber, wrapper.windowId));
+            PlayerUtil.displayInClient(yellow + "[" + green + "*" + yellow + "] " + reset + String.format(red + "Transaction " + reset + " (ID: %s) (WindowID: %s)", wrapper.actionNumber, wrapper.windowId));
         }
     };
 }
