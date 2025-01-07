@@ -478,7 +478,7 @@ public final class KillAura extends Module {
                 this.interact(movingObjectPosition);
             }
 
-            mc.gameSettings.keyBindUseItem.pressed = true;
+            mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
             
             blocking = true;
         }

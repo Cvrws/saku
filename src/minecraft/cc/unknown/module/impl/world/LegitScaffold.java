@@ -37,6 +37,7 @@ public class LegitScaffold extends Module {
 	private final BooleanValue blocksOnly = new BooleanValue("Blocks Only", this, true);
 	private final BooleanValue backwards = new BooleanValue("Backwards Movement Only", this, true);
 	private final BooleanValue spoof = new BooleanValue("Spoof Slot", this, true);
+	private final BooleanValue hideSneak = new BooleanValue("Hide Sneak Animation", this, false);
 
 	private boolean shouldBridge, isShifting = false;
 	private int lastSlot;
@@ -63,6 +64,10 @@ public class LegitScaffold extends Module {
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (!(mc.currentScreen == null) || !isInGame()) return;
 
+		if (hideSneak.getValue()) {
+			mc.player.hideSneakHeight.reset();
+		}
+		
 		boolean shift = delay.getSecondValue().intValue() > 0;
 
 		if (mc.player.rotationPitch < pitchRange.getValue().floatValue() || mc.player.rotationPitch > pitchRange.getSecondValue().floatValue()) {

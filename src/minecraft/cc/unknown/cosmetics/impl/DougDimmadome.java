@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL11;
 import cc.unknown.cosmetics.CosmeticBase;
 import cc.unknown.cosmetics.CosmeticController;
 import cc.unknown.cosmetics.CosmeticModelBase;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -26,7 +27,7 @@ public class DougDimmadome extends CosmeticBase {
 			float partialTicks, float ageInTicks, float headYaw, float headPitch, float scale) {
 		
 		
-		if (CosmeticController.shouldRenderDougDimmadomeHat(player)) {
+		if (CosmeticController.shouldRenderDougDimmadomeHat(player) && Minecraft.getInstance().player == player) {
 			
 			GlStateManager.pushMatrix();
 			playerRenderer.bindTexture(new ResourceLocation("sakura/cosmes/DougDimmadomeHat.png"));

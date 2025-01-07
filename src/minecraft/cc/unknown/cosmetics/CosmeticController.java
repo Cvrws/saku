@@ -27,6 +27,12 @@ public class CosmeticController {
                 return cosmetics.whiterPet.getValue();
             case "Dog Pet":
             	return cosmetics.dogPet.getValue();
+            case "Bandana":
+            	return cosmetics.bandana.getValue();
+            case "Galaxy Wings":
+            	return cosmetics.galaxyWings.getValue();
+            case "Witch Hat":
+            	return cosmetics.witchHat.getValue();
             default:
                 return false;
         }
@@ -44,8 +50,20 @@ public class CosmeticController {
         return shouldRenderCosmetic("Whiter Pet");
     }
     
+    public static boolean shouldRenderBandana(AbstractClientPlayer player) {
+    	return shouldRenderCosmetic("Bandana");
+    }
+    
     public static boolean shouldRenderDogPet(AbstractClientPlayer player) {
     	return shouldRenderCosmetic("Dog Pet");
+    }
+    
+    public static boolean shouldRenderGalaxyWings(AbstractClientPlayer player) {
+    	return shouldRenderCosmetic("Galaxy Wings");
+    }
+    
+    public static boolean shouldRenderWitchHat(AbstractClientPlayer player) {
+    	return shouldRenderCosmetic("Witch Hat");
     }
     
     public static float[] getTophatColor(AbstractClientPlayer player) {
@@ -57,5 +75,8 @@ public class CosmeticController {
 		renderPlayer.addLayer(new Tophat(renderPlayer));
 		renderPlayer.addLayer(new WhiterPet(renderPlayer));
 		renderPlayer.addLayer(new DogPet(renderPlayer));
+		renderPlayer.addLayer(new Bandana(renderPlayer));
+		renderPlayer.addLayer(new GalaxyWings(renderPlayer));
+		renderPlayer.addLayer(new WitchHat(renderPlayer));
 	}
 }

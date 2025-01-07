@@ -15,5 +15,8 @@ public final class Cosmetics extends Module {
 	
 	public final BooleanValue whiterPet = new BooleanValue("Whiter Pet", this, false);
 	public final BooleanValue dogPet = new BooleanValue("Dog Pet", this, false);
+	public final BooleanValue bandana = new BooleanValue("Bandana", this, false);
+	public final BooleanValue galaxyWings = new BooleanValue("Galaxy Wings", this, false);
+	public final BooleanValue witchHat = new BooleanValue("Witch Hat", this, false);
 	
 }

@@ -54,7 +54,7 @@ public final class ScriptManager implements Accessor {
     private final List<Script> scripts = new ArrayList<>();
     
     public void init() {
-        this.unloadScripts();
+        //this.unloadScripts();
 
         this.engineFactory = new NashornScriptEngineFactory();
 

@@ -35,19 +35,21 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
-public class ViaVersionHandler implements Accessor {
+public class ViaHandler implements Accessor {
 	
+    private boolean lastGround;
+
 	/*
 	 * Block Fix
 	 */
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
-			if (PlayerUtil.getItemStack() != null && PlayerUtil.getItemStack().getItem() instanceof ItemSword && (mc.gameSettings.keyBindUseItem.isKeyDown() || getModule(KillAura.class).blocking)) {
-	         	mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
-            	PacketWrapper useItem = PacketWrapper.create(29, null, Via.getManager().getConnectionManager().getConnections().iterator().next());
-            	useItem.write(Type.VAR_INT, 1);
-            	com.viaversion.viarewind.utils.PacketUtil.sendToServer(useItem, Protocol1_8To1_9.class, true, true);
+			if (PlayerUtil.getItemStack() != null
+					&& PlayerUtil.getItemStack().getItem() instanceof ItemSword && (mc.gameSettings.keyBindUseItem.isPressed() || getModule(KillAura.class).blocking)) {
+                PacketWrapper useItem = PacketWrapper.create(29, null, Via.getManager().getConnectionManager().getConnections().iterator().next());
+                useItem.write(Type.VAR_INT, 1);
+                PacketUtil.sendToServer(useItem, Protocol1_8To1_9.class, true, true);
 			}
 		}
 	};
@@ -57,7 +59,7 @@ public class ViaVersionHandler implements Accessor {
 	 */
     @EventLink(value = Priority.VERY_LOW)
     public final Listener<PacketSendEvent> onSend = event -> {
-        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
+        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_11)) {
             final Packet<?> packet = event.getPacket();
             if (packet instanceof C08PacketPlayerBlockPlacement) {
                 ((C08PacketPlayerBlockPlacement) packet).facingX = 0.5F;
@@ -66,7 +68,19 @@ public class ViaVersionHandler implements Accessor {
             }
         }
     };
-
+    
+    /*
+     * Bounding Box Fix
+     */
+    @EventLink
+    public final Listener<PreUpdateEvent> onPreUpdate = event -> {
+        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
+            mc.player.setEntityBoundingBox(new AxisAlignedBB(mc.player.posX - 0.3, mc.player.posY,
+                    mc.player.posZ - 0.3, mc.player.posX + 0.3, mc.player.posY + 1.8,
+                    mc.player.posZ + 0.3));
+        }
+    };
+    
     /*
      * Ladder Fix
      */
@@ -84,26 +98,48 @@ public class ViaVersionHandler implements Accessor {
 
                     switch (iblockstate.getValue(BlockLadder.FACING)) {
                         case NORTH:
-                            event.setBoundingBox(new AxisAlignedBB(0.0F, 0.0F, 1.0F - f, 1.0F, 1.0F, 1.0F).offset(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+                            event.setBoundingBox(new AxisAlignedBB(0.0F, 0.0F, 1.0F - f, 1.0F, 1.0F, 1.0F)
+                                    .offset(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
                             break;
 
                         case SOUTH:
-                            event.setBoundingBox(new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, f).offset(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+                            event.setBoundingBox(new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, f)
+                                    .offset(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
                             break;
 
                         case WEST:
-                            event.setBoundingBox(new AxisAlignedBB(1.0F - f, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F).offset(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+                            event.setBoundingBox(new AxisAlignedBB(1.0F - f, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F)
+                                    .offset(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
                             break;
 
                         case EAST:
                         default:
-                            event.setBoundingBox(new AxisAlignedBB(0.0F, 0.0F, 0.0F, f, 1.0F, 1.0F).offset(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+                            event.setBoundingBox(new AxisAlignedBB(0.0F, 0.0F, 0.0F, f, 1.0F, 1.0F)
+                                    .offset(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
                     }
                 }
             }
         }
     };
+    
+    /*
+     * Friction Fix
+     */
+    @EventLink(value = Priority.LOW)
+    public final Listener<PreStrafeEvent> onStrafe = event -> {
+        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_17)) {
+            if (!mc.player.isPotionActive(Potion.moveSpeed)) return;
 
+            float[][] friction = {new float[]{0.11999998f, 0.15599997f}, new float[]{0.13999997f, 0.18199998f}};
+
+            int speed = Math.min(mc.player.getActivePotionEffect(Potion.moveSpeed).getAmplifier(), 1);
+            boolean ground = mc.player.onGround;
+            boolean sprinting = mc.player.isSprinting();
+
+            if (ground) event.setFriction(friction[speed][sprinting ? 1 : 0]);
+        }
+    };
+    
     /*
      * Motion Fix
      */

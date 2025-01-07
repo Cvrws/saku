@@ -85,9 +85,9 @@ public abstract class AbstractClientPlayer extends EntityPlayer {
 	public ResourceLocation getLocationSkin() {
 		Cosmetics cosmetics = Sakura.instance.getModuleManager().get(Cosmetics.class);
 
-		if (cosmetics.doug.getValue() && cosmetics.isEnabled()) {
+		/*if (cosmetics.doug.getValue() && cosmetics.isEnabled()) {
 			return new ResourceLocation("sakura/skins/doug_dimmadome.png");
-		}
+		}*/
 
 		/*if (skinChanger.isEnabled() && !skinChanger.text.getValue().isEmpty()) {
 			return skinChanger.setSkin(this);

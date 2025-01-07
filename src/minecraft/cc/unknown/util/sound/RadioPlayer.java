@@ -23,7 +23,7 @@ public class RadioPlayer {
     private final StopWatch timer = new StopWatch();
 
     public void start(final String url) {
-        if (this.timer.finished(50L)) {
+        if (this.timer.finished(5L)) {
             (this.thread = new Thread(() -> {
                 try {
                     SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -38,7 +38,7 @@ public class RadioPlayer {
 
                     this.player.play();
                 } catch (JavaLayerException | NoSuchAlgorithmException | KeyManagementException e2) {
-                    e2.printStackTrace();
+                	
                 }
             })).start();
             this.timer.reset();

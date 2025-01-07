@@ -24,6 +24,8 @@ public final class Chams extends Module {
         if (event.getEntity() instanceof EntityPlayer && event.getEntity() != mc.player) {
             GL11.glEnable(32823);
             GL11.glPolygonOffset(1.0F, -1100000.0F);
+			RenderHelper.disableStandardItemLighting();
+			mc.entityRenderer.disableLightmap();
         }
 	};
 	
@@ -44,6 +46,11 @@ public final class Chams extends Module {
 			Color color = new Color(0);
 			if (color.getAlpha() <= 0) continue;
 	
+			if (player == mc.player) {
+				RenderHelper.disableStandardItemLighting();
+				mc.entityRenderer.disableLightmap();
+			}
+			
 			double x = player.prevPosX + (player.posX - player.prevPosX) * partialTicks - renderPosX;
 			double y = player.prevPosY + (player.posY - player.prevPosY) * partialTicks - renderPosY;
 			double z = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks - renderPosZ;
@@ -63,6 +70,8 @@ public final class Chams extends Module {
     	if (event.getEntity() instanceof EntityPlayer && event.getEntity() != mc.player) {
             GL11.glDisable(32823);
             GL11.glPolygonOffset(1.0F, 1100000.0F);
+			RenderHelper.disableStandardItemLighting();
+			mc.entityRenderer.disableLightmap();
         }
     };
 }

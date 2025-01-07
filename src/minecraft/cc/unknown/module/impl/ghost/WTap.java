@@ -8,6 +8,7 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.MoveUtil;
@@ -73,6 +74,8 @@ public class WTap extends Module {
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreUpdate = event -> {
+		if (getModule(Scaffold.class).isEnabled()) return;
+		
 	    if (ticks == hits.getSecondValue().intValue()) {
 	        switch (mode.getValue().getName()) {
 	            case "Normal":

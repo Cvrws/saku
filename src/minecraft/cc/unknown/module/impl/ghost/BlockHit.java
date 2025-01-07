@@ -2,16 +2,30 @@ package cc.unknown.module.impl.ghost;
 
 import org.lwjgl.input.Mouse;
 
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.player.PostMotionEvent;
+import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.event.impl.player.SlowDownEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.NumberValue;
+import de.florianmichael.vialoadingbase.ViaLoadingBase;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemBucketMilk;
+import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemPotion;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.network.play.client.C09PacketHeldItemChange;
 
 @ModuleInfo(aliases = "Block Hit", description = "Block hitea automáticamente", category = Category.GHOST)
 public class BlockHit extends Module {
@@ -25,8 +39,9 @@ public class BlockHit extends Module {
 
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		if (!isInGame())
-			return;
+		if (!isInGame()) return;
+		
+		if (mc.currentScreen != null) return;
 
 		if (block) {
 			if (PlayerUtil.isHoldingWeapon() && (stopWatch.hasFinished() || !Mouse.isButtonDown(0)) && duration.getValue().intValue() <= stopWatch.getElapsedTime()) {
@@ -44,7 +59,46 @@ public class BlockHit extends Module {
 			block = true;
 			stopWatch.setMillis(duration.getSecondValue().intValue());
 			stopWatch.reset();
-			mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
+			
+			 if (ViaLoadingBase.getInstance().getTargetVersion().isEqualTo(ProtocolVersion.v1_9)) {
+				 mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
+			 } else {
+				 mc.gameSettings.keyBindUseItem.pressed = true;
+			 }
 		}
+	};
+	
+	@EventLink
+	public final Listener<SlowDownEvent> onSlowDown = event -> {
+		if (!isInGame()) return;
+	    ItemStack item = PlayerUtil.getItemStack();
+		
+	    if (item == null) return;
+		
+		 if (ViaLoadingBase.getInstance().getTargetVersion().isEqualTo(ProtocolVersion.v1_9)) {
+			if (item != null && (mc.player.moveForward != 0.0F || mc.player.moveStrafing != 0.0F)) {
+				if ((item.getItem() instanceof ItemSword)) {
+					event.setSprint(true);
+					event.setForwardMultiplier(1f);
+					event.setStrafeMultiplier(1f);
+				}
+			}
+		 }
+	};
+
+	@EventLink
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
+	    if (!isInGame()) return;
+	    ItemStack item = PlayerUtil.getItemStack();
+	    if (item == null) return;
+	    
+        if (mc.player.getItemInUseDuration() == 1) {
+			if (item.getItem() instanceof ItemSword) {
+				if (ViaLoadingBase.getInstance().getTargetVersion().isEqualTo(ProtocolVersion.v1_9)) {
+					PacketUtil.send(new C09PacketHeldItemChange((mc.player.inventory.currentItem + 1) % 3));
+					PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
+				}
+			}
+        }
 	};
 }

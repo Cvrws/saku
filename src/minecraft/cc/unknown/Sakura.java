@@ -88,7 +88,7 @@ public class Sakura {
     	LOGGER.info("Handlers initialized.");
 
     	register(
-    			new ViaVersionHandler(),
+    			new ViaHandler(),
     			new SpoofHandler(),
     			new AutoJoinHandler(),
     			new SinceTickHandler(),
