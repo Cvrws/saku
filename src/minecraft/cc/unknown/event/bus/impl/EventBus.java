@@ -20,7 +20,7 @@ import cc.unknown.event.impl.other.GameEvent;
 import cc.unknown.event.impl.other.ServerJoinEvent;
 import cc.unknown.event.impl.other.ServerKickEvent;
 import cc.unknown.event.impl.other.WorldChangeEvent;
-import cc.unknown.module.impl.movement.Sprint;
+import cc.unknown.module.impl.move.Sprint;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.player.PlayerUtil;
 

@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.exploit;
+package cc.unknown.module.impl.other;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -13,7 +13,7 @@ import cc.unknown.value.impl.StringValue;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 
-@ModuleInfo(aliases = "Chat Bypass", description = "Evita la censura en el chat.", category = Category.EXPLOIT)
+@ModuleInfo(aliases = "Chat Bypass", description = "Evita la censura en el chat.", category = Category.OTHER)
 public final class ChatBypass extends Module {
 		
 	@EventLink

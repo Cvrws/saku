@@ -9,7 +9,7 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.ghost.AimAssist;
-import cc.unknown.module.impl.movement.Stuck;
+import cc.unknown.module.impl.move.Stuck;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.value.impl.ModeValue;

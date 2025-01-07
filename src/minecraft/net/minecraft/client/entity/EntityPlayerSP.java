@@ -10,7 +10,7 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.player.PushOutOfBlockEvent;
 import cc.unknown.event.impl.player.SlowDownEvent;
-import cc.unknown.module.impl.movement.Sprint;
+import cc.unknown.module.impl.move.Sprint;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.structure.geometry.Vector2f;
 import net.minecraft.client.Minecraft;

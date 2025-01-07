@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.movement;
+package cc.unknown.module.impl.move;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;

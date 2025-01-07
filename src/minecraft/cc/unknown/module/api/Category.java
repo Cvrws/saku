@@ -17,7 +17,6 @@ public enum Category {
     GHOST("Ghost", Fonts.ICONS_1.get(17), "f", 0x6, new CategoryScreen()),
     OTHER("Other", Fonts.ICONS_2.get(17), "c", 0x7, new CategoryScreen()),
     VISUALS("Visuals", Fonts.ICONS_1.get(17), "g", 0x7, new CategoryScreen()),
-    EXPLOIT("Exploit", Fonts.ICONS_2.get(17), "f", 0x7, new CategoryScreen()),
     WORLD("World", Fonts.ICONS_2.get(17), "h", 0x7, new CategoryScreen()),
     THEME("Themes", Fonts.ICONS_2.get(17), "m", 0x7, new ThemeScreen()),
     CONFIG("Configs", Fonts.ICONS_2.get(17), "m", 0xA, new ConfigScreen()),

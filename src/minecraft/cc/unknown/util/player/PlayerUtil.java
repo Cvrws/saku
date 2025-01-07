@@ -13,7 +13,7 @@ import org.lwjgl.input.Mouse;
 import cc.unknown.Sakura;
 import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.impl.ghost.AutoClicker;
-import cc.unknown.module.impl.movement.Sprint;
+import cc.unknown.module.impl.move.Sprint;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.netty.PacketUtil;

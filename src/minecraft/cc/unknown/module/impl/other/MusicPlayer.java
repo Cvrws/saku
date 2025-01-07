@@ -43,6 +43,18 @@ public class MusicPlayer extends Module {
     private List<File> musicFiles;
     private volatile AdvancedPlayer player;
     private final RadioPlayer radio = new RadioPlayer();
+    
+    @Override
+    public void onEnable() {
+    	started = true;
+    }
+
+    @Override
+    public void onDisable() {   
+        stopMusic();
+        stopLocal();
+        started = false;
+    }
 
     @EventLink(value = Priority.EXTREMELY_HIGH)
     public final Listener<TickEvent> onTick = event -> {
@@ -61,18 +73,6 @@ public class MusicPlayer extends Module {
             started = false;
         }
     };
-    
-    @Override
-    public void onEnable() {
-    	started = true;
-    }
-
-    @Override
-    public void onDisable() {   
-        stopMusic();
-        stopLocal();
-        started = false;
-    }
     
     private void playLocal(File musicFile) {
     	Runnable musicRunnable = () -> {

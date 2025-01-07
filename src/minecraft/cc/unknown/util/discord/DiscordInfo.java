@@ -27,7 +27,7 @@ import net.minecraft.util.ResourceLocation;
 public class DiscordInfo implements Accessor {
     private boolean running = true;
     private long timeElapsed = 0;
-    private String detectUser = "";
+    private String discordUser = "";
     public String serverName;
     public String serverAddresses;
     public Map<String, ServerData> serverDataMap = new HashMap<>();
@@ -36,7 +36,7 @@ public class DiscordInfo implements Accessor {
         this.timeElapsed = System.currentTimeMillis();
         DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(discordUser -> {
             if (discordUser.userId != null) {
-            	detectUser = discordUser.username + (discordUser.discriminator.equals("0") ? "" : discordUser.discriminator);
+            	this.discordUser = discordUser.username + (discordUser.discriminator.equals("0") ? "" : discordUser.discriminator);
             }
         }).build();
 
@@ -48,9 +48,9 @@ public class DiscordInfo implements Accessor {
                     if (mc.player != null) {
                         
                         if (mc.isSingleplayer()) {
-                            update("User: " + detectUser, "in SinglePlayer");
+                            update("User: " + discordUser, "in SinglePlayer");
                         } else if (fetchAndFindServerData(mc.getCurrentServerData().serverIP)) {
-                        	update("User: " + detectUser, "Playing on " + serverName);
+                        	update("User: " + discordUser, "Cheating on " + serverName);
                             
                         } else if (mc.currentScreen instanceof GuiDownloadTerrain) {
                             update("Loading World...", "");

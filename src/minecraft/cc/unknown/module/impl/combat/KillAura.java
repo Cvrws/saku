@@ -390,17 +390,21 @@ public final class KillAura extends Module {
 			}
 
 			event.setCancelled();
+		} else {
+			event.setCancelled();
 		}
 	};
 
 	@EventLink
 	public final Listener<HitSlowDownEvent> onHitSlowDown = event -> {
-		if (keepSprint.getValue() && mc.player.hurtTime > 0) {
-			event.setSlowDown(this.defMotion.getValue().doubleValue());
-			event.setSprint(this.defCheck.getValue());
-		} else {
-			event.setSlowDown(this.offeMotion.getValue().doubleValue());
-			event.setSprint(this.offeCheck.getValue());
+		if (keepSprint.getValue()) {
+			if (mc.player.hurtTime > 0) {
+				event.setSlowDown(this.defMotion.getValue().doubleValue());
+				event.setSprint(this.defCheck.getValue());
+			} else {
+				event.setSlowDown(this.offeMotion.getValue().doubleValue());
+				event.setSprint(this.offeCheck.getValue());
+			}
 		}
 	};
 

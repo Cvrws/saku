@@ -1,6 +1,7 @@
 package net.minecraft.client.renderer.entity;
 
 import cc.unknown.Sakura;
+import cc.unknown.cosmetics.CosmeticController;
 import cc.unknown.module.impl.combat.KillAura;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -39,6 +40,8 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 		this.addLayer(new LayerDeadmau5Head(this));
 		this.addLayer(new LayerCape(this));
 		this.addLayer(new LayerCustomHead(this.getMainModel().bipedHead));
+		
+		CosmeticController.addModels(this);
 	}
 
 	public ModelPlayer getMainModel() {

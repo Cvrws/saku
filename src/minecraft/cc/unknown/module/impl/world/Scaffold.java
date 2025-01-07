@@ -20,7 +20,7 @@ import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.module.impl.movement.Speed;
+import cc.unknown.module.impl.move.Speed;
 import cc.unknown.module.impl.world.scaffold.sprint.BypassSprint;
 import cc.unknown.module.impl.world.scaffold.sprint.DisabledSprint;
 import cc.unknown.module.impl.world.scaffold.sprint.LegitSprint;

@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.movement;
+package cc.unknown.module.impl.move;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 

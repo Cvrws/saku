@@ -18,7 +18,7 @@ import cc.unknown.value.impl.NumberValue;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 
-@ModuleInfo(aliases = "Perfect Criticals", description = "Obtén criticos perfectos utilizando la latencia", category = Category.LATENCY)
+@ModuleInfo(aliases = "Perfect Criticals", description = "Obtén criticos perfectos utilizando lag", category = Category.LATENCY)
 public class PerfectCriticals extends Module {
 	
 	private NumberValue delay = new NumberValue("Delay", this, 120, 10, 500, 10);

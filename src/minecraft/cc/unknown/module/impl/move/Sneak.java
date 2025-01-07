@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.movement;
+package cc.unknown.module.impl.move;
 
 import static net.minecraft.network.play.client.C0BPacketEntityAction.Action.START_SNEAKING;
 import static net.minecraft.network.play.client.C0BPacketEntityAction.Action.STOP_SNEAKING;

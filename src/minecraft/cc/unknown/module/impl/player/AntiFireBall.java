@@ -36,8 +36,6 @@ public class AntiFireBall extends Module {
 
     @EventLink(value = Priority.VERY_HIGH)
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-        if (getModule(Scaffold.class).isEnabled() || mc.player.getHeldItem().getItem() instanceof ItemFireball)
-            return;
         
         for (Entity entity : mc.theWorld.loadedEntityList) {
             if (entity instanceof EntityFireball && entity.getDistanceToEntity(mc.player) < range.getValue().floatValue()) {

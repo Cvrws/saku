@@ -46,7 +46,6 @@ public final class HUD extends Module {
     public final BooleanValue hideVisuals = new BooleanValue("Hide Visuals", this, true, () -> !renderCategories.getValue());
     public final BooleanValue hideMovement = new BooleanValue("Hide Movement", this, false, () -> !renderCategories.getValue());
     public final BooleanValue hideGhost = new BooleanValue("Hide Ghost", this, false, () -> !renderCategories.getValue());
-    public final BooleanValue hideExploit = new BooleanValue("Hide Exploit", this, false, () -> !renderCategories.getValue());
     public final BooleanValue hideLatency = new BooleanValue("Hide Latency", this, false, () -> !renderCategories.getValue());
     public final BooleanValue hideOther = new BooleanValue("Hide Other", this, false, () -> !renderCategories.getValue());
     public final BooleanValue hidePlayer = new BooleanValue("Hide Player", this, false, () -> !renderCategories.getValue());

@@ -17,7 +17,7 @@ import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.network.play.server.S27PacketExplosion;
 
-@ModuleInfo(aliases = "Velocity", description = "Te vuelve un gordito come hamburguesas haciendo que no tengas kb.", category = Category.COMBAT)
+@ModuleInfo(aliases = "Velocity", description = "Modifica tu kb (Only Hypixel).", category = Category.COMBAT)
 public final class Velocity extends Module {
 
 	private final NumberValue vertical = new NumberValue("Vertical", this, 90, 0, 100, 1);

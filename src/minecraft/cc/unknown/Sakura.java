@@ -32,7 +32,7 @@ public class Sakura {
     public static final String VERSION = "5.6";
 
     public static final Sakura instance = new Sakura();
-    private static final CustomLogger LOGGER = new CustomLogger(Sakura.class);
+    public static final CustomLogger LOGGER = new CustomLogger(Sakura.class);
     
     private EventBus<Event> eventBus;
     private ModuleManager moduleManager;

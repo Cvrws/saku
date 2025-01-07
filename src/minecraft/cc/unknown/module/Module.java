@@ -173,7 +173,6 @@ public abstract class Module implements Accessor, Toggleable, Bindable {
         visibility.put(Category.OTHER, instance.hideOther.getValue());
         visibility.put(Category.PLAYER, instance.hidePlayer.getValue());
         visibility.put(Category.WORLD, instance.hideWorld.getValue());
-        visibility.put(Category.EXPLOIT, instance.hideExploit.getValue());
 
         Category currentCategory = this.getModuleInfo().category();
         if (visibility.getOrDefault(currentCategory, false)) {

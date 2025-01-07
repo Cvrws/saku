@@ -9,10 +9,9 @@ import cc.unknown.Sakura;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.impl.combat.*;
-import cc.unknown.module.impl.exploit.*;
 import cc.unknown.module.impl.ghost.*;
 import cc.unknown.module.impl.latency.*;
-import cc.unknown.module.impl.movement.*;
+import cc.unknown.module.impl.move.*;
 import cc.unknown.module.impl.other.*;
 import cc.unknown.module.impl.player.*;
 import cc.unknown.module.impl.visual.*;
@@ -148,6 +147,8 @@ public final class ModuleManager {
         this.put(Tracers.class, new Tracers());
         this.put(UnlimitedChat.class, new UnlimitedChat());
         this.put(ChinaHat.class, new ChinaHat());
+        this.put(PointerESP.class, new PointerESP());
+        this.put(Cosmetics.class, new Cosmetics());
 
         this.getAll().stream().filter(module -> module.getModuleInfo().autoEnabled()).forEach(module -> module.setEnabled(true));
         Sakura.instance.getEventBus().register(this);

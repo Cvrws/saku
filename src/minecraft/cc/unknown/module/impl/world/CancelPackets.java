@@ -1,4 +1,4 @@
-package cc.unknown.module.impl.exploit;
+package cc.unknown.module.impl.world;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.INetHandlerPlayServer;
 
-@ModuleInfo(aliases = "Cancel Packets", description = "Cancela los datos del cliente/servidor", category = Category.LATENCY)
+@ModuleInfo(aliases = "Cancel Packets", description = "Cancela los datos del cliente/servidor", category = Category.WORLD)
 public class CancelPackets extends Module {
     
     private final ModeValue mode = new ModeValue("Mode", this)

@@ -67,15 +67,11 @@ public final class AimAssist extends Module {
 	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !lineOfSightCheck.getValue());
 	private final BooleanValue disableAimWhileBreakingBlock = new BooleanValue("Check Block Break", this, false);
 	private final BooleanValue weaponOnly = new BooleanValue("Weapons Only", this, false);
-	private final BooleanValue targetIndicator = new BooleanValue("Target Indicator", this, false);
 	public EntityPlayer target;
 	private double animation;
 	private boolean direction;
 	private Random random = new Random();
 	private StopWatch stopWatch = new StopWatch();
-    private @Nullable Animation animationX;
-    private @Nullable Animation animationY;
-    private @Nullable Animation animationZ;
 	
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
@@ -124,14 +120,7 @@ public final class AimAssist extends Module {
 			}
         }
 	};
-	
-	@EventLink
-	public final Listener<Render3DEvent> onRender3D = event -> {
-        if (targetIndicator.getValue() && target != null && RotationUtil.getDistanceToEntityBox(target) < distance.getValue().doubleValue()) {
-  
-        }
-	};
-	
+
 	@Override
 	public void onDisable() {
 		target = null;
