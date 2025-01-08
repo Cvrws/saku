@@ -3,19 +3,11 @@ package cc.unknown.module.impl.combat;
 import java.util.Comparator;
 import java.util.List;
 
-import com.viaversion.viarewind.protocol.protocol1_8to1_9.Protocol1_8To1_9;
-import com.viaversion.viaversion.api.Via;
-import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
-import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
-import com.viaversion.viaversion.api.type.Type;
-import com.viaversion.viaversion.protocols.protocol1_9to1_8.Protocol1_9To1_8;
-
 import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.RightClickEvent;
-import cc.unknown.event.impl.other.GameEvent;
 import cc.unknown.event.impl.other.WorldChangeEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.HitSlowDownEvent;
@@ -34,6 +26,7 @@ import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.util.player.TargetUtil;
 import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.util.player.rotation.RotationUtil;
+import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.structure.EvictingList;
 import cc.unknown.util.structure.geometry.Vector2f;
 import cc.unknown.value.impl.BooleanValue;
@@ -43,18 +36,17 @@ import cc.unknown.value.impl.ListValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
-import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import de.florianmichael.viamcp.fixes.AttackOrder;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemHoe;
+import net.minecraft.item.ItemPickaxe;
+import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemSword;
-import net.minecraft.network.play.client.C02PacketUseEntity;
-import net.minecraft.network.play.client.C07PacketPlayerDigging;
-import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
-import net.minecraft.network.play.client.C0APacketAnimation;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.network.play.client.C09PacketHeldItemChange;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.Vec3;
@@ -73,6 +65,7 @@ public final class KillAura extends Module {
 			.add(new SubMode("Fake"))
 			.add(new SubMode("Vanilla ReBlock"))
 			.add(new SubMode("Post"))
+			.add(new SubMode("New NCP"))
 			.setDefault("Vanilla ReBlock");
 	
 	private final BooleanValue rightClickOnly = new BooleanValue("Right Click Only", this, false, () -> autoBlock.is("Fake"));
@@ -86,6 +79,12 @@ public final class KillAura extends Module {
 			.add(new SubMode("Fov"))
 			.setDefault("Distance");
 
+    private final ModeValue clickMode = new ModeValue("Click Delay", this)
+            .add(new SubMode("None"))
+            .add(new SubMode("1.9+"))
+            .add(new SubMode("1.9+ With 1.8 Animations"))
+            .setDefault("None");
+	
 	public final NumberValue range = new NumberValue("Range", this, 3, 3, 6, 0.1);
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 10, 15, 1, 20, 1);
 	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 0, 2, 0.1);
@@ -134,7 +133,6 @@ public final class KillAura extends Module {
 	private int expandRange;
 	private int blockTicks;
 	private int switchTicks;
-	private int hitTicks;
 	private boolean resetting;
 
 	private final EvictingList<EntityLivingBase> pastTargets = new EvictingList<>(9);
@@ -250,7 +248,6 @@ public final class KillAura extends Module {
 		}
 		
 		this.attack = Math.max(Math.min(this.attack, this.attack - 2), 0);
-		this.hitTicks++;
 
 		/*
 		 * Heuristic fix
@@ -325,12 +322,81 @@ public final class KillAura extends Module {
 			.setRange(event.getRange() + range.getValue().doubleValue() - 3);
 
 
-	private void doAttack(final List<EntityLivingBase> targets) {
-		if (attackStopWatch.finished(this.nextSwing) && target != null) {
-			final long clicks = (long) (this.cps.getRandomBetween().longValue() * randomization.getValue().doubleValue());
-			this.nextSwing = 1000 / clicks;
+    public Tuple<Boolean, Double> getDelay() {
+        double delay = -1;
+        boolean flag = false;
 
-			if (Math.sin(nextSwing) + 1 > Math.random() || attackStopWatch.finished(this.nextSwing + 500) || Math.random() > 0.5) {
+        switch (clickMode.getValue().getName()) {
+            case "1.9+ With 1.8 Animations":
+            case "1.9+": {
+                if (clickMode.is("1.9+ With 1.8 Animations") && Math.random() > 0.2) {
+                    RenderUtil.renderAttack(target);
+                }
+
+                double speed = 4;
+
+                if (mc.player.getHeldItem() != null) {
+                    final Item item = mc.player.getHeldItem().getItem();
+
+                    if (item instanceof ItemSword) {
+                        speed = 1.6;
+                    } else if (item instanceof ItemSpade) {
+                        speed = 1;
+                    } else if (item instanceof ItemPickaxe) {
+                        speed = 1.2;
+                    } else if (item instanceof ItemAxe) {
+                        switch (((ItemAxe) item).getToolMaterial()) {
+                            case WOOD:
+                            case STONE:
+                                speed = 0.8;
+                                break;
+
+                            case IRON:
+                                speed = 0.9;
+                                break;
+
+                            default:
+                                speed = 1;
+                                break;
+                        }
+                    } else if (item instanceof ItemHoe) {
+                        switch (((ItemHoe) item).getToolMaterial()) {
+                            case WOOD:
+                            case GOLD:
+                                speed = 1;
+                                break;
+
+                            case STONE:
+                                speed = 2;
+                                break;
+
+                            case IRON:
+                                speed = 3;
+                                break;
+						default:
+							break;
+                        }
+                    }
+                }
+
+                delay = 1 / speed * 20 - 1;
+                break;
+            }
+        }
+
+        return new Tuple<>(flag, delay);
+    }
+
+    private void doAttack(final List<EntityLivingBase> targets) {
+        Tuple<Boolean, Double> tuple = getDelay();
+        final double delay = tuple.getSecond();
+        final boolean flag = tuple.getFirst();
+
+        if (attackStopWatch.finished(this.nextSwing) && target != null && (clickStopWatch.finished((long) (delay * 50)) || flag)) {
+            final long clicks = (long) (this.cps.getRandomBetween().longValue() * 1.5);
+            this.nextSwing = 1000 / clicks;
+
+            if (Math.sin(nextSwing) + 1 > Math.random() || attackStopWatch.finished(this.nextSwing + 500) || Math.random() > 0.5) {
 				if (this.allowAttack) {
 					final double range = this.range.getValue().doubleValue();
 					final Vec3 rotationVector = mc.player.getVectorForRotation(RotationHandler.rotations.getY(), RotationHandler.rotations.getX());
@@ -411,8 +477,11 @@ public final class KillAura extends Module {
 	private void postAttackBlock() {
 		switch (autoBlock.getValue().getName()) {
 		case "Vanilla ReBlock":
-			block(false);
+            if (!this.blocking) {
+                this.block(false);
+            }
 			break;
+			
 		case "Post":
 			boolean furry = false;
 			
@@ -431,15 +500,21 @@ public final class KillAura extends Module {
 
 	private void preBlock() {
 		switch (autoBlock.getValue().getName()) {
-		case "Post":
-			//allowAttack = true;
-			break;
+        case "New NCP":
+            if (this.blocking) {
+                PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 8 + 1));
+                PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
+                this.blocking = false;
+            }
+            break;
 		}
 	}
 
 	private void postBlock() {
 		switch (autoBlock.getValue().getName()) {
-
+        case "New NCP":
+        	block(false);
+            break;
 		}
 	}
 

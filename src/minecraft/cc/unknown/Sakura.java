@@ -28,7 +28,7 @@ import net.minecraft.src.Config;
 public class Sakura {
 
     public static final String NAME = "Sakura";
-    public static final String VERSION = "5.6";
+    public static final String VERSION = "5.7";
 
     public static final Sakura instance = new Sakura();
     public static final CustomLogger LOGGER = new CustomLogger(Sakura.class);

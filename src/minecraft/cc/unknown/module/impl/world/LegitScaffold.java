@@ -3,8 +3,9 @@ package cc.unknown.module.impl.world;
 import org.lwjgl.input.Keyboard;
 
 import cc.unknown.event.Listener;
+import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.other.TickEvent;
+import cc.unknown.event.impl.input.MoveInputEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.handlers.SpoofHandler;
@@ -16,12 +17,12 @@ import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.SlotUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
-import cc.unknown.value.impl.ModeValue;
-import cc.unknown.value.impl.SubMode;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldSettings;
 
@@ -51,7 +52,7 @@ public class LegitScaffold extends Module {
 	@Override
 	public void onDisable() {
 		setSneak(false);
-		if (PlayerUtil.isOverAir()) {
+		if (overAir()) {
 			setSneak(false);
 		}
 
@@ -60,7 +61,7 @@ public class LegitScaffold extends Module {
 		shouldBridge = false;
 	}
 
-	@EventLink
+	@EventLink(value = Priority.LOW)
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (!(mc.currentScreen == null) || !isInGame()) return;
 
@@ -109,7 +110,7 @@ public class LegitScaffold extends Module {
 		}
 
 		if (mc.player.onGround) {
-			if (PlayerUtil.isOverAir()) {
+			if (overAir()) {
 				if (shift) {
 					stopWatch.setMillis(MathHelper.randomInt(delay.getValue().intValue(),
 							(int) (delay.getSecondValue().intValue() + 0.1)));
@@ -142,7 +143,7 @@ public class LegitScaffold extends Module {
 		} else if (shouldBridge && mc.player.capabilities.isFlying) {
 			setSneak(false);
 			shouldBridge = false;
-		} else if (shouldBridge && PlayerUtil.isOverAir() && legit.getValue()) {
+		} else if (shouldBridge && overAir() && legit.getValue()) {
 			isShifting = true;
 			setSneak(true);
 		} else {
@@ -195,8 +196,21 @@ public class LegitScaffold extends Module {
 		ItemStack heldItem = mc.player.getHeldItem();
 		return heldItem == null || !(heldItem.getItem() instanceof ItemBlock);
 	}
-
+	
 	private void setSneak(boolean sneak) {
 		KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), sneak);		
 	}
+	
+	private boolean overAir() {
+		return blockRelativeToPlayer(0, -1, 0) instanceof BlockAir;
+	}
+	
+
+	private Block getBlock(final double x, final double y, final double z) {
+        return mc.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();
+    }
+
+	private Block blockRelativeToPlayer(final double offsetX, final double offsetY, final double offsetZ) {
+        return getBlock(mc.player.posX + offsetX, mc.player.posY + offsetY, mc.player.posZ + offsetZ);
+    }
 }

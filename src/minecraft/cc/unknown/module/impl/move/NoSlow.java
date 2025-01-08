@@ -51,9 +51,6 @@ public class NoSlow extends Module {
 	private final BooleanValue timer = new BooleanValue("Boost Timer", this, true);
 	private final NumberValue boostTimer = new NumberValue("Timer", this, 1, 0.1, 10, 0.1, () -> !timer.getValue());
 
-	
-	private final StopWatch timeHelper = new StopWatch();
-
 	@Override
 	public void onDisable() {
 		mc.timer.timerSpeed = 1.0F;
@@ -78,8 +75,6 @@ public class NoSlow extends Module {
 				event.setStrafeMultiplier(strafe.getValue().floatValue());
 			}
 			mc.timer.timerSpeed = timer.getValue() ? boostTimer.getValue().floatValue() : 1.0F;
-		} else {
-			timeHelper.reset();
 		}
 	};
 	

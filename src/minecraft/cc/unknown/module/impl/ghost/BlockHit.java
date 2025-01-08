@@ -6,8 +6,8 @@ import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.player.PostMotionEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.player.SlowDownEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
@@ -19,10 +19,7 @@ import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.NumberValue;
 import de.florianmichael.vialoadingbase.ViaLoadingBase;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemBucketMilk;
-import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemPotion;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.C09PacketHeldItemChange;
@@ -34,24 +31,54 @@ public class BlockHit extends Module {
 	private final BoundsNumberValue distance = new BoundsNumberValue("Distance", this, 0, 3, 0, 6, 0.1);
 	private final NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
 
-	private boolean block;
+	public boolean block;
 	private StopWatch stopWatch = new StopWatch();
 
 	@EventLink
-	public final Listener<Render3DEvent> onRender3D = event -> {
-		if (!isInGame()) return;
-		
-		if (mc.currentScreen != null) return;
+	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
+		if (!isInGame())
+			return;
 
+		if (mc.currentScreen != null)
+			return;
+
+		if (ViaLoadingBase.getInstance().getTargetVersion().isEqualTo(ProtocolVersion.v1_9)) {
+			autoBlock(true);
+		} else {
+			autoBlock(false);
+		}
+	};
+
+	@EventLink
+	public final Listener<Render3DEvent> onRender3D = event -> {
+		if (!isInGame())
+			return;
+
+		if (mc.currentScreen != null)
+			return;
+
+		if (ViaLoadingBase.getInstance().getTargetVersion().isEqualTo(ProtocolVersion.v1_9)) {
+			autoBlock(true);
+		} else {
+			autoBlock(false);
+		}
+	};
+
+	private void autoBlock(boolean v1_9) {
 		if (block) {
 			if (PlayerUtil.isHoldingWeapon() && (stopWatch.hasFinished() || !Mouse.isButtonDown(0)) && duration.getValue().intValue() <= stopWatch.getElapsedTime()) {
 				block = false;
-				mc.gameSettings.keyBindUseItem.pressed = false;
+				if (v1_9) {
+					mc.gameSettings.keyBindUseItem.pressed = false;	
+				} else {
+					release();
+				}
 			}
 			return;
 		}
 
-		if (PlayerUtil.isHoldingWeapon() && Mouse.isButtonDown(0) && mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null
+		if (PlayerUtil.isHoldingWeapon() && Mouse.isButtonDown(0) && mc.objectMouseOver != null
+				&& mc.objectMouseOver.entityHit != null
 				&& mc.player.getDistanceToEntity(mc.objectMouseOver.entityHit) >= distance.getValue().floatValue()
 				&& mc.objectMouseOver.entityHit != null
 				&& mc.player.getDistanceToEntity(mc.objectMouseOver.entityHit) <= distance.getSecondValue().floatValue()
@@ -59,46 +86,21 @@ public class BlockHit extends Module {
 			block = true;
 			stopWatch.setMillis(duration.getSecondValue().intValue());
 			stopWatch.reset();
-			
-			 if (ViaLoadingBase.getInstance().getTargetVersion().isEqualTo(ProtocolVersion.v1_9)) {
-				 mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
-			 } else {
-				 mc.gameSettings.keyBindUseItem.pressed = true;
-			 }
-		}
-	};
-	
-	@EventLink
-	public final Listener<SlowDownEvent> onSlowDown = event -> {
-		if (!isInGame()) return;
-	    ItemStack item = PlayerUtil.getItemStack();
-		
-	    if (item == null) return;
-		
-		 if (ViaLoadingBase.getInstance().getTargetVersion().isEqualTo(ProtocolVersion.v1_9)) {
-			if (item != null && (mc.player.moveForward != 0.0F || mc.player.moveStrafing != 0.0F)) {
-				if ((item.getItem() instanceof ItemSword)) {
-					event.setSprint(true);
-					event.setForwardMultiplier(1f);
-					event.setStrafeMultiplier(1f);
-				}
-			}
-		 }
-	};
 
-	@EventLink
-	public final Listener<PreMotionEvent> onPreMotion = event -> {
-	    if (!isInGame()) return;
-	    ItemStack item = PlayerUtil.getItemStack();
-	    if (item == null) return;
-	    
-        if (mc.player.getItemInUseDuration() == 1) {
-			if (item.getItem() instanceof ItemSword) {
-				if (ViaLoadingBase.getInstance().getTargetVersion().isEqualTo(ProtocolVersion.v1_9)) {
-					PacketUtil.send(new C09PacketHeldItemChange((mc.player.inventory.currentItem + 1) % 3));
-					PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
-				}
+			if (v1_9) {
+				mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
+			} else {
+				press();
 			}
-        }
-	};
+		}
+	}
+
+	private void release() {
+		KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
+	}
+
+	private void press() {
+		KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
+		KeyBinding.onTick(mc.gameSettings.keyBindUseItem.getKeyCode());
+	}
 }

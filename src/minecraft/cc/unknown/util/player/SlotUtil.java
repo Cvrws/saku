@@ -47,7 +47,7 @@ public class SlotUtil implements Accessor {
         int highestStack = -1;
         for (int i = 0; i < 9; ++i) {
             final ItemStack itemStack = mc.player.inventory.mainInventory[i];
-            if (itemStack != null && itemStack.getItem() instanceof ItemBlock &&  SlotUtil.blacklist.stream().noneMatch(block -> block.equals(((ItemBlock) itemStack.getItem()).getBlock())) && itemStack.stackSize > 0) {
+            if (itemStack != null && itemStack.getItem() instanceof ItemBlock &&  blacklist.stream().noneMatch(block -> block.equals(((ItemBlock) itemStack.getItem()).getBlock())) && itemStack.stackSize > 0) {
                 if (mc.player.inventory.mainInventory[i].stackSize > highestStack) {
                     highestStack = mc.player.inventory.mainInventory[i].stackSize;
                     slot = i;
@@ -240,7 +240,7 @@ public class SlotUtil implements Accessor {
 
         float damage = speedMultiplier / block.getBlockHardness(worldIn,blockIn);
 
-        if (SlotUtil.canHeldItemHarvest(block,slot)) {
+        if (canHeldItemHarvest(block,slot)) {
             damage /= 30;
         } else {
             damage /= 100;

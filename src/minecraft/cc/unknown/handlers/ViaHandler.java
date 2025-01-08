@@ -18,6 +18,7 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreStrafeEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.impl.combat.KillAura;
+import cc.unknown.module.impl.ghost.BlockHit;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.netty.packet.PlayPongC2SPacket;
 import cc.unknown.util.player.PlayerUtil;
@@ -46,7 +47,7 @@ public class ViaHandler implements Accessor {
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
 			if (PlayerUtil.getItemStack() != null
-					&& PlayerUtil.getItemStack().getItem() instanceof ItemSword && (mc.gameSettings.keyBindUseItem.isPressed() || getModule(KillAura.class).blocking)) {
+					&& PlayerUtil.getItemStack().getItem() instanceof ItemSword && (mc.gameSettings.keyBindUseItem.isPressed() || getModule(KillAura.class).blocking || getModule(BlockHit.class).block)) {
                 PacketWrapper useItem = PacketWrapper.create(29, null, Via.getManager().getConnectionManager().getConnections().iterator().next());
                 useItem.write(Type.VAR_INT, 1);
                 PacketUtil.sendToServer(useItem, Protocol1_8To1_9.class, true, true);

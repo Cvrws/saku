@@ -93,8 +93,7 @@ public final class RotationHandler implements Accessor {
 
 	@EventLink(value = Priority.VERY_LOW)
 	public final Listener<JumpEvent> onJump = event -> {
-		if (active && (correctMovement == MoveFix.SILENT || correctMovement == MoveFix.STRICT
-				/*|| correctMovement == MovementFix.BACKWARDS_SPRINT*/) && rotations != null) {
+		if (active && (correctMovement == MoveFix.SILENT || correctMovement == MoveFix.STRICT) && rotations != null) {
 			event.setYaw(rotations.x);
 		}
 	};

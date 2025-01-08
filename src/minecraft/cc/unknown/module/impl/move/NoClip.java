@@ -30,9 +30,9 @@ import net.minecraft.util.MovingObjectPosition;
 public class NoClip extends Module {
 
 	private int lastSlot;
-	
+
 	private BooleanValue spoof = new BooleanValue("Spoof Slot", this, true);
-	
+
 	@Override
 	public void onEnable() {
 		lastSlot = -1;
@@ -41,20 +41,18 @@ public class NoClip extends Module {
 	@Override
 	public void onDisable() {
 		mc.player.noClip = false;
-    	mc.player.inventory.currentItem = lastSlot;
-    	SpoofHandler.stopSpoofing();
+		mc.player.inventory.currentItem = lastSlot;
+		SpoofHandler.stopSpoofing();
 	}
 
 	@EventLink
 	public final Listener<BlockAABBEvent> onBlockAABB = event -> {
 		if (PlayerUtil.insideBlock()) {
 			event.setBoundingBox(null);
-			
+
 			if (!(event.getBlock() instanceof BlockAir) && !mc.gameSettings.keyBindSneak.isKeyDown()) {
-				final double 
-				x = event.getBlockPos().getX(),
-				y = event.getBlockPos().getY(),
-				z = event.getBlockPos().getZ();
+				final double x = event.getBlockPos().getX(), y = event.getBlockPos().getY(),
+						z = event.getBlockPos().getZ();
 
 				if (y < mc.player.posY) {
 					event.setBoundingBox(AxisAlignedBB.fromBounds(-15, -1, -15, 15, 1, 15).offset(x, y, z));
@@ -68,39 +66,47 @@ public class NoClip extends Module {
 
 	@EventLink
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-        if (lastSlot == -1) {
-        	lastSlot = mc.player.inventory.currentItem;
-        }
-        
+		if (lastSlot == -1) {
+			lastSlot = mc.player.inventory.currentItem;
+		}
+
 		mc.player.noClip = true;
 
-		if (getModule(Scaffold.class).isEnabled() || (getModule(KillAura.class).isEnabled() && getModule(KillAura.class).target != null)) return;
+		if (getModule(Scaffold.class).isEnabled()
+				|| (getModule(KillAura.class).isEnabled() && getModule(KillAura.class).target != null))
+			return;
 
-        final int slot = SlotUtil.findBlock();
-        
-        if (slot == -1 || PlayerUtil.insideBlock()) {
-            return;
-        }
-        
-        mc.player.inventory.currentItem = slot;
-        if (spoof.getValue()) SpoofHandler.startSpoofing(lastSlot);
+		final int slot = SlotUtil.findBlock();
 
-        RotationHandler.setRotations(new Vector2f(mc.player.rotationYaw, 90), 2, MoveFix.SILENT);
+		if (slot == -1 || PlayerUtil.insideBlock()) {
+			return;
+		}
 
-        if (RotationHandler.rotations.y >= 89 && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && mc.player.posY == mc.objectMouseOver.getBlockPos().up().getY()) {
+		mc.player.inventory.currentItem = slot;
+		if (spoof.getValue())
+			SpoofHandler.startSpoofing(lastSlot);
 
-            mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(),  mc.objectMouseOver.getBlockPos(), mc.objectMouseOver.sideHit, mc.objectMouseOver.hitVec);
+		RotationHandler.setRotations(new Vector2f(mc.player.rotationYaw, 90), 2, MoveFix.SILENT);
 
-            mc.player.swingItem();
-        }
+		if (RotationHandler.rotations.y >= 89
+				&& mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK
+				&& mc.player.posY == mc.objectMouseOver.getBlockPos().up().getY()) {
+
+			mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(),
+					mc.objectMouseOver.getBlockPos(), mc.objectMouseOver.sideHit, mc.objectMouseOver.hitVec);
+
+			mc.player.swingItem();
+		}
 	};
-	
+
 	@EventLink
 	public final Listener<Render2DEvent> onRender2D = event -> {
-        final ScaledResolution scaledResolution = /*mc.scaledResolution*/ new ScaledResolution(mc);
+		final ScaledResolution scaledResolution = new ScaledResolution(mc);
 
-        final String name = "Una ves activado presiona shift";
-        mc.fontRendererObj.drawCentered(name, scaledResolution.getScaledWidth() / 2F, scaledResolution.getScaledHeight() - 89.5F, new Color(0, 0, 0, 200).hashCode());
-        mc.fontRendererObj.drawCentered(name, scaledResolution.getScaledWidth() / 2F, scaledResolution.getScaledHeight() - 90, getTheme().getAccentColor().getRGB());
+		final String name = "Una ves activado presiona shift";
+		mc.fontRendererObj.drawCentered(name, scaledResolution.getScaledWidth() / 2F,
+				scaledResolution.getScaledHeight() - 89.5F, new Color(0, 0, 0, 200).hashCode());
+		mc.fontRendererObj.drawCentered(name, scaledResolution.getScaledWidth() / 2F,
+				scaledResolution.getScaledHeight() - 90, getTheme().getAccentColor().getRGB());
 	};
 }

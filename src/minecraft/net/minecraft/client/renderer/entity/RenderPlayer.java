@@ -3,6 +3,7 @@ package net.minecraft.client.renderer.entity;
 import cc.unknown.Sakura;
 import cc.unknown.cosmetics.CosmeticController;
 import cc.unknown.module.impl.combat.KillAura;
+import cc.unknown.module.impl.ghost.BlockHit;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelPlayer;
@@ -99,6 +100,8 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 
 				boolean flag = clientPlayer instanceof EntityPlayerSP
 						&& Sakura.instance.getModuleManager().get(KillAura.class).isEnabled()
+						&& Sakura.instance.getModuleManager().get(BlockHit.class).isEnabled()
+						&& Sakura.instance.getModuleManager().get(BlockHit.class).block
 						&& !Sakura.instance.getModuleManager().get(KillAura.class).autoBlock.is("Fake")
 						&& Sakura.instance.getModuleManager().get(KillAura.class).target != null
 						&& Sakura.instance.getModuleManager().get(KillAura.class).canBlock();

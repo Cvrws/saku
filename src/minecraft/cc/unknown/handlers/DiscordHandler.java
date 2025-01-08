@@ -49,9 +49,14 @@ public class DiscordHandler implements Accessor {
                             update("", "in SinglePlayer");
                         } else if (fetchAndFindServerData(mc.getCurrentServerData().serverIP)) {
                         	update("", "Cheating on " + serverName);
-                            
                         } else if (mc.currentScreen instanceof GuiDownloadTerrain) {
                             update("Loading World...", "");
+                        }
+                        
+                        if (fetchAndFindServerData("anticheat-test.com")) {
+                        	update("", "Testing on " + serverName);
+                        } else if (fetchAndFindServerData("eu.loyisa.cn")) {
+                        	update("", "Testing on " + serverName);
                         }
                     } else {
                         if (mc.currentScreen instanceof GuiSelectWorld) {
