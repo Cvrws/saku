@@ -67,6 +67,11 @@ public class GuiLanguage extends GuiScreen {
         super.handleMouseInput();
         this.list.handleMouseInput();
     }
+    
+    @Override
+    public void onGuiClosed() {
+        mc.ingameGUI.getChatGUI().refreshChat();
+    }
 
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)

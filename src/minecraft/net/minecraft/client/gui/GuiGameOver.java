@@ -19,6 +19,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback {
      */
     public void initGui() {
         this.buttonList.clear();
+        this.enableButtonsTimer = 0;
 
         if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled()) {
             if (this.mc.isIntegratedServerRunning()) {
