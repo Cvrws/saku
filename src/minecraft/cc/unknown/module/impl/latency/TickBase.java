@@ -34,17 +34,11 @@ import net.minecraft.util.Vec3;
 
 @ModuleInfo(aliases = "Tick Base", description = "Congela el juego", category = Category.LATENCY)
 public class TickBase extends Module {
-
-	private final ModeValue mode = new ModeValue("Mode", this)
-			.add(new SubMode("Future"))
-			.add(new SubMode("Past"))
-			.setDefault("Future");
 	
     public final NumberValue delay = new NumberValue("Delay", this, 50, 0, 1000, 50);
     public final BoundsNumberValue activeRange = new BoundsNumberValue("Active Range", this, 3f, 7f, 0.1f, 7f, 0.1f);
     public final NumberValue ticks = new NumberValue("Ticks", this, 4, 1, 20, 1);
     public final BooleanValue displayPredictPos = new BooleanValue("Dislay Predict Pos", this, false);
-    public final BooleanValue check = new BooleanValue("Check", this, false);
 
 	private StopWatch timer = new StopWatch();
 	
@@ -99,57 +93,28 @@ public class TickBase extends Module {
 	
 	@EventLink
 	public final Listener<TimerManipulationEvent> onTimerManipulation = event -> {
-        if (mode.is("Past")) {
 
-            if (target == null || predictProcesses.isEmpty() || shouldStop()) {
-                return;
-            }
+		if (target == null || predictProcesses.isEmpty() || shouldStop()) {
+			return;
+		}
 
-            if (shouldStart() && timer.finished(delay.getValue().intValue())) {
-                shifted += event.getTime() - previousTime;
-            }
+		if (shouldStart() && timer.finished(delay.getValue().intValue())) {
+			shifted += event.getTime() - previousTime;
+		}
 
-            if (shifted >= ticks.getValue().intValue() * (1000 / 20f)) {
-                shifted = 0;
-                timer.reset();
-            }
+		if (shifted >= ticks.getValue().intValue() * (1000 / 20f)) {
+			shifted = 0;
+			timer.reset();
+		}
 
-            previousTime = event.getTime();
-            event.setTime(event.getTime() - shifted);
-        }
-	};
-	
-	@EventLink
-	public final Listener<PreMotionEvent> onPreMotion = event -> {
-        if (mode.is("Future")) {
-
-            if (target == null || predictProcesses.isEmpty() || shouldStop()) {
-                return;
-            }
-
-            if(timer.finished(delay.getValue().intValue())) {
-                if (shouldStart()) {
-                    firstAnimation = false;
-                    while (skippedTick <= ticks.getValue().intValue() && !shouldStop()) {
-                        ++skippedTick;
-                        try {
-                            mc.runTick();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    timer.reset();
-                }
-            }
-            working = false;
-        }
+		previousTime = event.getTime();
+		event.setTime(event.getTime() - shifted);
 	};
 	
 	public boolean shouldStart() {
 	    int index = ticks.getValue().intValue() - 1;
 
 	    if (index < 0 || index >= predictProcesses.size()) {
-	        System.err.println("Invalid index: " + index + ", predictProcesses size: " + predictProcesses.size());
 	        return false;
 	    }
 
@@ -166,26 +131,13 @@ public class TickBase extends Module {
 
 	    boolean canSeeEachOther = mc.player.canEntityBeSeen(target) && target.canEntityBeSeen(mc.player);
 
-	    boolean rotationCheck = (!check.getValue()) || (RotationUtil.getRotationDifference(mc.player, target) <= 90 && check.getValue());
-
 	    boolean isNotCollided = !predictedProcess.isCollidedHorizontally;
 
-	    return isWithinDistance && isWithinActiveRange && canSeeEachOther && rotationCheck && isNotCollided;
+	    return isWithinDistance && isWithinActiveRange && canSeeEachOther && isNotCollided;
 	}
 
     public boolean shouldStop(){
         return mc.player.hurtTime != 0;
-    }
-
-    public boolean handleTick() {
-        if (mode.is("Future")) {
-            if (working || skippedTick < 0) return true;
-            if (isEnabled() && skippedTick > 0) {
-                --skippedTick;
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean freezeAnim(){

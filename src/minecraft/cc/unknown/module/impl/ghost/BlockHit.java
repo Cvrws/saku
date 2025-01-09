@@ -65,32 +65,29 @@ public class BlockHit extends Module {
 	};
 
 	private void autoBlock(boolean v1_9) {
-		if (block) {
-			if (PlayerUtil.isHoldingWeapon() && (stopWatch.hasFinished() || !Mouse.isButtonDown(0)) && duration.getValue().intValue() <= stopWatch.getElapsedTime()) {
-				block = false;
-				if (v1_9) {
-					mc.gameSettings.keyBindUseItem.pressed = false;	
-				} else {
-					release();
+		if (PlayerUtil.isHoldingWeapon()) {
+			if (block) {
+				if ((stopWatch.hasFinished() || !Mouse.isButtonDown(0)) && duration.getValue().intValue() <= stopWatch.getElapsedTime()) {
+					block = false;
+					if (v1_9) {
+						mc.gameSettings.keyBindUseItem.pressed = false;	
+					} else {
+						release();
+					}
 				}
+				return;
 			}
-			return;
-		}
-
-		if (PlayerUtil.isHoldingWeapon() && Mouse.isButtonDown(0) && mc.objectMouseOver != null
-				&& mc.objectMouseOver.entityHit != null
-				&& mc.player.getDistanceToEntity(mc.objectMouseOver.entityHit) >= distance.getValue().floatValue()
-				&& mc.objectMouseOver.entityHit != null
-				&& mc.player.getDistanceToEntity(mc.objectMouseOver.entityHit) <= distance.getSecondValue().floatValue()
-				&& (chance.getValue().intValue() == 100 || Math.random() <= chance.getValue().intValue() / 100)) {
-			block = true;
-			stopWatch.setMillis(duration.getSecondValue().intValue());
-			stopWatch.reset();
-
-			if (v1_9) {
-				mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
-			} else {
-				press();
+	
+			if (Mouse.isButtonDown(0) && (chance.getValue().intValue() == 100 || Math.random() <= chance.getValue().intValue() / 100)) {
+				block = true;
+				stopWatch.setMillis(duration.getSecondValue().intValue());
+				stopWatch.reset();
+	
+				if (v1_9) {
+					mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
+				} else {
+					press();
+				}
 			}
 		}
 	}

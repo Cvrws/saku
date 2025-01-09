@@ -389,7 +389,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
         final int i = 64;
         final int j = 6;
         worldRendererIn.begin(7, DefaultVertexFormats.POSITION);
-        final int k = (this.renderDistance / 64 + 1) * 64 + 64;
+        final int k = (256 / 64 + 1) * 64 + 64;
 
         for (int l = -k; l <= k; l += 64) {
             for (int i1 = -k; i1 <= k; i1 += 64) {

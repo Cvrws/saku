@@ -41,6 +41,7 @@ public class HitSelect extends Module {
     
 	@EventLink(value = Priority.VERY_HIGH)
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
+		currentShouldAttack = false;
         if (Math.random() > chance.getValue().intValue()) {
             currentShouldAttack = true;
         } else {

@@ -12,6 +12,7 @@ import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketSendEvent;
 import cc.unknown.event.impl.player.HitEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.Module;
@@ -26,6 +27,7 @@ import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.TargetUtil;
 import cc.unknown.util.player.rotation.RotationUtil;
 import cc.unknown.util.structure.geometry.Doble;
 import cc.unknown.util.structure.geometry.Vector2f;
@@ -62,6 +64,7 @@ public class LagRange extends Module {
 	
 	private LinkedList<Packet> outPackets = new LinkedList();
 	private StopWatch timer = new StopWatch();
+	public EntityPlayer target;
 
 	@Override
 	public void onDisable() {
@@ -80,6 +83,7 @@ public class LagRange extends Module {
 	@EventLink
 	public final Listener<HitEvent> onHit = event -> {
 		if (mode.is("Lag")) {
+			if (target == null) return;
 			if (isHurtTime()) {
 				event.setForced(true);
 				fullRelease();
@@ -108,6 +112,11 @@ public class LagRange extends Module {
 				fullRelease();
 			}
 		}
+	};
+	
+	@EventLink
+	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
+		 target = (EntityPlayer) TargetUtil.getTarget(range.getValue().doubleValue() * 3);
 	};
 	
 	@SneakyThrows
@@ -176,7 +185,7 @@ public class LagRange extends Module {
     }
     
     public boolean isHurtTime() {
-        return (getModule(AimAssist.class).target.hurtTime <= 2 && getModule(AimAssist.class).isEnabled()) || (getModule(KillAura.class).target.hurtTime <= 2 && getModule(KillAura.class).isEnabled());
+        return target.hurtTime <= 2;
      }
     
     public Entity raycast(double range, final Vector2f rotation) {

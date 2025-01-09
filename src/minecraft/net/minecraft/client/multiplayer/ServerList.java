@@ -74,15 +74,21 @@ public class ServerList {
     /**
      * Gets the ServerData instance stored for the given index in the list.
      */
-    public ServerData getServerData(final int p_78850_1_) {
-        return this.servers.get(p_78850_1_);
+    public ServerData getServerData(int index) {
+        try {
+            return this.servers.get(index);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
      * Removes the ServerData instance stored for the given index in the list.
      */
-    public void removeServerData(final int p_78851_1_) {
-        this.servers.remove(p_78851_1_);
+    public void removeServerData(int index) {
+        try {
+            this.servers.remove(index);
+        } catch (Exception e) { }
     }
 
     /**

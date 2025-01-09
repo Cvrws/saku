@@ -83,16 +83,6 @@ public abstract class AbstractClientPlayer extends EntityPlayer {
 	 * Returns true if the player instance has an associated skin.
 	 */
 	public ResourceLocation getLocationSkin() {
-		Cosmetics cosmetics = Sakura.instance.getModuleManager().get(Cosmetics.class);
-
-		/*if (cosmetics.doug.getValue() && cosmetics.isEnabled()) {
-			return new ResourceLocation("sakura/skins/doug_dimmadome.png");
-		}*/
-
-		/*if (skinChanger.isEnabled() && !skinChanger.text.getValue().isEmpty()) {
-			return skinChanger.setSkin(this);
-		}*/
-
 		NetworkPlayerInfo networkplayerinfo = this.getPlayerInfo();
 		return networkplayerinfo == null ? DefaultPlayerSkin.getDefaultSkin(this.getUniqueID())
 				: networkplayerinfo.getLocationSkin();
@@ -209,6 +199,7 @@ public abstract class AbstractClientPlayer extends EntityPlayer {
 	/**
 	 * interpolated look vector
 	 */
+	@Override
 	public Vec3 getLook(final float partialTicks) {
 		float yaw = this.rotationYaw;
 		float pitch = this.rotationPitch;

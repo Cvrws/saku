@@ -1013,13 +1013,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.mcProfiler.startSection("tick");
         TickBase tickBase = Sakura.instance.getModuleManager().get(TickBase.class);
 
-
 		Lagometer.timerTick.start();
 
 		for (int j = 0; j < this.timer.elapsedTicks; ++j) {
-			if (tickBase.handleTick()) {
-				continue;
-			}
 			timer.timerSpeed = 1;
 
 			TickEvent tickEvent = new TickEvent();
