@@ -70,36 +70,34 @@ public final class BlueArchive extends Module {
         int screenHeight = sr.getScaledHeight();
 
         Vector2d pos = position.position;
-        float scaledWidth = scale.x;
-        float scaledHeight = scale.y;
 
         switch (stickerType.getValue().getName()) {
             case "Aris": {
-                drawImage(new ResourceLocation("sakura/images/aris.png"), (int) pos.x, (int) pos.y, 150, 160, 1);
+                RenderUtil.image(new ResourceLocation("sakura/images/aris.png"), (int) pos.x, (int) pos.y, 150, 160);
                 break;
             }
             case "Shiroko": {
-                drawImage(new ResourceLocation("sakura/images/shiroko.png"), (int) pos.x, (int) pos.y, 85, 160, 1);
+                RenderUtil.image(new ResourceLocation("sakura/images/shiroko.png"), (int) pos.x, (int) pos.y, 85, 160);
                 break;
             }
             case "Azusa": {
-                drawImage(new ResourceLocation("sakura/images/azusa.png"), (int) pos.x, (int) pos.y, 120, 160, 1);
+                RenderUtil.image(new ResourceLocation("sakura/images/azusa.png"), (int) pos.x, (int) pos.y, 120, 160);
                 break;
             }
             case "Ui": {
-                drawImage(new ResourceLocation("sakura/images/ui.png"), (int) pos.x, (int) pos.y, 100, 160, 1);
+                RenderUtil.image(new ResourceLocation("sakura/images/ui.png"), (int) pos.x, (int) pos.y, 100, 160);
                 break;
             }
             case "Hoshino Swimsuit": {
-                drawImage(new ResourceLocation("sakura/images/hoshino_swimsuit.png"), (int) pos.x, (int) pos.y, 130, 160, 1);
+                RenderUtil.image(new ResourceLocation("sakura/images/hoshino_swimsuit.png"), (int) pos.x, (int) pos.y, 130, 160);
                 break;
             }
             case "Mika": {
-                drawImage(new ResourceLocation("sakura/images/mika.png"), (int) pos.x, (int) pos.y, 95, 160, 1);
+                RenderUtil.image(new ResourceLocation("sakura/images/mika.png"), (int) pos.x, (int) pos.y, 95, 160);
                 break;
             }
             case "Ibuki": {
-                drawImage(new ResourceLocation("sakura/images/ibuki.png"), (int) pos.x, (int) pos.y, 100, 170, 1);
+                RenderUtil.image(new ResourceLocation("sakura/images/ibuki.png"), (int) pos.x, (int) pos.y, 100, 170);
                 break;
             }
         }
@@ -656,19 +654,5 @@ public final class BlueArchive extends Module {
         GL11.glEnd();
 
         GL11.glPopMatrix();
-    }
-    
-    private void drawImage(ResourceLocation image, int x, int y, int width, int height, double scale) {
-        GlStateManager.disableDepth();
-        GlStateManager.enableBlend();
-        GlStateManager.depthMask(false);
-        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.getTextureManager().bindTexture(image);
-        Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0,
-                (int) Math.round(width * scale), (int) Math.round(height * scale), Math.round(width * scale), Math.round(height * scale));
-        GlStateManager.depthMask(true);
-        GlStateManager.disableBlend();
-        GlStateManager.enableDepth();
     }
 }

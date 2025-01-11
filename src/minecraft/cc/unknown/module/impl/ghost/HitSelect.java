@@ -17,13 +17,7 @@ import net.minecraft.entity.Entity;
 @ModuleInfo(aliases = "Hit Select", description = "Escoge el mejor momento para atacar.", category = Category.GHOST)
 public class HitSelect extends Module {
 	
-	private final ModeValue mode = new ModeValue("Mode", this)
-			.add(new SubMode("Legitimate keepsprint"))
-			.add(new SubMode("KnockBack reduction"))
-			.add(new SubMode("Critical hit frequency"))
-			.setDefault("KnockBack reduction");
-	
-    private final NumberValue delay = new NumberValue("Delay", this, 420, 50, 500, 1);
+    private final NumberValue delay = new NumberValue("Delay", this, 420, 50, 500, 10);
     private final NumberValue chance = new NumberValue("Chance", this, 80, 0, 100, 1);
     
     private long attackTime = 0;
@@ -44,20 +38,7 @@ public class HitSelect extends Module {
 		currentShouldAttack = false;
         if (Math.random() > chance.getValue().intValue()) {
             currentShouldAttack = true;
-        } else {
-            switch (mode.getValue().getName()) {
-                case "Legitimate keepsprint":
-                    currentShouldAttack = mc.player.hurtTime > 0 && !mc.player.onGround && MoveUtil.isMoving();
-                    break;
-                case "KnockBack reduction":
-                    currentShouldAttack = !mc.player.onGround && mc.player.motionY < 0;
-                    break;
-                case "Critical hit frequency":
-                	currentShouldAttack = !mc.player.onGround && mc.player.fallDistance > 0.3;
-                	break;
-            }
-
-            if (!currentShouldAttack)
+        } else if (!currentShouldAttack) {
                 currentShouldAttack = System.currentTimeMillis() - attackTime >= delay.getValue().intValue();
         }
 	};

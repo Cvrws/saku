@@ -75,6 +75,7 @@ public final class NameTags extends Module {
             }
             
             event.setCancelled();
+            player.setAlwaysRenderNameTag(false);
             
             renderNewTag(event, player, name);
         }
