@@ -59,8 +59,6 @@ public class WTap extends Module {
 	private final StopWatch stopWatch = new StopWatch();
 	private int ticks;
 
-	private boolean reset = false;
-	private boolean toggle = false;
 	private int hitsSend;
 	private int combo;
 	
