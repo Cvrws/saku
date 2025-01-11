@@ -41,7 +41,9 @@ public final class RenderUtil implements Accessor {
 	private final Frustum FRUSTUM = new Frustum();
 	private final Map<Integer, Integer> shadowCache = new HashMap<>();
 	public final int GENERIC_SCALE = 22;
-
+    public static final int BASE_WIDTH = 1920;
+    public static final int BASE_HEIGHT = 1080;
+    
 	public void start() {
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

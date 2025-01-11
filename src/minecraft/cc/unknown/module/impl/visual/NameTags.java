@@ -47,7 +47,6 @@ public final class NameTags extends Module {
         	
             String name;
             
-            
             if (onlyRenderName.getValue()) {
             	name = player.getName();
             } else {

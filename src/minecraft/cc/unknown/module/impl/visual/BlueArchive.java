@@ -14,8 +14,11 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.render.animation.Easing;
+import cc.unknown.util.structure.geometry.Vector2d;
+import cc.unknown.util.structure.geometry.Vector2f;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.DescValue;
+import cc.unknown.value.impl.DragValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
@@ -55,46 +58,51 @@ public final class BlueArchive extends Module {
 			.add(new SubMode("None"))
 			.setDefault("Aris");
 	
+	private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));
+	private final Vector2f scale = new Vector2f(RenderUtil.GENERIC_SCALE, RenderUtil.GENERIC_SCALE);
+	
     private Animation animation = new Animation(Easing.LINEAR, 2000);
     private ScaledResolution sr = new ScaledResolution(mc);
-    private boolean isReversing = true;
     
     @EventLink
     public final Listener<Render2DEvent> onRender2D = event -> {
+        int screenWidth = sr.getScaledWidth();
+        int screenHeight = sr.getScaledHeight();
+
+        Vector2d pos = position.position;
+        float scaledWidth = scale.x;
+        float scaledHeight = scale.y;
+
         switch (stickerType.getValue().getName()) {
-	        case "Aris": {
-	            drawImage(new ResourceLocation("sakura/images/aris.png"), 160, 170, 150, 160, 1);
-	            break;
-	        }
-	        case "Shiroko": {
-	            drawImage(new ResourceLocation("sakura/images/shiroko.png"), 95, 165, 85, 160, 1);
-	            break;
-	        }
-	        case "Azusa": {
-	            drawImage(new ResourceLocation("sakura/images/azusa.png"), 130, 170, 120, 160, 1);
-	            break;
-	        }
-	        case "Hina Swimsuit": {
-	            drawImage(new ResourceLocation("sakura/images/hina_swimsuit.png"), 110, 170, 100, 160, 1);
-	            break;
-	        }
-	        case "Ui": {
-	            drawImage(new ResourceLocation("sakura/images/ui.png"), 110, 170, 100, 160, 1);
-	            break;
-	        }
-	        case "Hoshino Swimsuit": {
-	            drawImage(new ResourceLocation("sakura/images/hoshino_swimsuit.png"), 140, 170, 130, 160, 1);
-	            break;
-	        }
-	        case "Mika": {
-	            drawImage(new ResourceLocation("sakura/images/mika.png"), 110, 170, 95, 160, 1);
-	            break;
-	        }
-	        case "Ibuki": {
-	            drawImage(new ResourceLocation("sakura/images/ibuki.png"), 110, 18, 100, 170, 1);
-	            break;
-	        }
-	    }
+            case "Aris": {
+                drawImage(new ResourceLocation("sakura/images/aris.png"), (int) pos.x, (int) pos.y, 150, 160, 1);
+                break;
+            }
+            case "Shiroko": {
+                drawImage(new ResourceLocation("sakura/images/shiroko.png"), (int) pos.x, (int) pos.y, 85, 160, 1);
+                break;
+            }
+            case "Azusa": {
+                drawImage(new ResourceLocation("sakura/images/azusa.png"), (int) pos.x, (int) pos.y, 120, 160, 1);
+                break;
+            }
+            case "Ui": {
+                drawImage(new ResourceLocation("sakura/images/ui.png"), (int) pos.x, (int) pos.y, 100, 160, 1);
+                break;
+            }
+            case "Hoshino Swimsuit": {
+                drawImage(new ResourceLocation("sakura/images/hoshino_swimsuit.png"), (int) pos.x, (int) pos.y, 130, 160, 1);
+                break;
+            }
+            case "Mika": {
+                drawImage(new ResourceLocation("sakura/images/mika.png"), (int) pos.x, (int) pos.y, 95, 160, 1);
+                break;
+            }
+            case "Ibuki": {
+                drawImage(new ResourceLocation("sakura/images/ibuki.png"), (int) pos.x, (int) pos.y, 100, 170, 1);
+                break;
+            }
+        }
     };
     
     @EventLink
@@ -134,10 +142,7 @@ public final class BlueArchive extends Module {
     };
     
     public void drawShirokoHalo(Render3DEvent event) {
-        animation.animate(isReversing ? 0 : 0.1);
-
-        if (animation.getValue() == 0) isReversing = false;
-        if (animation.getValue() == 0.1) isReversing = true;
+        animation.animate(0.1);
 
         float height = mc.player.height + 0.25f + (float) animation.getValue();
 
@@ -204,10 +209,7 @@ public final class BlueArchive extends Module {
     }
 
     public void drawShiroko_TerrorHalo(Render3DEvent event) {
-        animation.animate(isReversing ? 0 : 0.1);
-
-        if (animation.getValue() == 0) isReversing = false;
-        if (animation.getValue() == 0.1) isReversing = true;
+        animation.animate(0.1);
 
         float height = mc.player.height + 0.25f + (float) animation.getValue();
 
@@ -277,11 +279,8 @@ public final class BlueArchive extends Module {
     }
 
     public void drawReisaHalo(Render3DEvent event) {
-        animation.animate(isReversing ? 0 : 0.1);
-
-        if (animation.getValue() == 0) isReversing = false;
-        if (animation.getValue() == 0.1) isReversing = true;
-
+        animation.animate(0.1);
+        
         float height = mc.player.height + 0.25f + (float) animation.getValue();
         GL11.glPushMatrix();
         GL11.glTranslated(
@@ -320,10 +319,7 @@ public final class BlueArchive extends Module {
     }
 
     public void drawNatsuHalo(Render3DEvent event) {
-        animation.animate(isReversing ? 0 : 0.1);
-
-        if (animation.getValue() == 0) isReversing = false;
-        if (animation.getValue() == 0.1) isReversing = true;
+        animation.animate(0.1);
 
         float height = mc.player.height + 0.25f + (float) animation.getValue();
 
@@ -385,10 +381,7 @@ public final class BlueArchive extends Module {
     }
 
     public void drawYuukaHalo(Render3DEvent event) {
-        animation.animate(isReversing ? 0 : 0.1);
-
-        if (animation.getValue() == 0) isReversing = false;
-        if (animation.getValue() == 0.1) isReversing = true;
+        animation.animate(0.1);
 
         float height = mc.player.height + 0.25f + (float) animation.getValue();
 
@@ -440,10 +433,7 @@ public final class BlueArchive extends Module {
     }
 
     public void drawHoshinoHalo(Render3DEvent event) {
-        animation.animate(isReversing ? 0 : 0.1);
-
-        if (animation.getValue() == 0) isReversing = false;
-        if (animation.getValue() == 0.1) isReversing = true;
+        animation.animate(0.1);
 
         float height = mc.player.height + 0.25f + (float) animation.getValue();
         float extraHeight = 0.035f;
@@ -549,10 +539,7 @@ public final class BlueArchive extends Module {
     }
 
     public void drawArisHalo(Render3DEvent event) {
-        animation.animate(isReversing ? 0 : 0.1);
-
-        if (animation.getValue() == 0) isReversing = false;
-        if (animation.getValue() == 0.1) isReversing = true;
+        animation.animate(0.1);
 
         float height = mc.player.height + 0.25f + (float) animation.getValue();
 
