@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -58,6 +59,15 @@ public final class RenderUtil implements Accessor {
 		GlStateManager.disableBlend();
 		GlStateManager.resetColor();
 	}
+	
+    public static void startBlend() {
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    public static void endBlend() {
+        GlStateManager.disableBlend();
+    }
 
 	public void rectangle(final double x, final double y, final double width, final double height, final Color color) {
 		start();
@@ -735,5 +745,32 @@ public final class RenderUtil implements Accessor {
         GL11.glHint(3155, 4352);
         GlStateManager.color(1, 1, 1, 1);
         GL11.glPopMatrix();
+    }
+    
+    public Framebuffer createFrameBuffer(Framebuffer framebuffer) {
+        return createFrameBuffer(framebuffer, false);
+    }
+
+    public Framebuffer createFrameBuffer(Framebuffer framebuffer, boolean depth) {
+        if (needsNewFramebuffer(framebuffer)) {
+            if (framebuffer != null) {
+                framebuffer.deleteFramebuffer();
+            }
+            return new Framebuffer(mc.displayWidth, mc.displayHeight, depth);
+        }
+        return framebuffer;
+    }
+
+    public boolean needsNewFramebuffer(Framebuffer framebuffer) {
+        return framebuffer == null || framebuffer.framebufferWidth != mc.displayWidth || framebuffer.framebufferHeight != mc.displayHeight;
+    }
+    
+    public void bindTexture(int texture) {
+    	GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+    }
+    
+    public static void setAlphaLimit(float limit) {
+        GlStateManager.enableAlpha();
+        GlStateManager.alphaFunc(GL11.GL_GREATER, (float) (limit * .01));
     }
 }

@@ -64,7 +64,7 @@ public class AltManager extends GuiScreen implements Accessor {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         BackgroundUtil.renderBackground(this);
-        animation.run(0);
+        animation.animate(0);
 
         usernameBox.drawTextBox();
         GlStateManager.pushMatrix();

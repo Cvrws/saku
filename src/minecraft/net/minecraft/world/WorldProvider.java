@@ -168,27 +168,16 @@ public abstract class WorldProvider {
     public Vec3 getFogColor(final float p_76562_1_, final float p_76562_2_) {
         float f = MathHelper.cos(p_76562_1_ * (float) Math.PI * 2.0F) * 2.0F + 0.5F;
         f = MathHelper.clamp_float(f, 0.0F, 1.0F);
-        float f1 = 0.7529412F;
+        float f1 = .7529412F;
         float f2 = 0.84705883F;
         float f3 = 1.0F;
 
-        Ambience ambience = Sakura.instance.getModuleManager().get(Ambience.class);
 
-        // Our custom fog color
-        if (ambience != null && ambience.isEnabled() && ambience.getWeather().is("Nether Particles")) {
-            f1 = 0.85F;
-            f2 = 0.68F;
-            f3 = 0.62F;
-        }
+        f1 = f1 * (f * 0.94F + 0.06F);
+        f2 = f2 * (f * 0.94F + 0.06F);
+        f3 = f3 * (f * 0.91F + 0.09F);
 
-        // Vanilla fog color
-        else {
-            f1 = f1 * (f * 0.94F + 0.06F);
-            f2 = f2 * (f * 0.94F + 0.06F);
-            f3 = f3 * (f * 0.91F + 0.09F);
-        }
-
-        return new Vec3(f1, f2, f3);
+        return new Vec3(0, 0, 0);
     }
 
     /**

@@ -39,7 +39,7 @@ public class WorldGenTaiga2 extends WorldGenAbstractTree {
                 for (int k1 = position.getX() - j1; k1 <= position.getX() + j1 && flag; ++k1) {
                     for (int l1 = position.getZ() - j1; l1 <= position.getZ() + j1 && flag; ++l1) {
                         if (i1 >= 0 && i1 < 256) {
-                            final Block block = worldIn.getBlockState(blockpos$mutableblockpos.func_181079_c(k1, i1, l1)).getBlock();
+                            final Block block = worldIn.getBlockState(blockpos$mutableblockpos.set(k1, i1, l1)).getBlock();
 
                             if (block.getMaterial() != Material.air && block.getMaterial() != Material.leaves) {
                                 flag = false;

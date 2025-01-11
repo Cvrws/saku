@@ -26,7 +26,7 @@ public class WTap extends Module {
 
 	private ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Normal"))
-			.add(new SubMode("Fast"))
+			.add(new SubMode("Silent"))
 			.setDefault("Normal");
 	
 	private NumberValue delay = new NumberValue("Delay", this, 500, 50, 1000, 10);
@@ -63,7 +63,7 @@ public class WTap extends Module {
 	    
     	switch (mode.getValue().getName()) {
     	case "Normal":
-    	case "Fast":
+    	case "Silent":
     		if (stopWatch.finished(delay.getValue().intValue())) {
     			stopWatch.reset();
     			ticks = hits.getSecondValue().intValue();
@@ -81,7 +81,7 @@ public class WTap extends Module {
 	            case "Normal":
 	                mc.gameSettings.keyBindForward.pressed = false;
 	                break;
-	            case "Fast":
+	            case "Silent":
 	            	 mc.player.sprintingTicksLeft = 0;
 	                break;
 	        }
@@ -90,7 +90,7 @@ public class WTap extends Module {
             case "Normal":
                 mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
                 break;
-            case "Fast":
+            case "Silent":
             	 mc.player.sprintingTicksLeft = 0;
                 break;
 	        }

@@ -326,7 +326,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 						this.unsetScoreTeamColor();
 					}
 				} else {
-					final boolean flag = /* entity.render && */this.setDoRenderBrightness(entity, partialTicks);
+					final boolean flag = this.setDoRenderBrightness(entity, partialTicks);
 
 					if (EmissiveTextures.isActive()) {
 						EmissiveTextures.beginRender();

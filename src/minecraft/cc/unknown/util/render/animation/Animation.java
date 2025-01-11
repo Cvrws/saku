@@ -28,7 +28,7 @@ public class Animation {
      *
      * @param destinationValue the value that the animation is going to reach
      */
-    public void run(final double destinationValue) {
+    public void animate(final double destinationValue) {
         this.millis = System.currentTimeMillis();
         if (this.destinationValue != destinationValue) {
             this.destinationValue = destinationValue;

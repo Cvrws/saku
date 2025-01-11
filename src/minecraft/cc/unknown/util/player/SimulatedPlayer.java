@@ -841,7 +841,7 @@ public class SimulatedPlayer implements Accessor {
             for (int k1 = i; k1 < j; k1++) {
                 for (int l1 = k; l1 < l; l1++) {
                     for (int i2 = i1; i2 < j1; i2++) {
-                        blockPos.func_181079_c(k1, l1, i2);
+                        blockPos.set(k1, l1, i2);
                         IBlockState state = getBlockState(blockPos);
                         if (state == null) continue;
                         Block block = state.getBlock();
@@ -1008,9 +1008,9 @@ public class SimulatedPlayer implements Accessor {
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
         for (int k1 = i; k1 < j; k1++) {
             for (int l1 = i1; l1 < j1; l1++) {
-                if (isBlockLoaded(blockPos.func_181079_c(k1, 64, l1))) {
+                if (isBlockLoaded(blockPos.set(k1, 64, l1))) {
                     for (int i2 = k - 1; i2 < l; i2++) {
-                        blockPos.func_181079_c(k1, i2, l1);
+                        blockPos.set(k1, i2, l1);
                         if (flag && flag1) {
                             isOutsideBorder = false;
                         } else if (!flag && !flag1) {

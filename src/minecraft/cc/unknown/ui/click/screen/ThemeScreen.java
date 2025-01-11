@@ -43,8 +43,8 @@ public class ThemeScreen implements Screen, Accessor {
         for (int i = 0; i < this.visibleThemes.size(); i++) {
             ThemeComponent theme = this.visibleThemes.get(i);
 
-            theme.getXAnimation().run(position.getX() + sidebar + 7 + ((7 + themeWidth) * (i % 3)));
-            theme.getYAnimation().run(position.getY() - 35 + Math.floor(i / 3D) * 57 + 60);
+            theme.getXAnimation().animate(position.getX() + sidebar + 7 + ((7 + themeWidth) * (i % 3)));
+            theme.getYAnimation().animate(position.getY() - 35 + Math.floor(i / 3D) * 57 + 60);
         }
 
         for (ThemeComponent theme : this.allThemes) {
@@ -52,7 +52,7 @@ public class ThemeScreen implements Screen, Accessor {
                 theme.draw(this.scrollUtil.getScroll(), themeWidth);
             }
 
-            theme.getOpacityAnimation().run(this.visibleThemes.contains(theme) ? 255 : 0);
+            theme.getOpacityAnimation().animate(this.visibleThemes.contains(theme) ? 255 : 0);
         }
     }
 

@@ -45,7 +45,7 @@ public final class CategoryComponent implements Accessor {
 
         /* Animations */
         animation.setDuration(200);
-        animation.run(selectedScreen.equals(category.getClickGUIScreen()) ? 255 : 0);
+        animation.animate(selectedScreen.equals(category.getClickGUIScreen()) ? 255 : 0);
 
         final double spacer = 3;
         final double width = Fonts.ROBOTO.get(16, Weight.LIGHT).width(category.getName()) + spacer * 2 + category.getFontRenderer().width(category.getIcon());

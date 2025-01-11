@@ -252,20 +252,6 @@ public class PlayerUtil implements Accessor {
 	}
 
 	/**
-	 * Checks if another players' team is the same as the players' team
-	 *
-	 * @return same team
-	 */
-	public boolean sameTeam(final EntityLivingBase player) {
-		if (player.getTeam() != null && mc.player.getTeam() != null) {
-			final char c1 = player.getDisplayName().getFormattedText().charAt(1);
-			final char c2 = mc.player.getDisplayName().getFormattedText().charAt(1);
-			return c1 == c2;
-		}
-		return false;
-	}
-
-	/**
 	 * Checks if there is a block under the player
 	 *
 	 * @return block under

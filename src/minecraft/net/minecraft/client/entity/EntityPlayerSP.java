@@ -840,4 +840,5 @@ public class EntityPlayerSP extends AbstractClientPlayer implements Accessor {
     public void moveEntityNoEvent(double x, double y, double z) {
         super.moveEntity(x, y, z);
     }
+
 }

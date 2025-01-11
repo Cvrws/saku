@@ -146,11 +146,11 @@ public class RiceGui extends GuiScreen implements Accessor {
 
         opacityAnimation.setEasing(mc.currentScreen == Sakura.instance.getClickGui() ? Easing.EASE_OUT_EXPO : Easing.LINEAR);
         opacityAnimation.setDuration(mc.currentScreen == Sakura.instance.getClickGui() ? 300 : 100);
-        opacityAnimation.run(mc.currentScreen == Sakura.instance.getClickGui() ? 1 : 0);
+        opacityAnimation.animate(mc.currentScreen == Sakura.instance.getClickGui() ? 1 : 0);
         opacity = opacityAnimation.getValue();
 
         scaleAnimation.setEasing(mc.currentScreen == Sakura.instance.getClickGui() ? Easing.EASE_OUT_EXPO : Easing.LINEAR);
-        scaleAnimation.run(mc.currentScreen == Sakura.instance.getClickGui() ? 1 : 0);
+        scaleAnimation.animate(mc.currentScreen == Sakura.instance.getClickGui() ? 1 : 0);
         animationTime = scaleAnimation.getValue();
 
         if (mc.currentScreen == Sakura.instance.getClickGui() && animationTime == 0) animationTime = 0.01;

@@ -294,7 +294,7 @@ public class GuiIngame extends Gui {
 
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.disableLighting();
-		GlStateManager.enableAlpha();
+		GlStateManager.enableAlpha();		
 	}
 
 	private void renderScoreboard(ScoreObjective objective, ScaledResolution scaledRes) {

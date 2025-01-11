@@ -30,25 +30,21 @@ public final class NameTags extends Module {
 	private final NumberValue distance = new NumberValue("Distance", this, 2.4, 1, 7, 0.1);
 	private final NumberValue scale = new NumberValue("Scale", this, 2.4, 0.1, 10, 0.1);
 	private final BooleanValue selfTag = new BooleanValue("Self Tag", this, true);
-	private final BooleanValue dropShadow = new BooleanValue("Drop shadow", this, false);
+	private final BooleanValue dropShadow = new BooleanValue("Drop shadow", this, true);
 	private final BooleanValue showDistance = new BooleanValue("Show Distance", this, false);
-	private final BooleanValue onlyRenderName = new BooleanValue("Only Render Name", this, true);
-	private final BooleanValue background = new BooleanValue("Background", this, true);
-	private final NumberValue alphaBackground = new NumberValue("Alpha Background", this, 110, 0, 255, 1, () -> !background.getValue());
+	private final BooleanValue onlyRenderName = new BooleanValue("Only Render Name", this, false);
+	private final BooleanValue checkInvis = new BooleanValue("Show Invisibles", this, false);
 	private final DescValue armorSettings = new DescValue("Armor Settings", this);
 	private final BooleanValue showArmor = new BooleanValue("Show Armor", this, true);
 	private final BooleanValue showEnchants = new BooleanValue("Show enchant", this, true, () -> !showArmor.getValue());
 	private final BooleanValue showDurability = new BooleanValue("Show Durability", this, true, () -> !showArmor.getValue());
 	private final BooleanValue showStackSize = new BooleanValue("Show StackSize", this, true, () -> !showArmor.getValue());
-	private final BooleanValue checkInvis = new BooleanValue("Show Invisibles", this, false, () -> !showArmor.getValue());
-	
-    private int friendColor = new Color(0, 255, 0, 255).getRGB();
-    private int enemyColor = new Color(255, 0, 0, 255).getRGB();
 
 	@EventLink
 	public final Listener<RenderLabelEvent> onRenderLabel = event -> {
         if (event.getTarget() instanceof EntityPlayer && ((EntityPlayer)event.getTarget()).deathTime == 0 && (checkInvis.getValue() || !((EntityPlayer)event.getTarget()).isInvisible())) {
-            EntityPlayer player = (EntityPlayer) event.getTarget();
+        	EntityPlayer player = (EntityPlayer) event.getTarget();
+        	
             String name;
             
             
@@ -77,10 +73,6 @@ public final class NameTags extends Module {
                     color += "2";
                 }
                 name = color + distance + "m§r " + name;
-            }
-            
-            if (event.getTarget() == mc.player && !selfTag.getValue()) {
-            	return;
             }
             
             event.setCancelled();
@@ -115,21 +107,7 @@ public final class NameTags extends Module {
 		if (showArmor.getValue()) {
 			renderArmor(player);
 		}
-        
-	    if (background.getValue()) {
-	    	if (player.isSneaking()) {
-	    		RenderUtil.roundedRect(-compactWidth / 2 + 1 , 4, compactWidth / 2 - 3, compactHeight + 8, 6, new Color(0, 0, 0, alphaBackground.getValue().intValue()).getRGB());
-	    	} else {
-	    		RenderUtil.roundedRect(-compactWidth / 2 + 1 , -6.0F, compactWidth / 2 - 3, compactHeight - 1, 6, new Color(0, 0, 0, alphaBackground.getValue().intValue()).getRGB());
-	    	}
-	    }
-	    
-	    if (FriendUtil.isFriend(player)) {
-	        RenderUtil.drawOutline(-compactWidth / 2 + 1, -4.0F, compactWidth / 2 - 3, mc.fontRendererObj.FONT_HEIGHT + 2, 2, friendColor);
-	    } else if (EnemyUtil.isEnemy(player)) {
-	        RenderUtil.drawOutline(-compactWidth / 2 + 1, -4.0F, compactWidth / 2 - 3, mc.fontRendererObj.FONT_HEIGHT + 2, 2, enemyColor);
-	    }
-	    
+		
 	    if (player.isSneaking()) {
 	        GlStateManager.translate(0.0F, 9.374999F, 0.0F);
 	    }
@@ -151,31 +129,23 @@ public final class NameTags extends Module {
 	
 	private void renderItemStack(final ItemStack stack, final int x, final int y) {
 	    GlStateManager.pushMatrix();
+	    GlStateManager.enableBlend();
+	    GlStateManager.enableAlpha();
+	    RenderHelper.enableStandardItemLighting();
+	    fixGlintShit();
+	    mc.getRenderItem().zLevel = -150.0F;
 
-	    try {
-	        GlStateManager.enableBlend();
-	        GlStateManager.enableAlpha();
-	        RenderHelper.enableStandardItemLighting();
-	        mc.getRenderItem().zLevel = -150.0F;
-
-	        GlStateManager.disableDepth();
-	        mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
-			if (showStackSize.getValue() && !(stack.getItem() instanceof ItemSword) && !(stack.getItem() instanceof ItemBow) && !(stack.getItem() instanceof ItemTool) && !(stack.getItem() instanceof ItemArmor)) {
-				mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, stack, x, y);
-			}
-	        mc.getRenderItem().zLevel = 0.0F;
-	        RenderHelper.disableStandardItemLighting();
-
-	        renderEnchantText(stack, x, y);
-
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	        GlStateManager.disableBlend();
-	        GlStateManager.disableAlpha();
-	        GlStateManager.enableDepth();
-	        GlStateManager.popMatrix();
+	    GlStateManager.disableDepth();
+	    mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
+	    if (showStackSize.getValue() && !(stack.getItem() instanceof ItemSword) && !(stack.getItem() instanceof ItemBow) && !(stack.getItem() instanceof ItemTool) && !(stack.getItem() instanceof ItemArmor)) {
+	    	mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, stack, x, y);
 	    }
+	    mc.getRenderItem().zLevel = 0.0F;
+	    RenderHelper.disableStandardItemLighting();
+
+	    renderEnchantText(stack, x, y);
+
+	    GlStateManager.popMatrix();
 	}
 	
 	private void renderArmor(EntityPlayer e) {
@@ -201,12 +171,11 @@ public final class NameTags extends Module {
 				pos += 16;
 			}
 		}
-		
-		RenderHelper.disableStandardItemLighting();
-		mc.entityRenderer.disableLightmap();
 	}
 	
 	private void renderEnchantText(ItemStack stack, int x, int y) {
+        GlStateManager.pushMatrix();
+        GlStateManager.disableDepth();
 		int newY = y - 24;
 		if (showDurability.getValue() && stack.getItem() instanceof ItemArmor) {
 			int remainingDurability = stack.getMaxDamage() - stack.getItemDamage();
@@ -227,6 +196,8 @@ public final class NameTags extends Module {
 				}
 			}
 		}
+        GlStateManager.enableDepth();
+        GlStateManager.popMatrix();
 	}
 	
 	private float getSize(EntityPlayer player) {
@@ -283,4 +254,22 @@ public final class NameTags extends Module {
 			return null;
 		}
 	}
+	
+	private static void fixGlintShit() {
+        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.enableDepth();
+        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableAlpha();
+        GlStateManager.disableBlend();
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableLighting();
+        GlStateManager.enableDepth();
+    }
 }

@@ -1827,11 +1827,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 	}
 
 	private void addRainParticles() {
-		float f = this.mc.theWorld.getRainStrength(1.0F);
-
-		Ambience ambience = Sakura.instance.getModuleManager().get(Ambience.class);
-		if (ambience != null && ambience.skipRainParticles())
-			return;
+		/*float f = this.mc.theWorld.getRainStrength(1.0F);
 
 		if (!Config.isRainFancy()) {
 			f /= 2.0F;
@@ -1900,7 +1896,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 					this.mc.theWorld.playSound(d0, d1, d2, "ambient.weather.rain", 0.2F, 1.0F, false);
 				}
 			}
-		}
+		}*/
 	}
 
 	private static final Tessellator tessellator = Tessellator.getInstance();
@@ -1910,7 +1906,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 	 * Render rain and snow
 	 */
 	protected void renderRainSnow(final float partialTicks) {
-		if (Reflector.ForgeWorldProvider_getWeatherRenderer.exists()) {
+		/*if (Reflector.ForgeWorldProvider_getWeatherRenderer.exists()) {
 			final WorldProvider worldprovider = this.mc.theWorld.provider;
 			final Object object = Reflector.call(worldprovider, Reflector.ForgeWorldProvider_getWeatherRenderer);
 
@@ -1983,10 +1979,6 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 							this.random.setSeed(l1 * l1 * 3121 + l1 * 45238971 ^ k1 * k1 * 418711 + k1 * 13761);
 							blockpos$mutableblockpos.func_181079_c(l1, k2, k1);
 
-							final Ambience ambience = Sakura.instance.getModuleManager().get(Ambience.class);
-
-							final float f1 = ambience.getFloatTemperature(blockpos$mutableblockpos, biomegenbase);
-
 							if (world.getWorldChunkManager().getTemperatureAtHeight(f1, j2) >= 0.15F) {
 								if (j1 != 0) {
 									if (j1 >= 0) {
@@ -2027,20 +2019,6 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 							else {
 								Color color = Color.WHITE;
 								ResourceLocation texture = TEXTURE_SNOW_HEAVY;
-
-								if (ambience.isEnabled()) {
-									color = new Color(Color
-											.getHSBColor((ambience.snowColor.getValue().floatValue() % 360) / 360.0f,
-													1.0f, 1f)
-											.getRGB());
-									;
-									if (ambience.getWeather().getValue().getName().equals("Light Snow"))
-										texture = TEXTURE_SNOW_LIGHT;
-									else if (ambience.getWeather().getValue().getName().equals("Nether Particles")) {
-										texture = TEXTURE_NETHER_PARTICLES;
-										color = new Color(220, 200, 230);
-									}
-								}
 
 								if (j1 != 1) {
 									if (j1 >= 0) {
@@ -2097,7 +2075,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 			GlStateManager.disableBlend();
 			GlStateManager.alphaFunc(516, 0.1F);
 			this.disableLightmap();
-		}
+		}*/
 	}
 
 	/**
@@ -2310,7 +2288,8 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 	private void setupFog(final int p_78468_1_, final float partialTicks) {
 		this.fogStandard = false;
 		final Entity entity = this.mc.getRenderViewEntity();
-
+		Ambience ambience = Sakura.instance.getModuleManager().get(Ambience.class);
+		
 		GL11.glFog(GL11.GL_FOG_COLOR,
 				this.setFogColorBuffer(this.fogColorRed, this.fogColorGreen, this.fogColorBlue, 1.0F));
 		GL11.glNormal3f(0.0F, -1.0F, 0.0F);

@@ -37,7 +37,7 @@ public class FastPlace extends Module {
 			ItemStack stack = mc.player.getCurrentEquippedItem();
 			if (stack != null) {
 				Item item = mc.player.getCurrentEquippedItem().getItem();
-				if (mc.objectMouseOver.typeOfHit == null || mc.objectMouseOver == null) return;
+				if (mc.objectMouseOver.typeOfHit == null || mc.objectMouseOver == null || item == null) return;
 				if (blocks.getValue() && item instanceof ItemBlock && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
 					long random = blockDelay.getValue().longValue() == 0.0 ? 0L : blockDelay.getValue().longValue() + MathUtil.nextLong(-30L, 30L);
 					if (stopWatch.finished(random)) {

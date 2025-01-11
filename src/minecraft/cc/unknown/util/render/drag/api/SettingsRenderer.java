@@ -64,7 +64,7 @@ public class SettingsRenderer implements Accessor {
         double width = 100, height = 100;
         animation.setDuration(300);
         animation.setEasing(close ? Easing.EASE_IN_EXPO : Easing.EASE_OUT_EXPO);
-        animation.run(close ? 0 : 1);
+        animation.animate(close ? 0 : 1);
         double scale = animation.getValue();
 
         if (scale <= 0.0001) return;

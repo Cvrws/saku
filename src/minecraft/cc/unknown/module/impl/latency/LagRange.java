@@ -131,7 +131,7 @@ public class LagRange extends Module {
 
     private boolean shouldStart() {
         if (System.currentTimeMillis() - lastLagTime < delay.getValue().longValue()) return false;
-        EntityPlayer target = mc.theWorld.playerEntities.stream().filter(p -> p != mc.player).filter(p -> !checkTeams.getValue() || !PlayerUtil.sameTeam(p)).filter(p -> !FriendUtil.isFriend(p)).map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p))).min(Comparator.comparing(Doble::getSecond)).map(Doble::getFirst).orElse(null);
+        EntityPlayer target = mc.theWorld.playerEntities.stream().filter(p -> p != mc.player).filter(p -> checkTeams.getValue() || PlayerUtil.isTeam(p)).filter(p -> !FriendUtil.isFriend(p)).map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p))).min(Comparator.comparing(Doble::getSecond)).map(Doble::getFirst).orElse(null);
         if (target == null) return false;
         double distance = new Vec3(target).distanceTo(mc.player);
         return distance >= 3.0 && distance <= range.getValue().doubleValue();

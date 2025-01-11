@@ -72,7 +72,7 @@ public class BlockHit extends Module {
 					if (v1_9) {
 						mc.gameSettings.keyBindUseItem.pressed = false;	
 					} else {
-						release();
+						KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
 					}
 				}
 				return;
@@ -86,18 +86,11 @@ public class BlockHit extends Module {
 				if (v1_9) {
 					mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
 				} else {
-					press();
+					KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
+					KeyBinding.onTick(mc.gameSettings.keyBindUseItem.getKeyCode());
 				}
 			}
 		}
 	}
 
-	private void release() {
-		KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
-	}
-
-	private void press() {
-		KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
-		KeyBinding.onTick(mc.gameSettings.keyBindUseItem.getKeyCode());
-	}
 }

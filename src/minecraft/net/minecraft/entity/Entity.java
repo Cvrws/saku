@@ -1787,7 +1787,7 @@ public abstract class Entity implements ICommandSender {
                 int l = MathHelper.floor_double(this.posZ + (double) (((float) ((i >> 2) % 2) - 0.5F) * this.width * 0.8F));
 
                 if (blockpos$mutableblockpos.getX() != k || blockpos$mutableblockpos.getY() != j || blockpos$mutableblockpos.getZ() != l) {
-                    blockpos$mutableblockpos.func_181079_c(k, j, l);
+                    blockpos$mutableblockpos.set(k, j, l);
 
                     if (this.worldObj.getBlockState(blockpos$mutableblockpos).getBlock().isVisuallyOpaque()) {
                         return true;
@@ -2589,5 +2589,16 @@ public abstract class Entity implements ICommandSender {
         }
 
         EnchantmentHelper.applyArthropodEnchantments(entityLivingBaseIn, entityIn);
+    }
+    
+    public float getSmoothDistanceToCoord(float x, float y, float z) {
+        float pTicks = Minecraft.getInstance().timer.renderPartialTicks;
+        double xposme = this.lastTickPosX + (this.posX - this.lastTickPosX) * (double)pTicks;
+        double yposme = this.lastTickPosY + (this.posY - this.lastTickPosY) * (double)pTicks;
+        double zposme = this.lastTickPosZ + (this.posZ - this.lastTickPosZ) * (double)pTicks;
+        float f = (float)(xposme - (double)x);
+        float f1 = (float)(yposme - (double)y);
+        float f2 = (float)(zposme - (double)z);
+        return MathHelper.sqrt_double(f * f + f1 * f1 + f2 * f2);
     }
 }

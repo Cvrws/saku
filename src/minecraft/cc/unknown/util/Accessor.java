@@ -1,5 +1,8 @@
 package cc.unknown.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.Gson;
 
 import cc.unknown.Sakura;
@@ -10,6 +13,9 @@ import net.minecraft.client.Minecraft;
 
 public interface Accessor {
     Minecraft mc = Minecraft.getInstance();
+    
+    List<Runnable> MODERN_BLUR_RUNNABLES = new ArrayList<>();
+    List<Runnable> MODERN_BLOOM_RUNNABLES = new ArrayList<>();
 
     default Sakura getInstance() {
         return Sakura.instance;

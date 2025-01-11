@@ -1,9 +1,11 @@
 package net.minecraft.client.multiplayer;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import cc.unknown.module.impl.visual.Invisibles;
@@ -24,9 +26,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.src.Config;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -280,7 +284,7 @@ public class WorldClient extends World {
             final int k = p_73029_1_ + this.rand.nextInt(i) - this.rand.nextInt(i);
             final int l = p_73029_2_ + this.rand.nextInt(i) - this.rand.nextInt(i);
             final int i1 = p_73029_3_ + this.rand.nextInt(i) - this.rand.nextInt(i);
-            blockpos$mutableblockpos.func_181079_c(k, l, i1);
+            blockpos$mutableblockpos.set(k, l, i1);
             final IBlockState iblockstate = this.getBlockState(blockpos$mutableblockpos);
             iblockstate.getBlock().randomDisplayTick(this, blockpos$mutableblockpos, iblockstate, random);
 
@@ -462,4 +466,45 @@ public class WorldClient extends World {
     public boolean isPlayerUpdate() {
         return this.playerUpdate;
     }
+
+    public List<AxisAlignedBB> getCollisionBoxes(AxisAlignedBB bb)
+    {
+        List<AxisAlignedBB> list = Lists.<AxisAlignedBB>newArrayList();
+        int i = MathHelper.floor_double(bb.minX);
+        int j = MathHelper.floor_double(bb.maxX + 1.0D);
+        int k = MathHelper.floor_double(bb.minY);
+        int l = MathHelper.floor_double(bb.maxY + 1.0D);
+        int i1 = MathHelper.floor_double(bb.minZ);
+        int j1 = MathHelper.floor_double(bb.maxZ + 1.0D);
+        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+
+        for (int k1 = i; k1 < j; ++k1)
+        {
+            for (int l1 = i1; l1 < j1; ++l1)
+            {
+                if (this.isBlockLoaded(blockpos$mutableblockpos.set(k1, 64, l1)))
+                {
+                    for (int i2 = k - 1; i2 < l; ++i2)
+                    {
+                        blockpos$mutableblockpos.set(k1, i2, l1);
+                        IBlockState iblockstate;
+
+                        if (k1 >= -30000000 && k1 < 30000000 && l1 >= -30000000 && l1 < 30000000)
+                        {
+                            iblockstate = this.getBlockState(blockpos$mutableblockpos);
+                        }
+                        else
+                        {
+                            iblockstate = Blocks.bedrock.getDefaultState();
+                        }
+
+                        iblockstate.getBlock().addCollisionBoxesToList(this, blockpos$mutableblockpos, iblockstate, bb, list, (Entity)null);
+                    }
+                }
+            }
+        }
+
+        return list;
+    }
+
 }

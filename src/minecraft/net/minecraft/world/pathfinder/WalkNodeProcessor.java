@@ -48,7 +48,7 @@ public class WalkNodeProcessor extends NodeProcessor {
 
             for (Block block = this.blockaccess.getBlockState(blockpos$mutableblockpos).getBlock(); block == Blocks.flowing_water || block == Blocks.water; block = this.blockaccess.getBlockState(blockpos$mutableblockpos).getBlock()) {
                 ++i;
-                blockpos$mutableblockpos.func_181079_c(MathHelper.floor_double(entityIn.posX), i, MathHelper.floor_double(entityIn.posZ));
+                blockpos$mutableblockpos.set(MathHelper.floor_double(entityIn.posX), i, MathHelper.floor_double(entityIn.posZ));
             }
 
             this.avoidsWater = false;
@@ -175,7 +175,7 @@ public class WalkNodeProcessor extends NodeProcessor {
         for (int i = x; i < x + sizeX; ++i) {
             for (int j = y; j < y + sizeY; ++j) {
                 for (int k = z; k < z + sizeZ; ++k) {
-                    blockpos$mutableblockpos.func_181079_c(i, j, k);
+                    blockpos$mutableblockpos.set(i, j, k);
                     final Block block = blockaccessIn.getBlockState(blockpos$mutableblockpos).getBlock();
 
                     if (block.getMaterial() != Material.air) {

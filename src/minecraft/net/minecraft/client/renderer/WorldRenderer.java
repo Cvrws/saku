@@ -21,6 +21,7 @@ import net.minecraft.src.Config;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.optifine.SmartAnimations;
 import net.optifine.render.RenderEnv;
 import net.optifine.shaders.SVertexBuilder;
@@ -450,6 +451,10 @@ public class WorldRenderer {
     public WorldRenderer color(final float p_181666_1_, final float p_181666_2_, final float p_181666_3_, final float p_181666_4_) {
         return this.func_181669_b((int) (p_181666_1_ * 255.0F), (int) (p_181666_2_ * 255.0F), (int) (p_181666_3_ * 255.0F), (int) (p_181666_4_ * 255.0F));
     }
+    
+    public WorldRenderer color(int colorHex) {
+        return this.color(colorHex >> 16 & 255, colorHex >> 8 & 255, colorHex & 255, colorHex >> 24 & 255);
+    }
 
     public WorldRenderer func_181669_b(final int p_181669_1_, final int p_181669_2_, final int p_181669_3_, final int p_181669_4_) {
         if (!this.needsUpdate) {
@@ -523,6 +528,14 @@ public class WorldRenderer {
         if (Config.isShaders()) {
             SVertexBuilder.endAddVertex(this);
         }
+    }
+    
+    public WorldRenderer pos(Vec3 vec) {
+        return this.pos(vec.xCoord, vec.yCoord, vec.zCoord);
+    }
+
+    public WorldRenderer pos(double x, double y) {
+        return this.pos(x, y, 0.0);
     }
 
     public WorldRenderer pos(final double p_181662_1_, final double p_181662_3_, final double p_181662_5_) {

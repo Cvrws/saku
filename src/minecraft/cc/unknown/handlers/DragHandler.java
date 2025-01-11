@@ -55,7 +55,7 @@ public class DragHandler implements Accessor {
 
             animationAlpha.setEasing(LINEAR);
             animationAlpha.setDuration(300);
-            animationAlpha.run(shouldRender ? 100 : 0);
+            animationAlpha.animate(shouldRender ? 100 : 0);
 
             if (animationAlpha.getValue() <= 0 && closeStopWatch.finished(0)) {
                 selectedValue = null;

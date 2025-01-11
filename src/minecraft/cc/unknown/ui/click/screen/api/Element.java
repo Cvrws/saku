@@ -49,8 +49,8 @@ public class Element implements Accessor {
             return;
         }
 
-        alpha.run(over() ? 75 : 0);
-        hover.run(over() ? 5 : 0);
+        alpha.animate(over() ? 75 : 0);
+        hover.animate(over() ? 5 : 0);
 
         RenderUtil.roundedRectangle(this.position.x, this.position.y, scale.x, scale.y, 8, Colors.OVERLAY.get());
 

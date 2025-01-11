@@ -179,8 +179,8 @@ public class Teleporter {
                 label142:
 
                 for (int j3 = this.worldServerInstance.getActualHeight() - 1; j3 >= 0; --j3) {
-                    if (this.worldServerInstance.isAirBlock(blockpos$mutableblockpos.func_181079_c(j2, j3, l2))) {
-                        while (j3 > 0 && this.worldServerInstance.isAirBlock(blockpos$mutableblockpos.func_181079_c(j2, j3 - 1, l2))) {
+                    if (this.worldServerInstance.isAirBlock(blockpos$mutableblockpos.set(j2, j3, l2))) {
+                        while (j3 > 0 && this.worldServerInstance.isAirBlock(blockpos$mutableblockpos.set(j2, j3 - 1, l2))) {
                             --j3;
                         }
 
@@ -199,7 +199,7 @@ public class Teleporter {
                                         final int i5 = j2 + (k4 - 1) * l3 + j4 * i4;
                                         final int j5 = j3 + l4;
                                         final int k5 = l2 + (k4 - 1) * i4 - j4 * l3;
-                                        blockpos$mutableblockpos.func_181079_c(i5, j5, k5);
+                                        blockpos$mutableblockpos.set(i5, j5, k5);
 
                                         if (l4 < 0 && !this.worldServerInstance.getBlockState(blockpos$mutableblockpos).getBlock().getMaterial().isSolid() || l4 >= 0 && !this.worldServerInstance.isAirBlock(blockpos$mutableblockpos)) {
                                             continue label142;
@@ -233,8 +233,8 @@ public class Teleporter {
                     label562:
 
                     for (int i7 = this.worldServerInstance.getActualHeight() - 1; i7 >= 0; --i7) {
-                        if (this.worldServerInstance.isAirBlock(blockpos$mutableblockpos.func_181079_c(l5, i7, j6))) {
-                            while (i7 > 0 && this.worldServerInstance.isAirBlock(blockpos$mutableblockpos.func_181079_c(l5, i7 - 1, j6))) {
+                        if (this.worldServerInstance.isAirBlock(blockpos$mutableblockpos.set(l5, i7, j6))) {
+                            while (i7 > 0 && this.worldServerInstance.isAirBlock(blockpos$mutableblockpos.set(l5, i7 - 1, j6))) {
                                 --i7;
                             }
 
@@ -247,7 +247,7 @@ public class Teleporter {
                                         final int j12 = l5 + (j10 - 1) * j8;
                                         final int i13 = i7 + j11;
                                         final int j13 = j6 + (j10 - 1) * j9;
-                                        blockpos$mutableblockpos.func_181079_c(j12, i13, j13);
+                                        blockpos$mutableblockpos.set(j12, i13, j13);
 
                                         if (j11 < 0 && !this.worldServerInstance.getBlockState(blockpos$mutableblockpos).getBlock().getMaterial().isSolid() || j11 >= 0 && !this.worldServerInstance.isAirBlock(blockpos$mutableblockpos)) {
                                             continue label562;

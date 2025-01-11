@@ -69,7 +69,7 @@ public class ModuleComponent implements Accessor {
             // Hover animation
             final boolean overModule = GUIUtil.mouseOver(position.x - 28, position.y, scale.x, this.scale.y, mouseX, mouseY);
 
-            hoverAnimation.run(overModule ? mouseDown ? 35 : 20 : 0);
+            hoverAnimation.animate(overModule ? mouseDown ? 35 : 20 : 0);
 
             // Draw the module's category if the user is searching
             /*if (clickGUI.getRenderedScreen() instanceof HomeScreen) {
@@ -111,11 +111,11 @@ public class ModuleComponent implements Accessor {
 
         opening.setDuration(Math.min((long) height * 3, 450));
         opening.setEasing(Easing.EASE_OUT_EXPO);
-        opening.run(expanded ? height : defaultHeight);
+        opening.animate(expanded ? height : defaultHeight);
         scale.y = (float) opening.getValue();
 
         settingOpacity.setDuration(expanded ? opening.getDuration() / 2 : opening.getDuration() / 3);
-        settingOpacity.run(expanded ? 255 : 0);
+        settingOpacity.animate(expanded ? 255 : 0);
 
     }
 
