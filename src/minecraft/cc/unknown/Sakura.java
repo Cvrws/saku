@@ -45,7 +45,7 @@ public class Sakura {
     private ScriptManager scriptManager;
     
     private RiceGui clickGui;
-    public boolean firstLogin;
+    public boolean firstStart;
     
     private DiscordHandler discordHandler = new DiscordHandler();
     public static final List<Object> registered = new ArrayList<Object>();
@@ -64,6 +64,9 @@ public class Sakura {
     	setupDiscordRPC();
         
     	mc.displayGuiScreen(new MainMenu());
+    	
+        this.firstStart = true;
+    	
     	LOGGER.info("Initialized successfully.");
     }
 
