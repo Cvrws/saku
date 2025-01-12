@@ -22,7 +22,7 @@ import com.google.gson.annotations.SerializedName;
 import cc.unknown.ui.menu.alt.AltManager;
 import cc.unknown.util.client.StreamerUtil;
 import cc.unknown.util.netty.NetworkUtil;
-import cc.unknown.util.structure.NameValuePair;
+import cc.unknown.util.structure.ValuePair;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -178,10 +178,10 @@ public class MicrosoftLogin {
             if ("GET".equalsIgnoreCase(method)) {
                 URI requestURI = (URI) getRequestURI.invoke(httpExchange);
             	String queryString = requestURI.getQuery();
-            	List<NameValuePair> queryParameters = NetworkUtil.parse(queryString, StandardCharsets.UTF_8);
+            	List<ValuePair> queryParameters = NetworkUtil.parse(queryString, StandardCharsets.UTF_8);
 
                 boolean ok = false;
-                for (NameValuePair pair : queryParameters) {
+                for (ValuePair pair : queryParameters) {
                     if ("code".equals(pair.getName())) {
                         handleCode(pair.getValue());
                         ok = true;

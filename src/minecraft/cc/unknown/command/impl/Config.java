@@ -3,8 +3,13 @@ package cc.unknown.command.impl;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
+import cc.unknown.Sakura;
 import cc.unknown.command.Command;
 import cc.unknown.managers.ConfigManager;
 import cc.unknown.util.file.config.ConfigFile;
@@ -84,11 +89,6 @@ public final class Config extends Command {
                             final String color = getTheme().getChatAccentColor().toString();
 
                             final ChatComponentText chatText = new ChatComponentText(color + "> " + configName);
-                            final ChatComponentText hoverText = new ChatComponentText(String.format("Click to load config %s", configName));
-
-                            chatText.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, configCommand))
-                                    .setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText));
-
                             mc.player.addChatMessage(chatText);
                         });
                         break;
@@ -106,6 +106,32 @@ public final class Config extends Command {
                         break;
                 }
                 break;
+        }
+    }
+    
+    @Override
+    public List<String> autocomplete(int arg, String[] args) {
+        if (args.length == 0) {
+            return Collections.emptyList();
+        }
+
+        switch (args.length) {
+            case 1:
+                return Arrays.asList("list", "load", "save", "remove", "folder").stream()
+                        .filter(option -> option.toLowerCase().startsWith(args[0].toLowerCase()))
+                        .collect(Collectors.toList());
+
+            case 2:
+                if ("load".equalsIgnoreCase(args[0]) || "remove".equalsIgnoreCase(args[0])) {
+                    return getInstance().getConfigManager().stream()
+                            .map(config -> config.getFile().getAbsoluteFile().getName().replace(".json", ""))
+                            .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
+                            .collect(Collectors.toList());
+                }
+                return Collections.emptyList();
+
+            default:
+                return Collections.emptyList();
         }
     }
 }

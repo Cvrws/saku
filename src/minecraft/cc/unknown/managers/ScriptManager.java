@@ -43,7 +43,7 @@ public final class ScriptManager implements Accessor {
 
     public static final File SCRIPT_DIRECTORY = new File(FileManager.DIRECTORY, "scripts");
 
-    private static final FilenameFilter SCRIPT_FILE_FILTER = (file, name) -> name.toLowerCase(Locale.ENGLISH).endsWith(".js");
+    public static final FilenameFilter SCRIPT_FILE_FILTER = (file, name) -> name.toLowerCase(Locale.ENGLISH).endsWith(".js");
 
     private static final ClassFilter SCRIPT_CLASS_FILTER = new ScriptClassFilter();
 

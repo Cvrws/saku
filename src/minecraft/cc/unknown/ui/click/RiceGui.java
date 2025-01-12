@@ -188,7 +188,7 @@ public class RiceGui extends GuiScreen implements Accessor {
         int length = 0;
 
         /* Renders screen depending on selected category */
-        (renderedScreen = timeInCategory.finished(length) ? selectedScreen : lastScreen).onRender(mouseX, mouseY, partialTicks);
+        (renderedScreen = timeInCategory.finished(length) ? selectedScreen : lastScreen).onDraw(mouseX, mouseY, partialTicks);
 
         final int opacity2 = 255 - (int) Math.max(0, Math.min(255, timeInCategory.getElapsedTime() < length ? 255 - (timeInCategory.getElapsedTime() * (255f / length)) : ((timeInCategory.getElapsedTime() - length) * (255f / length))));
 

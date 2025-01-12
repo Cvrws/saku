@@ -36,7 +36,7 @@ public class ScriptScreen implements Screen, Accessor {
     private Animation animation = new Animation(Easing.EASE_OUT_EXPO, 400);
 
     @Override
-    public void onRender(final int mouseX, final int mouseY, final float partialTicks) {
+    public void onDraw(final int mouseX, final int mouseY, final float partialTicks) {
         if (!registered) {
             Sakura.instance.getEventBus().register(this);
             registered = true;

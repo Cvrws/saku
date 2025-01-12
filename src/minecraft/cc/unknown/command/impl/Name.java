@@ -1,5 +1,8 @@
 package cc.unknown.command.impl;
 
+import java.util.Collections;
+import java.util.List;
+
 import cc.unknown.command.Command;
 import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.client.gui.GuiScreen;
@@ -16,5 +19,10 @@ public final class Name extends Command {
 
         GuiScreen.setClipboardString(name);
         PlayerUtil.displayInClient("Copied your username to clipboard. (%s)", name);
+    }
+    
+    @Override
+    public List<String> autocomplete(int arg, String[] args) {
+        return args.length == 0 ? Collections.singletonList("name") : Collections.emptyList();
     }
 }

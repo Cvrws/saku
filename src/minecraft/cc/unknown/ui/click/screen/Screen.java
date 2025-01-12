@@ -2,7 +2,7 @@ package cc.unknown.ui.click.screen;
 
 public interface Screen {
 
-    default void onRender(final int mouseX, final int mouseY, final float partialTicks) {
+    default void onDraw(final int mouseX, final int mouseY, final float partialTicks) {
 
     }
 

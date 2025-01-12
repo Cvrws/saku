@@ -24,7 +24,7 @@ public final class CategoryScreen implements Screen, Accessor {
     private double endOfList, startOfList;
 
     @Override
-    public void onRender(final int mouseX, final int mouseY, final float partialTicks) {
+    public void onDraw(final int mouseX, final int mouseY, final float partialTicks) {
         if (this.category == null) return;
 
         final RiceGui clickGUI = this.getClickGUI();

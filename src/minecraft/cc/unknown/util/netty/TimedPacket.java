@@ -1,4 +1,4 @@
-package cc.unknown.util.netty.packet;
+package cc.unknown.util.netty;
 
 import cc.unknown.util.client.StopWatch;
 import lombok.Getter;

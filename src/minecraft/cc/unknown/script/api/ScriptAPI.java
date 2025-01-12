@@ -113,6 +113,11 @@ public class ScriptAPI {
 
                 scriptCommand.call("onExecute", (Object[]) args);
             }
+
+			@Override
+			public List<String> autocomplete(int arg, String[] args) {
+				return null;
+			}
         };
 
         scriptCommandReference.set(getCommand(command));

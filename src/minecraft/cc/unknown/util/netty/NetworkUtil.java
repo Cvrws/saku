@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.structure.NameValuePair;
+import cc.unknown.util.structure.ValuePair;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,8 +30,8 @@ public class NetworkUtil implements Accessor {
     	}
     }
 
-    public static List<NameValuePair> parse(String query, java.nio.charset.Charset charset) {
-        List<NameValuePair> result = new ArrayList<>();
+    public static List<ValuePair> parse(String query, java.nio.charset.Charset charset) {
+        List<ValuePair> result = new ArrayList<>();
         if (query == null || query.isEmpty()) {
             return result;
         }
@@ -42,7 +42,7 @@ public class NetworkUtil implements Accessor {
             try {
                 String key = URLDecoder.decode(keyValue[0], charset.name());
                 String value = keyValue.length > 1 ? URLDecoder.decode(keyValue[1], charset.name()) : "";
-                result.add(new NameValuePair(key, value));
+                result.add(new ValuePair(key, value));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

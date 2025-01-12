@@ -1,5 +1,10 @@
 package cc.unknown.command.impl;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import cc.unknown.command.Command;
 import cc.unknown.util.player.FriendUtil;
 
@@ -43,6 +48,31 @@ public final class Friend extends Command {
 	        error("Usage: .friend <add/remove/list> <player>");
 	    }
 	}
+	
+    @Override
+    public List<String> autocomplete(int arg, String[] args) {
+        if (args.length == 0) {
+            return Collections.emptyList();
+        }
+
+        switch (args.length) {
+            case 1:
+                return Arrays.asList("add", "remove", "list", "clear").stream()
+                        .filter(option -> option.toLowerCase().startsWith(args[0].toLowerCase()))
+                        .collect(Collectors.toList());
+
+            case 2:
+                if ("remove".equalsIgnoreCase(args[0]) || "add".equalsIgnoreCase(args[0])) {
+                    return FriendUtil.getFriends().stream()
+                            .filter(friend -> friend.toLowerCase().startsWith(args[1].toLowerCase()))
+                            .collect(Collectors.toList());
+                }
+                return Collections.emptyList();
+
+            default:
+                return Collections.emptyList();
+        }
+    }
 
 	private String getFriendList() {
 	    if (FriendUtil.getFriends().isEmpty()) {

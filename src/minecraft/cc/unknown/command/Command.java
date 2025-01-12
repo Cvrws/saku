@@ -5,6 +5,12 @@ import static cc.unknown.util.client.StreamerUtil.red;
 import static cc.unknown.util.client.StreamerUtil.reset;
 import static cc.unknown.util.client.StreamerUtil.yellow;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+
 import cc.unknown.util.Accessor;
 import cc.unknown.util.player.PlayerUtil;
 import lombok.Getter;
@@ -21,6 +27,23 @@ public abstract class Command implements Accessor {
     }
 
     public abstract void execute(String[] args);
+    
+    public abstract List<String> autocomplete(int arg, String[] args);
+
+    public boolean match(String name) {
+        for (String alias : expressions) {
+            if (alias.equalsIgnoreCase(name)) return true;
+        }
+        return false;
+    }
+
+    @NotNull
+    public List<String> getNameAndAliases() {
+        List<String> l = new ArrayList<>();
+        l.addAll(Arrays.asList(expressions));
+
+        return l;
+    }
 	
 	public void error(String error) {
 		PlayerUtil.displayInClient(yellow + "[" + red + "%" + yellow + "] " + reset + error); 

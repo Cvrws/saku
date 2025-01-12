@@ -26,7 +26,7 @@ public class ThemeScreen implements Screen, Accessor {
     }
 
     @Override
-    public void onRender(int mouseX, int mouseY, float partialTicks) {
+    public void onDraw(int mouseX, int mouseY, float partialTicks) {
         scrollUtil.onRender();
 
         final double rows = Math.ceil(visibleThemes.size() / 3D);

@@ -11,6 +11,7 @@ import org.lwjgl.input.Mouse;
 
 import com.google.common.collect.Lists;
 
+import cc.unknown.Sakura;
 import net.minecraft.network.play.client.C14PacketTabComplete;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -179,10 +180,19 @@ public class GuiChat extends GuiScreen {
 		if (p_146405_1_.length() >= 1) {
 			BlockPos blockpos = null;
 
-			if (this.mc.objectMouseOver != null
-					&& this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+			if (this.mc.objectMouseOver != null && this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
 				blockpos = this.mc.objectMouseOver.getBlockPos();
 			}
+			
+	        if (p_146405_1_.startsWith(".")) {
+	            String[] ls = Sakura.instance.getCommandManager().autoComplete(p_146405_1_).toArray(new String[0]);
+	            if (ls.length == 0 || p_146405_1_.toLowerCase().endsWith(ls[ls.length - 1].toLowerCase())) {
+	                return;
+	            }
+	            waitingOnAutocomplete = true;
+	            onAutocompleteResponse(ls);
+	            return;
+	        }
 
 			this.mc.player.sendQueue.addToSendQueue(new C14PacketTabComplete(p_146405_1_, blockpos));
 			this.waitingOnAutocomplete = true;

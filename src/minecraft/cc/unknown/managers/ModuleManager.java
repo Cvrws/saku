@@ -45,6 +45,7 @@ public final class ModuleManager {
         this.put(BlockHit.class, new BlockHit());
         this.put(KeepSprint.class, new KeepSprint());
         this.put(WTap.class, new WTap());
+        this.put(JumpReset2.class, new JumpReset2());
         
         // Latency
         this.put(PingSpoof.class, new PingSpoof());

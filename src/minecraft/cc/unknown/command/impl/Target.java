@@ -1,5 +1,9 @@
 package cc.unknown.command.impl;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import cc.unknown.command.Command;
 import cc.unknown.util.player.EnemyUtil;
 
@@ -43,6 +47,16 @@ public final class Target extends Command {
 	        error("Usage: .target <add/remove/list> <player>");
 	    }
 	}
+	
+    @Override
+    public List<String> autocomplete(int arg, String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("add", "remove", "list", "clear");
+        } else if (args.length == 2 && (args[1].equalsIgnoreCase("remove"))) {
+            return EnemyUtil.getEnemy();
+        }
+        return Collections.emptyList();
+    }
     
 	private String getTargetList() {
 	    if (EnemyUtil.getEnemy().isEmpty()) {

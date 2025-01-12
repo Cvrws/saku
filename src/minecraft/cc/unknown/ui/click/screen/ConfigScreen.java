@@ -37,7 +37,7 @@ public final class ConfigScreen implements Screen, Accessor {
     private static final int MAX_ITEMS_PER_ROW = 3;
 
     @Override
-    public void onRender(final int mouseX, final int mouseY, final float partialTicks) {
+    public void onDraw(final int mouseX, final int mouseY, final float partialTicks) {
         if (!registered) {
             Sakura.instance.getEventBus().register(this);
             registered = true;

@@ -3,10 +3,13 @@ package cc.unknown.command.impl;
 import static cc.unknown.util.client.StreamerUtil.green;
 import static cc.unknown.util.client.StreamerUtil.red;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import cc.unknown.Sakura;
 import cc.unknown.command.Command;
 import cc.unknown.module.Module;
-import cc.unknown.util.player.PlayerUtil;
 
 public final class Toggle extends Command {
 
@@ -29,5 +32,20 @@ public final class Toggle extends Command {
         success(String.format("%s",
                 module.getAliases()[0] + " " + (module.isEnabled() ? green + "enabled" : red + "disabled"))
         );
+    }
+    
+    @Override
+    public List<String> autocomplete(int arg, String[] args) {
+        if (args.length == 0) {
+            return Collections.emptyList();
+        }
+
+        String moduleName = args[0];
+
+        if (args.length == 1) {
+            return Sakura.instance.getModuleManager().getAll().stream().map(Module::getName).filter(name -> name.toLowerCase().startsWith(moduleName.toLowerCase())).map(name -> name.replace(" ", "")).collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

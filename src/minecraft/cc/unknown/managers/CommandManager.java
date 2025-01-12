@@ -1,21 +1,29 @@
 package cc.unknown.managers;
 
-import static cc.unknown.util.client.StreamerUtil.red;
-import static cc.unknown.util.client.StreamerUtil.reset;
-import static cc.unknown.util.client.StreamerUtil.yellow;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+
+import org.jetbrains.annotations.NotNull;
 
 import cc.unknown.Sakura;
 import cc.unknown.command.Command;
-import cc.unknown.command.impl.*;
+import cc.unknown.command.impl.Bind;
+import cc.unknown.command.impl.Config;
+import cc.unknown.command.impl.Friend;
+import cc.unknown.command.impl.Help;
+import cc.unknown.command.impl.Join;
+import cc.unknown.command.impl.Name;
+import cc.unknown.command.impl.Script;
+import cc.unknown.command.impl.Target;
+import cc.unknown.command.impl.Toggle;
+import cc.unknown.command.impl.Transaction;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.ChatInputEvent;
-import cc.unknown.util.player.PlayerUtil;
 import lombok.Getter;
 
 @Getter
@@ -50,7 +58,7 @@ public final class CommandManager {
     public final Listener<ChatInputEvent> onChatInput = event -> {
         String message = event.getMessage();
 
-        if (!message.startsWith(CommandManager.prefix)) return;
+        if (!message.startsWith(prefix)) return;
 
         message = message.substring(1);
         final String[] args = message.split(" ");
@@ -58,19 +66,45 @@ public final class CommandManager {
         final AtomicBoolean commandFound = new AtomicBoolean(false);
 
         try {
-        	CommandManager.commandList.stream()
-                    .filter(command ->
-                    Arrays.stream(command.getExpressions())
-                    .anyMatch(expression ->
-                    expression.equalsIgnoreCase(args[0])))
-                    .forEach(command -> {
-                    	commandFound.set(true);
-                        command.execute(args);
-                    });
+        	commandList.stream().filter(command -> Arrays.stream(command.getExpressions()).anyMatch(expression -> expression.equalsIgnoreCase(args[0]))).forEach(command -> {
+        		commandFound.set(true);
+        		command.execute(args);
+        	});
         } catch (final Exception ex) {
             ex.printStackTrace();
         }
 
         event.setCancelled();
     };
+    
+    public Collection<String> autoComplete(@NotNull String currCmd) {
+        String raw = currCmd.substring(1);
+        String[] split = raw.split(" ");
+
+        List<String> ret = new ArrayList<>();
+
+
+        Command currentCommand = split.length >= 1 ? commandList.stream().filter(cmd -> cmd.match(split[0])).findFirst().orElse(null) : null;
+
+        if (split.length >= 2 || currentCommand != null && currCmd.endsWith(" ")) {
+
+            if (currentCommand == null) return ret;
+
+            String[] args = new String[split.length - 1];
+
+            System.arraycopy(split, 1, args, 0, split.length - 1);
+
+            List<String> autocomplete = currentCommand.autocomplete(args.length + (currCmd.endsWith(" ") ? 1 : 0), args);
+
+            return autocomplete == null ? new ArrayList<>() : autocomplete;
+        } else if (split.length == 1) {
+            for (Command command : commandList) {
+                ret.addAll(command.getNameAndAliases());
+            }
+
+            return ret.stream().map(str -> "." + str).filter(str -> str.toLowerCase().startsWith(currCmd.toLowerCase())).collect(Collectors.toList());
+        }
+
+        return ret;
+    }
 }

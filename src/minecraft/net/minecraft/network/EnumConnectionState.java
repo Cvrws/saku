@@ -8,7 +8,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 
-import cc.unknown.util.netty.packet.RawPacket;
 import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.network.login.client.C01PacketEncryptionResponse;
@@ -291,10 +290,6 @@ public enum EnumConnectionState {
         return stateId >= field_181136_e && stateId <= field_181137_f ? STATES_BY_ID[stateId - field_181136_e] : null;
     }
     public static EnumConnectionState getFromPacket(final Packet packetIn) {
-        if (packetIn instanceof RawPacket) {
-            return ((RawPacket) packetIn).getDirection();
-        }
-
         return STATES_BY_CLASS.get(packetIn.getClass());
     }
 

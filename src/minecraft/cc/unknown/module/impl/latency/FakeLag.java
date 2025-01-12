@@ -20,7 +20,7 @@ import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.netty.PacketUtil;
-import cc.unknown.util.netty.packet.TimedPacket;
+import cc.unknown.util.netty.TimedPacket;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.structure.geometry.Vector2f;
 import cc.unknown.value.impl.BooleanValue;

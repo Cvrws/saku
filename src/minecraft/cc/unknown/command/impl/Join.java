@@ -1,6 +1,11 @@
 package cc.unknown.command.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import cc.unknown.command.Command;
 import cc.unknown.handlers.AutoJoinHandler;
@@ -58,6 +63,37 @@ public class Join extends Command {
 
 	    AutoJoinHandler.init(hashMap.get(gameName), lobbyNumber);
 	}
+	
+    @Override
+    public List<String> autocomplete(int arg, String[] args) {
+        if (args.length == 0) {
+            return Collections.emptyList();
+        }
+
+        switch (args.length) {
+            case 1:
+                return Arrays.asList("game", "list").stream()
+                        .filter(option -> option.startsWith(args[0].toLowerCase()))
+                        .collect(Collectors.toList());
+
+            case 2:
+                if ("game".equalsIgnoreCase(args[0])) {
+                    return new ArrayList<>(hashMap.keySet()).stream()
+                            .filter(game -> game.startsWith(args[1].toLowerCase()))
+                            .collect(Collectors.toList());
+                }
+                return Collections.emptyList();
+
+            case 3:
+                if ("game".equalsIgnoreCase(args[0]) && hashMap.containsKey(args[1].toLowerCase())) {
+                    return Collections.singletonList("<lobbyNumber>");
+                }
+                return Collections.emptyList();
+
+            default:
+                return Collections.emptyList();
+        }
+    }
 
     private String getList() {
         return "\n" +

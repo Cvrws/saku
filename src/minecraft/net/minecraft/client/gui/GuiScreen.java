@@ -576,6 +576,21 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback, Accesso
 	 * Draws the background (i is always 0 as of 1.2.2)
 	 */
 	public void drawBackground(final int tint) {
+		
+        /*GlStateManager.disableLighting();
+        GlStateManager.disableFog();
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        this.mc.getTextureManager().bindTexture(optionsBackground);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        float f = 32.0F;
+        worldrenderer.begin(7, DefaultVertexFormats.field_181709_i);
+        worldrenderer.pos(0.0D, (double)this.height, 0.0D).tex(0.0D, (double)((float)this.height / 32.0F + (float)tint)).color(64, 64, 64, 255).endVertex();
+        worldrenderer.pos((double)this.width, (double)this.height, 0.0D).tex((double)((float)this.width / 32.0F), (double)((float)this.height / 32.0F + (float)tint)).color(64, 64, 64, 255).endVertex();
+        worldrenderer.pos((double)this.width, 0.0D, 0.0D).tex((double)((float)this.width / 32.0F), (double)tint).color(64, 64, 64, 255).endVertex();
+        worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(0.0D, (double)tint).color(64, 64, 64, 255).endVertex();
+        tessellator.draw();*/
+
 		BackgroundUtil.renderBackground(this);
 	}
 

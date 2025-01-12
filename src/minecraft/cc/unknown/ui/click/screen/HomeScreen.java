@@ -33,7 +33,7 @@ public final class HomeScreen implements Screen, Accessor {
     private boolean typedWhileOpen;
 
     @Override
-    public void onRender(final int mouseX, final int mouseY, final float partialTicks) {
+    public void onDraw(final int mouseX, final int mouseY, final float partialTicks) {
         final RiceGui clickGUI = this.getClickGUI();
 
         /* Setting searchbar color to clickgui fontcolor */

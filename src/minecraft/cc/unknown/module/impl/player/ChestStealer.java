@@ -1,5 +1,7 @@
 package cc.unknown.module.impl.player;
 
+import static net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -23,14 +25,11 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemPickaxe;
-import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
@@ -121,19 +120,9 @@ public class ChestStealer extends Module {
 		delayTime.reset();
 	}
 
-	private int calculateDistance(int slot1, int slot2) {
-		int rowLength = 9;
-		int row1 = slot1 / rowLength;
-		int col1 = slot1 % rowLength;
-		int row2 = slot2 / rowLength;
-		int col2 = slot2 % rowLength;
-		int distance = (int) Math.sqrt(Math.pow(row1 - row2, 2) + Math.pow(col1 - col2, 2));
-		return distance;
-	}
-
 	private long getRandomDelay() {
-		long min = (long) speed.getValue().longValue();
-		long max = (long) speed.getSecondValue().longValue();
+		long min = speed.getValue().longValue();
+		long max = speed.getSecondValue().longValue();
 		return min + MathUtil.getSafeRandom(min, max);
 	}
 
@@ -144,7 +133,7 @@ public class ChestStealer extends Module {
 	}
 
 	public boolean isBestChestItem(ItemStack itemStack) {
-		if (itemStack.getItem() instanceof ItemSword || itemStack.getItem() instanceof ItemBow || itemStack.getItem() instanceof ItemArmor || itemStack.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemSpade || itemStack.getItem() instanceof ItemFishingRod) {
+		if (itemStack.getItem() instanceof ItemSword || itemStack.getItem() instanceof ItemBow || itemStack.getItem() instanceof ItemArmor || itemStack.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemPickaxe) {
 			ItemStack bestItem = null;
 			GuiChest chest = (GuiChest) mc.currentScreen;
 
@@ -152,23 +141,19 @@ public class ChestStealer extends Module {
 				ItemStack chestItem = chest.inventorySlots.getSlot(i).getStack();
 				if (chestItem != null) {
 					if (itemStack.getItem() instanceof ItemSword && chestItem.getItem() instanceof ItemSword) {
-						if (getDamageSword(itemStack) < getDamageSword(chestItem)) {
+						if (getDamage(itemStack) < getDamage(chestItem)) {
 							return false;
 						}
 					} else if (itemStack.getItem() instanceof ItemBow && chestItem.getItem() instanceof ItemBow) {
-						if (getDamageBow(itemStack) < getDamageBow(chestItem)) {
+						if (getDamage(itemStack) < getDamage(chestItem)) {
 							return false;
 						}
 					} else if (itemStack.getItem() instanceof ItemArmor && chestItem.getItem() instanceof ItemArmor) {
-						if (((ItemArmor) itemStack.getItem()).armorType == ((ItemArmor) chestItem.getItem()).armorType && getDamageReduceAmount(itemStack) < getDamageReduceAmount(chestItem)) {
+						if (((ItemArmor) itemStack.getItem()).armorType == ((ItemArmor) chestItem.getItem()).armorType && getDamage(itemStack) < getDamage(chestItem)) {
 							return false;
 						}
-					} else if (itemStack.getItem() instanceof ItemFishingRod && chestItem.getItem() instanceof ItemFishingRod) {
-						if (getBestRod(itemStack) < getBestRod(chestItem)) {
-							return false;
-						}
-					} else if (itemStack.getItem() instanceof ItemAxe && chestItem.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemPickaxe && chestItem.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemSpade) {
-						if (getToolSpeed(itemStack) < getToolSpeed(chestItem)) {
+					} else if (itemStack.getItem() instanceof ItemAxe && chestItem.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemPickaxe && chestItem.getItem() instanceof ItemPickaxe) {
+						if (getDamage(itemStack) < getDamage(chestItem)) {
 							return false;
 						}
 					}
@@ -180,27 +165,23 @@ public class ChestStealer extends Module {
 	}
 
 	public boolean isBestItem(ItemStack itemStack) {
-		if (itemStack.getItem() instanceof ItemSword || itemStack.getItem() instanceof ItemBow || itemStack.getItem() instanceof ItemArmor || itemStack.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemSpade || itemStack.getItem() instanceof ItemFishingRod) {
+		if (itemStack.getItem() instanceof ItemSword || itemStack.getItem() instanceof ItemBow || itemStack.getItem() instanceof ItemArmor || itemStack.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemPickaxe) {
 			for (int i = 0; i < mc.player.inventoryContainer.inventorySlots.size(); ++i) {
 				ItemStack inventoryStack = mc.player.inventoryContainer.getSlot(i).getStack();
 				if (inventoryStack != null) {
 					if (itemStack.getItem() instanceof ItemSword && inventoryStack.getItem() instanceof ItemSword) {
-						if (getDamageSword(itemStack) <= getDamageSword(inventoryStack)) {
+						if (getDamage(itemStack) <= getDamage(inventoryStack)) {
 							return false;
 						}
 					} else if (itemStack.getItem() instanceof ItemBow && inventoryStack.getItem() instanceof ItemBow) {
-						if (getDamageBow(itemStack) <= getDamageBow(inventoryStack)) {
+						if (getDamage(itemStack) <= getDamage(inventoryStack)) {
 							return false;
 						}
 					} else if (itemStack.getItem() instanceof ItemArmor && inventoryStack.getItem() instanceof ItemArmor) {
-						if (((ItemArmor) itemStack.getItem()).armorType == ((ItemArmor) inventoryStack.getItem()).armorType && getDamageReduceAmount(itemStack) <= getDamageReduceAmount(inventoryStack)) {
+						if (((ItemArmor) itemStack.getItem()).armorType == ((ItemArmor) inventoryStack.getItem()).armorType && getDamage(itemStack) <= getDamage(inventoryStack)) {
 							return false;
 						}
-					} else if (itemStack.getItem() instanceof ItemFishingRod && inventoryStack.getItem() instanceof ItemFishingRod) {
-						if (getBestRod(itemStack) <= getBestRod(inventoryStack)) {
-							return false;
-						}
-					} else if (itemStack.getItem() instanceof ItemPickaxe && inventoryStack.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemAxe && inventoryStack.getItem() instanceof ItemAxe || itemStack.getItem() instanceof ItemSpade && inventoryStack.getItem() instanceof ItemSpade && getToolSpeed(itemStack) <= getToolSpeed(inventoryStack)) {
+					} else if (itemStack.getItem() instanceof ItemPickaxe && inventoryStack.getItem() instanceof ItemPickaxe || itemStack.getItem() instanceof ItemAxe && inventoryStack.getItem() instanceof ItemAxe) {
 						return false;
 					}
 				}
@@ -210,90 +191,50 @@ public class ChestStealer extends Module {
 		return true;
 	}
 
-	private double getDamageSword(ItemStack itemStack) {
+	private double getDamage(ItemStack itemStack) {
 		double damage = 0.0;
 		if (itemStack.getItem() instanceof ItemSword) {
-			damage += (double) (((ItemSword) itemStack.getItem()).getMaxDamage() + (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, itemStack) * 1.25F);
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.fireAspect.effectId, itemStack) / 11.0;
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.knockback.effectId, itemStack) / 11.0;
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, itemStack) / 11.0;
+			damage += (double) (((ItemSword) itemStack.getItem()).getMaxDamage() + (float) getEnchantmentLevel(Enchantment.sharpness.effectId, itemStack) * 1.25F);
+			damage += (double) getEnchantmentLevel(Enchantment.fireAspect.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.knockback.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.unbreaking.effectId, itemStack) / 11.0;
 			damage -= (double) itemStack.getItemDamage() / 10000.0;
 		}
-
-		return damage;
-	}
-
-	private double getDamageBow(ItemStack itemStack) {
-		double damage = 0.0;
+		
 		if (itemStack.getItem() instanceof ItemBow) {
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.flame.effectId, itemStack) / 11.0;
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, itemStack) / 8.0;
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, itemStack) / 8.0;
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, itemStack) / 11.0;
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.flame.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.punch.effectId, itemStack) / 8.0;
+			damage += (double) getEnchantmentLevel(Enchantment.power.effectId, itemStack) / 8.0;
+			damage += (double) getEnchantmentLevel(Enchantment.infinity.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.unbreaking.effectId, itemStack) / 11.0;
 			damage -= (double) itemStack.getItemDamage() / 10000.0;
 		}
-
-		return damage;
-	}
-
-	private double getToolSpeed(ItemStack itemStack) {
-		double damage = 0.0;
+		
 		if (itemStack.getItem() instanceof ItemTool) {
 			if (itemStack.getItem() instanceof ItemAxe) {
-				damage += (double) (itemStack.getItem().getStrVsBlock(itemStack, new Block(Material.wood, MapColor.woodColor)) + (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack));
+				damage += (double) (itemStack.getItem().getStrVsBlock(itemStack, new Block(Material.wood, MapColor.woodColor)) + (float) getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack));
 			} else if (itemStack.getItem() instanceof ItemPickaxe) {
-				damage += (double) (itemStack.getItem().getStrVsBlock(itemStack, new Block(Material.rock, MapColor.stoneColor)) + (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack));
-			} else if (itemStack.getItem() instanceof ItemSpade) {
-				damage += (double) (itemStack.getItem().getStrVsBlock(itemStack, new Block(Material.sand, MapColor.sandColor)) + (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack));
+				damage += (double) (itemStack.getItem().getStrVsBlock(itemStack, new Block(Material.rock, MapColor.stoneColor)) + (float) getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack));
 			}
 
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, itemStack) / 11.0;
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.silkTouch.effectId, itemStack) / 11.0;
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, itemStack) / 33.0;
+			damage += (double) getEnchantmentLevel(Enchantment.unbreaking.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.silkTouch.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.sharpness.effectId, itemStack) / 33.0;
 			damage -= (double) itemStack.getItemDamage() / 10000.0;
 		}
-
-		return damage;
-	}
-
-	private double getDamageReduceAmount(ItemStack itemStack) {
-		double damageReduceAmount = 0.0;
+		
 		if (itemStack.getItem() instanceof ItemArmor) {
-			damageReduceAmount += (double) ((float) ((ItemArmor) itemStack.getItem()).damageReduceAmount
-					+ (float) (6 + EnchantmentHelper.getEnchantmentLevel(Enchantment.protection.effectId, itemStack)
-							* EnchantmentHelper.getEnchantmentLevel(Enchantment.protection.effectId, itemStack))
-							/ 3.0F);
-			damageReduceAmount += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.blastProtection.effectId,
-					itemStack) / 11.0;
-			damageReduceAmount += (double) EnchantmentHelper
-					.getEnchantmentLevel(Enchantment.projectileProtection.effectId, itemStack) / 11.0;
-			damageReduceAmount += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.fireProtection.effectId,
-					itemStack) / 11.0;
-			damageReduceAmount += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId,
-					itemStack) / 11.0;
-			damageReduceAmount += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.thorns.effectId, itemStack)
-					/ 11.0;
-			damageReduceAmount += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.featherFalling.effectId,
-					itemStack) / 11.0;
-			if (((ItemArmor) itemStack.getItem()).armorType == 0
-					&& ((ItemArmor) itemStack.getItem()).getArmorMaterial() == ItemArmor.ArmorMaterial.GOLD) {
-				damageReduceAmount -= 0.01;
+			damage += (double) ((float) ((ItemArmor) itemStack.getItem()).damageReduceAmount + (float) (6 + getEnchantmentLevel(Enchantment.protection.effectId, itemStack) * getEnchantmentLevel(Enchantment.protection.effectId, itemStack)) / 3.0F);
+			damage += (double) getEnchantmentLevel(Enchantment.blastProtection.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.projectileProtection.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.fireProtection.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.unbreaking.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.thorns.effectId, itemStack) / 11.0;
+			damage += (double) getEnchantmentLevel(Enchantment.featherFalling.effectId, itemStack) / 11.0;
+			if (((ItemArmor) itemStack.getItem()).armorType == 0 && ((ItemArmor) itemStack.getItem()).getArmorMaterial() == ItemArmor.ArmorMaterial.GOLD) {
+				damage -= 0.01;
 			}
 
-			damageReduceAmount -= (double) itemStack.getItemDamage() / 10000.0;
-		}
-
-		return damageReduceAmount;
-	}
-
-	private double getBestRod(ItemStack itemStack) {
-		double damage = 0.0;
-		if (itemStack.getItem() instanceof ItemFishingRod) {
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.lure.effectId, itemStack) / 11.0;
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, itemStack) / 11.0;
-			damage += (double) EnchantmentHelper.getEnchantmentLevel(Enchantment.luckOfTheSea.effectId, itemStack)
-					/ 33.0;
 			damage -= (double) itemStack.getItemDamage() / 10000.0;
 		}
 

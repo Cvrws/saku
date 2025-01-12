@@ -3,13 +3,14 @@ package cc.unknown.command.impl;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import cc.unknown.Sakura;
 import cc.unknown.command.Command;
 import cc.unknown.managers.ScriptManager;
-import cc.unknown.util.player.PlayerUtil;
 
 public final class Script extends Command {
 
@@ -70,5 +71,15 @@ public final class Script extends Command {
             ex.printStackTrace();
             error("Failed to " + action + " a script. Stacktrace printed.");
         }
+    }
+    
+    @Override
+    public List<String> autocomplete(int arg, String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("load", "reload", "unload", "open", "folder");
+        } else if (args.length == 2 && (args[1].equalsIgnoreCase("load") || args[1].equalsIgnoreCase("unload"))) {
+            return (List<String>) getInstance().getScriptManager().SCRIPT_FILE_FILTER;
+        }
+        return Collections.emptyList();
     }
 }
