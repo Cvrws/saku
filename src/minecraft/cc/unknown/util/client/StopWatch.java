@@ -45,6 +45,6 @@ public class StopWatch {
     }
     
     private long getSystemTime() {
-        return System.nanoTime() / (long) (1E6);
+        return (long) (System.nanoTime() / 1E6);
     }
 }

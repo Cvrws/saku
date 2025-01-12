@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.render.RenderUtil;
+import static cc.unknown.util.render.RenderUtil.*;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
@@ -26,7 +26,7 @@ public class HaloRenderer implements Accessor {
 	    GL11.glRotatef(-yaw, 0F, 1F, 0F);
 	    GL11.glRotatef(90, 1F, 0F, 0F);
 
-	    RenderUtil.drawHaloRectangles();
+	    drawHaloRectangles();
 
 	    resetOpenGL();
 	    GL11.glPopMatrix();
@@ -39,7 +39,7 @@ public class HaloRenderer implements Accessor {
         glTranslated(event, height);
         setupOpenGL();
 
-        RenderUtil.color(new Color(
+        color(new Color(
             MathHelper.clamp_int(2000 * 1800, 0, 255),
             MathHelper.clamp_int(230 + 2000 * 200, 0, 255),
             250, 220
@@ -50,10 +50,10 @@ public class HaloRenderer implements Accessor {
         GL11.glRotatef(-yaw, 0F, 1F, 0F);
         GL11.glRotatef(90, 1F, 0F, 0F);
 
-        RenderUtil.drawCircle(0.18f, 2.5f);
+        drawCircle(0.18f, 2.5f);
 
         GL11.glTranslated(0.0f, 0.0f, -0.02f);
-        RenderUtil.drawDecorativeCircle(0.3f, 3.7f);
+        drawDecorativeCircle(0.3f, 3.7f);
 
         resetOpenGL();
         GL11.glPopMatrix();
@@ -71,13 +71,13 @@ public class HaloRenderer implements Accessor {
         GL11.glRotatef(-yaw, 0F, 1F, 0F);
         GL11.glRotatef(90, 1F, 0F, 0F);
 
-        RenderUtil.color(new Color(200, 200, 250, 220));
-        GL11.glLineWidth(3.0f * RenderUtil.getExtraWidth());
-        RenderUtil.drawStar(0.0f, 0.0f, 0.3f, 0);
+        color(new Color(200, 200, 250, 220));
+        GL11.glLineWidth(3.0f * getExtraWidth());
+        drawStar(0.0f, 0.0f, 0.3f, 0);
 
         GL11.glPushMatrix();
         GL11.glRotatef(36, 0F, 0F, 1F);
-        RenderUtil.drawStar(0.0f, 0.0f, 0.14f, 0);
+        drawStar(0.0f, 0.0f, 0.14f, 0);
         GL11.glPopMatrix();
 
         resetOpenGL();
@@ -96,10 +96,10 @@ public class HaloRenderer implements Accessor {
         GL11.glRotatef(-yaw, 0F, 1F, 0F);
         GL11.glRotatef(90, 1F, 0F, 0F);
 
-        RenderUtil.color(new Color(254, 200, 200, 240));
+        color(new Color(254, 200, 200, 240));
 
-        RenderUtil.drawCircle(0.3f, 3.5f);
-        RenderUtil.drawCircleWithOffsets(0.15f, 0.05f, 0.05f, 3.5f);
+        drawCircle(0.3f, 3.5f);
+        drawCircleWithOffsets(0.15f, 0.05f, 0.05f, 3.5f);
 
         resetOpenGL();
         GL11.glPopMatrix();
@@ -120,17 +120,17 @@ public class HaloRenderer implements Accessor {
         GL11.glRotatef(-yaw, 0F, 1F, 0F);
         GL11.glRotatef(90, 1F, 0F, 0F);
 
-        RenderUtil.drawCircle(0.13f, 4.0f, new Color(237, MathHelper.clamp_int(110 + 2000 * 600, 0, 255), 183, 220));
+        drawCircle(0.13f, 4.0f, new Color(237, MathHelper.clamp_int(110 + 2000 * 600, 0, 255), 183, 220));
         GL11.glTranslated(0.0f, 0.0f, -extraHeight);
-        RenderUtil.drawCircle(0.20f, 2.5f, new Color(237, MathHelper.clamp_int(110 + 2000 * 600, 0, 255), 183, 220));
+        drawCircle(0.20f, 2.5f, new Color(237, MathHelper.clamp_int(110 + 2000 * 600, 0, 255), 183, 220));
         GL11.glTranslated(0.0f, 0.0f, -extraHeight);
 
-        RenderUtil.drawArc(0.27f, 15, 165, 4.0f, new Color(237, MathHelper.clamp_int(110 + 2000 * 600, 0, 255), 183, 220));
-        RenderUtil.drawArc(0.27f, 195, 345, 4.0f, new Color(237, MathHelper.clamp_int(110 + 2000 * 600, 0, 255), 183, 220));
+        drawArc(0.27f, 15, 165, 4.0f, new Color(237, MathHelper.clamp_int(110 + 2000 * 600, 0, 255), 183, 220));
+        drawArc(0.27f, 195, 345, 4.0f, new Color(237, MathHelper.clamp_int(110 + 2000 * 600, 0, 255), 183, 220));
 
-        RenderUtil.drawLineExtensions(0.27f, extensionLength, new int[]{0, 180});
+        drawLineExtensions(0.27f, extensionLength, new int[]{0, 180});
 
-        RenderUtil.drawLineExtensions(0.27f, smallExtensionLength, new int[]{15, 165, 195, 345});
+        drawLineExtensions(0.27f, smallExtensionLength, new int[]{15, 165, 195, 345});
 
         resetOpenGL();
         GL11.glPopMatrix();

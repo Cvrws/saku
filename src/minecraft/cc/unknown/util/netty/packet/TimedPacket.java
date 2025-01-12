@@ -11,17 +11,15 @@ public class TimedPacket {
 
     private final Packet<?> packet;
     private final StopWatch stopWatch;
-    private final long millis;
 
     public TimedPacket(Packet<?> packet) {
         this.packet = packet;
         this.stopWatch = new StopWatch();
-        this.millis = System.currentTimeMillis();
     }
 
-    public TimedPacket(final Packet<?> packet, final long millis) {
+    public TimedPacket(final Packet<?> packet, long stopWatchTime) {
         this.packet = packet;
-        this.millis = millis;
         this.stopWatch = new StopWatch();
+        this.stopWatch.finished(stopWatchTime);
     }
 }

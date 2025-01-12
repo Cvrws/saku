@@ -118,7 +118,7 @@ public class NetworkingHandler implements Accessor {
             enabled = false;
 
             packets.forEach(packet -> {
-                if (packet.getMillis() + amount < System.currentTimeMillis()) {
+                if (packet.getStopWatch().getMillis() + amount < System.currentTimeMillis()) {
                     PacketUtil.queue(packet.getPacket());
                     packets.remove(packet);
                 }

@@ -14,7 +14,7 @@ public class MouseUtil implements Accessor {
     }
 
     public Vector2d mouse() {
-    	ScaledResolution sr = /*mc.scaledResolution*/ new ScaledResolution(mc);
+    	ScaledResolution sr = new ScaledResolution(mc);
         final int i1 = sr.getScaledWidth();
         final int j1 = sr.getScaledHeight();
         final int mouseX = Mouse.getX() * i1 / mc.displayWidth;
