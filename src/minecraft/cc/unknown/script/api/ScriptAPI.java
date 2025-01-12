@@ -17,6 +17,8 @@ import cc.unknown.script.api.wrapper.impl.ScriptModule;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector2f;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector3d;
 import cc.unknown.script.util.ScriptModuleInfo;
+import cc.unknown.util.player.EnemyUtil;
+import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.util.player.rotation.RotationUtil;
@@ -155,11 +157,11 @@ public class ScriptAPI {
     }
 
     public boolean isFriend(String name){
-        return Sakura.instance.getFriendManager().isFriend(name);
+        return FriendUtil.isFriend(name);
     }
     
     public boolean isEnemy(String name) {
-    	return Sakura.instance.getEnemyManager().isEnemy(name);
+    	return EnemyUtil.isEnemy(name);
     }
 
     public ScriptBlockPos newBlockPos(int x, int y, int z) {

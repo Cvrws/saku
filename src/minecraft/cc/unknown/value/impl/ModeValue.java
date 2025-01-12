@@ -86,7 +86,7 @@ public class ModeValue extends ListValue<Mode<?>> {
 		return modes;
 	}
 	
-    public String getMode() {
-    	return ((Mode<?>) modes.get(0)).getName();
-    }
+	public String getMode() {
+	    return getValue() != null ? getValue().getName() : null;
+	}
 }

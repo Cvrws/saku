@@ -36,7 +36,6 @@ public final class HUD extends Module {
 	private final ModeValue colorMode = new ModeValue("Style Color", this)
         .add(new SubMode("Static"))
         .add(new SubMode("Fade"))
-        .add(new SubMode("Breathe"))
         .setDefault("Fade");
         
     private final BooleanValue dropShadow = new BooleanValue("Drop Shadow", this, true);
@@ -67,6 +66,7 @@ public final class HUD extends Module {
         .map(ModuleComponent::new)
         .peek(module -> module.setTranslatedName(module.getModule().getName()))
         .forEach(allModuleComponents::add);
+
 	}
 
     @EventLink
@@ -94,11 +94,6 @@ public final class HUD extends Module {
         	if (colorMode.is("Fade")) {
         		color = getTheme().getAccentColor(new Vector2d(0, module.getPosition().getY()));
         	}
-        	
-        	if (colorMode.is("Breathe")) {
-                color = ColorUtil.mixColors(color, this.getTheme().getSecondColor(), this.getTheme().getBlendFactor(new Vector2d(0, 0)));
-        	}
-        	
         	
         	module.setColor(color);
         	module.setNameWidth(font.width(name));

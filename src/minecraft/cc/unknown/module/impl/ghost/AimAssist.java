@@ -6,22 +6,19 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
-import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.player.EnemyUtil;
+import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.player.rotation.RotationUtil;
 import cc.unknown.util.render.RenderUtil;
-import cc.unknown.util.render.animation.Animation;
-import cc.unknown.util.render.animation.Easing;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
@@ -137,12 +134,12 @@ public final class AimAssist extends Module {
 	
 	    for (final EntityPlayer player : mc.theWorld.playerEntities) {
 	        if (player != mc.player && player.deathTime == 0 && player.isEntityAlive()) {
-	            if (getInstance().getEnemyManager().isEnemy(player)) continue;
+	            if (EnemyUtil.isEnemy(player)) continue;
 	            if (player.getName().contains("[NPC]")) continue;
 	            if (player.getName().contains("MEJORAS")) continue;
 	            if (player.getName().contains("CLICK DERECHO")) continue;
 	            if (aimAtInvisibleEnemies.getValue() && player.isInvisible()) continue;
-	            if (getInstance().getFriendManager().isFriend(player) && ignoreFriendlyEntities.getValue()) continue;
+	            if (FriendUtil.isFriend(player) && !ignoreFriendlyEntities.getValue()) continue;
 	            if (ignoreTeammates.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
 	            if (playerPos.distanceTo(player) > distance.getValue().doubleValue()) continue;
 	            if (lineOfSightCheck.getValue() && !mc.player.canEntityBeSeen(player)) continue;

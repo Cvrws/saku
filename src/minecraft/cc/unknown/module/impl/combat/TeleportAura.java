@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
@@ -16,6 +15,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.netty.PacketUtil;
+import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
@@ -189,7 +189,7 @@ public class TeleportAura extends Module {
 				if (entity.isPlayerSleeping()) {
 					return false;
 				}
-				if (Sakura.instance.getFriendManager().isFriend(entity.getName())) {
+				if (FriendUtil.isFriend(entity.getName())) {
 					return false;
 				}
 
@@ -202,7 +202,7 @@ public class TeleportAura extends Module {
 						return false;
 					} else if (player.isInvisible() && !invi.getValue()) {
 						return false;
-					} else if (Sakura.instance.getFriendManager().isFriend(player.getName())) {
+					} else if (FriendUtil.isFriend(player.getName())) {
 						return false;
 					} else
 						return true;

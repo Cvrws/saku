@@ -1,7 +1,7 @@
 package cc.unknown.command.impl;
 
 import cc.unknown.command.Command;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.FriendUtil;
 
 public final class Friend extends Command {
 
@@ -18,7 +18,7 @@ public final class Friend extends Command {
 	            	success(getFriendList());
 	                break;
 	            case "clear":
-	            	getInstance().getFriendManager().removeFriends();
+	            	FriendUtil.removeFriends();
 	            	break;
 	        }
 	        return;
@@ -30,12 +30,12 @@ public final class Friend extends Command {
 
 	        switch (action) {
 	            case "add":
-	                getInstance().getFriendManager().addFriend(target);
+	                FriendUtil.addFriend(target);
 	                success(String.format("Added %s to friends list", target));
 	                break;
 
 	            case "remove":
-	                getInstance().getFriendManager().removeFriend(target);
+	                FriendUtil.removeFriend(target);
 	                success(String.format("Removed %s from friends list", target));
 	                break;
 	        }
@@ -45,12 +45,12 @@ public final class Friend extends Command {
 	}
 
 	private String getFriendList() {
-	    if (getInstance().getFriendManager().getFriends().isEmpty()) {
+	    if (FriendUtil.getFriends().isEmpty()) {
 	        return "Your friend list is empty.";
 	    }
 
 	    StringBuilder message = new StringBuilder("Friend list:\n");
-	    for (String friend : getInstance().getFriendManager().getFriends()) {
+	    for (String friend : FriendUtil.getFriends()) {
 	        message.append("- ").append(friend).append("\n");
 	    }
 	    return message.toString();

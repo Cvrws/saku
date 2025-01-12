@@ -17,6 +17,7 @@ public class ArmorStandRenderer extends RendererLivingEntity<EntityArmorStand> {
 
     public ArmorStandRenderer(final RenderManager p_i46195_1_) {
         super(p_i46195_1_, new ModelArmorStand(), 0.0F);
+        
         final LayerBipedArmor layerbipedarmor = new LayerBipedArmor(this) {
             protected void initArmor() {
                 this.field_177189_c = new ModelArmorStandArmor(0.5F);

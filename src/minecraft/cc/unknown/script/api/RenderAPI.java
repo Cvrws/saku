@@ -62,9 +62,4 @@ public class RenderAPI extends API implements Accessor {
         Color color = getTheme().getBackgroundShade();
         return new int[]{color.getRed(), color.getBlue(), color.getGreen(), color.getAlpha()};
     }
-
-    public int[] getDropShadow() {
-        Color color = getTheme().getDropShadow();
-        return new int[]{color.getRed(), color.getBlue(), color.getGreen(), color.getAlpha()};
-    }
 }

@@ -12,6 +12,7 @@ import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.handlers.TransactionHandler;
 import cc.unknown.util.player.PlayerUtil;
+import net.minecraft.client.renderer.tileentity.RenderItemFrame;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S32PacketConfirmTransaction;
 

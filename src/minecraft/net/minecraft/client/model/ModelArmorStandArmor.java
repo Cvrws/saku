@@ -1,5 +1,7 @@
 package net.minecraft.client.model;
 
+import cc.unknown.Sakura;
+import cc.unknown.module.impl.other.FPSBoost;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 
@@ -22,7 +24,8 @@ public class ModelArmorStandArmor extends ModelBiped {
      * "far" arms and legs can swing at most.
      */
     public void setRotationAngles(final float p_78087_1_, final float p_78087_2_, final float p_78087_3_, final float p_78087_4_, final float p_78087_5_, final float p_78087_6_, final Entity entityIn) {
-        if (entityIn instanceof EntityArmorStand) {
+    	if (entityIn instanceof EntityArmorStand) {
+    		
             final EntityArmorStand entityarmorstand = (EntityArmorStand) entityIn;
             this.bipedHead.rotateAngleX = 0.017453292F * entityarmorstand.getHeadRotation().getX();
             this.bipedHead.rotateAngleY = 0.017453292F * entityarmorstand.getHeadRotation().getY();

@@ -10,6 +10,7 @@ public class StreamerUtil {
 	public ChatFormatting yellow = ChatFormatting.YELLOW;
 	public ChatFormatting red = ChatFormatting.RED;
 	public ChatFormatting reset = ChatFormatting.RESET;
+	public ChatFormatting white = ChatFormatting.RESET;
 	public ChatFormatting aqua = ChatFormatting.AQUA;
 	public ChatFormatting gray = ChatFormatting.GRAY;
 	public ChatFormatting green = ChatFormatting.GREEN;

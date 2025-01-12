@@ -324,6 +324,9 @@ public abstract class Entity implements ICommandSender {
     public float movementYaw, velocityYaw, lastMovementYaw;
 
     public boolean moved = false;
+    
+    @Getter
+    public int trueX, trueY, trueZ;
 
     /**
      * The command result statistics for this Entity.

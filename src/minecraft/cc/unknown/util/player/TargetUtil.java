@@ -1,7 +1,5 @@
 package cc.unknown.util.player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,12 +9,9 @@ import cc.unknown.util.Accessor;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -55,7 +50,7 @@ public class TargetUtil implements Accessor {
 			boolean teams, boolean friends) {
 		return mc.theWorld.loadedEntityList.stream()
 				.filter(entity -> entity instanceof EntityLivingBase && entity != mc.getRenderViewEntity()
-				&& (!Sakura.instance.getFriendManager().isFriend(entity.getName()) || friends)
+				&& (!FriendUtil.isFriend(entity.getName()) || friends)
 				&& (!(entity instanceof EntityPlayer) || players)
 				&& (!(entity instanceof IMob || entity instanceof INpc) || mobs)
 				&& (!(entity instanceof EntityAnimal || entity instanceof EntityAmbientCreature || entity instanceof EntityWaterMob) || animals)

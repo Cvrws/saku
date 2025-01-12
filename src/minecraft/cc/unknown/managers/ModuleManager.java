@@ -51,7 +51,7 @@ public final class ModuleManager {
         this.put(BackTrack.class, new BackTrack());
         this.put(FakeLag.class, new FakeLag());
         this.put(LagRange.class, new LagRange());
-        this.put(TickBase.class, new TickBase());
+        this.put(TimerManipulation.class, new TimerManipulation());
         this.put(PerfectCriticals.class, new PerfectCriticals());
         
         // Movement

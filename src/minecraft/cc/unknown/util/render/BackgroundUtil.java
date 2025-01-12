@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 @UtilityClass
 public class BackgroundUtil implements Accessor {
     public void renderBackground(GuiScreen gui) {
-        ScaledResolution sr = /*mc.scaledResolution*/ new ScaledResolution(mc);;
+        ScaledResolution sr = new ScaledResolution(mc);;
         RenderUtil.image(new ResourceLocation("sakura/images/background.png"), 0, 0, gui.width, gui.height);
         RenderUtil.roundedRect(0, 0, sr.getScaledWidth(), sr.getScaledHeight(), 0, new Color(0, 0, 0, 170).getRGB());
     }

@@ -22,25 +22,33 @@ public final class CPSDisplay extends Module {
 
 	private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));
 	private final Vector2f scale = new Vector2f(RenderUtil.GENERIC_SCALE, RenderUtil.GENERIC_SCALE);
-
+	
 	@EventLink
 	public final Listener<Render2DEvent> onRender2D = event -> {
-		Vector2d position = this.position.position;
+	    Vector2d position = this.position.position;
 
-		final String titleString = "CPS ";
-		final String cpsString = CPSHelper.getCPS(MouseButton.LEFT) + "";
-        final float cpsWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(cpsString);
-		final float titleWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(titleString);
-		scale.x = titleWidth + Fonts.ROBOTO.get(20, Weight.LIGHT).width(cpsString);
+	    final String leftCPS = CPSHelper.getCPS(MouseButton.LEFT) + "";
+	    final String rightCPS = CPSHelper.getCPS(MouseButton.RIGHT) + "";
+	    final String title = " CPS";
+	    final String separator = " | ";
 
-		this.position.setScale(new Vector2d(scale.x + 6, scale.y - 1));
+	    final float leftCPSWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(leftCPS);
+	    final float separatorWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(separator);
+	    final float rightCPSWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(rightCPS);
+	    final float titleWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(title);
 
-		final double textX = position.x + 3.0F;
-		final double textY = position.y + scale.y / 2.0F - Fonts.ROBOTO.get(20, Weight.LIGHT).height() / 4.0F;
-		
-        RenderUtil.roundedRect(textX + cpsWidth + 24, textY + 11, textX - 2, textY - 4, 0, getTheme().getBackgroundShade().getRGB());
-		
-		Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(titleString, textX, textY, getTheme().getFirstColor().getRGB());
-		Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(cpsString, textX + titleWidth, textY, Color.WHITE.getRGB());
+	    scale.x = leftCPSWidth + separatorWidth + rightCPSWidth + titleWidth;
+
+	    this.position.setScale(new Vector2d(scale.x + 6, scale.y - 1));
+
+	    final double textX = position.x + 3.0F;
+	    final double textY = position.y + scale.y / 2.0F - Fonts.ROBOTO.get(20, Weight.LIGHT).height() / 4.0F;
+
+	    RenderUtil.roundedRect(textX + scale.x + 3, textY + 11, textX - 2, textY - 4, 0, getTheme().getBackgroundShade().getRGB());
+
+	    Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(leftCPS, textX, textY, Color.WHITE.getRGB());
+	    Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(separator, textX + leftCPSWidth, textY, Color.WHITE.getRGB());
+	    Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(rightCPS, textX + leftCPSWidth + separatorWidth, textY, Color.WHITE.getRGB());
+	    Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(title, textX + leftCPSWidth + separatorWidth + rightCPSWidth, textY, Color.WHITE.getRGB());
 	};
 }

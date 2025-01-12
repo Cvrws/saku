@@ -7,6 +7,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import com.mojang.authlib.GameProfile;
 
+import cc.unknown.handlers.UserHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -48,9 +49,11 @@ public class GuiPlayerTabOverlay extends Gui {
      * Returns the name that should be rendered for the player supplied
      */
     public String getPlayerName(NetworkPlayerInfo networkPlayerInfoIn) {
-        return networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
-    }
+        String nick = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
 
+        return nick;
+    }
+    
     /**
      * Called by GuiIngame to update the information stored in the playerlist, does not actually render the list,
      * however.
@@ -93,7 +96,7 @@ public class GuiPlayerTabOverlay extends Gui {
             ++j4;
         }
 
-        final boolean flag = true /*this.mc.isIntegratedServerRunning() || this.mc.getNetHandler().getNetworkManager().getIsencrypted()*/;
+        final boolean flag = true;
         final int l;
 
         if (scoreObjectiveIn != null) {

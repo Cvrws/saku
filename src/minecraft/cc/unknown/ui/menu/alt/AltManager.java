@@ -33,7 +33,6 @@ public class AltManager extends GuiScreen implements Accessor {
     private static TextField usernameBox;
     private static GuiScreen reference;
     public static String status = yellow + "Idle...";
-    private Animation animation;
     private static final Font FONT_RENDERER = Fonts.ROBOTO.get(20, Weight.LIGHT);
 
     public AltManager() {
@@ -56,15 +55,11 @@ public class AltManager extends GuiScreen implements Accessor {
     	this.buttonList.add(new Button(3, (int) (position.x + (buttonWidth + padding) * 1 - 30), (int) (position.y + (boxHeight + padding) * 2), (int) buttonWidth, (int) boxHeight, "Browser Login"));
     	this.buttonList.add(new Button(4, (int) (position.x + (buttonWidth + padding) * 2 - 30), (int) (position.y + (boxHeight + padding) * 2), (int) buttonWidth, (int) boxHeight, "Cookie Login"));
     	this.buttonList.add(new Button(5, (int) (position.x + (buttonWidth + padding) * 3 - 30), (int) (position.y + (boxHeight + padding) * 2), (int) buttonWidth, (int) boxHeight, "Atràs"));
-    	
-        animation = new Animation(Easing.EASE_OUT_QUINT, 600);
-        animation.setStartValue(-200);
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         BackgroundUtil.renderBackground(this);
-        animation.animate(0);
 
         usernameBox.drawTextBox();
         GlStateManager.pushMatrix();
@@ -72,7 +67,7 @@ public class AltManager extends GuiScreen implements Accessor {
 	     int backgroundWidth = FONT_RENDERER.width(status) + 22;
 	     int backgroundHeight = (int) (FONT_RENDERER.height() + 5);
 	     int backgroundX = (width / 2) - (backgroundWidth / 2);
-	     int backgroundY = (int) ((height / 2 - 35 + animation.getValue()) - (backgroundHeight / 2));
+	     int backgroundY = (int) (height / 2 - 35 - (backgroundHeight / 2));
 	
 	     FONT_RENDERER.drawCentered(status, width / 2, (int) (backgroundY + backgroundHeight / 2 - FONT_RENDERER.height() / 2), Color.WHITE.getRGB());
 	     this.buttonList.forEach(button -> button.drawButton(mc, mouseX, mouseY));

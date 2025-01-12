@@ -1,10 +1,11 @@
 package net.minecraft.network.play.client;
 
+import java.io.IOException;
+
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
-
-import java.io.IOException;
+import net.minecraft.util.Vec3;
 
 public class C03PacketPlayer implements Packet<INetHandlerPlayServer> {
     public double x;
@@ -74,6 +75,10 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer> {
 
     public boolean getRotating() {
         return this.rotating;
+    }
+    
+    public Vec3 getPos() {
+        return new Vec3(this.x, this.y, this.z);
     }
 
     public void setMoving(final boolean isMoving) {

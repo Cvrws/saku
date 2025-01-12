@@ -39,9 +39,6 @@ public class Sakura {
     private ThemeManager themeManager;
 
     private FileManager fileManager;
-    
-    private FriendManager friendManager;
-    private EnemyManager enemyManager;
 
     private BindableManager bindableManager;
     private ConfigManager configManager;
@@ -97,7 +94,8 @@ public class Sakura {
     			new ConnectionHandler(),
     			new RotationHandler(),
     			new FixHandler(),
-    			new TransactionHandler());
+    			new TransactionHandler(),
+    			new UserHandler());
     	
     	LOGGER.info("Handlers registered.");
     }
@@ -113,8 +111,6 @@ public class Sakura {
         fileManager = new FileManager();
         commandManager = new CommandManager();
         configManager = new ConfigManager();
-        friendManager = new FriendManager();
-        enemyManager = new EnemyManager();
         themeManager = new ThemeManager();
         eventBus = new EventBus<>();
         scriptManager = new ScriptManager();

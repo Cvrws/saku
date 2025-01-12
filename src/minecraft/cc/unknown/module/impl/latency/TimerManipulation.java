@@ -32,12 +32,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 
-@ModuleInfo(aliases = "Tick Base", description = "Congela el juego", category = Category.LATENCY)
-public class TickBase extends Module {
+@ModuleInfo(aliases = "Timer Manipulation", description = "Utilia timer para hacer un tp", category = Category.LATENCY)
+public class TimerManipulation extends Module {
 	
     public final NumberValue delay = new NumberValue("Delay", this, 50, 0, 1000, 50);
-    public final BoundsNumberValue activeRange = new BoundsNumberValue("Active Range", this, 3f, 7f, 0.1f, 7f, 0.1f);
-    public final NumberValue ticks = new NumberValue("Ticks", this, 4, 1, 20, 1);
+    public final NumberValue ticks = new NumberValue("Ticks", this, 4, 1, 40, 1);
     public final BooleanValue displayPredictPos = new BooleanValue("Dislay Predict Pos", this, false);
 
 	private StopWatch timer = new StopWatch();
@@ -88,7 +87,7 @@ public class TickBase extends Module {
 	
 	@EventLink
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-		 target = (EntityPlayer) TargetUtil.getTarget(activeRange.getSecondValue().floatValue() * 3);
+		 target = (EntityPlayer) TargetUtil.getTarget(4 * 3);
 	};
 	
 	@EventLink
@@ -124,8 +123,8 @@ public class TickBase extends Module {
 	                               mc.player.getPositionVector().distanceTo(target.getPositionVector());
 
 	    boolean isWithinActiveRange = MathUtil.inBetween(
-	        activeRange.getValue().intValue(),
-	        activeRange.getSecondValue().intValue(),
+	        3,
+	        4,
 	        predictedProcess.position.distanceTo(target.getPositionVector())
 	    );
 

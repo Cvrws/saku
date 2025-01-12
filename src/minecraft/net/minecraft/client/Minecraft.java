@@ -67,7 +67,7 @@ import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.TickEndEvent;
-import cc.unknown.module.impl.latency.TickBase;
+import cc.unknown.module.impl.latency.TimerManipulation;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.player.NoClickDelay;
 import cc.unknown.module.impl.visual.FreeLook;
@@ -214,7 +214,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	private final File fileResourcepacks;
 	private final PropertyMap twitchDetails;
 	private final PropertyMap field_181038_N;
-	private ServerData currentServerData;
+	public ServerData currentServerData;
 
 	/**
 	 * The RenderEngine instance used by Minecraft
@@ -1011,7 +1011,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.mcProfiler.endSection();
 		final long l = System.nanoTime();
 		this.mcProfiler.startSection("tick");
-        TickBase tickBase = Sakura.instance.getModuleManager().get(TickBase.class);
+        TimerManipulation tickBase = Sakura.instance.getModuleManager().get(TimerManipulation.class);
 
 		Lagometer.timerTick.start();
 
@@ -1470,6 +1470,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	 */
 	public void rightClickMouse() {
 		Sakura.instance.getEventBus().handle(new MouseEvent(1));
+		CPSHelper.registerClick(CPSHelper.MouseButton.RIGHT);
 		RightClickEvent rightClickEvent = new RightClickEvent();
 		Sakura.instance.getEventBus().handle(rightClickEvent);
 		if (rightClickEvent.isCancelled())

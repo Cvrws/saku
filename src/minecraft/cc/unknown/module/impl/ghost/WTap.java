@@ -36,7 +36,6 @@ public class WTap extends Module {
 	private ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Normal"))
 			.add(new SubMode("Silent"))
-			.add(new SubMode("Smart"))
 			.setDefault("Normal");
 
 	private NumberValue delay = new NumberValue("Delay", this, 500, 50, 1000, 10, () -> !isTwo());
@@ -48,119 +47,32 @@ public class WTap extends Module {
 	private BooleanValue onlyMoveForward = new BooleanValue("Only Forward", this, false, () -> !onlyMove.getValue() || !isTwo());
 	private BooleanValue ignoreTeammates = new BooleanValue("Ignore Teams", this, false, () -> !isTwo());
 
-	private final NumberValue smartRange = new NumberValue("Smart Range", this, 3.0, 0.0, 8.0, 0.1, () -> !mode.is("Smart"));
-	private final NumberValue smartDelay = new NumberValue("Smart Delay", this, 2, 1, 50, 1, () -> !mode.is("Smart"));
-	private final NumberValue fov = new NumberValue("Fov", this, 60, 3, 360, 1, () -> !mode.is("Smart"));
-	private final BooleanValue sprintReset = new BooleanValue("Sprint Reset", this, true, () -> !mode.is("Smart"));
-	private final NumberValue DelaySprint = new NumberValue("Delay Sprint", this, 8, 1, 50, 1, () -> !mode.is("Smart") || !sprintReset.getValue());
-	private final BooleanValue CanMoveBack = new BooleanValue("Can Move Back", this, true, () -> !mode.is("Smart"));
-	private final BooleanValue Combo = new BooleanValue("Combo", this, true, () -> !mode.is("Smart"));
-
 	private final StopWatch stopWatch = new StopWatch();
 	private int ticks;
 
 	private int hitsSend;
 	private int combo;
 	
-    @Override
-    public void onDisable() {
-        finishCombo();
-    }
-
-	@EventLink
-	public final Listener<TickEvent> onTick = event -> {
-		if (mode.is("Smart")) {
-			EntityPlayerSP player = mc.player;
-			if (mc.currentScreen != null) {
-				return;
-			}
-			if (Combo.getValue()) {
-				if (Mouse.isButtonDown(0)) {
-					combo++;
-
-					if (combo >= 3) {
-						if (isEntityWithinThreeBlocks(player, 6.4)) {
-							KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), false);
-							KeyBinding.onTick(mc.gameSettings.keyBindForward.getKeyCode());
-
-						}
-
-					}
-				}
-				if (!(mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null)) {
-					combo = 0;
-				}
-
-			}
-
-			if (sprintReset.getValue()) {
-				double forward = mc.player.movementInput.moveForward;
-				if (Mouse.isButtonDown(0) && mc.player.onGround && !mc.gameSettings.keyBindJump.isKeyDown()
-						&& isEntityWithinThreeBlocks(player, smartRange.getValue().doubleValue())) {
-					if (mc.player.isSprinting() && forward > 0) {
-						hitsSend++;
-						if (hitsSend == 2) {
-							mc.player.setSprinting(false);
-						}
-
-						if (hitsSend == DelaySprint.getValue().intValue()) {
-							mc.player.setSprinting(false);
-							hitsSend = 0;
-						}
-					}
-				}
-
-			}
-			if (Mouse.isButtonDown(0) && mc.player.onGround && !mc.gameSettings.keyBindJump.isKeyDown()
-					&& isEntityWithinThreeBlocks(player, smartRange.getValue().doubleValue())) {
-
-				if (CanMoveBack.getValue()) {
-					KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), false);
-					KeyBinding.onTick(mc.gameSettings.keyBindForward.getKeyCode());
-				} else {
-					if (Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode())) {
-						KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
-						KeyBinding.onTick(mc.gameSettings.keyBindForward.getKeyCode());
-					}
-				}
-
-				if (mc.player.ticksExisted % smartDelay.getValue().intValue() == 0) {
-					if (Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode())) {
-						KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), false);
-						KeyBinding.onTick(mc.gameSettings.keyBindForward.getKeyCode());
-					}
-				}
-			} else {
-				finishCombo();
-			}
-		}
-	};
-
 	@EventLink
 	public final Listener<AttackEvent> onAttack = event -> {
 		double chanceValue = chance.getValue().doubleValue();
 		double randomFactor = MathUtil.getRandomFactor(chanceValue);
-		if (mode.is("Normal") || mode.is("Silent")) {
-			if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
-			if (mc.player == null) return;
+		if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
+		if (mc.player == null) return;
 
-			if (event.getTarget().hurtTime > hurtTime.getValue().intValue() || !stopWatch.finished(delay.getValue().intValue()) || (onlyGround.getValue() && !mc.player.onGround)) {
-				return;
-			}
-
-			if (ignoreTeammates.getValue() && PlayerUtil.isTeam((EntityPlayer) event.getTarget(), true, true)) { 
-				return;
-			}
-
-			if (onlyMove.getValue() && (!MoveUtil.isMoving() || (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f))) {
-				return;
-			}
+		if (event.getTarget().hurtTime > hurtTime.getValue().intValue() || !stopWatch.finished(delay.getValue().intValue()) || (onlyGround.getValue() && !mc.player.onGround)) {
+			return;
 		}
-		switch (mode.getValue().getName()) {
-		case "Smart":
-			startW();
-			break;
+
+		if (ignoreTeammates.getValue() && PlayerUtil.isTeam((EntityPlayer) event.getTarget(), true, true)) { 
+			return;
+		}
+
+		if (onlyMove.getValue() && (!MoveUtil.isMoving() || (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f))) {
+			return;
+		}
 		
+		switch (mode.getValue().getName()) {
 		case "Normal":
 		case "Silent":
 			if (stopWatch.finished(delay.getValue().intValue())) {
@@ -203,70 +115,4 @@ public class WTap extends Module {
 	private boolean isTwo() {
 		return mode.is("Normal") || mode.is("Silent");
 	}
-
-	private boolean isEntityWithinThreeBlocks(EntityPlayer player, double radius) {
-		if (mc.theWorld == null || player == null) {
-			return false;
-		}
-		
-		float fov = this.fov.getValue().floatValue();
-
-		float playerYaw = player.rotationYaw;
-		float playerPitch = player.rotationPitch;
-
-		for (Entity entity : mc.theWorld.loadedEntityList) {
-			if (entity != player) {
-				double deltaX = entity.posX - player.posX;
-				double deltaZ = entity.posZ - player.posZ;
-				double deltaY = (entity.posY + 0.9) - (player.posY + player.getEyeHeight());
-
-				double distanceXZ = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-				double distance = Math.sqrt(distanceXZ * distanceXZ + deltaY * deltaY);
-
-				if (distance <= radius) {
-					float targetYaw = (float) (Math.atan2(deltaZ, deltaX) * 180.0 / Math.PI) - 90.0F;
-					float targetPitch = (float) -(Math.atan2(deltaY, distanceXZ) * 180.0 / Math.PI);
-
-					float angleYaw = MathHelper.wrapAngleTo180_float(targetYaw - playerYaw);
-					float anglePitch = MathHelper.wrapAngleTo180_float(targetPitch - playerPitch);
-
-					if (Math.abs(angleYaw) < fov / 2.0F && Math.abs(anglePitch) < fov / 2.0F) {
-						if (distance != radius) {
-							if (CanMoveBack.getValue()) {
-								KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), true);
-							}
-						}
-						return true;
-					}
-				}
-			}
-		}
-
-		return false;
-	}
-	
-    private void finishCombo() {
-        if(!Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())){
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), false);
-        }
-
-        if(!Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode())){
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), false);
-        }
-
-        if(Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode())){
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
-        }
-
-        if(Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())){
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), true);
-        }
-    }
-
-    private void startW() {
-        if(Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode())) {
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), true);
-            KeyBinding.onTick(mc.gameSettings.keyBindBack.getKeyCode());
-        }
-    }
 }

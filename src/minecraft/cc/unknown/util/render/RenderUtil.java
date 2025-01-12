@@ -30,6 +30,7 @@ import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.src.Config;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -59,15 +60,6 @@ public final class RenderUtil implements Accessor {
 		GlStateManager.disableBlend();
 		GlStateManager.resetColor();
 	}
-	
-    public static void startBlend() {
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    public static void endBlend() {
-        GlStateManager.disableBlend();
-    }
 
 	public void rectangle(final double x, final double y, final double width, final double height, final Color color) {
 		start();
@@ -747,30 +739,211 @@ public final class RenderUtil implements Accessor {
         GL11.glPopMatrix();
     }
     
-    public Framebuffer createFrameBuffer(Framebuffer framebuffer) {
-        return createFrameBuffer(framebuffer, false);
-    }
-
-    public Framebuffer createFrameBuffer(Framebuffer framebuffer, boolean depth) {
-        if (needsNewFramebuffer(framebuffer)) {
-            if (framebuffer != null) {
-                framebuffer.deleteFramebuffer();
-            }
-            return new Framebuffer(mc.displayWidth, mc.displayHeight, depth);
+    public float getExtraWidth() {
+        if (mc.gameSettings.thirdPersonView == 0 || Config.zoomMode) {
+            return 2;
         }
-        return framebuffer;
+        return 1;
     }
 
-    public boolean needsNewFramebuffer(Framebuffer framebuffer) {
-        return framebuffer == null || framebuffer.framebufferWidth != mc.displayWidth || framebuffer.framebufferHeight != mc.displayHeight;
+    public void drawRectangle(float x, float y, float width, float height, float lineWidth, boolean filled) {
+        GL11.glPushMatrix();
+        GL11.glTranslatef(x - 0.05f, y - 0.15f, 0.0f);
+
+        if (filled) {
+            GL11.glLineWidth(lineWidth * getExtraWidth());
+            GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+            GL11.glVertex2f(-width / 2, -height / 2);
+            GL11.glVertex2f(width / 2, -height / 2);
+            GL11.glVertex2f(width / 2, height / 2);
+            GL11.glVertex2f(-width / 2, height / 2);
+            GL11.glEnd();
+        } else {
+            GL11.glLineWidth(lineWidth * getExtraWidth());
+            GL11.glBegin(GL11.GL_LINE_LOOP);
+            GL11.glVertex2f(-width / 2, -height / 2);
+            GL11.glVertex2f(width / 2, -height / 2);
+            GL11.glVertex2f(width / 2, height / 2);
+            GL11.glVertex2f(-width / 2, height / 2);
+            GL11.glEnd();
+        }
+        GL11.glPopMatrix();
+    }
+
+    public void drawStar(float x, float y, float radius) {
+        final int POINTS = 5;
+        final float[] angles = new float[POINTS * 2];
+
+        for (int i = 0; i < POINTS * 2; i++) {
+            angles[i] = (float) Math.toRadians(i * 360.0f / (POINTS * 2) - 90.0f);
+        }
+
+        float[] vertices = new float[POINTS * 4];
+        float innerRadius = radius * 0.6f;
+
+        for (int i = 0; i < POINTS * 2; i++) {
+            float angle = angles[i];
+            float currentRadius = (i % 2 == 0) ? radius : innerRadius;
+            vertices[i * 2] = x + (float) Math.cos(angle) * currentRadius;
+            vertices[i * 2 + 1] = y + (float) Math.sin(angle) * currentRadius;
+        }
+
+        GL11.glBegin(GL11.GL_LINE_LOOP);
+        for (int i = 0; i < POINTS * 2; i++) {
+            GL11.glVertex2f(vertices[i * 2], vertices[i * 2 + 1]);
+        }
+        GL11.glEnd();
     }
     
-    public void bindTexture(int texture) {
-    	GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+    public void drawStar(float centerX, float centerY, float radius, float rotationOffset) {
+        int points = 5;
+        double angleIncrement = Math.PI / points;
+        GL11.glBegin(GL11.GL_LINE_LOOP);
+
+        for (int i = 0; i < points * 2; i++) {
+            double angle = i * angleIncrement + rotationOffset;
+            float scale = (i % 2 == 0) ? 1.0f : 0.5f;
+            GL11.glVertex2f(
+                centerX + (float) Math.cos(angle) * radius * scale,
+                centerY + (float) Math.sin(angle) * radius * scale
+            );
+        }
+        GL11.glEnd();
+    }
+
+    public void drawTriangle(float x, float y, float base, float height, float rotationAngle) {
+        float[] vertices = new float[6];
+
+        vertices[0] = -base / 2;
+        vertices[1] = 0;
+
+        vertices[2] = base / 2;
+        vertices[3] = 0;
+
+        vertices[4] = 0;
+        vertices[5] = height;
+
+        GL11.glPushMatrix();
+
+        GL11.glTranslatef(x, y, 0);
+
+        GL11.glRotatef(rotationAngle, 0, 0, 1);
+
+        for (int i = 0; i < 3; i++) {
+            GL11.glVertex2f(vertices[i * 2], vertices[i * 2 + 1]);
+        }
+        GL11.glEnd();
+
+        GL11.glPopMatrix();
     }
     
-    public static void setAlphaLimit(float limit) {
-        GlStateManager.enableAlpha();
-        GlStateManager.alphaFunc(GL11.GL_GREATER, (float) (limit * .01));
+    public void drawCircle(float radius, float lineWidth) {
+        GL11.glLineWidth(lineWidth * getExtraWidth());
+        GL11.glBegin(GL11.GL_LINE_STRIP);
+        for (int i = 0; i <= 360; i += 5) {
+            float angle = (float) Math.toRadians(i);
+            GL11.glVertex2f((float) Math.cos(angle) * radius, (float) Math.sin(angle) * radius);
+        }
+        GL11.glEnd();
+    }
+
+    public void drawDecorativeCircle(float radius, float lineWidth) {
+        GL11.glLineWidth(lineWidth * getExtraWidth());
+        GL11.glBegin(GL11.GL_LINE_STRIP);
+        for (int i = 0; i <= 360; i += 5) {
+            float angle = (float) Math.toRadians(i);
+            float x = (float) Math.cos(angle) * radius;
+            float y = (float) Math.sin(angle) * radius;
+
+            GL11.glVertex2f(x, y);
+
+            if (i % 90 == 0) {
+                drawSegment(x, y, angle, 0.1f, 0.03f);
+            }
+        }
+        GL11.glEnd();
+    }
+
+    public void drawSegment(float x, float y, float angle, float offset, float inwardOffset) {
+        GL11.glVertex2f(x + (float) Math.cos(angle) * offset, y + (float) Math.sin(angle) * offset);
+        GL11.glVertex2f(x, y);
+        GL11.glVertex2f(x - (float) Math.cos(angle) * inwardOffset, y - (float) Math.sin(angle) * inwardOffset);
+        GL11.glVertex2f(x, y);
+    }
+    
+    public void drawCircleWithOffsets(float radius, float offset, float inwardOffset, float lineWidth) {
+        GL11.glLineWidth(lineWidth * getExtraWidth());
+        GL11.glBegin(GL11.GL_LINE_STRIP);
+        for (int i = 0; i <= 360; i += 5) {
+            float angle = (float) Math.toRadians(i);
+            float x = (float) Math.cos(angle) * radius;
+            float y = (float) Math.sin(angle) * radius;
+
+            GL11.glVertex2f(x, y);
+
+            if (i % 90 == 0) {
+                GL11.glVertex2f(x + (float) Math.cos(angle) * offset, y + (float) Math.sin(angle) * offset);
+                GL11.glVertex2f(x, y);
+                GL11.glVertex2f(x - (float) Math.cos(angle) * inwardOffset, y - (float) Math.sin(angle) * inwardOffset);
+                GL11.glVertex2f(x, y);
+            }
+        }
+        GL11.glEnd();
+    }
+
+    public void drawCircle(float radius, float lineWidth, Color color) {
+        color(color);
+        GL11.glLineWidth(lineWidth * getExtraWidth());
+        GL11.glBegin(GL11.GL_LINE_STRIP);
+        for (int i = 0; i <= 360; i += 5) {
+            float angle = (float) Math.toRadians(i);
+            GL11.glVertex2f(
+                (float) Math.cos(angle) * radius,
+                (float) Math.sin(angle) * radius
+            );
+        }
+        GL11.glEnd();
+    }
+
+    public void drawArc(float radius, int startAngle, int endAngle, float lineWidth, Color color) {
+        color(color);
+        GL11.glLineWidth(lineWidth * getExtraWidth());
+        GL11.glBegin(GL11.GL_LINE_STRIP);
+        for (int i = startAngle; i <= endAngle; i += 5) {
+            float angle = (float) Math.toRadians(i);
+            GL11.glVertex2f(
+                (float) Math.cos(angle) * radius,
+                (float) Math.sin(angle) * radius
+            );
+        }
+        GL11.glEnd();
+    }
+
+    public void drawLineExtensions(float radius, float extensionLength, int[] angles) {
+        GL11.glLineWidth(4.0f * getExtraWidth());
+        GL11.glBegin(GL11.GL_LINES);
+        for (int angle : angles) {
+            float angleRad = (float) Math.toRadians(angle);
+            GL11.glVertex3f(
+                (float) Math.cos(angleRad) * radius,
+                (float) Math.sin(angleRad) * radius,
+                0.0f
+            );
+            GL11.glVertex3f(
+                (float) Math.cos(angleRad) * (radius + extensionLength),
+                (float) Math.sin(angleRad) * (radius + extensionLength),
+                0.0f
+            );
+        }
+        GL11.glEnd();
+    }
+    
+    public void drawHaloRectangles() {
+        color(new Color(161, 253, 228, 220));
+        drawRectangle(0.20f, 0.02f, 0.26f, 0.26f, 4f, false);
+        drawRectangle(0.2f, 0.3f, 0.4f, 0.4f, 6f, false);
+        drawRectangle(-0.09f, 0.21f, 0.35f, 0.35f, 5f, false);
+        drawRectangle(-0.13f, 0.45f, 0.15f, 0.05f, 4f, false);
+        drawRectangle(0.12f, 0.49f, 0.1f, 0f, 6f, false);
     }
 }

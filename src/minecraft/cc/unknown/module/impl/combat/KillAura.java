@@ -21,6 +21,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.netty.PacketUtil;
+import cc.unknown.util.player.EnemyUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.util.player.TargetUtil;
@@ -218,8 +219,8 @@ public final class KillAura extends Module {
 
 	private void sortByTargets() {
 		targets.sort((o1, o2) -> {
-			boolean isTarget1 = Sakura.instance.getEnemyManager().isEnemy(o1.getName());
-			boolean isTarget2 = Sakura.instance.getEnemyManager().isEnemy(o2.getName());
+			boolean isTarget1 = EnemyUtil.isEnemy(o1.getName());
+			boolean isTarget2 = EnemyUtil.isEnemy(o2.getName());
 			if (isTarget1 && !isTarget2) {
 				return -1;
 			} else if (!isTarget1 && isTarget2) {

@@ -21,42 +21,4 @@ import net.minecraft.util.ChatComponentText;
 @ModuleInfo(aliases = {"Internet Relay Chat", "Irc"}, description = "Comunicate con otros sakura users.", category = Category.OTHER)
 public class InternetRelayChat extends Module {
 	
-	private String sakuraUser = "[S]";
-	
-    @Override
-    public void onEnable() {
-        super.onEnable();
-        sendIRCIdentificationPacket();
-    }
-    
-    @EventLink
-    public final Listener<TickEvent> onTick = event -> {
-    	sendIRCIdentificationPacket();
-    };
-	
-    @EventLink
-    public final Listener<PacketReceiveEvent> onPacketReceive = event -> {
-    	Packet<?> packet = event.getPacket();
-    	
-        if (packet instanceof S38PacketPlayerListItem) {
-            S38PacketPlayerListItem wrapper = (S38PacketPlayerListItem) event.getPacket();
-            List<S38PacketPlayerListItem.AddPlayerData> players = wrapper.func_179767_a();
-            for (S38PacketPlayerListItem.AddPlayerData playerData : players) {
-                NetworkPlayerInfo playerInfo = mc.getNetHandler().getPlayerInfo(playerData.getProfile().getId());
-                if (playerInfo != null) {
-                    String displayName = playerInfo.getDisplayName().getUnformattedText();
-                    if (!displayName.contains("[IRC]")) {
-                        playerInfo.setDisplayName(new ChatComponentText(displayName + " [IRC]"));
-                    }
-                }
-            }
-        }
-    };
-    
-    private void sendIRCIdentificationPacket() {
-        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        buffer.writeString("IRC");
-        buffer.writeString(sakuraUser);
-        PacketUtil.send(new C17PacketCustomPayload("IRC|Ident", buffer));
-    }
 }

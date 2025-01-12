@@ -1,7 +1,7 @@
 package cc.unknown.command.impl;
 
 import cc.unknown.command.Command;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.EnemyUtil;
 
 public final class Target extends Command {
 
@@ -18,7 +18,7 @@ public final class Target extends Command {
 	            	success(getTargetList());
 	                break;
 	            case "clear":
-	            	getInstance().getEnemyManager().removeEnemy();
+	            	EnemyUtil.removeEnemy();
 	            	break;
 	        }
 	        return;
@@ -30,12 +30,12 @@ public final class Target extends Command {
 
 	        switch (action) {
 	            case "add":
-	                getInstance().getEnemyManager().addEnemy(target);
+	                EnemyUtil.addEnemy(target);
 	                success(String.format("Added %s to target list", target));
 	                break;
 
 	            case "remove":
-	                getInstance().getEnemyManager().removeEnemy(target);
+	                EnemyUtil.removeEnemy(target);
 	                success(String.format("Removed %s from target list", target));
 	                break;
 	        }
@@ -45,12 +45,12 @@ public final class Target extends Command {
 	}
     
 	private String getTargetList() {
-	    if (getInstance().getEnemyManager().getEnemy().isEmpty()) {
+	    if (EnemyUtil.getEnemy().isEmpty()) {
 	        return "Your target list is empty.";
 	    }
 
 	    StringBuilder message = new StringBuilder("Target list:\n");
-	    for (String enemy : getInstance().getEnemyManager().getEnemy()) {
+	    for (String enemy : EnemyUtil.getEnemy()) {
 	        message.append("- ").append(enemy).append("\n");
 	    }
 	    return message.toString();

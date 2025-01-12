@@ -40,7 +40,7 @@ public class CPSHelper {
     @Getter
     @RequiredArgsConstructor
     public enum MouseButton {
-        LEFT(0), MIDDLE(1), RIGHT(2);
+        LEFT(0), RIGHT(1), MIDDLE(2);
 
         private final int index;
     }
