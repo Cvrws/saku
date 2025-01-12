@@ -32,12 +32,12 @@ import cc.unknown.value.impl.SubMode;
 
 @ModuleInfo(aliases = "HUD", description = "Renderiza los modulos del cliente.", category = Category.VISUALS, autoEnabled = true)
 public final class HUD extends Module {
-	
-	private final ModeValue colorMode = new ModeValue("Style Color", this)
-        .add(new SubMode("Static"))
-        .add(new SubMode("Fade"))
-        .setDefault("Fade");
-        
+
+    private final ModeValue colorMode = new ModeValue("Style Color", this)
+            .add(new SubMode("Static"))
+            .add(new SubMode("Fade"))
+            .setDefault("Fade");
+
     private final BooleanValue dropShadow = new BooleanValue("Drop Shadow", this, true);
     private final BooleanValue bloom = new BooleanValue("Bloom", this, true);
     private final BooleanValue renderCategories = new BooleanValue("Render Category", this, true);
@@ -51,30 +51,29 @@ public final class HUD extends Module {
     public final BooleanValue hideWorld = new BooleanValue("Hide World", this, false, () -> !renderCategories.getValue());
     private final BooleanValue lowercase = new BooleanValue("Lowercase", this, false);
     private final NumberValue alphaBackground = new NumberValue("Alpha BackGround", this, 180, 0, 255, 1);
-    
+
     private List<ModuleComponent> activeModuleComponents = new ArrayList<>();
     private List<ModuleComponent> allModuleComponents = new ArrayList<>();
     private Font font = Fonts.MONSERAT.get(16, Weight.BOLD);
     private final StopWatch stopwatch = new StopWatch();
     private float moduleSpacing = 12, edgeOffset;
-    
-	@Override
-	public void onEnable() {		
-        allModuleComponents.clear();
-        Sakura.instance.getModuleManager().getAll().stream()
-        .sorted(Comparator.comparingDouble(module -> -font.width(module.getName())))
-        .map(ModuleComponent::new)
-        .peek(module -> module.setTranslatedName(module.getModule().getName()))
-        .forEach(allModuleComponents::add);
 
-	}
+    @Override
+    public void onEnable() {
+        allModuleComponents.clear();
+        allModuleComponents = Sakura.instance.getModuleManager().getAll().stream()
+                .sorted(Comparator.comparingDouble(module -> -font.width(module.getName())))
+                .map(ModuleComponent::new)
+                .peek(module -> module.setTranslatedName(module.getModule().getName()))
+                .collect(Collectors.toList());
+    }
 
     @EventLink
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-    	activeModuleComponents = allModuleComponents.stream()
-    	.filter(module -> module.getModule().shouldDisplay(this))
-    	.sorted(Comparator.comparingDouble(module -> -(module.getNameWidth())))
-    	.collect(Collectors.toList());
+        activeModuleComponents = allModuleComponents.stream()
+                .filter(module -> module.getModule().shouldDisplay(this))
+                .sorted(Comparator.comparingDouble(module -> -(module.getNameWidth())))
+                .collect(Collectors.toList());
     };
 
     @EventLink(value = Priority.LOW)
@@ -86,33 +85,25 @@ public final class HUD extends Module {
         float sy = event.getScaledResolution().getScaledHeight() - font.height() - 1;
         double widthOffset = 3;
         float totalHeight = activeModuleComponents.size() * moduleSpacing;
-        
-        for (final ModuleComponent module : activeModuleComponents) {
-        	String name = getName(module);
-        	Color color = getTheme().getFirstColor();
-                
-        	if (colorMode.is("Fade")) {
-        		color = getTheme().getAccentColor(new Vector2d(0, module.getPosition().getY()));
-        	}
-        	
-        	module.setColor(color);
-        	module.setNameWidth(font.width(name));
-        	module.setDisplayName(name);
+
+        for (ModuleComponent module : activeModuleComponents) {
+            String name = getName(module);
+            Color color = getTheme().getFirstColor();
+
+            if (colorMode.is("Fade")) {
+                color = getTheme().getAccentColor(new Vector2d(0, module.getPosition().getY()));
+            }
+
+            module.setColor(color);
+            module.setNameWidth(font.width(name));
+            module.setDisplayName(name);
         }
 
-        for (final ModuleComponent module : activeModuleComponents) {
-            double x = module.getPosition().getX();
-            double y = module.getPosition().getY();
+        float screenWidth = event.getScaledResolution().getScaledWidth();
+        Vector2f position = new Vector2f(0, 0);
 
-            Color finalColor = module.getColor();
-            setRenderRectangle(module, x, y, widthOffset, totalHeight);
-            drawText(module, x, y - .7f, finalColor.getRGB());
-        }
-        
-        final float screenWidth = event.getScaledResolution().getScaledWidth();
-        final Vector2f position = new Vector2f(0, 0);
-        for (final ModuleComponent module : activeModuleComponents) {
-        	module.targetPosition = new Vector2d(screenWidth - module.getNameWidth(), position.getY());
+        for (ModuleComponent module : activeModuleComponents) {
+            module.targetPosition = new Vector2d(screenWidth - module.getNameWidth(), position.getY());
 
             if (!module.getModule().isEnabled()) {
                 module.targetPosition = new Vector2d(screenWidth + module.getNameWidth(), position.getY());
@@ -120,13 +111,18 @@ public final class HUD extends Module {
                 position.setY(position.getY() + moduleSpacing);
             }
 
-            float offsetX = edgeOffset;
-            float offsetY = edgeOffset;
-
-            module.targetPosition.x -= offsetX;
-            module.targetPosition.y += offsetY;
-            
+            module.targetPosition.x -= edgeOffset;
+            module.targetPosition.y += edgeOffset;
             module.position = module.targetPosition;
+        }
+
+        for (ModuleComponent module : activeModuleComponents) {
+            double x = module.getPosition().getX();
+            double y = module.getPosition().getY();
+            Color finalColor = module.getColor();
+
+            setRenderRectangle(module, x, y, widthOffset, totalHeight);
+            drawText(module, x, y - 0.7f, finalColor.getRGB());
         }
     };
 
@@ -137,18 +133,18 @@ public final class HUD extends Module {
             font.draw(component.getDisplayName(), x, y, hex);
         }
     }
-    
+
     private String getName(ModuleComponent module) {
-    	return (lowercase.getValue() ? module.getTranslatedName().toLowerCase() : module.getTranslatedName()).replace(" ", "");
+        return (lowercase.getValue() ? module.getTranslatedName().toLowerCase() : module.getTranslatedName()).replace(" ", "");
     }
 
     private void setRenderRectangle(ModuleComponent module, double x, double y, double widthOffset, float totalHeight) {
         float rectangleWidth = (float) (module.nameWidth + 3 + widthOffset);
 
         if (bloom.getValue()) {
-        	RenderUtil.drawBloomShadow((float) (x - widthOffset), (float) (y - 3f), rectangleWidth, (float) moduleSpacing + 4, 6, 0, new Color(0, 0, 0, alphaBackground.getValue().intValue()));
+            RenderUtil.drawBloomShadow((float) (x - widthOffset), (float) (y - 3f), rectangleWidth, (float) moduleSpacing + 4, 6, 0, new Color(0, 0, 0, alphaBackground.getValue().intValue()));
         }
-        
+
         RenderUtil.rectangle(x - widthOffset, y - 3f, rectangleWidth, moduleSpacing, new Color(0, 0, 0, alphaBackground.getValue().intValue()));
     }
 }

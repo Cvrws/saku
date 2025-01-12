@@ -15,58 +15,58 @@ import net.minecraft.client.Minecraft;
 
 @Getter
 public enum Fonts {
-    MONSERAT("Montserrat-%s", getExt()),
-    ROBOTO("Roboto-%s", getExt()),
+    MONSERAT("Montserrat-%s", "ttf"),
+    ROBOTO("Roboto-%s", "ttf"),
     ICONS_1("Icon-1", "ttf"),
     ICONS_2("Icon-2", "ttf"),
     MINECRAFT("Minecraft", () -> Minecraft.getInstance().fontRendererObj);
-	
-    Supplier<Font> get;
-    Font font;
-    @Setter String name;
-    final String extention;
+
+    private final Supplier<Font> get;
+    private Font font;
+    @Setter
+    private String name;
+    private final String extention;
     private final HashMap<Integer, FontRenderer> sizes = new HashMap<>();
-	
+
     Fonts(String name, String extension) {
         this.name = name;
         this.extention = extension;
+        this.get = null;
     }
-    
+
     Fonts(String name, Supplier<Font> get) {
         this.name = name;
         this.extention = "";
-        this.font = get.get();
         this.get = get;
+        this.font = get.get();
     }
 
-    @SneakyThrows
     public Font get(int size) {
         return get(size, Weight.NONE);
     }
 
-    @SneakyThrows
     public Font get() {
         return get(0, Weight.NONE);
     }
 
-    @SneakyThrows
     public Font get(int size, Weight weight) {
-        if (get != null) {
-            if (font == null) font = get.get();
+        if (get != null && font == null) {
+            font = get.get();
             return font;
         }
-        
-        int key = Integer.parseInt(size + "" + weight.getNum());
+
+        int key = generateKey(size, weight);
 
         if (!sizes.containsKey(key)) {
             java.awt.Font font = null;
             String location = "unknown";
 
             for (String alias : weight.getAliases().split(",")) {
-                location = "sakura/font/" + String.format(name, alias) + "." + extention;
+                location = String.format("sakura/font/%s.%s", String.format(name, alias), extention);
                 font = FontUtil.getResource(location, size);
                 if (font != null) break;
             }
+
             if (font != null) {
                 sizes.put(key, new FontRenderer(font, true, true, false));
             }
@@ -74,9 +74,8 @@ public enum Fonts {
 
         return sizes.get(key);
     }
-    
-    private static String getExt() {
-        String vendor = System.getProperty("java.vendor");
-        return vendor != null && vendor.contains("Oracle") ? "ttf" : "otf";
+
+    private int generateKey(int size, Weight weight) {
+        return 31 * size + weight.getNum();
     }
 }
