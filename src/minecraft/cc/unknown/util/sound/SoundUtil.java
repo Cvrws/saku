@@ -12,7 +12,7 @@ public class SoundUtil {
 	public void playLocalSound() {
 		try {
 			clip = AudioSystem.getClip();
-			clip.open(AudioSystem.getAudioInputStream(SoundUtil.class.getResource("/assets/minecraft/sakura/sound/knockknock.ogg")));
+			clip.open(AudioSystem.getAudioInputStream(SoundUtil.class.getResource("/assets/minecraft/sakura/sound/knockknock.wav")));
 			clip.start();
 		} catch (Exception e) {
 			e.printStackTrace();

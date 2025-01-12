@@ -10,6 +10,7 @@ import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.input.ModuleToggleEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.font.Fonts;
@@ -19,16 +20,16 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.visual.api.ModuleComponent;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.font.Font;
 import cc.unknown.util.structure.geometry.Vector2d;
 import cc.unknown.util.structure.geometry.Vector2f;
-import cc.unknown.value.Value;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.util.ResourceLocation;
 
 @ModuleInfo(aliases = "HUD", description = "Renderiza los modulos del cliente.", category = Category.VISUALS, autoEnabled = true)
 public final class HUD extends Module {
@@ -74,6 +75,11 @@ public final class HUD extends Module {
                 .filter(module -> module.getModule().shouldDisplay(this))
                 .sorted(Comparator.comparingDouble(module -> -(module.getNameWidth())))
                 .collect(Collectors.toList());
+    };
+    
+    @EventLink
+    public final Listener<ModuleToggleEvent> onToggle = event -> {
+		mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
     };
 
     @EventLink(value = Priority.LOW)
