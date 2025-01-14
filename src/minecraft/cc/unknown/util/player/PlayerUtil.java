@@ -827,4 +827,17 @@ public class PlayerUtil implements Accessor {
 		}
 		return f;
 	}
+	
+    public boolean overVoid(double posX, double posY, double posZ) {
+        for (int i = (int) posY; i > -1; i--) {
+            if (!(mc.theWorld.getBlockState(new BlockPos(posX, i, posZ)).getBlock() instanceof BlockAir)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean overVoid() {
+        return overVoid(mc.player.posX, mc.player.posY, mc.player.posZ);
+    }
 }

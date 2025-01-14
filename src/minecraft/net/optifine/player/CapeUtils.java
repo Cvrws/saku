@@ -37,12 +37,13 @@ public class CapeUtils {
                 }
             }
 
-            final CapeImageBuffer capeimagebuffer = new CapeImageBuffer(player, resourcelocation);
+            final cc.unknown.util.memoryfix.CapeImageBuffer capeimagebuffer = new cc.unknown.util.memoryfix.CapeImageBuffer(player, resourcelocation);
             final ThreadDownloadImageData threaddownloadimagedata1 = new ThreadDownloadImageData(null, s1, null, capeimagebuffer);
             threaddownloadimagedata1.pipeline = true;
             texturemanager.loadTexture(resourcelocation, threaddownloadimagedata1);
         }
     }
+
 
     public static BufferedImage parseCape(final BufferedImage img) {
         int i = 64;

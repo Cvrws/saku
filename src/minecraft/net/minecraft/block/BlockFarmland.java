@@ -1,5 +1,9 @@
 package net.minecraft.block;
 
+import java.util.Random;
+
+import de.florianmichael.vialoadingbase.ViaLoadingBase;
+import de.florianmichael.viamcp.ViaMCP;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
@@ -15,8 +19,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import java.util.Random;
-
 public class BlockFarmland extends Block {
     public static final PropertyInteger MOISTURE = PropertyInteger.create("moisture", 0, 7);
 
@@ -28,10 +30,15 @@ public class BlockFarmland extends Block {
         this.setLightOpacity(255);
     }
 
-    public AxisAlignedBB getCollisionBoundingBox(final World worldIn, final BlockPos pos, final IBlockState state) {
-        return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+    public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+        return getCollisionBoundingBox_BlockFarmland(pos);
     }
 
+    public AxisAlignedBB getCollisionBoundingBox_BlockFarmland(BlockPos blockPos) {
+        double f = ViaLoadingBase.getInstance().getTargetVersion().getVersion() <= 47 ? 1.0 : 0.9375;
+        return new AxisAlignedBB(blockPos.getX(), blockPos.getY(), blockPos.getZ(), blockPos.getX() + 1, (double)blockPos.getY() + f, blockPos.getZ() + 1);
+    }
+    
     /**
      * Used to determine ambient occlusion and culling when rebuilding chunks for render
      */

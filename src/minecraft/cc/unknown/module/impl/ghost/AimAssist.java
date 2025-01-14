@@ -55,14 +55,15 @@ public final class AimAssist extends Module {
 	private final NumberValue maxAngle = new NumberValue("Max Angle", this, 180, 1, 180, 1);
 	private final NumberValue distance = new NumberValue("Distance", this, 4, 1, 8, 0.1);
 	private final BooleanValue clickAim = new BooleanValue("Require Clicking", this, true);
-	private final BooleanValue ignoreFriendlyEntities = new BooleanValue("Ignore Friends", this, false);
-	private final BooleanValue ignoreTeammates = new BooleanValue("Ignore Teams", this, false);
-	private final BooleanValue scoreboardCheckTeam = new BooleanValue("Scoreboard Check Team", this, false, () -> !ignoreTeammates.getValue());
-	private final BooleanValue checkArmorColor = new BooleanValue("Check Armor Color", this, false, () -> !ignoreTeammates.getValue());
-	private final BooleanValue aimAtInvisibleEnemies = new BooleanValue("Target invisibles", this, false);
-	private final BooleanValue lineOfSightCheck = new BooleanValue("Visibility Check", this, true);
-	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !lineOfSightCheck.getValue());
-	private final BooleanValue disableAimWhileBreakingBlock = new BooleanValue("Check Block Break", this, false);
+	private final BooleanValue ignoreFriend = new BooleanValue("Ignore Friends", this, false);
+	private final BooleanValue ignoreTeams = new BooleanValue("Ignore Teams", this, false);
+	private final BooleanValue scoreboardCheckTeam = new BooleanValue("Scoreboard Check Team", this, false, () -> !ignoreTeams.getValue());
+	private final BooleanValue checkArmorColor = new BooleanValue("Check Armor Color", this, false, () -> !ignoreTeams.getValue());
+	private final BooleanValue targetInvisibles = new BooleanValue("Target invisibles", this, false);
+	private final BooleanValue visibilityCheck = new BooleanValue("Visibility Check", this, true);
+	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !visibilityCheck.getValue());
+	private final BooleanValue checkBlockBreak = new BooleanValue("Check Block Break", this, false);
+	private final BooleanValue onlyBed = new BooleanValue("Only Bed", this, false, () -> !checkBlockBreak.getValue());
 	private final BooleanValue weaponOnly = new BooleanValue("Weapons Only", this, false);
 	public EntityPlayer target;
 	private double animation;
@@ -138,11 +139,11 @@ public final class AimAssist extends Module {
 	            if (player.getName().contains("[NPC]")) continue;
 	            if (player.getName().contains("MEJORAS")) continue;
 	            if (player.getName().contains("CLICK DERECHO")) continue;
-	            if (aimAtInvisibleEnemies.getValue() && player.isInvisible()) continue;
-	            if (FriendUtil.isFriend(player) && !ignoreFriendlyEntities.getValue()) continue;
-	            if (ignoreTeammates.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
+	            if (targetInvisibles.getValue() && player.isInvisible()) continue;
+	            if (FriendUtil.isFriend(player) && !ignoreFriend.getValue()) continue;
+	            if (ignoreTeams.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
 	            if (playerPos.distanceTo(player) > distance.getValue().doubleValue()) continue;
-	            if (lineOfSightCheck.getValue() && !mc.player.canEntityBeSeen(player)) continue;
+	            if (visibilityCheck.getValue() && !mc.player.canEntityBeSeen(player)) continue;
 	            if (fov != 180 && !PlayerUtil.fov(player, fov)) continue;
 	            double fov2 = Math.abs(PlayerUtil.getFov(player.posX, player.posZ));
 	            if (fov2 < targetFov) {
@@ -162,11 +163,11 @@ public final class AimAssist extends Module {
 	    if (weaponOnly.getValue() && !PlayerUtil.isHoldingWeapon()) return true;
 	    if (clickAim.getValue() && !PlayerUtil.isClicking()) return true;
 	    if (mouseOverEntity.getValue() && (mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY)) return true;
-	    if (disableAimWhileBreakingBlock.getValue() && mc.objectMouseOver != null) {
+	    if (checkBlockBreak.getValue() && mc.objectMouseOver != null) {
 	        BlockPos p = mc.objectMouseOver.getBlockPos();
 	        if (p != null) {
 	            Block bl = mc.theWorld.getBlockState(p).getBlock();
-	            if (bl != Blocks.air && !(bl instanceof BlockLiquid) && (bl instanceof Block || bl instanceof BlockBed)) {
+	            if (bl != Blocks.air && !(bl instanceof BlockLiquid) && (bl instanceof Block) || (onlyBed.getValue() && bl instanceof BlockBed)) {
 	                return true;
 	            }
 	        }

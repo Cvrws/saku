@@ -45,7 +45,6 @@ public final class ModuleManager {
         this.put(BlockHit.class, new BlockHit());
         this.put(KeepSprint.class, new KeepSprint());
         this.put(WTap.class, new WTap());
-        this.put(JumpReset2.class, new JumpReset2());
         
         // Latency
         this.put(PingSpoof.class, new PingSpoof());
@@ -113,6 +112,7 @@ public final class ModuleManager {
         this.put(Derp.class, new Derp());
         this.put(NoClickDelay.class, new NoClickDelay());
         this.put(FastUse.class, new FastUse());
+        this.put(BlockIn.class, new BlockIn());
         this.put(InventoryManager.class, new InventoryManager());
         this.put(Timer.class, new Timer());
         this.put(ChestStealer.class, new ChestStealer());

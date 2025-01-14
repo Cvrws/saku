@@ -111,6 +111,7 @@ public class Scaffold extends Module {
     private final BoundsNumberValue placeDelay = new BoundsNumberValue("Place Delay", this, 0, 0, 0, 5, 1);
     private final BooleanValue safeWalk = new BooleanValue("Safe Walk", this, false);
 	private final BooleanValue spoof = new BooleanValue("Spoof Slot", this, true);
+	private final BooleanValue silentSwing = new BooleanValue("Silent Swing", this, true);
 	private final BoundsNumberValue timer = new BoundsNumberValue("Timer", this, 1, 1, 0.1, 10, 0.05);
 	private final NumberValue expand = new NumberValue("Expand", this, 0, 0, 5, 1);
 	
@@ -661,11 +662,20 @@ public class Scaffold extends Module {
 
 		Vec3 hitVec = this.getHitVec();
 
-		if (rayCast.is("Strict")) {
+		if (mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
+			if (silentSwing.getValue()) {
+				PacketUtil.send(new C0APacketAnimation());
+			} else {
+				mc.player.swingItem();
+				mc.getItemRenderer().resetEquippedProgress();
+			}
+		}
+		
+		/*if (rayCast.is("Strict")) {
 			mc.rightClickMouse();
 		} else if (mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, mc.player.getHeldItem(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
 			PacketUtil.send(new C0APacketAnimation());
-		}
+		}*/
 	}
 	
 	public void getRotations(final int yawOffset) {

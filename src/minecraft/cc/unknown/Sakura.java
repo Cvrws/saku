@@ -97,8 +97,7 @@ public class Sakura {
     			new ConnectionHandler(),
     			new RotationHandler(),
     			new FixHandler(),
-    			new TransactionHandler(),
-    			new UserHandler());
+    			new TransactionHandler());
     	
     	LOGGER.info("Handlers registered.");
     }

@@ -20,6 +20,7 @@ import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.Entity;
+import net.minecraft.potion.Potion;
 
 @ModuleInfo(aliases = "Jump Reset", description = "Salta automaticamente al recibir daño para resetear el kb.", category = Category.GHOST)
 public class JumpReset extends Module {
@@ -27,6 +28,8 @@ public class JumpReset extends Module {
 	private final BooleanValue onlyTarget = new BooleanValue("Require Target", this, false);
 	private final BooleanValue disabledWhileHold = new BooleanValue("Disable while holding S", this, false);
 	private final BooleanValue onlyClick = new BooleanValue("Require Clicking", this, false);
+	private final BooleanValue notWhileSpeed = new BooleanValue("Not while with potion speed", this, false);
+	private final BooleanValue notWhileJumpBoost = new BooleanValue("Not while with potion jump ", this, false);
 	private final NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
 
 	@EventLink
@@ -46,12 +49,17 @@ public class JumpReset extends Module {
 	    double chanceValue = chance.getValue().doubleValue();
 	    double randomFactor = getRandomFactor(chanceValue);
 
+        if (noAction()) return;
 	    if (!shouldPerformAction(chanceValue, randomFactor)) return;
 	    
 		if (MoveUtil.isMoving() && mc.player.hurtTime > 0 && mc.player.motionY > 0 && (mc.player.ticksSinceVelocity <= 14 || mc.player.onGroundTicks <= 1)) {
 			event.setJump(true);
 		}
 	};
+	
+    private boolean noAction() {
+        return mc.player.getActivePotionEffects().parallelStream().anyMatch(effect -> notWhileSpeed.getValue() && effect.getPotionID() == Potion.moveSpeed.getId() || notWhileJumpBoost.getValue() && effect.getPotionID() == Potion.jump.getId());
+    }
 
 	private double getRandomFactor(double chanceValue) {
 	    return Math.abs(Math.sin(System.nanoTime() * Double.doubleToLongBits(chanceValue))) * 100.0;

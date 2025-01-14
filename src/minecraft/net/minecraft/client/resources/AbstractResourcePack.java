@@ -16,6 +16,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
+import cc.unknown.util.memoryfix.ResourcePackImageScaler;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.data.IMetadataSection;
 import net.minecraft.client.resources.data.IMetadataSerializer;
@@ -60,7 +62,6 @@ public abstract class AbstractResourcePack implements IResourcePack {
     static <T extends IMetadataSection> T readMetadata(final IMetadataSerializer p_110596_0_, final InputStream p_110596_1_, final String p_110596_2_) {
         JsonObject jsonobject = null;
         BufferedReader bufferedreader = null;
-
         try {
             bufferedreader = new BufferedReader(new InputStreamReader(p_110596_1_, Charsets.UTF_8));
             jsonobject = (new JsonParser()).parse(bufferedreader).getAsJsonObject();
@@ -74,7 +75,8 @@ public abstract class AbstractResourcePack implements IResourcePack {
     }
 
     public BufferedImage getPackImage() throws IOException {
-        return TextureUtil.readBufferedImage(this.getInputStreamByName("pack.png"));
+        BufferedImage image = TextureUtil.readBufferedImage(this.getInputStreamByName("pack.png"));
+        return ResourcePackImageScaler.scalePackImage(image);
     }
 
     public String getPackName() {

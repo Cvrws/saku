@@ -63,10 +63,8 @@ public final class BlueArchive extends Module {
         Vector2d pos = position.position;
 
         StickerData sticker = null;
-
-        String stickerTypeName = stickerType.getMode();
         
-        switch (stickerTypeName) {
+        switch (stickerType.getMode()) {
             case "Aris":
                 sticker = new StickerData("sakura/images/aris.png", 150, 160);
                 break;
@@ -92,10 +90,8 @@ public final class BlueArchive extends Module {
     @EventLink
     public final Listener<Render3DEvent> onRender3D = event -> {
         if (mc.gameSettings.thirdPersonView == 0 && !showInFirstPerson.getValue()) return;
-
-        String haloTypeName = haloType.getMode();
         
-        switch (haloTypeName) {
+        switch (haloType.getMode()) {
             case "Shiroko":
                 HaloRenderer.drawShirokoHalo(event);
                 break;
