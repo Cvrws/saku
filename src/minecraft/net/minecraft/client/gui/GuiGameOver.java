@@ -2,7 +2,7 @@ package net.minecraft.client.gui;
 
 import java.io.IOException;
 
-import cc.unknown.ui.menu.MainMenu;
+import cc.unknown.ui.menu.saku.SakuMenu;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ChatFormatting;
@@ -60,7 +60,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback {
 
             case 1:
                 if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled()) {
-                    this.mc.displayGuiScreen(new MainMenu());
+                    this.mc.displayGuiScreen(new SakuMenu());
                 } else {
                     final GuiYesNo guiyesno = new GuiYesNo(this, I18n.format("deathScreen.quit.confirm"), "", I18n.format("deathScreen.titleScreen"), I18n.format("deathScreen.respawn"), 0);
                     this.mc.displayGuiScreen(guiyesno);
@@ -73,7 +73,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback {
         if (result) {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
             this.mc.loadWorld(null);
-            this.mc.displayGuiScreen(new MainMenu());
+            this.mc.displayGuiScreen(new SakuMenu());
         } else {
             this.mc.player.respawnPlayer();
             this.mc.displayGuiScreen(null);

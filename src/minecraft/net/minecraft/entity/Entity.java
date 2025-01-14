@@ -96,7 +96,6 @@ public abstract class Entity implements ICommandSender {
     public double prevPosY;
     public double prevPosZ;
 
-    public transient EvictingList<Double> speeds = new EvictingList<>(20);
 
     /**
      * Entity position X
@@ -161,7 +160,7 @@ public abstract class Entity implements ICommandSender {
 
     public boolean inView;
     public int outOfViewTicks;
-    public final StopWatch updateModelVisibilities = new StopWatch();
+    //public final StopWatch updateModelVisibilities = new StopWatch();
 
     /**
      * True if after a move this entity has collided with something on Y-axis

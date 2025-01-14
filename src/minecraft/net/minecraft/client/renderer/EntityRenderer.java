@@ -1,6 +1,5 @@
 package net.minecraft.client.renderer;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Calendar;
@@ -28,11 +27,10 @@ import cc.unknown.event.impl.other.RotationEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
-import cc.unknown.module.impl.visual.Ambience;
 import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.module.impl.visual.HurtCamera;
 import cc.unknown.module.impl.visual.NoCameraClip;
-import cc.unknown.ui.menu.MainMenu;
+import cc.unknown.ui.menu.saku.SakuMenu;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
 import net.minecraft.block.Block;
@@ -54,7 +52,6 @@ import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
@@ -84,7 +81,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MouseFilter;
@@ -93,9 +89,7 @@ import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.optifine.CustomColors;
 import net.optifine.GlErrors;
 import net.optifine.Lagometer;
@@ -772,7 +766,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 					f2 += 180.0F;
 				}
 
-				NoCameraClip noCameraClip = Sakura.instance.getModuleManager().get(NoCameraClip.class);
+				NoCameraClip noCameraClip = getModule(NoCameraClip.class);
 
 				if (noCameraClip == null || !noCameraClip.isEnabled()) {
 					final double d4 = (double) (-MathHelper.sin(f1 / 180.0F * (float) Math.PI)
@@ -1300,7 +1294,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 					GlStateManager.enableAlpha();
 
 					Sakura.instance.getEventBus().handle(
-							new Render2DEvent(/* mc.scaledResolution */ new ScaledResolution(mc), partialTicks));
+							new Render2DEvent(new ScaledResolution(mc), partialTicks));
 
 					if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo) {
 						Config.drawFps();
@@ -2288,7 +2282,6 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 	private void setupFog(final int p_78468_1_, final float partialTicks) {
 		this.fogStandard = false;
 		final Entity entity = this.mc.getRenderViewEntity();
-		Ambience ambience = Sakura.instance.getModuleManager().get(Ambience.class);
 		
 		GL11.glFog(GL11.GL_FOG_COLOR,
 				this.setFogColorBuffer(this.fogColorRed, this.fogColorGreen, this.fogColorBlue, 1.0F));
@@ -2485,8 +2478,8 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 		Config.checkDisplayMode();
 		World world = this.mc.theWorld;
 
-		if (this.mc.currentScreen instanceof MainMenu) {
-			this.updateMainMenu((MainMenu) this.mc.currentScreen);
+		if (this.mc.currentScreen instanceof SakuMenu) {
+			this.updateMainMenu((SakuMenu) this.mc.currentScreen);
 		}
 
 		if (this.updatedWorld != world) {
@@ -2520,7 +2513,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 		}
 	}
 
-	private void updateMainMenu(final MainMenu p_updateMainMenu_1_) {
+	private void updateMainMenu(final SakuMenu p_updateMainMenu_1_) {
 		try {
 			String s = null;
 			final Calendar calendar = Calendar.getInstance();

@@ -5,12 +5,10 @@ import cc.unknown.event.impl.input.ChatInputEvent;
 import cc.unknown.event.impl.player.MoveEvent;
 import cc.unknown.event.impl.player.PostMotionEvent;
 import cc.unknown.event.impl.player.PostUpdateEvent;
-import cc.unknown.event.impl.player.PreLivingUpdateEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.player.PushOutOfBlockEvent;
 import cc.unknown.event.impl.player.SlowDownEvent;
-import cc.unknown.module.impl.move.Sprint;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.structure.geometry.Vector2f;
 import net.minecraft.client.Minecraft;
@@ -666,9 +664,7 @@ public class EntityPlayerSP extends AbstractClientPlayer implements Accessor {
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate() {
-    	Sakura.instance.getEventBus().handle(new PreLivingUpdateEvent());
-    	
+    public void onLivingUpdate() {    	
         if (this.sprintingTicksLeft > 0) {
             --this.sprintingTicksLeft;
 

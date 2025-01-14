@@ -5,11 +5,9 @@ import static org.apache.commons.lang3.RandomUtils.nextFloat;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.jetbrains.annotations.NotNull;
-
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
@@ -18,7 +16,6 @@ import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.EnemyUtil;
 import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
@@ -28,7 +25,6 @@ import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
@@ -46,7 +42,7 @@ public final class AimAssist extends Module {
 	private BooleanValue verticalRandom = new BooleanValue("Vertical Random", this, false, () -> !vertical.getValue());
 	private NumberValue verticalRandomization = new NumberValue("Vertical Randomization", this, 1.2, 0.1, 5, 0.01, () -> !verticalRandom.getValue());
 
-	private final ModeValue randomMode = new ModeValue("Speed Randomization", this)
+	private final ModeValue randomMode = new ModeValue("Speed Type", this)
 			.add(new SubMode("Thread Local Random"))
 			.add(new SubMode("Random Secure"))
 			.add(new SubMode("Gaussian"))
@@ -56,67 +52,46 @@ public final class AimAssist extends Module {
 	private final NumberValue distance = new NumberValue("Distance", this, 4, 1, 8, 0.1);
 	private final BooleanValue clickAim = new BooleanValue("Require Clicking", this, true);
 	private final BooleanValue ignoreFriend = new BooleanValue("Ignore Friends", this, false);
+	private final BooleanValue ignoreInvisibles = new BooleanValue("Ignore invisibles", this, false);
 	private final BooleanValue ignoreTeams = new BooleanValue("Ignore Teams", this, false);
 	private final BooleanValue scoreboardCheckTeam = new BooleanValue("Scoreboard Check Team", this, false, () -> !ignoreTeams.getValue());
 	private final BooleanValue checkArmorColor = new BooleanValue("Check Armor Color", this, false, () -> !ignoreTeams.getValue());
-	private final BooleanValue targetInvisibles = new BooleanValue("Target invisibles", this, false);
 	private final BooleanValue visibilityCheck = new BooleanValue("Visibility Check", this, true);
 	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !visibilityCheck.getValue());
 	private final BooleanValue checkBlockBreak = new BooleanValue("Check Block Break", this, false);
 	private final BooleanValue onlyBed = new BooleanValue("Only Bed", this, false, () -> !checkBlockBreak.getValue());
 	private final BooleanValue weaponOnly = new BooleanValue("Weapons Only", this, false);
 	public EntityPlayer target;
-	private double animation;
-	private boolean direction;
 	private Random random = new Random();
-	private StopWatch stopWatch = new StopWatch();
 	
 	@EventLink
-	public final Listener<PreMotionEvent> onPreMotion = event -> {
-		if (noAim()) {
-			return;
-		}
+	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
+	    if (noAim()) {
+	        return;
+	    }
 
-		target = getEnemy();
-		if (target == null) return;
+	    target = getEnemy();
+	    if (target == null) {
+	        return;
+	    }
 
-        double yawSpeed = this.horizontalSpeed.getValue().doubleValue();
-        double yawCompl = this.horizontalCompl.getValue().doubleValue();
-        double yawOffset = MathUtil.nextSecureDouble(yawSpeed, yawCompl) / 180;
-        
-        double yawFov = PlayerUtil.fovFromTarget(target);
-        double pitchEntity = PlayerUtil.pitchFromTarget(target, 0);
-        float yaw = getSpeedRandomize(randomMode.getValue().getName(), yawFov, yawOffset, yawSpeed, yawCompl);
-		double verticalRandomOffset = ThreadLocalRandom.current().nextDouble(verticalCompl.getValue().doubleValue() - 1.47328, verticalCompl.getValue().doubleValue() + 2.48293) / 100;
-		float resultVertical = (float) (-(pitchEntity * verticalRandomOffset + pitchEntity / (101.0D - (float) ThreadLocalRandom.current().nextDouble(verticalSpeed.getValue().doubleValue() - 4.723847, verticalSpeed.getValue().doubleValue()))));
-        
-        if (onTarget(target)) {
-            if (isYawFov(yawFov)) {
-                mc.player.rotationYaw += yaw;
-                mc.player.setAngles(Math.abs(yaw / 50), 0.0f);
-            }
-            
-			if (vertical.getValue()) {
-				float pitchChange = random.nextBoolean() ? -nextFloat(0F, verticalRandomization.getValue().floatValue()) : nextFloat(0F, verticalRandomization.getValue().floatValue());
-				float pitchAdjustment = (float) (verticalRandom.getValue() ? pitchChange : resultVertical);
-				float newPitch = mc.player.rotationPitch + pitchAdjustment;
-				mc.player.rotationPitch += pitchAdjustment;
-				mc.player.rotationPitch = newPitch >= 90f ? newPitch - 360f : newPitch <= -90f ? newPitch + 360f : newPitch;
-			}
-        } else {
-        	if (isYawFov(yawFov)) {
-            	mc.player.rotationYaw += yaw;
-            	mc.player.setAngles(Math.abs(yaw / 50), 0.0f);
-        	}
-        	
-			if (vertical.getValue()) {
-				float pitchChange = random.nextBoolean() ? -nextFloat(0F, verticalRandomization.getValue().floatValue()) : nextFloat(0F, verticalRandomization.getValue().floatValue());
-				float pitchAdjustment = (float) (verticalRandom.getValue() ? pitchChange : resultVertical);
-				float newPitch = mc.player.rotationPitch + pitchAdjustment;
-				mc.player.rotationPitch += pitchAdjustment;
-				mc.player.rotationPitch = newPitch >= 90f ? newPitch - 360f : newPitch <= -90f ? newPitch + 360f : newPitch;
-			}
-        }
+	    double yawSpeed = horizontalSpeed.getValue().doubleValue();
+	    double yawCompl = horizontalCompl.getValue().doubleValue();
+	    double yawOffset = MathUtil.nextSecureDouble(yawSpeed, yawCompl) / 180;
+	    double yawFov = PlayerUtil.fovFromTarget(target);
+	    double pitchEntity = PlayerUtil.pitchFromTarget(target, 0);
+	    float yawAdjustment = getSpeedRandomize(randomMode.getValue().getName(), yawFov, yawOffset, yawSpeed, yawCompl);
+
+	    double verticalRandomOffset = ThreadLocalRandom.current().nextDouble(verticalCompl.getValue().doubleValue() - 1.47328, verticalCompl.getValue().doubleValue() + 2.48293) / 100;
+	    float resultVertical = (float) (-(pitchEntity * verticalRandomOffset + pitchEntity / (101.0D - ThreadLocalRandom.current().nextDouble(verticalSpeed.getValue().doubleValue() - 4.723847, verticalSpeed.getValue().doubleValue()))));
+
+	    if (onTarget(target)) {
+	        applyYaw(yawFov, yawAdjustment);
+	        applyPitch(resultVertical);
+	    } else {
+	        applyYaw(yawFov, yawAdjustment);
+	        applyPitch(resultVertical);
+	    }
 	};
 
 	@Override
@@ -124,55 +99,100 @@ public final class AimAssist extends Module {
 		target = null;
 	}
 
-	public EntityPlayer getEnemy() {
+	private EntityPlayer getEnemy() {
 	    int fov = maxAngle.getValue().intValue();
-	    final Vec3 playerPos = new Vec3(mc.player);
-	
+	    Vec3 playerPos = new Vec3(mc.player);
+
 	    target = null;
-	    double targetFov = 180;
+	    double targetFov = 180.0;
 	    EntityPlayer potentialTarget = null;
-	    int validTargets = 0;
-	
-	    for (final EntityPlayer player : mc.theWorld.playerEntities) {
-	        if (player != mc.player && player.deathTime == 0 && player.isEntityAlive()) {
-	            if (EnemyUtil.isEnemy(player)) continue;
-	            if (player.getName().contains("[NPC]")) continue;
-	            if (player.getName().contains("MEJORAS")) continue;
-	            if (player.getName().contains("CLICK DERECHO")) continue;
-	            if (targetInvisibles.getValue() && player.isInvisible()) continue;
-	            if (FriendUtil.isFriend(player) && !ignoreFriend.getValue()) continue;
-	            if (ignoreTeams.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
-	            if (playerPos.distanceTo(player) > distance.getValue().doubleValue()) continue;
-	            if (visibilityCheck.getValue() && !mc.player.canEntityBeSeen(player)) continue;
-	            if (fov != 180 && !PlayerUtil.fov(player, fov)) continue;
-	            double fov2 = Math.abs(PlayerUtil.getFov(player.posX, player.posZ));
-	            if (fov2 < targetFov) {
-	                potentialTarget = player;
-	                targetFov = fov2;
-	            }
-	            validTargets++;
+
+	    for (EntityPlayer player : mc.theWorld.playerEntities) {
+	        if (!isValidTarget(player, playerPos, fov)) {
+	            continue;
+	        }
+
+	        double fovToPlayer = Math.abs(PlayerUtil.getFov(player.posX, player.posZ));
+	        if (fovToPlayer < targetFov) {
+	            potentialTarget = player;
+	            targetFov = fovToPlayer;
 	        }
 	    }
-	
+
 	    target = potentialTarget;
 	    return target;
 	}
+	
+	private boolean isValidTarget(EntityPlayer player, Vec3 playerPos, int fov) {
+	    if (player == mc.player || !player.isEntityAlive() || player.deathTime > 0) {
+	        return false;
+	    }
+
+	    if (EnemyUtil.isEnemy(player)) return false;
+	    if (player.getName().contains("[NPC]") || player.getName().contains("MEJORAS") || player.getName().contains("CLICK DERECHO")) {
+	        return false;
+	    }
+
+	    if (!ignoreInvisibles.getValue() && player.isInvisible()) {
+	        return false;
+	    }
+
+	    if (FriendUtil.isFriend(player) && !ignoreFriend.getValue()) {
+	        return false;
+	    }
+
+	    if (ignoreTeams.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) {
+	        return false;
+	    }
+
+	    if (playerPos.distanceTo(player) > distance.getValue().doubleValue()) {
+	        return false;
+	    }
+
+	    if (visibilityCheck.getValue() && !mc.player.canEntityBeSeen(player)) {
+	        return false;
+	    }
+
+	    return fov == 180 || PlayerUtil.fov(player, fov);
+	}
 
 	private boolean noAim() {
-	    if (mc.currentScreen != null || !mc.inGameHasFocus) return true;
-	    if (weaponOnly.getValue() && !PlayerUtil.isHoldingWeapon()) return true;
-	    if (clickAim.getValue() && !PlayerUtil.isClicking()) return true;
-	    if (mouseOverEntity.getValue() && (mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY)) return true;
+	    if (mc.currentScreen != null || !mc.inGameHasFocus) {
+	        return true;
+	    }
+
+	    if (weaponOnly.getValue() && !PlayerUtil.isHoldingWeapon()) {
+	        return true;
+	    }
+
+	    if (clickAim.getValue() && !PlayerUtil.isClicking()) {
+	        return true;
+	    }
+
+	    if (mouseOverEntity.getValue() 
+	        && (mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY)) {
+	        return true;
+	    }
+	    
 	    if (checkBlockBreak.getValue() && mc.objectMouseOver != null) {
-	        BlockPos p = mc.objectMouseOver.getBlockPos();
-	        if (p != null) {
-	            Block bl = mc.theWorld.getBlockState(p).getBlock();
-	            if (bl != Blocks.air && !(bl instanceof BlockLiquid) && (bl instanceof Block) || (onlyBed.getValue() && bl instanceof BlockBed)) {
-	                return true;
+	        BlockPos blockPos = mc.objectMouseOver.getBlockPos();
+	        if (blockPos != null) {
+	            Block block = mc.theWorld.getBlockState(blockPos).getBlock();
+
+	            if (block != Blocks.air) {
+	                if (onlyBed.getValue()) {
+	                    if (block instanceof BlockBed) {
+	                        return true;
+	                    }
+	                } else {
+	                    if (!(block instanceof BlockLiquid) && block instanceof Block) {
+	                        return true;
+	                    }
+	                }
 	            }
 	        }
 	    }
-        
+
 	    return false;
 	}
 
@@ -181,42 +201,63 @@ public final class AimAssist extends Module {
 				&& mc.objectMouseOver.typeOfHit != MovingObjectType.BLOCK
 				&& mc.objectMouseOver.entityHit == target;
 	}
+	
+	private void applyYaw(double yawFov, float yawAdjustment) {
+	    if (isYawFov(yawFov)) {
+	        mc.player.rotationYaw += yawAdjustment;
+	        mc.player.setAngles(Math.abs(yawAdjustment / 50), 0.0f);
+	    }
+	}
 
-	public float getSpeedRandomize(String mode, double fov, double offset, double speed, double complement) {
+	private void applyPitch(float resultVertical) {
+	    if (vertical.getValue()) {
+	        float pitchChange = random.nextBoolean()
+	            ? -nextFloat(0F, verticalRandomization.getValue().floatValue())
+	            : nextFloat(0F, verticalRandomization.getValue().floatValue());
+	        float pitchAdjustment = verticalRandom.getValue() ? pitchChange : resultVertical;
+	        float newPitch = mc.player.rotationPitch + pitchAdjustment;
+
+	        mc.player.rotationPitch += pitchAdjustment;
+	        mc.player.rotationPitch = normalizePitch(newPitch);
+	    }
+	}
+
+	private float normalizePitch(float pitch) {
+	    return pitch >= 90f ? pitch - 360f : pitch <= -90f ? pitch + 360f : pitch;
+	}
+
+	private float getSpeedRandomize(String mode, double fov, double offset, double speed, double complement) {
 	    double randomComplement;
 	    float result;
 
 	    switch (mode) {
 	        case "Thread Local Random":
 	            randomComplement = MathUtil.nextDouble(complement - 1.47328, complement + 2.48293) / 100;
-	            result = (float) (-(fov * offset + fov / (101.0 - MathUtil.nextDouble(speed - 4.723847, speed))));
-	            return (float) (randomComplement + result);
+	            result = calculateResult(fov, offset, speed, MathUtil.nextDouble(speed - 4.723847, speed));
+	            break;
 
 	        case "Random Secure":
 	            randomComplement = MathUtil.nextSecureDouble(complement - 1.47328, complement + 2.48293) / 100;
-	            result = (float) (-(fov * offset + fov / (101.0 - MathUtil.nextSecureDouble(speed - 4.723847, speed))));
-	            return (float) (randomComplement + result);
+	            result = calculateResult(fov, offset, speed, MathUtil.nextSecureDouble(speed - 4.723847, speed));
+	            break;
 
 	        case "Gaussian":
-	            randomComplement = complement + new Random().nextGaussian() * 0.5;
-	            randomComplement /= 100;
-	            result = (float) (-(fov * offset + fov / (101.0 - (speed + new Random().nextGaussian() * 0.3))));
-	            return (float) (randomComplement + result);
+	            randomComplement = (complement + new Random().nextGaussian() * 0.5) / 100;
+	            result = calculateResult(fov, offset, speed, speed + new Random().nextGaussian() * 0.3);
+	            break;
 
 	        default:
 	            throw new IllegalArgumentException("Unknown mode: " + mode);
 	    }
+
+	    return (float) (randomComplement + result);
 	}
 
+	private float calculateResult(double fov, double offset, double speed, double randomizedSpeed) {
+	    return (float) (-(fov * offset + fov / (101.0 - randomizedSpeed)));
+	}
+	
 	private boolean isYawFov(double fov) {
 		return fov > 1.0D || fov < -1.0D;
 	}
-	
-    private void drawDot(@NotNull Vec3 pos, double size, int color) {
-        double d = size / 2;
-        AxisAlignedBB bbox = new AxisAlignedBB(pos.xCoord - d, pos.yCoord - d, pos.zCoord - d, pos.xCoord + d, pos.yCoord + d, pos.zCoord + d);
-
-        AxisAlignedBB axis = new AxisAlignedBB(bbox.minX - mc.player.posX, bbox.minY - mc.player.posY, bbox.minZ - mc.player.posZ, bbox.maxX - mc.player.posX, bbox.maxY - mc.player.posY, bbox.maxZ - mc.player.posZ);
-        RenderUtil.drawAxisAlignedBB(axis, true, color);
-    }
 }

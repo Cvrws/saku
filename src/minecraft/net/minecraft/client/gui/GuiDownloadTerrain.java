@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
 
-import cc.unknown.ui.menu.MainMenu;
+import cc.unknown.ui.menu.saku.SakuMenu;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.play.client.C00PacketKeepAlive;
@@ -27,7 +27,7 @@ public class GuiDownloadTerrain extends GuiScreen {
     protected void keyTyped(final char typedChar, final int keyCode) throws IOException {
         if (keyCode == 1) {
             mc.leaveServer();
-            mc.displayGuiScreen(new GuiMultiplayer(new MainMenu()));
+            mc.displayGuiScreen(new GuiMultiplayer(new SakuMenu()));
         }
 
         if (keyCode == Keyboard.KEY_RETURN) {

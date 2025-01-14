@@ -71,7 +71,7 @@ import cc.unknown.module.impl.latency.TimerManipulation;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.player.NoClickDelay;
 import cc.unknown.module.impl.visual.FreeLook;
-import cc.unknown.ui.menu.MainMenu;
+import cc.unknown.ui.menu.saku.SakuMenu;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
@@ -911,12 +911,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 
 		if (guiScreenIn == null && this.theWorld == null) {
-			guiScreenIn = new MainMenu();
+			guiScreenIn = new SakuMenu();
 		} else if (guiScreenIn == null && this.player.getHealth() <= 0.0F) {
 			guiScreenIn = new GuiGameOver();
 		}
 
-		if (guiScreenIn instanceof MainMenu) {
+		if (guiScreenIn instanceof SakuMenu) {
 			this.gameSettings.showDebugInfo = false;
 			this.ingameGUI.getChatGUI().clearChatMessages();
 		}
@@ -2904,9 +2904,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.loadWorld(null);
 
 		if (flag) {
-			this.displayGuiScreen(new MainMenu());
+			this.displayGuiScreen(new SakuMenu());
 		} else {
-			this.displayGuiScreen(new GuiMultiplayer(new MainMenu()));
+			this.displayGuiScreen(new GuiMultiplayer(new SakuMenu()));
 		}
 	}
 

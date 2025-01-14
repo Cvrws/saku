@@ -9,7 +9,7 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.ui.menu.MainMenu;
+import cc.unknown.ui.menu.saku.SakuMenu;
 import cc.unknown.util.player.PlayerUtil;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
@@ -65,7 +65,7 @@ public final class AltGenerator extends Module {
 
     private void connectToServer(String address, int port) {
         mc.theWorld = null;
-        mc.displayGuiScreen(new GuiConnecting(new MainMenu(), mc, new ServerData("FurryServer", address, false)));
+        mc.displayGuiScreen(new GuiConnecting(new SakuMenu(), mc, new ServerData("FurryServer", address, false)));
     }
 
     private void disconnectAndRetry() {

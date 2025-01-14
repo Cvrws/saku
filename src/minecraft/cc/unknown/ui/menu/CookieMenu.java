@@ -1,4 +1,4 @@
-package cc.unknown.ui.menu.alt;
+package cc.unknown.ui.menu;
 
 import java.awt.FileDialog;
 import java.awt.Frame;
@@ -17,9 +17,9 @@ import javax.swing.SwingUtilities;
 
 import com.google.gson.Gson;
 
-import cc.unknown.ui.menu.MainMenu;
-import cc.unknown.ui.menu.api.Button;
-import cc.unknown.ui.menu.api.TextField;
+import cc.unknown.ui.menu.saku.SakuMenu;
+import cc.unknown.ui.menu.saku.api.Button;
+import cc.unknown.ui.menu.saku.api.TextField;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.account.auth.Browser;
 import cc.unknown.util.account.auth.MicrosoftAccount;

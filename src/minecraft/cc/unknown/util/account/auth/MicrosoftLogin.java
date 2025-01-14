@@ -19,7 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import cc.unknown.ui.menu.alt.AltManager;
+import cc.unknown.ui.menu.AltManager;
 import cc.unknown.util.client.StreamerUtil;
 import cc.unknown.util.netty.NetworkUtil;
 import cc.unknown.util.structure.ValuePair;

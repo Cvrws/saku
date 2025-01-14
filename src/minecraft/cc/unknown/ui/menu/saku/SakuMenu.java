@@ -1,4 +1,4 @@
-package cc.unknown.ui.menu;
+package cc.unknown.ui.menu.saku;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,9 +7,9 @@ import java.util.function.Consumer;
 import cc.unknown.Sakura;
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.ui.menu.alt.AltManager;
-import cc.unknown.ui.menu.api.Button;
-import cc.unknown.ui.menu.api.RainSystem;
+import cc.unknown.ui.menu.AltManager;
+import cc.unknown.ui.menu.saku.api.Button;
+import cc.unknown.ui.menu.saku.api.RainSystem;
 import cc.unknown.util.render.font.Font;
 import cc.unknown.util.sound.SoundUtil;
 import lombok.SneakyThrows;
@@ -22,13 +22,13 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 
-public class MainMenu extends GuiMainMenu {
+public class SakuMenu extends GuiMainMenu {
 
     private Font fontRenderer;
     private RainSystem rainParticleSystem;
     private final Map<Integer, Consumer<GuiButton>> buttonActions = new HashMap<>();
 
-    public MainMenu() {
+    public SakuMenu() {
         fontRenderer = Fonts.ROBOTO.get(18, Weight.LIGHT);
         buttonActions.put(0, button -> mc.displayGuiScreen(new GuiSelectWorld(this)));
         buttonActions.put(1, button -> mc.displayGuiScreen(new GuiMultiplayer(this)));

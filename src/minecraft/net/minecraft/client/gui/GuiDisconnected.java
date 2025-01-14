@@ -6,7 +6,7 @@ import java.util.List;
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.other.ServerKickEvent;
 import cc.unknown.handlers.ConnectionHandler;
-import cc.unknown.ui.menu.MainMenu;
+import cc.unknown.ui.menu.saku.SakuMenu;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
@@ -66,7 +66,7 @@ public class GuiDisconnected extends GuiScreen {
         }
 
         if (button.id == 1) {
-            this.mc.displayGuiScreen(new GuiConnecting(new GuiMultiplayer(new MainMenu()), this.mc, new ServerData("", ConnectionHandler.ip, false)));
+            this.mc.displayGuiScreen(new GuiConnecting(new GuiMultiplayer(new SakuMenu()), this.mc, new ServerData("", ConnectionHandler.ip, false)));
         }
     }
 

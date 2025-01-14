@@ -1,4 +1,4 @@
-package cc.unknown.ui.menu.alt;
+package cc.unknown.ui.menu;
 
 import static cc.unknown.util.client.StreamerUtil.gray;
 import static cc.unknown.util.client.StreamerUtil.green;
@@ -10,9 +10,9 @@ import java.io.IOException;
 
 import cc.unknown.font.Fonts;
 import cc.unknown.font.Weight;
-import cc.unknown.ui.menu.MainMenu;
-import cc.unknown.ui.menu.api.Button;
-import cc.unknown.ui.menu.api.TextField;
+import cc.unknown.ui.menu.saku.SakuMenu;
+import cc.unknown.ui.menu.saku.api.Button;
+import cc.unknown.ui.menu.saku.api.TextField;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.account.auth.MicrosoftAccount;
 import cc.unknown.util.account.auth.MicrosoftLogin;
@@ -88,7 +88,7 @@ public class AltManager extends GuiScreen implements Accessor {
         }
         
         if (keyCode == 1) {
-        	mc.displayGuiScreen(new MainMenu());
+        	mc.displayGuiScreen(new SakuMenu());
         }
     }
     
@@ -120,7 +120,7 @@ public class AltManager extends GuiScreen implements Accessor {
         	mc.displayGuiScreen(new CookieMenu());
             break;
         case 5:
-        	mc.displayGuiScreen(new MainMenu());
+        	mc.displayGuiScreen(new SakuMenu());
         	break;
         }
     }

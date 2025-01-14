@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.Display;
 
 import com.google.gson.Gson;
@@ -14,10 +12,26 @@ import com.google.gson.GsonBuilder;
 
 import cc.unknown.event.Event;
 import cc.unknown.event.bus.impl.EventBus;
-import cc.unknown.handlers.*;
-import cc.unknown.managers.*;
+import cc.unknown.handlers.AutoJoinHandler;
+import cc.unknown.handlers.ConnectionHandler;
+import cc.unknown.handlers.DiscordHandler;
+import cc.unknown.handlers.DragHandler;
+import cc.unknown.handlers.FixHandler;
+import cc.unknown.handlers.NetworkingHandler;
+import cc.unknown.handlers.RotationHandler;
+import cc.unknown.handlers.SinceTickHandler;
+import cc.unknown.handlers.SpoofHandler;
+import cc.unknown.handlers.TransactionHandler;
+import cc.unknown.handlers.ViaHandler;
+import cc.unknown.managers.BindableManager;
+import cc.unknown.managers.CommandManager;
+import cc.unknown.managers.ConfigManager;
+import cc.unknown.managers.FileManager;
+import cc.unknown.managers.ModuleManager;
+import cc.unknown.managers.ScriptManager;
+import cc.unknown.managers.ThemeManager;
 import cc.unknown.ui.click.RiceGui;
-import cc.unknown.ui.menu.MainMenu;
+import cc.unknown.ui.menu.saku.SakuMenu;
 import cc.unknown.util.client.CustomLogger;
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
@@ -63,7 +77,7 @@ public class Sakura {
     	initVia();
     	setupDiscordRPC();
         
-    	mc.displayGuiScreen(new MainMenu());
+    	mc.displayGuiScreen(new SakuMenu());
     	
         this.firstStart = true;
     	

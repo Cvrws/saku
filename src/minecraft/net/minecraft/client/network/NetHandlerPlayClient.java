@@ -21,7 +21,7 @@ import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.netty.DisconnectionEvent;
 import cc.unknown.event.impl.other.TeleportEvent;
-import cc.unknown.ui.menu.MainMenu;
+import cc.unknown.ui.menu.saku.SakuMenu;
 import de.florianmichael.vialoadingbase.ViaLoadingBase;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
@@ -756,7 +756,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient, Cloneable {
         if (this.guiScreenServer != null) {
         	this.gameController.displayGuiScreen(new GuiDisconnected(this.guiScreenServer, "disconnect.lost", reason));
         } else {
-            this.gameController.displayGuiScreen(new GuiDisconnected(new GuiMultiplayer(new MainMenu()), "disconnect.lost", reason));
+            this.gameController.displayGuiScreen(new GuiDisconnected(new GuiMultiplayer(new SakuMenu()), "disconnect.lost", reason));
         }
     }
 

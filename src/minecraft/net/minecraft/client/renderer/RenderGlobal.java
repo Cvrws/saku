@@ -1655,19 +1655,19 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             float f16 = 30.0F;
 
             if (Config.isSunTexture()) {
-                this.renderEngine.bindTexture(locationSunPng);
+                /*this.renderEngine.bindTexture(locationSunPng);
                 worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
                 worldrenderer.pos(-f16, 100.0D, -f16).tex(0.0D, 0.0D).endVertex();
                 worldrenderer.pos(f16, 100.0D, -f16).tex(1.0D, 0.0D).endVertex();
                 worldrenderer.pos(f16, 100.0D, f16).tex(1.0D, 1.0D).endVertex();
                 worldrenderer.pos(-f16, 100.0D, f16).tex(0.0D, 1.0D).endVertex();
-                tessellator.draw();
+                tessellator.draw();*/
             }
 
             f16 = 20.0F;
 
             if (Config.isMoonTexture()) {
-                this.renderEngine.bindTexture(locationMoonPhasesPng);
+                /*this.renderEngine.bindTexture(locationMoonPhasesPng);
                 final int i = this.theWorld.getMoonPhase();
                 final int k = i % 4;
                 final int i1 = i / 4 % 2;
@@ -1680,7 +1680,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 worldrenderer.pos(f16, -100.0D, f16).tex(f19, f14).endVertex();
                 worldrenderer.pos(f16, -100.0D, -f16).tex(f19, f21).endVertex();
                 worldrenderer.pos(-f16, -100.0D, -f16).tex(f23, f21).endVertex();
-                tessellator.draw();
+                tessellator.draw();*/
             }
 
             GlStateManager.disableTexture2D();
