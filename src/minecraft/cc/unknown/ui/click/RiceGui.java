@@ -264,19 +264,6 @@ public class RiceGui extends GuiScreen implements Accessor {
         }
     }
 
-    public void switchScreen(final Screen screen) {
-        if (!this.selectedScreen.getClass().getSimpleName().equals(screen.getClass().getSimpleName())) {
-            lastScreen = this.getClickGUI().selectedScreen;
-            selectedScreen = screen;
-
-            this.timeInCategory.reset();
-            selectedScreen.onInit();
-            
-            final HomeScreen search = ((HomeScreen) Category.SEARCH.getClickGUIScreen());
-            search.relevantModules = search.getRelevantModules(search.searchBar.getText());
-        }
-    }
-
     public boolean activeTextBox() {
         for (final ModuleComponent moduleComponent : moduleList) {
             for (final ValueComponent value : moduleComponent.getValueList()) {

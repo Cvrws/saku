@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum Weight {
     NONE(0, ""),
     LIGHT(1, "Light"),
+    BLACK(2, "Black"),
+    EXTRABOLD(3, "ExtraBold"),
     BOLD(4, "Bold");
 
     final private int num;
