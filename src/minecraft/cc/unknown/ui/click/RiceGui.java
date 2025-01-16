@@ -65,6 +65,8 @@ public class RiceGui extends GuiScreen implements Accessor {
     Vector2d translate;
     public ValueComponent overlayPresent;
     public Vector2f moduleDefaultScale = new Vector2f(283, 38);
+    public Animation scaleAnimation = new Animation(Easing.EASE_IN_EXPO, 300);
+    public Animation opacityAnimation = new Animation(Easing.EASE_IN_EXPO, 300);
 
     public void rebuildModuleCache() {
         moduleList.clear();
@@ -80,6 +82,8 @@ public class RiceGui extends GuiScreen implements Accessor {
         }
 
         round = 12;
+        scaleAnimation.reset();
+        scaleAnimation.setValue(0);
 
         ScaledResolution scaledResolution = new ScaledResolution(mc);
 
@@ -143,7 +147,31 @@ public class RiceGui extends GuiScreen implements Accessor {
             position.y = mouseY + draggingOffsetY;
         }
 
+        opacityAnimation.setEasing(mc.currentScreen == Sakura.instance.getClickGui() ? Easing.EASE_OUT_EXPO : Easing.LINEAR);
+        opacityAnimation.setDuration(mc.currentScreen == Sakura.instance.getClickGui() ? 300 : 100);
+        opacityAnimation.animate(mc.currentScreen == Sakura.instance.getClickGui() ? 1 : 0);
+        opacity = opacityAnimation.getValue();
+
+        scaleAnimation.setEasing(mc.currentScreen == Sakura.instance.getClickGui() ? Easing.EASE_OUT_EXPO : Easing.LINEAR);
+        scaleAnimation.animate(mc.currentScreen == Sakura.instance.getClickGui() ? 1 : 0);
+        animationTime = scaleAnimation.getValue();
+
+        if (mc.currentScreen == Sakura.instance.getClickGui() && animationTime == 0) animationTime = 0.01;
+
+        if (animationTime == 0) {
+            Sakura.instance.getModuleManager().get(ClickGUI.class).setEnabled(false);
+            return;
+        }
+
+        // Opening and closing animation gl
+        translate = new Vector2d((position.x + scale.x / 2f) * (1 - animationTime), (position.y + scale.y / 2f) * (1 - animationTime));
+
         GlStateManager.pushMatrix();
+
+        if (animationTime != 1) {
+        	GlStateManager.translate(translate.x, translate.y, 0);
+        	GlStateManager.scale(animationTime, animationTime, 0);
+        }
 
         /* Background */
         RenderUtil.roundedRectangle(position.x, position.y, scale.x, scale.y, round, Colors.BACKGROUND.get());
