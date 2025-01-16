@@ -147,10 +147,6 @@ public final class RenderUtil implements Accessor {
 		GL11.glEnd();
 	}
 
-	public void circle(final double x, final double y, final double radius, final Color color) {
-		roundedRectangle(x - radius, y - radius, radius * 2, radius * 2, radius, color);
-	}
-
 	public void scissor(double x, double y, double width, double height) {
 		final ScaledResolution sr = new ScaledResolution(mc);
 		final double scale = sr.getScaleFactor();

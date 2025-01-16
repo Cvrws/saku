@@ -120,7 +120,11 @@ public class RiceGui extends GuiScreen implements Accessor {
         dragging = false;
     }
 
-    public void render() {
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    	super.drawScreen(mouseX, mouseY, partialTicks);
+        this.mouse = new Vector2f(mouseX, mouseY);
+        
         if (mouse == null) {
             return;
         }
@@ -129,11 +133,10 @@ public class RiceGui extends GuiScreen implements Accessor {
 
         final Minecraft mc = Minecraft.getInstance();
 
-        final int mouseX = (int) mouse.x;
-        final int mouseY = (int) mouse.y;
-        final float partialTicks = mc.getTimer().renderPartialTicks;
+        mouseX = (int) mouse.x;
+        mouseY = (int) mouse.y;
+        partialTicks = mc.getTimer().renderPartialTicks;
 
-        /* Handles dragging */
         if (dragging) {
 
             if (this.selectedScreen instanceof ThemeScreen) {
@@ -190,18 +193,6 @@ public class RiceGui extends GuiScreen implements Accessor {
         /* Renders screen depending on selected category */
         (renderedScreen = timeInCategory.finished(length) ? selectedScreen : lastScreen).onDraw(mouseX, mouseY, partialTicks);
 
-        final int opacity2 = 255 - (int) Math.max(0, Math.min(255, timeInCategory.getElapsedTime() < length ? 255 - (timeInCategory.getElapsedTime() * (255f / length)) : ((timeInCategory.getElapsedTime() - length) * (255f / length))));
-
-        if (timeInCategory.getElapsedTime() <= length * 2) {
-            RenderUtil.roundedRectangle(position.x, position.y, scale.x, scale.y, round, Colors.BACKGROUND.getWithAlpha(opacity2));
-        }
-
-        for (int i = 0; i <= 8; i++) {
-            double radius = i * 50;
-            RenderUtil.circle(position.x + sidebar.sidebarWidth - radius / 2, position.y + scale.y / 2 - radius / 2,
-                    radius, ColorUtil.withAlpha(getTheme().getFirstColor(), 1));
-        }
-
         /* Sidebar */
         sidebar.renderSidebar(mouseX, mouseY);
 
@@ -213,17 +204,7 @@ public class RiceGui extends GuiScreen implements Accessor {
     }
 
     @Override
-    public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
-        this.mouse = new Vector2f(mouseX, mouseY);
-        
-        render(); // better
-        super.drawScreen(mouseX, mouseY, partialTicks);
-    }
-
-    @Override
     protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException {
-        /* Registers click if you click within the window */
-
         if (GUIUtil.mouseOver(position.x, position.y, scale.x, 15, mouseX, mouseY) && overlayPresent == null) {
             draggingOffsetX = position.x - mouseX;
             draggingOffsetY = position.y - mouseY;
