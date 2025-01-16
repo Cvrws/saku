@@ -40,7 +40,7 @@ public class ScrollUtil implements Accessor {
         }
 
         for (int i = 0; i < stopwatch.getElapsedTime(); ++i) {
-            scroll = MathUtil.lerp(scroll, target, 1E-2F).doubleValue();
+            scroll = MathUtil.lerp(scroll, target, 1E-2F);
         }
 
         animating = Math.abs(scroll - target) > 0.5;

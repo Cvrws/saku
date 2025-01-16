@@ -39,15 +39,13 @@ public class MathUtil {
         }
     }
 
-    public Number lerp(Number a, Number b, Number t) {
-        if (a instanceof Double && b instanceof Double && t instanceof Double) {
-            return a.doubleValue() + t.doubleValue() * (b.doubleValue() - a.doubleValue());
-        } else if (a instanceof Float && b instanceof Float && t instanceof Float) {
-            return a.floatValue() + t.floatValue() * (b.floatValue() - a.floatValue());
-        } else {
-            throw new IllegalArgumentException("Unsupported number types for lerp: " + a.getClass() + ", " + b.getClass() + ", " + t.getClass());
-        }
-    }
+	public double lerp(final double a, final double b, final double c) {
+		return a + c * (b - a);
+	}
+
+	public float lerp(final float a, final float b, final float c) {
+		return a + c * (b - a);
+	}
 
 	public double getRandom(double min, double max) {
 		if (min == max) {

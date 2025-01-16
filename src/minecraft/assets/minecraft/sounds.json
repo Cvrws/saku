@@ -2021,35 +2021,5 @@
         "stream": true
       }
     ]
-  },
-  "rise.toggle.enable": {
-    "category": "master",
-    "sounds": [
-      "rise/toggle/enable"
-    ]
-  },
-  "rise.toggle.disable": {
-    "category": "master",
-    "sounds": [
-      "rise/toggle/disable"
-    ]
-  },
-  "rise.click.standard": {
-    "category": "master",
-    "sounds": [
-      "rise/click/standard"
-    ]
-  },
-  "rise.click.double": {
-    "category": "master",
-    "sounds": [
-      "rise/click/double"
-    ]
-  },
-  "rise.click.alan": {
-    "category": "master",
-    "sounds": [
-      "rise/click/alan"
-    ]
   }
 }
