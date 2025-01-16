@@ -102,7 +102,7 @@ public class WTap extends Module {
 				mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
 				break;
 			case "Silent":
-				mc.player.sprintingTicksLeft = 0;
+				mc.player.sprintingTicksLeft = 1;
 				break;
 			}
 		}

@@ -780,7 +780,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			this.mcResourcePackRepository.setRepositories(Collections.<ResourcePackRepository.Entry>emptyList());
 			this.mcResourceManager.reloadResources(list);
 			this.gameSettings.resourcePacks.clear();
-			this.gameSettings.field_183018_l.clear();
+			this.gameSettings.incompatibleResourcePacks.clear();
 			this.gameSettings.saveOptions();
 		}
 
@@ -2162,7 +2162,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 
 		if (worldClientIn == null && this.theWorld != null) {
-			this.mcResourcePackRepository.func_148529_f();
+			this.mcResourcePackRepository.clearResourcePack();
 			this.ingameGUI.resetPlayersOverlayFooterHeader();
 			this.setServerData(null);
 			this.integratedServerIsRunning = false;
@@ -2414,7 +2414,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 				stringbuilder.append(s);
 
-				if (Minecraft.this.gameSettings.field_183018_l.contains(s)) {
+				if (Minecraft.this.gameSettings.incompatibleResourcePacks.contains(s)) {
 					stringbuilder.append(" (incompatible)");
 				}
 			}

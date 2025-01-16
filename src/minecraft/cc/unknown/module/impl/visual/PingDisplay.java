@@ -41,7 +41,7 @@ public final class PingDisplay extends Module {
         
         final String titleString = ping + "";
         final String pingString = " ms";
-        final float titleWidth = Fonts.MINECRAFT.get(20, Weight.BOLD).width(titleString);
+        final float titleWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(titleString);
 
         if (ping != lastPing) {
             scale.x = titleWidth + Fonts.ROBOTO.get(20, Weight.LIGHT).width(pingString);
@@ -56,7 +56,7 @@ public final class PingDisplay extends Module {
 
         RenderUtil.roundedRect(textX + titleWidth + 24, textY + 10, textX - 5, textY - 4, 0, getTheme().getBackgroundShade().getRGB());
         
-        Fonts.MINECRAFT.get(20, Weight.BOLD).drawWithShadow(titleString, textX, textY, color.getRGB());
+        Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(titleString, textX, textY, color.getRGB());
         Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(pingString, textX + titleWidth, textY, Color.WHITE.getRGB());
     };
 }

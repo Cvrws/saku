@@ -12,8 +12,6 @@ import org.lwjgl.Sys;
 
 import com.google.common.collect.Lists;
 
-import cc.unknown.ui.menu.saku.api.TextField;
-import cc.unknown.ui.resourcepack.SearchResourcePacks;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.ResourcePackListEntry;
 import net.minecraft.client.resources.ResourcePackListEntryDefault;
@@ -24,30 +22,20 @@ import net.minecraft.util.Util;
 public class GuiScreenResourcePacks extends GuiScreen {
     private static final Logger logger = LogManager.getLogger();
     private final GuiScreen parentScreen;
-    private TextField searchField;
     private List<ResourcePackListEntry> availableResourcePacks;
     private List<ResourcePackListEntry> selectedResourcePacks;
     private GuiResourcePackAvailable availableResourcePacksList;
     private GuiResourcePackSelected selectedResourcePacksList;
-    private GuiResourcePackAvailable availablePacksClone;
     private boolean changed = false;
-    
-    private SearchResourcePacks customGuiResourcePack = new SearchResourcePacks((GuiScreenResourcePacks) this);
 
     public GuiScreenResourcePacks(final GuiScreen parentScreenIn) {
         this.parentScreen = parentScreenIn;
     }
 
-    /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
-     */
     @Override
     public void initGui() {
-        String s1 = searchField == null ? "" : searchField.getText();
-        
-        this.buttonList.add(new GuiOptionButton(2, this.width / 2 - 154, this.height - 48, I18n.format("resourcePack.openFolder")));
-        this.buttonList.add(new GuiOptionButton(1, this.width / 2 + 4, this.height - 48, I18n.format("gui.done")));
+        this.buttonList.add(new GuiOptionButton(2, this.width / 2 - 180, this.height - 48, I18n.format("resourcePack.openFolder")));
+        this.buttonList.add(new GuiOptionButton(1, this.width / 2 + 30, this.height - 48, I18n.format("gui.done")));
 
         if (!this.changed) {
             this.availableResourcePacks = Lists.newArrayList();
@@ -74,16 +62,8 @@ public class GuiScreenResourcePacks extends GuiScreen {
         this.selectedResourcePacksList = new GuiResourcePackSelected(this.mc, 200, this.height, this.selectedResourcePacks);
         this.selectedResourcePacksList.setSlotXBoundsFromLeft(this.width / 2 + 4);
         this.selectedResourcePacksList.registerScrollButtons(7, 8);
-        
-        this.availablePacksClone = this.availableResourcePacksList;
-        searchField = new TextField(3, fontRendererObj, width / 2 - 4 - 200, height - 24, 200, 20);
-        searchField.setText(s1);
-        customGuiResourcePack.initGui(buttonList);
     }
 
-    /**
-     * Handles mouse input.
-     */
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
@@ -107,9 +87,6 @@ public class GuiScreenResourcePacks extends GuiScreen {
         return this.selectedResourcePacks;
     }
 
-    /**
-     * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
-     */
     @Override
     protected void actionPerformed(final GuiButton button) throws IOException {
         if (button.enabled) {
@@ -164,13 +141,13 @@ public class GuiScreenResourcePacks extends GuiScreen {
                     Collections.reverse(list);
                     this.mc.getResourcePackRepository().setRepositories(list);
                     this.mc.gameSettings.resourcePacks.clear();
-                    this.mc.gameSettings.field_183018_l.clear();
+                    this.mc.gameSettings.incompatibleResourcePacks.clear();
 
                     for (final ResourcePackRepository.Entry resourcepackrepository$entry : list) {
                         this.mc.gameSettings.resourcePacks.add(resourcepackrepository$entry.getResourcePackName());
 
                         if (resourcepackrepository$entry.func_183027_f() != 1) {
-                            this.mc.gameSettings.field_183018_l.add(resourcepackrepository$entry.getResourcePackName());
+                            this.mc.gameSettings.incompatibleResourcePacks.add(resourcepackrepository$entry.getResourcePackName());
                         }
                     }
 
@@ -184,49 +161,26 @@ public class GuiScreenResourcePacks extends GuiScreen {
         }
     }
 
-    /**
-     * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
-     */
     @Override
     protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         this.availableResourcePacksList.mouseClicked(mouseX, mouseY, mouseButton);
         this.selectedResourcePacksList.mouseClicked(mouseX, mouseY, mouseButton);
-        searchField.mouseClicked(mouseX, mouseY, mouseButton);
-        if (searchField != null) searchField.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    /**
-     * Called when a mouse button is released.  Args : mouseX, mouseY, releaseButton
-     */
     @Override
     protected void mouseReleased(final int mouseX, final int mouseY, final int state) {
         super.mouseReleased(mouseX, mouseY, state);
     }
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
     @Override
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
-    	customGuiResourcePack.drawScreen(availableResourcePacksList, selectedResourcePacksList, mouseX, mouseY, partialTicks, fontRendererObj, width);
-        searchField.drawTextBox();
+        this.drawBackground(0);
+        this.availableResourcePacksList.drawScreen(mouseX, mouseY, partialTicks);
+        this.selectedResourcePacksList.drawScreen(mouseX, mouseY, partialTicks);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
-    
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
 
-        if (this.searchField != null) {
-            this.searchField.textboxKeyTyped(typedChar, keyCode);
-        }
-        availableResourcePacksList = customGuiResourcePack.updateList(searchField, availablePacksClone, availableResourcePacks, mc, width, height);
-    }
-
-    /**
-     * Marks the selected resource packs list as changed to trigger a resource reload when the screen is closed
-     */
     public void markChanged() {
         this.changed = true;
     }

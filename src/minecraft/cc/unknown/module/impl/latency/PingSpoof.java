@@ -40,7 +40,7 @@ public class PingSpoof extends Module {
     	Packet<?> packet = event.getPacket();
         if (packet instanceof C00PacketKeepAlive) {
             final C00PacketKeepAlive keepAlive = (C00PacketKeepAlive) packet;
-            keepAlivePackets.add(new C00PacketKeepAlive(keepAlive.getKey(), (long)(System.currentTimeMillis() + delay.getValue().longValue() + MathUtil.nextLong(0L, 200L))));
+            keepAlivePackets.add(new C00PacketKeepAlive(keepAlive.getKey(), (long)(System.currentTimeMillis() + delay.getValue().longValue() + MathUtil.nextRandom(0L, 200L).longValue())));
             event.setCancelled(true);
         }
     };

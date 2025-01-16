@@ -26,6 +26,7 @@ import cc.unknown.Sakura;
 import cc.unknown.event.impl.input.GuiClickEvent;
 import cc.unknown.event.impl.input.GuiKeyBoardEvent;
 import cc.unknown.event.impl.input.GuiMouseReleaseEvent;
+import cc.unknown.ui.menu.lunar.api.MainButton;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.BackgroundUtil;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
@@ -414,20 +415,17 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback, Accesso
 		GuiClickEvent guiClickEvent = new GuiClickEvent(mouseX, mouseY, mouseButton);
 		Sakura.instance.getEventBus().handle(guiClickEvent);
 
-        if (mouseButton == 0)
-        {
-            for (int i = 0; i < this.buttonList.size(); ++i)
-            {
-                GuiButton guibutton = (GuiButton)this.buttonList.get(i);
+		if (mouseButton == 0) {
+			for (int i = 0; i < this.buttonList.size(); ++i) {
+				GuiButton guibutton = (GuiButton) this.buttonList.get(i);
 
-                if (guibutton.mousePressed(this.mc, mouseX, mouseY))
-                {
-                    this.selectedButton = guibutton;
-                    guibutton.playPressSound(this.mc.getSoundHandler());
-                    this.actionPerformed(guibutton);
-                }
-            }
-        }
+				if (guibutton.mousePressed(this.mc, mouseX, mouseY)) {
+					this.selectedButton = guibutton;
+					guibutton.playPressSound(this.mc.getSoundHandler());
+					this.actionPerformed(guibutton);
+				}
+			}
+		}
 	}
 
 	/**
@@ -456,6 +454,9 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback, Accesso
 	 * buttons)
 	 */
 	protected void actionPerformed(final GuiButton button) throws IOException {
+	}
+
+	protected void actionPerformedMenu(MainButton buttonMenu) throws IOException {
 	}
 
 	/**

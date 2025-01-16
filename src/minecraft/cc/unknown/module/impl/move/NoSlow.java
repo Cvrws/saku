@@ -75,28 +75,28 @@ public class NoSlow extends Module {
 	@EventLink
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
 		if (eventType.is("Pre Attack")) {
-			 bypass(mode.getMode());
+			 bypass(mode.getValue().getName());
 		}
 	};
 	
 	@EventLink
 	public final Listener<PostUpdateEvent> onPostUpdate = event -> {
 		if (eventType.is("Post Attack")) {
-			 bypass(mode.getMode());
+			 bypass(mode.getValue().getName());
 		}
 	};
 	
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (eventType.is("Pre Position")) {
-			 bypass(mode.getMode());
+			 bypass(mode.getValue().getName());
 		}
 	};
 	
 	@EventLink
 	public final Listener<PostMotionEvent> onPostMotion = event -> {
 		if (eventType.is("Post Position")) {
-			 bypass(mode.getMode());
+			 bypass(mode.getValue().getName());
 		}
 	};
 

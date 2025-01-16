@@ -62,7 +62,7 @@ public final class Criticals extends Module {
 
     @EventLink
     public final Listener<AttackEvent> onAttack = event -> {
-        String type = mode.getMode();
+        String type = mode.getValue().getName();
         
         if (chance.getValue().doubleValue() != 100.0 && Math.random() >= chance.getValue().doubleValue() / 100.0) {
             return;

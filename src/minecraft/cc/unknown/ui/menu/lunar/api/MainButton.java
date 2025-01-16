@@ -9,7 +9,6 @@ public class MainButton {
 	protected String text;
 	protected int x, y;
 	protected int width, height;
-	
 	protected int hoverFade = 0;
 	
 	public MainButton(String text, int x, int y) {

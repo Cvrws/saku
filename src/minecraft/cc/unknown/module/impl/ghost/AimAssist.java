@@ -7,12 +7,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.player.PreUpdateEvent;
+import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
-import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.EnemyUtil;
 import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.PlayerUtil;
@@ -65,7 +64,7 @@ public final class AimAssist extends Module {
 	private Random random = new Random();
 	
 	@EventLink
-	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
 	    if (noAim()) {
 	        return;
 	    }
@@ -77,13 +76,13 @@ public final class AimAssist extends Module {
 
 	    double yawSpeed = horizontalSpeed.getValue().doubleValue();
 	    double yawCompl = horizontalCompl.getValue().doubleValue();
-	    double yawOffset = MathUtil.nextSecureDouble(yawSpeed, yawCompl) / 180;
+	    double yawOffset = MathUtil.nextSecureRandom(yawSpeed, yawCompl).doubleValue() / 180;
 	    double yawFov = PlayerUtil.fovFromTarget(target);
 	    double pitchEntity = PlayerUtil.pitchFromTarget(target, 0);
 	    float yawAdjustment = getSpeedRandomize(randomMode.getValue().getName(), yawFov, yawOffset, yawSpeed, yawCompl);
 
-	    double verticalRandomOffset = ThreadLocalRandom.current().nextDouble(verticalCompl.getValue().doubleValue() - 1.47328, verticalCompl.getValue().doubleValue() + 2.48293) / 100;
-	    float resultVertical = (float) (-(pitchEntity * verticalRandomOffset + pitchEntity / (101.0D - ThreadLocalRandom.current().nextDouble(verticalSpeed.getValue().doubleValue() - 4.723847, verticalSpeed.getValue().doubleValue()))));
+	    double verticalRandomOffset = MathUtil.nextRandom(verticalCompl.getValue().doubleValue() - 1.47328, verticalCompl.getValue().doubleValue() + 2.48293).doubleValue() / 100;
+	    float resultVertical = (float) (-(pitchEntity * verticalRandomOffset + pitchEntity / (101.0D - MathUtil.nextRandom(verticalSpeed.getValue().doubleValue() - 4.723847, verticalSpeed.getValue().doubleValue()).doubleValue())));
 
 	    if (onTarget(target)) {
 	        applyYaw(yawFov, yawAdjustment);
@@ -211,9 +210,7 @@ public final class AimAssist extends Module {
 
 	private void applyPitch(float resultVertical) {
 	    if (vertical.getValue()) {
-	        float pitchChange = random.nextBoolean()
-	            ? -nextFloat(0F, verticalRandomization.getValue().floatValue())
-	            : nextFloat(0F, verticalRandomization.getValue().floatValue());
+	        float pitchChange = random.nextBoolean() ? -MathUtil.nextRandom(0F, verticalRandomization.getValue().floatValue()).floatValue() : MathUtil.nextRandom(0F, verticalRandomization.getValue().floatValue()).floatValue();
 	        float pitchAdjustment = verticalRandom.getValue() ? pitchChange : resultVertical;
 	        float newPitch = mc.player.rotationPitch + pitchAdjustment;
 
@@ -232,13 +229,13 @@ public final class AimAssist extends Module {
 
 	    switch (mode) {
 	        case "Thread Local Random":
-	            randomComplement = MathUtil.nextDouble(complement - 1.47328, complement + 2.48293) / 100;
-	            result = calculateResult(fov, offset, speed, MathUtil.nextDouble(speed - 4.723847, speed));
+	            randomComplement = MathUtil.nextRandom(complement - 1.47328, complement + 2.48293).doubleValue() / 100;
+	            result = calculateResult(fov, offset, speed, MathUtil.nextRandom(speed - 4.723847, speed).doubleValue());
 	            break;
 
 	        case "Random Secure":
-	            randomComplement = MathUtil.nextSecureDouble(complement - 1.47328, complement + 2.48293) / 100;
-	            result = calculateResult(fov, offset, speed, MathUtil.nextSecureDouble(speed - 4.723847, speed));
+	            randomComplement = MathUtil.nextSecureRandom(complement - 1.47328, complement + 2.48293).doubleValue() / 100;
+	            result = calculateResult(fov, offset, speed, MathUtil.nextSecureRandom(speed - 4.723847, speed).doubleValue());
 	            break;
 
 	        case "Gaussian":

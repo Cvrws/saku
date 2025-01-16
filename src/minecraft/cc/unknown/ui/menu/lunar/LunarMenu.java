@@ -1,6 +1,7 @@
 package cc.unknown.ui.menu.lunar;
 
 import java.awt.Color;
+import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Project;
@@ -47,6 +48,9 @@ public class LunarMenu extends GuiMainMenu {
 
     @Override
     public void initGui() {
+        super.initGui();
+        this.buttonList.clear();
+        
         this.backgroundTexture = this.mc.getTextureManager().getDynamicTextureLocation("background", new DynamicTexture(256, 256));
         
         this.logo = new ResourceLocation("lunar/logo.png");
@@ -65,11 +69,12 @@ public class LunarMenu extends GuiMainMenu {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        GlStateManager.disableAlpha();
+    	super.drawScreen(mouseX, mouseY, partialTicks);
+    	
+    	GlStateManager.disableAlpha();
         this.renderSkybox(mouseX, mouseY, partialTicks);
         GlStateManager.enableAlpha();
         
-        super.drawScreen(mouseX, mouseY, partialTicks);
         GlStateManager.enableBlend();
         GlStateManager.color(1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(logo);
@@ -88,9 +93,16 @@ public class LunarMenu extends GuiMainMenu {
         
         this.btnQuit.drawButton(mouseX, mouseY);
         
-        String s = "Copyright Mojang Studios. Do not distribute!";
+        String s = "Not affiliated with Mojang or Microsoft. Do not distribute!";
         FontUtil.TEXT.getFont().drawString("Lunar Client 1.8.9 (v2.18.5-2401)", 7, this.height - 11, new Color(255, 255, 255, 100).getRGB());
         FontUtil.TEXT.getFont().drawString(s, this.width - FontUtil.TEXT.getFont().getWidth(s) - 6, this.height - 11, new Color(255, 255, 255, 100).getRGB());
+    }
+    
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+
+
     }
 
     @Override

@@ -88,7 +88,7 @@ public final class ColorUtil {
 
     public  Color withAlpha(final Color color, final int alpha) {
         if (alpha == color.getAlpha()) return color;
-        return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) MathUtil.clamp(0, 255, alpha));
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) MathHelper.clamp_int(0, 255, alpha));
     }
 
     public Color mixColors(final Color color1, final Color color2, final double percent) {

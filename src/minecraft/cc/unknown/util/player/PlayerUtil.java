@@ -597,8 +597,7 @@ public class PlayerUtil implements Accessor {
 			return true;
 		}
 
-		if (scoreboard && mc.player.getTeam() != null && player.getTeam() != null
-				&& mc.player.getTeam().isSameTeam(player.getTeam())) {
+		if (scoreboard && mc.player.getTeam() != null && player.getTeam() != null && mc.player.getTeam().isSameTeam(player.getTeam())) {
 			return true;
 		}
 

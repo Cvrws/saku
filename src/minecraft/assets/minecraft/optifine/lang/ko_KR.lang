@@ -212,7 +212,6 @@ of.options.MIPMAP_TYPE.tooltip.4=  선형 - 보통 부드러움 효과
 of.options.MIPMAP_TYPE.tooltip.5=  쌍선형 - 좋은 부드러움 효과 
 of.options.MIPMAP_TYPE.tooltip.6=  삼선형 - 가장 좋은 부드러움 효과 (가장 느림)
 
-
 of.options.AA_LEVEL=안티에일리어싱
 of.options.AA_LEVEL.tooltip.1=안티에일리어싱
 of.options.AA_LEVEL.tooltip.2= 꺼짐 - (기본) 안티에일리어싱 없음 (빠름)

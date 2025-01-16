@@ -99,7 +99,7 @@ public class GameSettings {
      */
     public int ambientOcclusion = 2;
     public List<String> resourcePacks = Lists.newArrayList();
-    public List<String> field_183018_l = Lists.newArrayList();
+    public List<String> incompatibleResourcePacks = Lists.newArrayList();
     public EntityPlayer.EnumChatVisibility chatVisibility = EntityPlayer.EnumChatVisibility.FULL;
     public boolean chatColours = true;
     public boolean chatLinks = true;
@@ -818,10 +818,10 @@ public class GameSettings {
                                     break;
 
                                 case "incompatibleResourcePacks":
-                                    this.field_183018_l = gson.fromJson(s.substring(s.indexOf(58) + 1), typeListString);
+                                    this.incompatibleResourcePacks = gson.fromJson(s.substring(s.indexOf(58) + 1), typeListString);
 
-                                    if (this.field_183018_l == null) {
-                                        this.field_183018_l = Lists.newArrayList();
+                                    if (this.incompatibleResourcePacks == null) {
+                                        this.incompatibleResourcePacks = Lists.newArrayList();
                                     }
                                     break;
 
@@ -1041,7 +1041,7 @@ public class GameSettings {
             }
 
             printwriter.println("resourcePacks:" + gson.toJson(this.resourcePacks));
-            printwriter.println("incompatibleResourcePacks:" + gson.toJson(this.field_183018_l));
+            printwriter.println("incompatibleResourcePacks:" + gson.toJson(this.incompatibleResourcePacks));
             printwriter.println("lastServer:" + this.lastServer);
             printwriter.println("lang:" + this.language);
             printwriter.println("chatVisibility:" + this.chatVisibility.getChatVisibility());

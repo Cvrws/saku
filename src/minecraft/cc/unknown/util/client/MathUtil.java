@@ -10,31 +10,44 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class MathUtil {
 
-	public int nextInt(int origin, int bound) {
-		return origin == bound ? origin : ThreadLocalRandom.current().nextInt(origin, bound);
-	}
+    public Number nextRandom(Number origin, Number bound) {
+        if (origin.equals(bound)) return origin;
 
-	public long nextLong(long origin, long bound) {
-		return origin == bound ? origin : ThreadLocalRandom.current().nextLong(origin, bound);
-	}
+        if (origin instanceof Integer && bound instanceof Integer) {
+            return ThreadLocalRandom.current().nextInt((Integer) origin, (Integer) bound);
+        } else if (origin instanceof Long && bound instanceof Long) {
+            return ThreadLocalRandom.current().nextLong((Long) origin, (Long) bound);
+        } else if (origin instanceof Float && bound instanceof Float) {
+            return (float) ThreadLocalRandom.current().nextDouble((Float) origin, (Float) bound);
+        } else if (origin instanceof Double && bound instanceof Double) {
+            return ThreadLocalRandom.current().nextDouble((Double) origin, (Double) bound);
+        } else {
+            throw new IllegalArgumentException("Unsupported number types: " + origin.getClass() + " and " + bound.getClass());
+        }
+    }
+    
+    public Number nextSecureRandom(Number origin, Number bound) {
+        if (origin.equals(bound)) return origin;
+        SecureRandom secureRandom = new SecureRandom();
 
-	public float nextFloat(double origin, double bound) {
-		return origin == bound ? (float) origin
-				: (float) ThreadLocalRandom.current().nextDouble((double) ((float) origin), (double) ((float) bound));
-	}
+        if (origin instanceof Integer && bound instanceof Integer) {
+            return origin.intValue() + secureRandom.nextInt(bound.intValue() - origin.intValue());
+        } else if (origin instanceof Double && bound instanceof Double) {
+            return origin.doubleValue() + secureRandom.nextDouble() * (bound.doubleValue() - origin.doubleValue());
+        } else {
+            throw new IllegalArgumentException("Unsupported number types for secure random: " + origin.getClass() + " and " + bound.getClass());
+        }
+    }
 
-	public float nextFloat(float origin, float bound) {
-		return origin == bound ? origin
-				: (float) ThreadLocalRandom.current().nextDouble((double) origin, (double) bound);
-	}
-
-	public double nextDouble(double origin, double bound) {
-		return origin == bound ? origin : ThreadLocalRandom.current().nextDouble(origin, bound);
-	}
-
-	public static double interpolate(double old, double now, float partialTicks) {
-		return old + (now - old) * partialTicks;
-	}
+    public Number lerp(Number a, Number b, Number t) {
+        if (a instanceof Double && b instanceof Double && t instanceof Double) {
+            return a.doubleValue() + t.doubleValue() * (b.doubleValue() - a.doubleValue());
+        } else if (a instanceof Float && b instanceof Float && t instanceof Float) {
+            return a.floatValue() + t.floatValue() * (b.floatValue() - a.floatValue());
+        } else {
+            throw new IllegalArgumentException("Unsupported number types for lerp: " + a.getClass() + ", " + b.getClass() + ", " + t.getClass());
+        }
+    }
 
 	public double getRandom(double min, double max) {
 		if (min == max) {
@@ -44,17 +57,7 @@ public class MathUtil {
 			min = max;
 			max = d;
 		}
-		return ThreadLocalRandom.current().nextDouble(min, max);
-	}
-
-	public double round(final double value, final int places) {
-		try {
-			final BigDecimal bigDecimal = BigDecimal.valueOf(value);
-
-			return bigDecimal.setScale(places, RoundingMode.HALF_UP).doubleValue();
-		} catch (Exception exception) {
-			return 0;
-		}
+		return nextRandom(min, max).doubleValue();
 	}
 
 	public double roundWithSteps(final double value, final double steps) {
@@ -65,46 +68,14 @@ public class MathUtil {
 		return a;
 	}
 
-	public double lerp(final double a, final double b, final double c) {
-		return a + c * (b - a);
-	}
-
-	public float lerp(final float a, final float b, final float c) {
-		return a + c * (b - a);
-	}
-
-	public double clamp(double min, double max, double n) {
-		return Math.max(min, Math.min(max, n));
-	}
-
 	public double wrappedDifference(double number1, double number2) {
 		return Math.min(Math.abs(number1 - number2), Math.min(Math.abs(number1 - 360) - Math.abs(number2 - 0),
 				Math.abs(number2 - 360) - Math.abs(number1 - 0)));
 	}
 
-	public double nextSecureDouble(double origin, double bound) {
-		if (origin == bound) {
-			return origin;
-		} else {
-			SecureRandom secureRandom = new SecureRandom();
-			double difference = bound - origin;
-			return origin + secureRandom.nextDouble() * difference;
-		}
-	}
-
-	public int nextSecureInt(int origin, int bound) {
-		if (origin == bound) {
-			return origin;
-		} else {
-			SecureRandom secureRandom = new SecureRandom();
-			int difference = bound - origin;
-			return origin + secureRandom.nextInt() * difference;
-		}
-	}
-
 	public long getSafeRandom(long min, long max) {
-		double randomPercent = ThreadLocalRandom.current().nextDouble(0.7, 1.3);
-		long delay = (long) (randomPercent * ThreadLocalRandom.current().nextLong(min, max + 1));
+		double randomPercent = nextRandom(0.7, 1.3).doubleValue();
+		long delay = (long) (randomPercent * nextRandom(min, max + 1).longValue());
 		return delay;
 	}
 
@@ -114,30 +85,6 @@ public class MathUtil {
 
 	public boolean shouldPerformAction(double chanceValue, double randomFactor) {
 		return chanceValue >= 100.0D || ThreadLocalRandom.current().nextDouble(100.0D + randomFactor) < chanceValue;
-	}
-
-	public int randomClickDelay(int minCPS, int maxCPS) {
-		return (int) (Math.random() * (1000 / minCPS - 1000 / maxCPS + 1) + 1000 / maxCPS);
-	}
-
-	public float getAdvancedRandom(float min, float max) {
-		SecureRandom random = new SecureRandom();
-
-		long finalSeed = System.nanoTime();
-
-		for (int i = 0; i < 3; ++i) {
-			long seed = (long) (Math.random() * 1_000_000_000);
-
-			seed ^= (seed << 13);
-			seed ^= (seed >>> 17);
-			seed ^= (seed << 15);
-
-			finalSeed += seed;
-		}
-
-		random.setSeed(finalSeed);
-
-		return random.nextFloat() * (max - min) + min;
 	}
 
 	public boolean inBetween(double min, double max, double value) {

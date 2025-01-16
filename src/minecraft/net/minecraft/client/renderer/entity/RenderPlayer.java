@@ -102,7 +102,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 						&& Sakura.instance.getModuleManager().get(KillAura.class).isEnabled()
 						&& Sakura.instance.getModuleManager().get(BlockHit.class).isEnabled()
 						&& Sakura.instance.getModuleManager().get(BlockHit.class).block
-						&& !Sakura.instance.getModuleManager().get(KillAura.class).autoBlock.is("Fake")
+						&& Sakura.instance.getModuleManager().get(KillAura.class).blocking
 						&& Sakura.instance.getModuleManager().get(KillAura.class).target != null
 						&& Sakura.instance.getModuleManager().get(KillAura.class).canBlock();
 
