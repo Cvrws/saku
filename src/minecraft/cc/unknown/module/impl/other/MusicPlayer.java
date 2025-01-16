@@ -14,7 +14,7 @@ import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.client.StreamerUtil;
+import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.sound.RadioPlayer;
 import cc.unknown.value.impl.ModeValue;
@@ -168,6 +168,6 @@ public class MusicPlayer extends Module {
     }
     
     private void setMessage(String message) {
-    	PlayerUtil.displayInClient(StreamerUtil.pink + "[S]" + " " + StreamerUtil.red + message);
+    	PlayerUtil.displayInClient(ColorUtil.pink + "[S]" + " " + ColorUtil.red + message);
     }
 }

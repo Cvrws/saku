@@ -1,9 +1,9 @@
 package cc.unknown.command;
 
-import static cc.unknown.util.client.StreamerUtil.green;
-import static cc.unknown.util.client.StreamerUtil.red;
-import static cc.unknown.util.client.StreamerUtil.reset;
-import static cc.unknown.util.client.StreamerUtil.yellow;
+import static cc.unknown.util.render.ColorUtil.green;
+import static cc.unknown.util.render.ColorUtil.red;
+import static cc.unknown.util.render.ColorUtil.reset;
+import static cc.unknown.util.render.ColorUtil.yellow;
 
 import java.util.ArrayList;
 import java.util.Arrays;

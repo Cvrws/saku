@@ -1,9 +1,6 @@
 package cc.unknown.command.impl;
 
-import static cc.unknown.util.client.StreamerUtil.gray;
-import static cc.unknown.util.client.StreamerUtil.red;
-import static cc.unknown.util.client.StreamerUtil.reset;
-import static cc.unknown.util.client.StreamerUtil.yellow;
+import static cc.unknown.util.render.ColorUtil.gray;
 
 import java.util.Arrays;
 import java.util.Collections;

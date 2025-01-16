@@ -1,7 +1,7 @@
 package cc.unknown.command.impl;
 
-import static cc.unknown.util.client.StreamerUtil.green;
-import static cc.unknown.util.client.StreamerUtil.red;
+import static cc.unknown.util.render.ColorUtil.green;
+import static cc.unknown.util.render.ColorUtil.red;
 
 import java.util.Collections;
 import java.util.List;

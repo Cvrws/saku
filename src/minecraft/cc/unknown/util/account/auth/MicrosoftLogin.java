@@ -20,8 +20,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import cc.unknown.ui.menu.AltManager;
-import cc.unknown.util.client.StreamerUtil;
 import cc.unknown.util.netty.NetworkUtil;
+import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.structure.ValuePair;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -186,7 +186,7 @@ public class MicrosoftLogin {
                         handleCode(pair.getValue());
                         ok = true;
                         
-                        AltManager.status = "Logeado como " + StreamerUtil.green + AltManager.mc.getSession().getUsername();
+                        AltManager.status = "Logeado como " + ColorUtil.green + AltManager.mc.getSession().getUsername();
                         break;
                     }
                 }

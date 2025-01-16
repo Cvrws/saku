@@ -1,9 +1,9 @@
 package cc.unknown.ui.menu;
 
-import static cc.unknown.util.client.StreamerUtil.gray;
-import static cc.unknown.util.client.StreamerUtil.green;
-import static cc.unknown.util.client.StreamerUtil.red;
-import static cc.unknown.util.client.StreamerUtil.yellow;
+import static cc.unknown.util.render.ColorUtil.gray;
+import static cc.unknown.util.render.ColorUtil.green;
+import static cc.unknown.util.render.ColorUtil.red;
+import static cc.unknown.util.render.ColorUtil.yellow;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -15,19 +15,14 @@ import cc.unknown.ui.menu.saku.api.Button;
 import cc.unknown.ui.menu.saku.api.TextField;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.account.auth.MicrosoftAccount;
-import cc.unknown.util.account.auth.MicrosoftLogin;
 import cc.unknown.util.account.name.UsernameGenerator;
-import cc.unknown.util.client.StreamerUtil;
 import cc.unknown.util.render.BackgroundUtil;
-import cc.unknown.util.render.animation.Animation;
-import cc.unknown.util.render.animation.Easing;
 import cc.unknown.util.render.font.Font;
 import cc.unknown.util.structure.geometry.Vector2d;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Session;
-import net.minecraft.util.Session.Type;
 
 public class AltManager extends GuiScreen implements Accessor {
     private static TextField usernameBox;

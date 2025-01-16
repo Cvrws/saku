@@ -8,7 +8,7 @@ import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.client.StreamerUtil;
+import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.SubMode;
@@ -46,7 +46,7 @@ public final class AutoPlay extends Module {
 	            
 	            if (!command.isEmpty()) {
 	                PlayerUtil.sendInChat(command);
-	                PlayerUtil.displayInClient(StreamerUtil.red +  "[S] " + StreamerUtil.pink + "Joined a new game");
+	                PlayerUtil.displayInClient(ColorUtil.red +  "[S] " + ColorUtil.pink + "Joined a new game");
 	            }
 	        }
 	    }

@@ -1,20 +1,45 @@
 package cc.unknown.util.render;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 
 import org.lwjgl.opengl.GL11;
 
-import cc.unknown.util.client.MathUtil;
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.util.ChatFormatting;
 import net.minecraft.util.MathHelper;
 
 @UtilityClass
+@Getter
 public final class ColorUtil {
+	
+	public ChatFormatting yellow = ChatFormatting.YELLOW;
+	public ChatFormatting red = ChatFormatting.RED;
+	public ChatFormatting reset = ChatFormatting.RESET;
+	public ChatFormatting white = ChatFormatting.RESET;
+	public ChatFormatting aqua = ChatFormatting.AQUA;
+	public ChatFormatting gray = ChatFormatting.GRAY;
+	public ChatFormatting green = ChatFormatting.GREEN;
+	public ChatFormatting blue = ChatFormatting.BLUE;
+	public ChatFormatting black = ChatFormatting.BLACK;
+	public ChatFormatting gold = ChatFormatting.GOLD;
+	
+	public ChatFormatting darkAqua = ChatFormatting.DARK_AQUA;
+	public ChatFormatting darkGray = ChatFormatting.DARK_GRAY;
+	public ChatFormatting darkPurple = ChatFormatting.DARK_PURPLE;
+	public ChatFormatting darkBlue = ChatFormatting.DARK_BLUE;
+	public ChatFormatting darkGreen = ChatFormatting.DARK_GREEN;
+	public ChatFormatting darkRed = ChatFormatting.DARK_RED;
+
+	public ChatFormatting pink = ChatFormatting.LIGHT_PURPLE;
+	
+   	public String usu = " ?§r§{0,3}§8§8\\[§r§f§fUsu§r§8§8\\]| ?§8\\[§fUsu§8\\]";
+   	public String jup = " ?§r§{0,3}§8§8\\[§r§b§bJup§r§8§8\\]| ?§8\\[§bJup§8\\]";
+
+	public String getPrefix(String rank, ChatFormatting rankColor) {
+		return darkGray + "[" + rankColor + rank + darkGray + "] " + rankColor;
+	}
 
     public void glColor(final int hex) {
         final float a = (hex >> 24 & 0xFF) / 255.0F;

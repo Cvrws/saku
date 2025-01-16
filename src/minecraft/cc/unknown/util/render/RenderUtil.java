@@ -39,7 +39,6 @@ import net.minecraft.util.ResourceLocation;
 @UtilityClass
 public final class RenderUtil implements Accessor {
 
-	private final Frustum FRUSTUM = new Frustum();
 	private final Map<Integer, Integer> shadowCache = new HashMap<>();
 	public final int GENERIC_SCALE = 22;
     

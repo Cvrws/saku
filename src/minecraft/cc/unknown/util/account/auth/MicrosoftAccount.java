@@ -1,13 +1,9 @@
 package cc.unknown.util.account.auth;
 
-import static cc.unknown.util.client.StreamerUtil.gray;
-import static cc.unknown.util.client.StreamerUtil.green;
-
 import java.util.function.Consumer;
 
 import com.google.gson.JsonObject;
 
-import cc.unknown.ui.menu.AltManager;
 import cc.unknown.util.account.Account;
 import cc.unknown.util.account.AccountType;
 import lombok.Getter;

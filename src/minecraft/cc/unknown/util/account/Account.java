@@ -1,11 +1,7 @@
 package cc.unknown.util.account;
 
-import static cc.unknown.util.client.StreamerUtil.gray;
-import static cc.unknown.util.client.StreamerUtil.green;
-
 import com.google.gson.JsonObject;
 
-import cc.unknown.ui.menu.AltManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
