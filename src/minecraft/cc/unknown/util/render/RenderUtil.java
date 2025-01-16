@@ -111,6 +111,10 @@ public final class RenderUtil implements Accessor {
 	public void begin(final int glMode) {
 		GL11.glBegin(glMode);
 	}
+	
+	public void circle(final double x, final double y, final double radius, final Color color) {
+		roundedRectangle(x - radius, y - radius, radius * 2, radius * 2, radius, color);
+	}
 
 	public void image(final ResourceLocation imageLocation, final int x, final int y, final int width,
 			final int height) {

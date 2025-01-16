@@ -70,6 +70,10 @@ public class MathUtil {
 		return Math.min(Math.abs(number1 - number2), Math.min(Math.abs(number1 - 360) - Math.abs(number2 - 0),
 				Math.abs(number2 - 360) - Math.abs(number1 - 0)));
 	}
+	
+	public double clamp(double min, double max, double n) {
+		return Math.max(min, Math.min(max, n));
+	}
 
 	public long getSafeRandom(long min, long max) {
 		double randomPercent = nextRandom(0.7, 1.3).doubleValue();
