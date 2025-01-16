@@ -5,14 +5,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import cc.unknown.Sakura;
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.click.screen.api.Element;
 import cc.unknown.ui.click.screen.api.Row;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.render.animation.Easing;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.render.gui.ScrollUtil;
 import cc.unknown.util.structure.geometry.Vector2d;
 import cc.unknown.util.structure.geometry.Vector2f;

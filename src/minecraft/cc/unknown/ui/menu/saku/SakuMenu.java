@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import cc.unknown.Sakura;
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.ui.menu.AltManager;
 import cc.unknown.ui.menu.saku.api.Button;
 import cc.unknown.ui.menu.saku.api.RainSystem;
 import cc.unknown.util.render.font.Font;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.sound.SoundUtil;
 import lombok.SneakyThrows;
 import net.minecraft.client.gui.GuiButton;

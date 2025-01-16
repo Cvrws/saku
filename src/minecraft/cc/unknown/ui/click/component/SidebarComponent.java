@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import org.lwjgl.input.Mouse;
 
 import cc.unknown.Sakura;
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.module.api.Category;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.click.screen.Colors;
@@ -18,6 +16,8 @@ import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.render.animation.Easing;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.render.gui.GUIUtil;
 import lombok.Getter;
 import lombok.Setter;

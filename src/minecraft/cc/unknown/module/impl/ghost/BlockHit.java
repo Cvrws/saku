@@ -84,7 +84,7 @@ public class BlockHit extends Module {
 				stopWatch.reset();
 	
 				if (v1_9) {
-					mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
+					mc.playerController.sendUseItem(mc.player, mc.world, PlayerUtil.getItemStack());
 				} else {
 					KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
 					KeyBinding.onTick(mc.gameSettings.keyBindUseItem.getKeyCode());

@@ -10,7 +10,7 @@ import net.minecraft.entity.EntityLivingBase;
 @Setter
 @AllArgsConstructor
 public class PreRenderLivingEntityEvent extends CancellableEvent {
-    private final EntityLivingBase entity;
+    private final EntityLivingBase target;
     private float limbSwing;
     private float limbSwingAmount;
     private float ageInTicks;

@@ -8,10 +8,10 @@ import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
 
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.render.font.Font;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.render.gui.GUIUtil;
 import cc.unknown.util.structure.geometry.Vector2d;
 import lombok.Getter;

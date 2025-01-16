@@ -21,7 +21,7 @@ public final class Chams extends Module {
 	
 	@EventLink
 	public final Listener<PreRenderLivingEntityEvent> onPreRenderLiving = event -> {
-        if (event.getEntity() instanceof EntityPlayer && event.getEntity() != mc.player) {
+        if (event.getTarget() instanceof EntityPlayer && event.getTarget() != mc.player) {
             GL11.glEnable(32823);
             GL11.glPolygonOffset(1.0F, -1100000.0F);
 			RenderHelper.disableStandardItemLighting();
@@ -31,7 +31,7 @@ public final class Chams extends Module {
 	
     @EventLink
     public final Listener<Render3DEvent> onRender3D = event -> {
-		for (EntityPlayer player : mc.theWorld.playerEntities) {
+		for (EntityPlayer player : mc.world.playerEntities) {
 			if (player == mc.player || player.isDead || player == null) {
 				continue;
 			}
@@ -67,7 +67,7 @@ public final class Chams extends Module {
 	
     @EventLink
     public final Listener<PostRenderLivingEntityEvent> onPostRenderLiving = event -> {
-    	if (event.getEntity() instanceof EntityPlayer && event.getEntity() != mc.player) {
+    	if (event.getTarget() instanceof EntityPlayer && event.getTarget() != mc.player) {
             GL11.glDisable(32823);
             GL11.glPolygonOffset(1.0F, 1100000.0F);
 			RenderHelper.disableStandardItemLighting();

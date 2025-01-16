@@ -104,7 +104,7 @@ public class ItemRenderer {
 	}
 
 	private void setLightMapFromPlayer(final AbstractClientPlayer clientPlayer) {
-		int i = this.mc.theWorld.getCombinedLight(new BlockPos(clientPlayer.posX, clientPlayer.posY + (double) clientPlayer.getEyeHeight(), clientPlayer.posZ), 0);
+		int i = this.mc.world.getCombinedLight(new BlockPos(clientPlayer.posX, clientPlayer.posY + (double) clientPlayer.getEyeHeight(), clientPlayer.posZ), 0);
 
 		if (Config.isDynamicLights()) {
 			i = DynamicLights.getCombinedLight(this.mc.getRenderViewEntity(), i);
@@ -198,7 +198,7 @@ public class ItemRenderer {
         worldrenderer.pos(135.0D, -7.0D, 0.0D).tex(1.0D, 0.0D).endVertex();
         worldrenderer.pos(-7.0D, -7.0D, 0.0D).tex(0.0D, 0.0D).endVertex();
         tessellator.draw();
-        final MapData mapdata = Items.filled_map.getMapData(this.itemToRender, this.mc.theWorld);
+        final MapData mapdata = Items.filled_map.getMapData(this.itemToRender, this.mc.world);
 
         if (mapdata != null) {
             this.mc.entityRenderer.getMapItemRenderer().renderMap(mapdata, false);

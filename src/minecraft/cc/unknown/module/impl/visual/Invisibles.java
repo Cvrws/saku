@@ -18,7 +18,7 @@ public final class Invisibles extends Module {
     @EventLink
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
     	if (players.getValue()) {
-            mc.theWorld.playerEntities.stream().forEach(player -> {
+            mc.world.playerEntities.stream().forEach(player -> {
             	player.removePotionEffect(Potion.invisibility.getId());
                 player.setInvisible(false);   
             });

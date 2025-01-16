@@ -91,6 +91,7 @@ public final class KillAura extends Module {
             .add(new SubMode("1.9+ With 1.8 Animations"))
             .setDefault("None");
 	
+    public final NumberValue preRange = new NumberValue("Pre Range", this, 4.5, 3, 6, 0.1);
 	public final NumberValue range = new NumberValue("Range", this, 3, 3, 6, 0.1);
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 10, 15, 1, 20, 1);
 	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 0, 2, 0.1);
@@ -179,9 +180,9 @@ public final class KillAura extends Module {
 	};
 
 	public void getTargets() {
-		double range = this.range.getValue().doubleValue();
+		double range = this.preRange.getValue().doubleValue();
 
-		targets = TargetUtil.getTargets(range);
+		targets = TargetUtil.getTarget(range);
 
 		if (attackMode.is("Switch")) {
 			targets.removeAll(pastTargets);
@@ -195,7 +196,7 @@ public final class KillAura extends Module {
 
 		if (targets.isEmpty()) {
 			pastTargets.clear();
-			targets = TargetUtil.getTargets(range + expandRange);
+			targets = TargetUtil.getTarget(range + expandRange);
 		}
 
 		switch (sorting.getValue().getName()) {
@@ -515,7 +516,7 @@ public final class KillAura extends Module {
 	private void postBlock() {
 		switch (autoBlock.getValue().getName()) {
         case "New NCP":
-            mc.playerController.sendUseItem(mc.player, mc.theWorld, mc.player.getHeldItem());
+            mc.playerController.sendUseItem(mc.player, mc.world, mc.player.getHeldItem());
 
             PacketWrapper use_0 = PacketWrapper.create(29, null,
                     Via.getManager().getConnectionManager().getConnections().iterator().next());
@@ -566,7 +567,7 @@ public final class KillAura extends Module {
                 this.interact(movingObjectPosition);
             }
 
-            mc.playerController.sendUseItem(mc.player, mc.theWorld, PlayerUtil.getItemStack());
+            mc.playerController.sendUseItem(mc.player, mc.world, PlayerUtil.getItemStack());
             
             blocking = true;
         }

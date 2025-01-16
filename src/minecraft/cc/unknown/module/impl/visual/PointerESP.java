@@ -28,7 +28,7 @@ public final class PointerESP extends Module {
         double playerOffsetX = mc.player.posX;
         double playerOffSetZ = mc.player.posZ;
 
-        for (Entity entity : mc.theWorld.loadedEntityList) {
+        for (Entity entity : mc.world.loadedEntityList) {
             if(entity instanceof EntityPlayer && entity != mc.player) {
                 double pos1 = (((entity.posX + (entity.posX - entity.lastTickPosX) * mc.timer.renderPartialTicks) - playerOffsetX) * 0.2);
                 double pos2 = (((entity.posZ + (entity.posZ - entity.lastTickPosZ) * mc.timer.renderPartialTicks) - playerOffSetZ) * 0.2);

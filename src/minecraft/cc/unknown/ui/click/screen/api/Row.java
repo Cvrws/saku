@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.click.screen.ConfigScreen;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.drag.Mouse;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.render.gui.GUIUtil;
 import cc.unknown.util.render.gui.ScrollUtil;
 import cc.unknown.util.structure.geometry.Vector2f;

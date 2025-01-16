@@ -226,7 +226,7 @@ public final class FakeLag extends Module {
     
     @EventLink
     public final Listener<GameEvent> onGame = event -> {
-        WorldClient world = mc.theWorld;
+        WorldClient world = mc.world;
 
         if (mc.player == null || world == null) {
             return;

@@ -247,7 +247,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	private final PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("client", this,
 			MinecraftServer.getCurrentTimeMillis());
 
-	public WorldClient theWorld;
+	public WorldClient world;
 	public RenderGlobal renderGlobal;
 	private RenderManager renderManager;
 	private RenderItem renderItem;
@@ -621,7 +621,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.mcResourceManager.registerReloadListener(this.renderGlobal);
 		this.guiAchievement = new GuiAchievement(this);
 		GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
-		this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
+		this.effectRenderer = new EffectRenderer(this.world, this.renderEngine);
 
 		this.checkGLError("Post startup");
 
@@ -910,7 +910,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			this.currentScreen.onGuiClosed();
 		}
 
-		if (guiScreenIn == null && this.theWorld == null) {
+		if (guiScreenIn == null && this.world == null) {
 			guiScreenIn = new SakuMenu();
 		} else if (guiScreenIn == null && this.player.getHealth() <= 0.0F) {
 			guiScreenIn = new GuiGameOver();
@@ -989,7 +989,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			this.shutdown();
 		}
 
-		if (this.isGamePaused && this.theWorld != null) {
+		if (this.isGamePaused && this.world != null) {
 			final float f = this.timer.renderPartialTicks;
 			this.timer.updateTimer();
 			this.timer.renderPartialTicks = f;
@@ -1153,7 +1153,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	}
 
 	public int getLimitFramerate() {
-		return this.theWorld == null && this.currentScreen != null ? 5000 : this.gameSettings.limitFramerate;
+		return this.world == null && this.currentScreen != null ? 5000 : this.gameSettings.limitFramerate;
 	}
 
 	public boolean isFramerateLimitBelowMax() {
@@ -1384,11 +1384,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			if (leftClick && this.objectMouseOver != null && this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
 				final BlockPos blockpos = this.objectMouseOver.getBlockPos();
 
-		        if (leftClickCounter == 0 && theWorld.getBlockState(objectMouseOver.getBlockPos()).getBlock().getMaterial() != Material.air) {
+		        if (leftClickCounter == 0 && world.getBlockState(objectMouseOver.getBlockPos()).getBlock().getMaterial() != Material.air) {
 		            Sakura.instance.getEventBus().handle(new ClickBlockEvent(objectMouseOver.getBlockPos(), objectMouseOver.sideHit));
 		        }
 				
-				if (this.theWorld.getBlockState(blockpos).getBlock().getMaterial() != Material.air && this.playerController.onPlayerDamageBlock(blockpos, this.objectMouseOver.sideHit)) {
+				if (this.world.getBlockState(blockpos).getBlock().getMaterial() != Material.air && this.playerController.onPlayerDamageBlock(blockpos, this.objectMouseOver.sideHit)) {
 					this.effectRenderer.addBlockHitEffects(blockpos, this.objectMouseOver.sideHit);
 					this.player.swingItem();
 				}
@@ -1449,7 +1449,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 				case BLOCK:
 					final BlockPos blockpos = this.objectMouseOver.getBlockPos();
 
-					if (this.theWorld.getBlockState(blockpos).getBlock().getMaterial() != Material.air) {
+					if (this.world.getBlockState(blockpos).getBlock().getMaterial() != Material.air) {
 						this.playerController.clickBlock(blockpos, this.objectMouseOver.sideHit);
 						break;
 					}
@@ -1499,10 +1499,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 				case BLOCK:
 					final BlockPos blockpos = this.objectMouseOver.getBlockPos();
 
-					if (this.theWorld.getBlockState(blockpos).getBlock().getMaterial() != Material.air) {
+					if (this.world.getBlockState(blockpos).getBlock().getMaterial() != Material.air) {
 						final int i = itemstack != null ? itemstack.stackSize : 0;
 
-						if (this.playerController.onPlayerRightClick(this.player, this.theWorld, itemstack, blockpos,
+						if (this.playerController.onPlayerRightClick(this.player, this.world, itemstack, blockpos,
 								this.objectMouseOver.sideHit, this.objectMouseOver.hitVec)) {
 							flag = false;
 							this.player.swingItem();
@@ -1524,7 +1524,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			if (flag) {
 				final ItemStack itemstack1 = PlayerUtil.getItemStack();
 
-				if (itemstack1 != null && this.playerController.sendUseItem(this.player, this.theWorld, itemstack1)) {
+				if (itemstack1 != null && this.playerController.sendUseItem(this.player, this.world, itemstack1)) {
 					this.entityRenderer.itemRenderer.resetEquippedProgress2();
 				}
 			}
@@ -1630,7 +1630,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.entityRenderer.getMouseOver(1.0F);
 		this.mcProfiler.startSection("gameMode");
 
-		if (!this.isGamePaused && this.theWorld != null) {
+		if (!this.isGamePaused && this.world != null) {
 			this.playerController.updateController();
 		}
 
@@ -1643,7 +1643,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		if (this.currentScreen == null && this.player != null) {
 			if (this.player.getHealth() <= 0.0F) {
 				this.displayGuiScreen(null);
-			} else if (this.player.isPlayerSleeping() && this.theWorld != null) {
+			} else if (this.player.isPlayerSleeping() && this.world != null) {
 				this.displayGuiScreen(new GuiSleepMP());
 			}
 		} else if (this.currentScreen != null && this.currentScreen instanceof GuiSleepMP
@@ -1985,13 +1985,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			this.player.inventory.currentItem = oldSlot;
 		}
 
-		if (this.theWorld != null) {
+		if (this.world != null) {
 			if (this.player != null) {
 				++this.joinPlayerCounter;
 				Sakura.instance.getEventBus().handle(new PlayerTickEvent());
 				if (this.joinPlayerCounter == 30) {
 					this.joinPlayerCounter = 0;
-					this.theWorld.joinEntityInSurroundings(this.player);
+					this.world.joinEntityInSurroundings(this.player);
 				}
 			}
 
@@ -2010,11 +2010,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			this.mcProfiler.endStartSection("level");
 
 			if (!this.isGamePaused) {
-				if (this.theWorld.getLastLightningBolt() > 0) {
-					this.theWorld.setLastLightningBolt(this.theWorld.getLastLightningBolt() - 1);
+				if (this.world.getLastLightningBolt() > 0) {
+					this.world.setLastLightningBolt(this.world.getLastLightningBolt() - 1);
 				}
 
-				this.theWorld.updateEntities();
+				this.world.updateEntities();
 			}
 		} else if (this.entityRenderer.isShaderActive()) {
 			this.entityRenderer.func_181022_b();
@@ -2025,20 +2025,20 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			this.mcSoundHandler.update();
 		}
 
-		if (this.theWorld != null) {
+		if (this.world != null) {
 			if (!this.isGamePaused) {
-				this.theWorld.setAllowedSpawnTypes(this.theWorld.getDifficulty() != EnumDifficulty.PEACEFUL, true);
+				this.world.setAllowedSpawnTypes(this.world.getDifficulty() != EnumDifficulty.PEACEFUL, true);
 
 				try {
-					this.theWorld.tick();
+					this.world.tick();
 				} catch (Throwable throwable2) {
 					CrashReport crashreport2 = CrashReport.makeCrashReport(throwable2, "Exception in world tick");
 
-					if (this.theWorld == null) {
+					if (this.world == null) {
 						CrashReportCategory crashreportcategory2 = crashreport2.makeCategory("Affected level");
 						crashreportcategory2.addCrashSection("Problem", "Level is null!");
 					} else {
-						this.theWorld.addWorldInfoToCrashReport(crashreport2);
+						this.world.addWorldInfoToCrashReport(crashreport2);
 					}
 
 					throw new ReportedException(crashreport2);
@@ -2047,8 +2047,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 			this.mcProfiler.endStartSection("animateTick");
 
-			if (!this.isGamePaused && this.theWorld != null) {
-				this.theWorld.doVoidFogParticles(MathHelper.floor_double(this.player.posX),
+			if (!this.isGamePaused && this.world != null) {
+				this.world.doVoidFogParticles(MathHelper.floor_double(this.player.posX),
 						MathHelper.floor_double(this.player.posY), MathHelper.floor_double(this.player.posZ));
 			}
 
@@ -2161,7 +2161,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			this.loadingScreen.displayLoadingString("");
 		}
 
-		if (worldClientIn == null && this.theWorld != null) {
+		if (worldClientIn == null && this.world != null) {
 			this.mcResourcePackRepository.clearResourcePack();
 			this.ingameGUI.resetPlayersOverlayFooterHeader();
 			this.setServerData(null);
@@ -2169,7 +2169,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 
 		this.mcSoundHandler.stopSounds();
-		this.theWorld = worldClientIn;
+		this.world = worldClientIn;
 
 		if (worldClientIn != null) {
 			if (this.renderGlobal != null) {
@@ -2200,27 +2200,27 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	}
 
 	public void setDimensionAndSpawnPlayer(final int dimension) {
-		this.theWorld.setInitialSpawnLocation();
-		this.theWorld.removeAllEntities();
+		this.world.setInitialSpawnLocation();
+		this.world.removeAllEntities();
 		int i = 0;
 		String s = null;
 
 		if (this.player != null) {
 			i = this.player.getEntityId();
-			this.theWorld.removeEntity(this.player);
+			this.world.removeEntity(this.player);
 			s = this.player.getClientBrand();
 		}
 
 		this.renderViewEntity = null;
 		final EntityPlayerSP entityplayersp = this.player;
-		this.player = this.playerController.func_178892_a(this.theWorld,
+		this.player = this.playerController.func_178892_a(this.world,
 				this.player == null ? new StatFileWriter() : this.player.getStatFileWriter());
 		this.player.getDataWatcher().updateWatchedObjectsFromList(entityplayersp.getDataWatcher().getAllWatched());
 		this.player.dimension = dimension;
 		this.renderViewEntity = this.player;
 		this.player.preparePlayerToSpawn();
 		this.player.setClientBrand(s);
-		this.theWorld.spawnEntityInWorld(this.player);
+		this.world.spawnEntityInWorld(this.player);
 		this.playerController.flipPlayer(this.player);
 		this.player.movementInput = new MovementInputFromOptions(this.gameSettings);
 		this.player.setEntityId(i);
@@ -2265,25 +2265,25 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
 			if (this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
 				final BlockPos blockpos = this.objectMouseOver.getBlockPos();
-				final Block block = this.theWorld.getBlockState(blockpos).getBlock();
+				final Block block = this.world.getBlockState(blockpos).getBlock();
 
 				if (block.getMaterial() == Material.air) {
 					return;
 				}
 
-				item = block.getItem(this.theWorld, blockpos);
+				item = block.getItem(this.world, blockpos);
 
 				if (item == null) {
 					return;
 				}
 
 				if (flag && GuiScreen.isCtrlKeyDown()) {
-					tileentity = this.theWorld.getTileEntity(blockpos);
+					tileentity = this.world.getTileEntity(blockpos);
 				}
 
 				final Block block1 = item instanceof ItemBlock && !block.isFlowerPot() ? Block.getBlockFromItem(item)
 						: block;
-				i = block1.getDamageValue(this.theWorld, blockpos);
+				i = block1.getDamageValue(this.world, blockpos);
 				flag1 = item.getHasSubtypes();
 			} else {
 				if (this.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY
@@ -2428,8 +2428,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 						: "N/A (disabled)");
 		theCrash.getCategory().addCrashSectionCallable("CPU", OpenGlHelper::getCpu);
 
-		if (this.theWorld != null) {
-			this.theWorld.addWorldInfoToCrashReport(theCrash);
+		if (this.world != null) {
+			this.world.addWorldInfoToCrashReport(theCrash);
 		}
 
 		return theCrash;
@@ -2896,11 +2896,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	}
 
 	public void leaveServer() {
-		if (this.theWorld == null)
+		if (this.world == null)
 			return;
 		final boolean flag = this.isIntegratedServerRunning();
 
-		this.theWorld.sendQuittingDisconnectingPacket();
+		this.world.sendQuittingDisconnectingPacket();
 		this.loadWorld(null);
 
 		if (flag) {

@@ -106,7 +106,7 @@ public class BlockIn extends Module {
 			return;
 		}
 
-		if (mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
+		if (mc.playerController.onPlayerRightClick(mc.player, mc.world, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
 			if (silentSwing.getValue()) {
 				mc.player.sendQueue.addToSendQueue(new C0APacketAnimation());
 			} else {

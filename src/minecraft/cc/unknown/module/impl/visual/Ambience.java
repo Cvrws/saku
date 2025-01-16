@@ -25,29 +25,29 @@ public final class Ambience extends Module {
 
 	@Override
 	public void onDisable() {
-		mc.theWorld.setRainStrength(0);
-		mc.theWorld.getWorldInfo().setCleanWeatherTime(Integer.MAX_VALUE);
-		mc.theWorld.getWorldInfo().setRainTime(0);
-		mc.theWorld.getWorldInfo().setThunderTime(0);
-		mc.theWorld.getWorldInfo().setRaining(false);
-		mc.theWorld.getWorldInfo().setThundering(false);
+		mc.world.setRainStrength(0);
+		mc.world.getWorldInfo().setCleanWeatherTime(Integer.MAX_VALUE);
+		mc.world.getWorldInfo().setRainTime(0);
+		mc.world.getWorldInfo().setThunderTime(0);
+		mc.world.getWorldInfo().setRaining(false);
+		mc.world.getWorldInfo().setThundering(false);
 	}
 
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		mc.theWorld.setWorldTime(
+		mc.world.setWorldTime(
 				(long) (time.getValue().intValue() + (System.currentTimeMillis() * speed.getValue().intValue())));
 	};
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotionEvent = event -> {
 		if (mc.player.ticksExisted % 20 == 0) {
-			mc.theWorld.setRainStrength(0);
-			mc.theWorld.getWorldInfo().setCleanWeatherTime(Integer.MAX_VALUE);
-			mc.theWorld.getWorldInfo().setRainTime(0);
-			mc.theWorld.getWorldInfo().setThunderTime(0);
-			mc.theWorld.getWorldInfo().setRaining(false);
-			mc.theWorld.getWorldInfo().setThundering(false);
+			mc.world.setRainStrength(0);
+			mc.world.getWorldInfo().setCleanWeatherTime(Integer.MAX_VALUE);
+			mc.world.getWorldInfo().setRainTime(0);
+			mc.world.getWorldInfo().setThunderTime(0);
+			mc.world.getWorldInfo().setRaining(false);
+			mc.world.getWorldInfo().setThundering(false);
 		}
 	};
 

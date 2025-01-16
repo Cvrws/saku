@@ -42,10 +42,13 @@ public final class NameTags extends Module {
 
 	@EventLink
 	public final Listener<RenderLabelEvent> onRenderLabel = event -> {
-        if (event.getTarget() instanceof EntityPlayer && ((EntityPlayer)event.getTarget()).deathTime == 0 && (checkInvis.getValue() || !((EntityPlayer)event.getTarget()).isInvisible())) {
+        if (event.getTarget() instanceof EntityPlayer && ((EntityPlayer)event.getTarget()).deathTime == 0) {
         	EntityPlayer player = (EntityPlayer) event.getTarget();
-        	
             String name;
+            
+            if (!checkInvis.getValue() && player.isInvisible()) {
+                return;
+            }
             
             if (onlyRenderName.getValue()) {
             	name = player.getName();

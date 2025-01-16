@@ -22,19 +22,12 @@ import net.minecraft.util.MathHelper;
 public class MoveUtil implements Accessor {
 
     public final double WALK_SPEED = 0.221;
-    public final double BUNNY_SLOPE = 0.66;
     public final double MOD_SPRINTING = 1.3F;
     public final double MOD_SNEAK = 0.3F;
-    public final double MOD_ICE = 2.5F;
     public final double MOD_WEB = 0.105 / WALK_SPEED;
     public final double JUMP_HEIGHT = 0.42F;
     public final double BUNNY_FRICTION = 159.9F;
-    public final double Y_ON_GROUND_MIN = 0.00001;
-    public final double Y_ON_GROUND_MAX = 0.0626;
 
-    public final double AIR_FRICTION = 0.9800000190734863D;
-    public final double WATER_FRICTION = 0.800000011920929D;
-    public final double LAVA_FRICTION = 0.5D;
     public final double MOD_SWIM = 0.115F / WALK_SPEED;
     
     public final double[] MOD_DEPTH_STRIDER = {
@@ -44,29 +37,23 @@ public class MoveUtil implements Accessor {
             1.0F / MOD_SWIM,
     };
 
-    public final double UNLOADED_CHUNK_MOTION = -0.09800000190735147;
     public final double HEAD_HITTER_MOTION = -0.0784000015258789;
 
-    /**
-     * Checks if the player is moving
-     *
-     * @return player moving
-     */
     public boolean isMoving() {
         return mc.player != null && mc.player.moveForward != 0 || mc.player.moveStrafing != 0;
     }
     
-    public static boolean isMovingStraight() {
+    public boolean isMovingStraight() {
         float direction = getRawDirection() + 180;
         float movingYaw = Math.round(direction / 45) * 45;
         return movingYaw % 90 == 0f;
     }
     
-    public static float getRawDirection() {
+    public float getRawDirection() {
         return getRawDirectionRotation(mc.player.rotationYaw, mc.player.moveStrafing, mc.player.moveForward);
     }
     
-    public static float getRawDirectionRotation(float yaw, float pStrafe, float pForward) {
+    public float getRawDirectionRotation(float yaw, float pStrafe, float pForward) {
         float rotationYaw = yaw;
 
         if (pForward < 0F)
@@ -95,21 +82,10 @@ public class MoveUtil implements Accessor {
         return entity.moveForward != 0 || entity.moveStrafing != 0;
     }
 
-    /**
-     * Checks if the player has enough movement input for sprinting
-     *
-     * @return movement input enough for sprinting
-     */
     public boolean enoughMovementForSprinting() {
         return Math.abs(mc.player.moveForward) >= 0.8F || Math.abs(mc.player.moveStrafing) >= 0.8F;
     }
 
-    /**
-     * Checks if the player is allowed to sprint
-     *
-     * @param legit should the player follow vanilla sprinting rules?
-     * @return player able to sprint
-     */
     public boolean canSprint(final boolean legit) {
         return (legit ? mc.player.moveForward >= 0.8F
                 && !mc.player.isCollidedHorizontally
@@ -544,7 +520,7 @@ public class MoveUtil implements Accessor {
         float f = 0.91F;
 
         if (mc.player.onGround) {
-            f = mc.theWorld.getBlockState(new BlockPos(MathHelper.floor_double(mc.player.posX), MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1, MathHelper.floor_double(mc.player.posZ))).getBlock().slipperiness * 0.91F;
+            f = mc.world.getBlockState(new BlockPos(MathHelper.floor_double(mc.player.posX), MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1, MathHelper.floor_double(mc.player.posZ))).getBlock().slipperiness * 0.91F;
         }
 
         return f;

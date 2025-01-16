@@ -2,14 +2,14 @@ package cc.unknown.ui.click.component;
 
 import java.awt.Color;
 
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.ui.theme.Themes;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.render.animation.Easing;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.structure.geometry.Vector3d;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

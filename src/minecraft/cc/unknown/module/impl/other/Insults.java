@@ -46,7 +46,7 @@ public final class Insults extends Module {
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
-		if (target != null && !mc.theWorld.playerEntities.contains(target)) {
+		if (target != null && !mc.world.playerEntities.contains(target)) {
 			if (ticks >= delay.getValue().intValue() + Math.random() * 2) {
 				String insult = "";
 

@@ -8,8 +8,6 @@ import static cc.unknown.util.render.ColorUtil.yellow;
 import java.awt.Color;
 import java.io.IOException;
 
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.ui.menu.saku.SakuMenu;
 import cc.unknown.ui.menu.saku.api.Button;
 import cc.unknown.ui.menu.saku.api.TextField;
@@ -18,6 +16,8 @@ import cc.unknown.util.account.auth.MicrosoftAccount;
 import cc.unknown.util.account.name.UsernameGenerator;
 import cc.unknown.util.render.BackgroundUtil;
 import cc.unknown.util.render.font.Font;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.structure.geometry.Vector2d;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;

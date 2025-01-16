@@ -95,7 +95,7 @@ public class NoClip extends Module {
 				&& mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK
 				&& mc.player.posY == mc.objectMouseOver.getBlockPos().up().getY()) {
 
-			mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(),
+			mc.playerController.onPlayerRightClick(mc.player, mc.world, PlayerUtil.getItemStack(),
 					mc.objectMouseOver.getBlockPos(), mc.objectMouseOver.sideHit, mc.objectMouseOver.hitVec);
 
 			if (noSwing.getValue()) {

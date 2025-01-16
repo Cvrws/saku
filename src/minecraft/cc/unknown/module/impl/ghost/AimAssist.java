@@ -106,7 +106,7 @@ public final class AimAssist extends Module {
 	    double targetFov = 180.0;
 	    EntityPlayer potentialTarget = null;
 
-	    for (EntityPlayer player : mc.theWorld.playerEntities) {
+	    for (EntityPlayer player : mc.world.playerEntities) {
 	        if (!isValidTarget(player, playerPos, fov)) {
 	            continue;
 	        }
@@ -176,7 +176,7 @@ public final class AimAssist extends Module {
 	    if (checkBlockBreak.getValue() && mc.objectMouseOver != null) {
 	        BlockPos blockPos = mc.objectMouseOver.getBlockPos();
 	        if (blockPos != null) {
-	            Block block = mc.theWorld.getBlockState(blockPos).getBlock();
+	            Block block = mc.world.getBlockState(blockPos).getBlock();
 
 	            if (block != Blocks.air) {
 	                if (onlyBed.getValue()) {

@@ -46,7 +46,7 @@ public class Reach extends Module {
 		} else {
 			if (!hitThroughBlocks.getValue() && mc.objectMouseOver != null) {
 				BlockPos p = mc.objectMouseOver.getBlockPos();
-				if (p != null && mc.theWorld.getBlockState(p).getBlock() != Blocks.air) {
+				if (p != null && mc.world.getBlockState(p).getBlock() != Blocks.air) {
 					return false;
 				}
 			}
@@ -80,7 +80,7 @@ public class Reach extends Module {
 			Vec3 reachTarget = eyePosition.addVector(playerLook.xCoord * reach, playerLook.yCoord * reach,
 					playerLook.zCoord * reach);
 			Vec3 targetHitVec = null;
-			List<Entity> targetsWithinReach = mc.theWorld.getEntitiesWithinAABBExcludingEntity(renderView,
+			List<Entity> targetsWithinReach = mc.world.getEntitiesWithinAABBExcludingEntity(renderView,
 					renderView.getEntityBoundingBox()
 							.addCoord(playerLook.xCoord * reach, playerLook.yCoord * reach, playerLook.zCoord * reach)
 							.expand(1.0D, 1.0D, 1.0D));

@@ -86,7 +86,7 @@ public class AntiCrash extends Module {
     	
         if (fakeDeathCheck.getValue() && event.getPacket() instanceof S19PacketEntityStatus) {
             S19PacketEntityStatus wrapper = (S19PacketEntityStatus) event.getPacket();
-            if (wrapper.getOpCode() == 3 && wrapper.getEntity(mc.theWorld) == mc.player) {
+            if (wrapper.getOpCode() == 3 && wrapper.getEntity(mc.world) == mc.player) {
                 event.setCancelled(true);
             }
         }

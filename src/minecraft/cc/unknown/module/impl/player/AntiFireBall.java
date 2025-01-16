@@ -37,7 +37,7 @@ public class AntiFireBall extends Module {
     @EventLink(value = Priority.VERY_HIGH)
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
         
-        for (Entity entity : mc.theWorld.loadedEntityList) {
+        for (Entity entity : mc.world.loadedEntityList) {
             if (entity instanceof EntityFireball && entity.getDistanceToEntity(mc.player) < range.getValue().floatValue()) {
                 if (attackTimer.finished((long) (1000L / (cps.getValue().intValue() + 4)))) {
 

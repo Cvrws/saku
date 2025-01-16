@@ -16,7 +16,7 @@ import net.minecraft.world.chunk.Chunk;
 public class IntegratedServerUtils {
     public static WorldServer getWorldServer() {
         final Minecraft minecraft = Config.getMinecraft();
-        final World world = minecraft.theWorld;
+        final World world = minecraft.world;
 
         if (world == null) {
             return null;

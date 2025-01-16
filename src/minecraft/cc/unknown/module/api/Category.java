@@ -1,8 +1,8 @@
 package cc.unknown.module.api;
 
-import cc.unknown.font.Fonts;
 import cc.unknown.ui.click.screen.*;
 import cc.unknown.util.render.font.Font;
+import cc.unknown.util.render.font.api.Fonts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

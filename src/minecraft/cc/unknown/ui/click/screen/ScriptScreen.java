@@ -6,8 +6,6 @@ import java.util.ConcurrentModificationException;
 import java.util.stream.Collectors;
 
 import cc.unknown.Sakura;
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.module.api.Category;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.click.component.ModuleComponent;
@@ -16,6 +14,8 @@ import cc.unknown.util.Accessor;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.render.animation.Easing;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.render.gui.ScrollUtil;
 import cc.unknown.util.structure.geometry.Triple;
 import cc.unknown.util.structure.geometry.Vector2d;

@@ -5,8 +5,6 @@ import static cc.unknown.util.render.animation.Easing.LINEAR;
 import java.awt.Color;
 
 import cc.unknown.Sakura;
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.impl.visual.ClickGUI;
 import cc.unknown.ui.click.RiceGui;
@@ -15,6 +13,8 @@ import cc.unknown.util.Accessor;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.animation.Animation;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.render.gui.GUIUtil;
 import cc.unknown.util.structure.geometry.Vector2d;
 import net.minecraft.client.renderer.GlStateManager;

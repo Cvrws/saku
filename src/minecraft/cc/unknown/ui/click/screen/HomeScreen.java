@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import cc.unknown.Sakura;
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.click.component.ModuleComponent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.render.ColorUtil;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.render.gui.ScrollUtil;
 import cc.unknown.util.render.gui.box.TextAlign;
 import cc.unknown.util.render.gui.box.TextBox;

@@ -200,8 +200,8 @@ public class Breaker extends Module {
                 
                 int slot = SlotUtil.findTool(blockToBreak);
                 if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(slot));
-                if (slot != -1) hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.theWorld, blockToBreak, slot);
-                else hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.theWorld, blockToBreak, mc.player.inventory.currentItem);
+                if (slot != -1) hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, slot);
+                else hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, mc.player.inventory.currentItem);
                 if (!mc.player.onGround) hardness *= airMultipalyer.getValue().floatValue();
 
                 if (damagetoblock == 0) {
@@ -209,7 +209,7 @@ public class Breaker extends Module {
                 }
                 mc.player.swingItem();
                 damagetoblock += hardness;
-                mc.theWorld.sendBlockBreakProgress(player.getEntityId(), blockToBreak, (int) (damagetoblock * 10 - 1));
+                mc.world.sendBlockBreakProgress(player.getEntityId(), blockToBreak, (int) (damagetoblock * 10 - 1));
                 if (damagetoblock >= (PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ()) instanceof BlockBed ? 1-fastBreakBed.getValue().floatValue() : 1-fastBreakNormal.getValue().floatValue())) {
                     damagetoblock = 0;
 

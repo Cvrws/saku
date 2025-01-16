@@ -83,7 +83,7 @@ public class PlayerUtil implements Accessor {
 	 * @return block
 	 */
 	public Block block(final double x, final double y, final double z) {
-		return mc.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();
+		return mc.world.getBlockState(new BlockPos(x, y, z)).getBlock();
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class PlayerUtil implements Accessor {
 	 * @return block
 	 */
 	public Block block(final BlockPos blockPos) {
-		return mc.theWorld.getBlockState(blockPos).getBlock();
+		return mc.world.getBlockState(blockPos).getBlock();
 	}
 
 	public Block block(final Vec3i pos) {
@@ -144,7 +144,7 @@ public class PlayerUtil implements Accessor {
 	}
 
 	public float[] getDirectionToBlock(final double x, final double y, final double z, final EnumFacing enumfacing) {
-		final EntityEgg var4 = new EntityEgg(mc.theWorld);
+		final EntityEgg var4 = new EntityEgg(mc.world);
 		var4.posX = x + 0.5D;
 		var4.posY = y + 0.5D;
 		var4.posZ = z + 0.5D;
@@ -264,7 +264,7 @@ public class PlayerUtil implements Accessor {
 		if (boundingBox) {
 			final AxisAlignedBB bb = mc.player.getEntityBoundingBox().offset(0, -height, 0);
 
-			if (!mc.theWorld.getCollidingBoundingBoxes(mc.player, bb).isEmpty()) {
+			if (!mc.world.getCollidingBoundingBoxes(mc.player, bb).isEmpty()) {
 				return true;
 			}
 		} else {
@@ -281,7 +281,7 @@ public class PlayerUtil implements Accessor {
 		final AxisAlignedBB bb = mc.player.getEntityBoundingBox().offset(0, height / 2f, 0).expand(0,
 				height - mc.player.height, 0);
 
-		if (!mc.theWorld.getCollidingBoundingBoxes(mc.player, bb).isEmpty()) {
+		if (!mc.world.getCollidingBoundingBoxes(mc.player, bb).isEmpty()) {
 			return true;
 		}
 
@@ -289,7 +289,7 @@ public class PlayerUtil implements Accessor {
 	}
 
 	public boolean isOverAir() {
-		return mc.theWorld.isAirBlock(new BlockPos(MathHelper.floor_double(mc.player.posX),
+		return mc.world.isAirBlock(new BlockPos(MathHelper.floor_double(mc.player.posX),
 				MathHelper.floor_double(mc.player.posY - 1.0D), MathHelper.floor_double(mc.player.posZ)));
 	}
 
@@ -393,7 +393,7 @@ public class PlayerUtil implements Accessor {
 		}
 
 		final EntityPlayerSP player = mc.player;
-		final WorldClient world = mc.theWorld;
+		final WorldClient world = mc.world;
 		final AxisAlignedBB bb = player.getEntityBoundingBox();
 		for (int x = MathHelper.floor_double(bb.minX); x < MathHelper.floor_double(bb.maxX) + 1; ++x) {
 			for (int y = MathHelper.floor_double(bb.minY); y < MathHelper.floor_double(bb.maxY) + 1; ++y) {
@@ -429,7 +429,7 @@ public class PlayerUtil implements Accessor {
 	public boolean onLiquid() {
 		boolean onLiquid = false;
 		final AxisAlignedBB playerBB = mc.player.getEntityBoundingBox();
-		final WorldClient world = mc.theWorld;
+		final WorldClient world = mc.world;
 		final int y = (int) playerBB.offset(0.0, -0.01, 0.0).minY;
 		for (int x = MathHelper.floor_double(playerBB.minX); x < MathHelper.floor_double(playerBB.maxX) + 1; ++x) {
 			for (int z = MathHelper.floor_double(playerBB.minZ); z < MathHelper.floor_double(playerBB.maxZ) + 1; ++z) {
@@ -452,7 +452,7 @@ public class PlayerUtil implements Accessor {
 	public EnumFacingOffset getEnumFacing(final Vec3 position, boolean downwards) {
 		List<EnumFacingOffset> possibleFacings = new ArrayList<>();
 		for (int z2 = -1; z2 <= 1; z2 += 2) {
-			if (!(block(position.xCoord, position.yCoord, position.zCoord + z2).isReplaceable(mc.theWorld,
+			if (!(block(position.xCoord, position.yCoord, position.zCoord + z2).isReplaceable(mc.world,
 					new BlockPos(position.xCoord, position.yCoord, position.zCoord + z2)))) {
 				if (z2 < 0) {
 					possibleFacings.add(new EnumFacingOffset(EnumFacing.SOUTH, new Vec3(0, 0, z2)));
@@ -463,7 +463,7 @@ public class PlayerUtil implements Accessor {
 		}
 
 		for (int x2 = -1; x2 <= 1; x2 += 2) {
-			if (!(block(position.xCoord + x2, position.yCoord, position.zCoord).isReplaceable(mc.theWorld,
+			if (!(block(position.xCoord + x2, position.yCoord, position.zCoord).isReplaceable(mc.world,
 					new BlockPos(position.xCoord + x2, position.yCoord, position.zCoord)))) {
 				if (x2 > 0) {
 					possibleFacings.add(new EnumFacingOffset(EnumFacing.WEST, new Vec3(x2, 0, 0)));
@@ -485,7 +485,7 @@ public class PlayerUtil implements Accessor {
 			return possibleFacings.get(0);
 
 		for (int y2 = -1; y2 <= 1; y2 += 2) {
-			if (!(block(position.xCoord, position.yCoord + y2, position.zCoord).isReplaceable(mc.theWorld,
+			if (!(block(position.xCoord, position.yCoord + y2, position.zCoord).isReplaceable(mc.world,
 					new BlockPos(position.xCoord, position.yCoord + y2, position.zCoord)))) {
 				if (y2 < 0) {
 					return new EnumFacingOffset(EnumFacing.UP, new Vec3(0, y2, 0));
@@ -512,7 +512,7 @@ public class PlayerUtil implements Accessor {
 	                Block block = blockRelativeToPlayer(x, y, z);
 	                BlockPos blockPos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
 
-	                if (!block.isReplaceable(mc.theWorld, blockPos)) {
+	                if (!block.isReplaceable(mc.world, blockPos)) {
 	                    possibilities.add(new Vec3(mc.player.posX + x + 1, mc.player.posY + y, mc.player.posZ + z));
 	                    possibilities.add(new Vec3(mc.player.posX + x - 1, mc.player.posY + y, mc.player.posZ + z));
 	                    possibilities.add(new Vec3(mc.player.posX + x, mc.player.posY + y + 1, mc.player.posZ + z));
@@ -528,7 +528,7 @@ public class PlayerUtil implements Accessor {
 	    possibilities = possibilities.stream()
 	        .filter(vec3 -> mc.player.getDistance(vec3.xCoord, vec3.yCoord, vec3.zCoord) <= 5)
 	        .filter(vec3 -> PlayerUtil.block(vec3.xCoord, vec3.yCoord, vec3.zCoord)
-	                .isReplaceable(mc.theWorld, new BlockPos(vec3.xCoord, vec3.yCoord, vec3.zCoord)))
+	                .isReplaceable(mc.world, new BlockPos(vec3.xCoord, vec3.yCoord, vec3.zCoord)))
 	        .collect(Collectors.toList());
 
 	    if (possibilities.isEmpty()) {
@@ -738,7 +738,7 @@ public class PlayerUtil implements Accessor {
         float bestSpeed = 1;
         int bestSlot = -1;
 
-        final IBlockState blockState = mc.theWorld.getBlockState(blockPos);
+        final IBlockState blockState = mc.world.getBlockState(blockPos);
 
         for (int i = 0; i < 9; i++) {
             final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
@@ -829,7 +829,7 @@ public class PlayerUtil implements Accessor {
 	
     public boolean overVoid(double posX, double posY, double posZ) {
         for (int i = (int) posY; i > -1; i--) {
-            if (!(mc.theWorld.getBlockState(new BlockPos(posX, i, posZ)).getBlock() instanceof BlockAir)) {
+            if (!(mc.world.getBlockState(new BlockPos(posX, i, posZ)).getBlock() instanceof BlockAir)) {
                 return false;
             }
         }

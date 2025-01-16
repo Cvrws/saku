@@ -1,4 +1,4 @@
-package cc.unknown.font;
+package cc.unknown.util.render.font.api;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +9,7 @@ public enum Weight {
     NONE(0, ""),
     LIGHT(1, "Light"),
     BLACK(2, "Black"),
-    EXTRABOLD(3, "ExtraBold"),
-    BOLD(4, "Bold");
+    BOLD(3, "Bold");
 
     final private int num;
     final private String aliases;

@@ -64,7 +64,7 @@ public final class AltGenerator extends Module {
     }
 
     private void connectToServer(String address, int port) {
-        mc.theWorld = null;
+        mc.world = null;
         mc.displayGuiScreen(new GuiConnecting(new SakuMenu(), mc, new ServerData("FurryServer", address, false)));
     }
 

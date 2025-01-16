@@ -207,7 +207,7 @@ public class LegitScaffold extends Module {
 	
 
 	private Block getBlock(final double x, final double y, final double z) {
-        return mc.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();
+        return mc.world.getBlockState(new BlockPos(x, y, z)).getBlock();
     }
 
 	private Block blockRelativeToPlayer(final double offsetX, final double offsetY, final double offsetZ) {

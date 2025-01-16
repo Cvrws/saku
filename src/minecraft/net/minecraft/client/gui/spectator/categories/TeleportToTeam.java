@@ -28,7 +28,7 @@ public class TeleportToTeam implements ISpectatorMenuView, ISpectatorMenuObject 
     public TeleportToTeam() {
         final Minecraft minecraft = Minecraft.getInstance();
 
-        for (final ScorePlayerTeam scoreplayerteam : minecraft.theWorld.getScoreboard().getTeams()) {
+        for (final ScorePlayerTeam scoreplayerteam : minecraft.world.getScoreboard().getTeams()) {
             this.field_178672_a.add(new TeleportToTeam.TeamSelectionObject(scoreplayerteam));
         }
     }

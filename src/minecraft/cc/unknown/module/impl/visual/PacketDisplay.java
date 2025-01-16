@@ -9,12 +9,12 @@ import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketSendEvent;
 import cc.unknown.event.impl.other.WorldChangeEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 

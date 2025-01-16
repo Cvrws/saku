@@ -97,7 +97,7 @@ public final class Criticals extends Module {
                 break;
                 
             case "Legit":
-        		if(mc.theWorld.getBlockState(new BlockPos(mc.player.posX, mc.player.posY + 1, mc.player.posZ)).getBlock().isCollidable()) {
+        		if(mc.world.getBlockState(new BlockPos(mc.player.posX, mc.player.posY + 1, mc.player.posZ)).getBlock().isCollidable()) {
         			if(mc.player.onGround && mc.player.jumpMovementFactor == 0.125)
         				mc.player.jump();
         		}
@@ -146,6 +146,6 @@ public final class Criticals extends Module {
     };
 
     private boolean isTargetNearby(double dist) {
-        return mc.theWorld.playerEntities.stream().filter(target -> target != mc.player).anyMatch(target -> new Vec3(target).distanceTo(mc.player) < dist);
+        return mc.world.playerEntities.stream().filter(target -> target != mc.player).anyMatch(target -> new Vec3(target).distanceTo(mc.player) < dist);
     }
 }

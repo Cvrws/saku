@@ -35,7 +35,7 @@ public final class STap extends Module {
 
     @EventLink
     public final Listener<MoveInputEvent> onMovementInput = event -> {
-        EntityLivingBase target = TargetUtil.getTarget(10);
+        EntityLivingBase target = (EntityLivingBase) TargetUtil.getTarget(10);
         double range = this.range.getValue().doubleValue();
 
         if (mc.player == null) return;

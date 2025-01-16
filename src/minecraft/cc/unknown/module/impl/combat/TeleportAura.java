@@ -174,7 +174,7 @@ public class TeleportAura extends Module {
 	}
 
 	private boolean canPassThrow(BlockPos pos) {
-		Block block = mc.theWorld
+		Block block = mc.world
 				.getBlockState(new net.minecraft.util.BlockPos(pos.getX(), pos.getY(), pos.getZ())).getBlock();
 		return block.getMaterial() == Material.air || block.getMaterial() == Material.plants
 				|| block.getMaterial() == Material.vine || block == Blocks.ladder || block == Blocks.water
@@ -232,7 +232,7 @@ public class TeleportAura extends Module {
 	private List<EntityLivingBase> getTargets() {
 		List<EntityLivingBase> targets = new ArrayList<>();
 
-		for (Object o : mc.theWorld.getLoadedEntityList()) {
+		for (Object o : mc.world.getLoadedEntityList()) {
 			if (o instanceof EntityLivingBase) {
 				EntityLivingBase entity = (EntityLivingBase) o;
 				if (validEntity(entity)) {
@@ -338,27 +338,27 @@ public class TeleportAura extends Module {
 	    }
 
 	    private static boolean isBlockSolid(BlockPos block) {
-	        return mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()).isSolidFullCube() ||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockSlab) ||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockStairs)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockCactus)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockChest)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockEnderChest)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockSkull)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockPane)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockFence)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockWall)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockGlass)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockPistonBase)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockPistonExtension)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockPistonMoving)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockStainedGlass)||
-	        		(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockTrapDoor);
+	        return mc.world.getBlock(block.getX(), block.getY(), block.getZ()).isSolidFullCube() ||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockSlab) ||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockStairs)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockCactus)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockChest)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockEnderChest)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockSkull)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockPane)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockFence)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockWall)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockGlass)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockPistonBase)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockPistonExtension)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockPistonMoving)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockStainedGlass)||
+	        		(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockTrapDoor);
 	    }
 
 	    private static boolean isSafeToWalkOn(BlockPos block) {
-	        return !(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockFence) && 
-	        		!(mc.theWorld.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockWall);
+	        return !(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockFence) && 
+	        		!(mc.world.getBlock(block.getX(), block.getY(), block.getZ()) instanceof BlockWall);
 	    }
 
 	    public Hub isHubExisting(Vec3 loc) {

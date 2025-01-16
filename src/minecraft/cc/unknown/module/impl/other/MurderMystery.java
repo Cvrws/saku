@@ -40,7 +40,7 @@ public final class MurderMystery extends Module {
 		if (!isInGame())
 			return;
 
-		for (EntityPlayer player : mc.theWorld.playerEntities) {
+		for (EntityPlayer player : mc.world.playerEntities) {
 			if (player.getHeldItem() == null || detectives.contains(player) || player == mc.player) continue;
 			String itemName = player.getHeldItem().getDisplayName();
 
@@ -59,7 +59,7 @@ public final class MurderMystery extends Module {
 
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		for (Entity entity : mc.theWorld.loadedEntityList) {
+		for (Entity entity : mc.world.loadedEntityList) {
 			if (entity == mc.player) continue;
 
 			if (entity instanceof EntityItem && ((EntityItem) entity).getEntityItem().getItem() == Items.gold_ingot && drawGold.getValue()) {

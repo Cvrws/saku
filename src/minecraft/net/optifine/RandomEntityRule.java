@@ -307,7 +307,7 @@ public class RandomEntityRule {
             }
 
             if (this.moonPhases != null) {
-                final World world = Config.getMinecraft().theWorld;
+                final World world = Config.getMinecraft().world;
 
                 if (world != null) {
                     final int j1 = world.getMoonPhase();
@@ -319,7 +319,7 @@ public class RandomEntityRule {
             }
 
             if (this.dayTimes != null) {
-                final World world1 = Config.getMinecraft().theWorld;
+                final World world1 = Config.getMinecraft().world;
 
                 if (world1 != null) {
                     final int k1 = (int) world1.getWorldInfo().getWorldTime();
@@ -331,7 +331,7 @@ public class RandomEntityRule {
             }
 
             if (this.weatherList != null) {
-                final World world2 = Config.getMinecraft().theWorld;
+                final World world2 = Config.getMinecraft().world;
 
                 if (world2 != null) {
                     final Weather weather = Weather.getWeather(world2, 0.0F);

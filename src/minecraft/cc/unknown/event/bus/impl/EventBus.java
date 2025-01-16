@@ -105,7 +105,7 @@ public final class EventBus<Event> implements Bus<Event>, Accessor {
     @Override
     public void handle(final Event event) {
         try {
-            if ((mc.theWorld == null || mc.getNetHandler() == null || (!mc.getNetHandler().doneLoadingTerrain && !(event instanceof PacketReceiveEvent))) && !(event instanceof ServerKickEvent || event instanceof GameEvent || event instanceof WorldChangeEvent || event instanceof ServerJoinEvent)) {
+            if ((mc.world == null || mc.getNetHandler() == null || (!mc.getNetHandler().doneLoadingTerrain && !(event instanceof PacketReceiveEvent))) && !(event instanceof ServerKickEvent || event instanceof GameEvent || event instanceof WorldChangeEvent || event instanceof ServerJoinEvent)) {
                 return;
             }
 

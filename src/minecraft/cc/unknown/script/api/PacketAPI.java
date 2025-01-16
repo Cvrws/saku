@@ -43,12 +43,12 @@ public class PacketAPI extends API {
     }
 
     public void sendUseEntity(final int entityID, final String action) {
-        PacketUtil.send(new C02PacketUseEntity(Minecraft.getInstance().theWorld.getEntityByID(entityID),
+        PacketUtil.send(new C02PacketUseEntity(Minecraft.getInstance().world.getEntityByID(entityID),
                 C02PacketUseEntity.Action.valueOf(action)));
     }
 
     public void sendUseEntity(final int entityID, ScriptVector3d vector) {
-        PacketUtil.send(new C02PacketUseEntity(Minecraft.getInstance().theWorld.getEntityByID(entityID),
+        PacketUtil.send(new C02PacketUseEntity(Minecraft.getInstance().world.getEntityByID(entityID),
                 new Vec3(vector.getX(), vector.getY(), vector.getZ())));
     }
 
@@ -96,7 +96,7 @@ public class PacketAPI extends API {
     }
 
     public void sendEntityAction(int entityID, String action) {
-        PacketUtil.send(new C0BPacketEntityAction(Minecraft.getInstance().theWorld.getEntityByID(entityID),
+        PacketUtil.send(new C0BPacketEntityAction(Minecraft.getInstance().world.getEntityByID(entityID),
                 C0BPacketEntityAction.Action.valueOf(action)));
     }
 

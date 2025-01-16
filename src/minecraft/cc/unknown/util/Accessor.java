@@ -22,7 +22,7 @@ public interface Accessor {
     }
     
     default boolean isInGame() {
-        return mc != null || mc.player != null || mc.theWorld != null;
+        return mc != null || mc.player != null || mc.world != null;
     }
     
     default RiceGui getClickGUI() {

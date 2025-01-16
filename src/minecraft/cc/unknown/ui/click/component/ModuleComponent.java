@@ -3,8 +3,6 @@ package cc.unknown.ui.click.component;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.module.Module;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.click.screen.Colors;
@@ -14,6 +12,8 @@ import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.render.animation.Easing;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.render.gui.GUIUtil;
 import cc.unknown.util.structure.geometry.Vector2d;
 import cc.unknown.util.structure.geometry.Vector2f;

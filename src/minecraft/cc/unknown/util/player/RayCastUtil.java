@@ -68,7 +68,7 @@ public final class RayCastUtil implements Accessor {
         final float partialTicks = mc.timer.renderPartialTicks;
         MovingObjectPosition objectMouseOver;
 
-        if (entity != null && mc.theWorld != null) {
+        if (entity != null && mc.world != null) {
             objectMouseOver = entity.rayTraceCustom(range, rotation.x, rotation.y);
             double d1 = range;
             final Vec3 vec3 = entity.getPositionEyes(partialTicks);
@@ -82,7 +82,7 @@ public final class RayCastUtil implements Accessor {
             Entity pointedEntity = null;
             Vec3 vec33 = null;
             final float f = 1.0F;
-            final List<Entity> list = mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * range, vec31.yCoord * range, vec31.zCoord * range).expand(f, f, f), Predicates.and(EntitySelectors.NOT_SPECTATING, Entity::canBeCollidedWith));
+            final List<Entity> list = mc.world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * range, vec31.yCoord * range, vec31.zCoord * range).expand(f, f, f), Predicates.and(EntitySelectors.NOT_SPECTATING, Entity::canBeCollidedWith));
             double d2 = d1;
 
             for (final Entity entity1 : list) {

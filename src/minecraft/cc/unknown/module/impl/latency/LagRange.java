@@ -131,7 +131,7 @@ public class LagRange extends Module {
 
     private boolean shouldStart() {
         if (System.currentTimeMillis() - lastLagTime < delay.getValue().longValue()) return false;
-        EntityPlayer target = mc.theWorld.playerEntities.stream().filter(p -> p != mc.player).filter(p -> checkTeams.getValue() || PlayerUtil.isTeam(p)).filter(p -> !FriendUtil.isFriend(p)).map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p))).min(Comparator.comparing(Doble::getSecond)).map(Doble::getFirst).orElse(null);
+        EntityPlayer target = mc.world.playerEntities.stream().filter(p -> p != mc.player).filter(p -> checkTeams.getValue() || PlayerUtil.isTeam(p)).filter(p -> !FriendUtil.isFriend(p)).map(p -> new Doble<>(p, mc.player.getDistanceSqToEntity(p))).min(Comparator.comparing(Doble::getSecond)).map(Doble::getFirst).orElse(null);
         if (target == null) return false;
         double distance = new Vec3(target).distanceTo(mc.player);
         return distance >= 3.0 && distance <= range.getValue().doubleValue();
@@ -197,7 +197,7 @@ public class LagRange extends Module {
            Vec3 vec32 = vec3.addVector(vec31.xCoord * range, vec31.yCoord * range, vec31.zCoord * range);
            Entity pointedEntity = null;
            float f = 1.0F;
-           List<?> list = mc.theWorld.getEntitiesInAABBexcluding(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec31.xCoord * range, vec31.yCoord * range, vec31.zCoord * range).expand((double)f, (double)f, (double)f), Predicates.and(EntitySelectors.NOT_SPECTATING, Entity::canBeCollidedWith));
+           List<?> list = mc.world.getEntitiesInAABBexcluding(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec31.xCoord * range, vec31.yCoord * range, vec31.zCoord * range).expand((double)f, (double)f, (double)f), Predicates.and(EntitySelectors.NOT_SPECTATING, Entity::canBeCollidedWith));
            double d2 = range;
            Iterator var12 = list.iterator();
 

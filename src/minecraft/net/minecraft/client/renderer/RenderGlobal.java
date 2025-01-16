@@ -1509,7 +1509,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
 
     public void renderSky(final float partialTicks, final int pass) {
         if (Reflector.ForgeWorldProvider_getSkyRenderer.exists()) {
-            final WorldProvider worldprovider = this.mc.theWorld.provider;
+            final WorldProvider worldprovider = this.mc.world.provider;
             final Object object = Reflector.call(worldprovider, Reflector.ForgeWorldProvider_getSkyRenderer);
 
             if (object != null) {
@@ -1518,9 +1518,9 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             }
         }
 
-        if (this.mc.theWorld.provider.getDimensionId() == 1) {
+        if (this.mc.world.provider.getDimensionId() == 1) {
             this.renderSkyEnd();
-        } else if (this.mc.theWorld.provider.isSurfaceWorld()) {
+        } else if (this.mc.world.provider.isSurfaceWorld()) {
             GlStateManager.disableTexture2D();
             final boolean flag = Config.isShaders();
 
@@ -1529,7 +1529,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             }
 
             Vec3 vec3 = this.theWorld.getSkyColor(this.mc.getRenderViewEntity(), partialTicks);
-            vec3 = CustomColors.getSkyColor(vec3, this.mc.theWorld, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
+            vec3 = CustomColors.getSkyColor(vec3, this.mc.world, this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY + 1.0D, this.mc.getRenderViewEntity().posZ);
 
             if (flag) {
                 Shaders.setSkyColor(vec3);
@@ -1806,7 +1806,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
     public void renderClouds(final float partialTicks, final int pass) {
         if (!Config.isCloudsOff()) {
             if (Reflector.ForgeWorldProvider_getCloudRenderer.exists()) {
-                final WorldProvider worldprovider = this.mc.theWorld.provider;
+                final WorldProvider worldprovider = this.mc.world.provider;
                 final Object object = Reflector.call(worldprovider, Reflector.ForgeWorldProvider_getCloudRenderer);
 
                 if (object != null) {
@@ -1815,7 +1815,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 }
             }
 
-            if (this.mc.theWorld.provider.isSurfaceWorld()) {
+            if (this.mc.world.provider.isSurfaceWorld()) {
                 if (Config.isShaders()) {
                     Shaders.beginClouds();
                 }

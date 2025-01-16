@@ -10,5 +10,5 @@ import net.minecraft.entity.EntityLivingBase;
 @Setter
 @RequiredArgsConstructor
 public class PostRenderLivingEntityEvent extends CancellableEvent {
-    private final EntityLivingBase entity;
+    private final EntityLivingBase target;
 }

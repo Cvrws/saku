@@ -1,8 +1,8 @@
 package cc.unknown.ui.click.component;
 
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.ui.click.screen.Colors;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.render.gui.GUIUtil;
 import cc.unknown.util.structure.geometry.Vector2d;
 import cc.unknown.value.Mode;

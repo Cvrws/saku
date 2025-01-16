@@ -28,7 +28,7 @@ public class BlockWeb extends Block {
      * Called When an Entity Collided with the Block
      */
     public void onEntityCollidedWithBlock(final World worldIn, final BlockPos pos, final IBlockState state, final Entity entityIn) {
-        if (Accessor.mc.player != null && Accessor.mc.theWorld != null && entityIn == Accessor.mc.player) {
+        if (Accessor.mc.player != null && Accessor.mc.world != null && entityIn == Accessor.mc.player) {
             BlockWebEvent event = new BlockWebEvent(pos, state);
             Sakura.instance.getEventBus().handle(event);
 

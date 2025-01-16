@@ -2,8 +2,6 @@ package cc.unknown.ui.click.screen.api;
 
 import static cc.unknown.ui.click.screen.ConfigScreen.PADDING;
 
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.ui.click.screen.Colors;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.StopWatch;
@@ -12,6 +10,8 @@ import cc.unknown.util.render.animation.Animation;
 import cc.unknown.util.render.animation.Easing;
 import cc.unknown.util.render.drag.Mouse;
 import cc.unknown.util.render.font.Font;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.render.gui.GUIUtil;
 import cc.unknown.util.structure.geometry.Vector2f;
 import lombok.Getter;
@@ -54,8 +54,7 @@ public class Element implements Accessor {
 
         RenderUtil.roundedRectangle(this.position.x, this.position.y, scale.x, scale.y, 8, Colors.OVERLAY.get());
 
-        RenderUtil.roundedRectangle(position.x, position.y, scale.x, scale.y,
-                8, Colors.OVERLAY.getWithAlpha((int) alpha.getValue()));
+        RenderUtil.roundedRectangle(position.x, position.y, scale.x, scale.y, 8, Colors.OVERLAY.getWithAlpha((int) alpha.getValue()));
 
         this.position.y += scale.y / 2 - titleFont.height() / 2f + 1 - PADDING / 4f;
         titleFont.drawCentered(title, this.position.x + this.scale.x / 2f, this.position.y, Colors.SECONDARY_TEXT.getRGB());

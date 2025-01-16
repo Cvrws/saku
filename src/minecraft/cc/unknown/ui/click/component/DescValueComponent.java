@@ -2,10 +2,10 @@ package cc.unknown.ui.click.component;
 
 import java.awt.Color;
 
-import cc.unknown.font.Fonts;
-import cc.unknown.font.Weight;
 import cc.unknown.ui.click.screen.Colors;
 import cc.unknown.util.render.ColorUtil;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.util.render.gui.box.TextAlign;
 import cc.unknown.util.render.gui.box.TextBox;
 import cc.unknown.util.structure.geometry.Vector2d;

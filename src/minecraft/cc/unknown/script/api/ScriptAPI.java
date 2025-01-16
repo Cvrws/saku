@@ -90,7 +90,7 @@ public class ScriptAPI {
     }
 
     public float[] getRotations(int entity) {
-        Vector2f rotations = RotationUtil.calculate(Minecraft.getInstance().theWorld.getEntityByID(entity));
+        Vector2f rotations = RotationUtil.calculate(Minecraft.getInstance().world.getEntityByID(entity));
 
         return new float[]{rotations.x, rotations.y};
     }

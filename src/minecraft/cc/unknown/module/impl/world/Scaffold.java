@@ -48,6 +48,7 @@ import cc.unknown.value.impl.StringValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.block.BlockAir;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -87,7 +88,7 @@ public class Scaffold extends Module {
 			.setDefault("Disabled");
 
 	public final ModeValue tower = new ModeValue("Tower", this)
-			.add(new SubMode("Polar"))
+			.add(new SubMode("Universocraft"))
 			.add(new SubMode("Off"))
 			.add(new VanillaTower("Vanilla", this))
 			.setDefault("Off");
@@ -120,7 +121,7 @@ public class Scaffold extends Module {
 	private final NumberValue range = new NumberValue("Block Range", this, 5, 4, 20, 1);
     private final BooleanValue randomiseRotationSpeed = new BooleanValue("Randomise Rotation Speed", this, false);
     private final BooleanValue legitStrafe = new BooleanValue("Legit Strafe", this, false);
-    private final BooleanValue movementCorrection = new BooleanValue("Movement Correction", this, false);
+    private final BooleanValue movementCorrection = new BooleanValue("Move Fix", this, false);
 	private final BooleanValue useBiggestStack = new BooleanValue("Use Biggest Stack", this, true);
 	private final BooleanValue ignoreSpeed = new BooleanValue("Ignore Speed Effect", this, false);
 	private final BooleanValue disableWithTeleport = new BooleanValue("Disabled on LagBack", this, true);
@@ -414,7 +415,7 @@ public class Scaffold extends Module {
                         && rayCast.getValue().getName().equals("Strict")
                         && !(PlayerUtil.blockRelativeToPlayer(0, -1, 0) instanceof BlockAir)) {
 
-                    mc.rightClickMouse();
+                	//isSilent(silentSwing.getValue());
                 }
             }
 
@@ -525,8 +526,10 @@ public class Scaffold extends Module {
 		    break;
 
 		case "Legit":
-            if (PlayerUtil.getItem() instanceof ItemBlock && canPlace) {
-                mc.rightClickMouse();
+            if ((PlayerUtil.blockRelativeToPlayer(0, -1, 0) instanceof BlockAir)) {
+            	KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
+            } else {
+            	mc.gameSettings.keyBindSneak.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindSneak);
             }
             
             float yaw = (mc.player.rotationYaw + 10000000) % 360;
@@ -559,8 +562,7 @@ public class Scaffold extends Module {
 					mc.rightClickMouse();
 
 				if (time >= 3 && mc.player.offGroundTicks <= (sameYValue.is("Off") ? 7 : 10)) {
-					if (!RayCastUtil.overBlock(RotationHandler.rotations, enumFacing.getEnumFacing(), blockFace,
-							rayCast.is("Strict"))) {
+					if (!RayCastUtil.overBlock(RotationHandler.rotations, enumFacing.getEnumFacing(), blockFace, rayCast.is("Strict"))) {
 						getRotations(0);
 					}
 				} else {
@@ -614,11 +616,10 @@ public class Scaffold extends Module {
 
 	public boolean doesNotContainBlock(int down) {
 		return PlayerUtil.blockRelativeToPlayer(offset.getX(), -down + offset.getY(), offset.getZ())
-				.isReplaceable(mc.theWorld, new BlockPos(mc.player).down(down));
+				.isReplaceable(mc.world, new BlockPos(mc.player).down(down));
 	}
 
 	public Vec3 getHitVec() {
-        /* Correct HitVec */
         Vec3 hitVec = new Vec3(blockFace.getX(), blockFace.getY(), blockFace.getZ());
 
         final MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationHandler.rotations, mc.playerController.getBlockReachDistance());
@@ -657,25 +658,20 @@ public class Scaffold extends Module {
     }
 
 	private void place() {
-		if (pause > 3)
-			return;
-
 		Vec3 hitVec = this.getHitVec();
 
-		if (mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
-			if (silentSwing.getValue()) {
-				PacketUtil.send(new C0APacketAnimation());
-			} else {
-				mc.player.swingItem();
-				mc.getItemRenderer().resetEquippedProgress();
-			}
+		if (mc.playerController.onPlayerRightClick(mc.player, mc.world, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {			
+			isSilent(silentSwing.getValue());
 		}
-		
-		/*if (rayCast.is("Strict")) {
-			mc.rightClickMouse();
-		} else if (mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, mc.player.getHeldItem(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
+	}
+	
+	private void isSilent(boolean silent) {
+		if (silent) {
 			PacketUtil.send(new C0APacketAnimation());
-		}*/
+		} else {
+			mc.player.swingItem();
+			mc.getItemRenderer().resetEquippedProgress();
+		}
 	}
 	
 	public void getRotations(final int yawOffset) {
@@ -700,7 +696,6 @@ public class Scaffold extends Module {
             }
         }
 
-        // Backup Rotations
         final Vector2f rotations = RotationUtil.calculate(new Vector3d(blockFace.getX(), blockFace.getY(), blockFace.getZ()), enumFacing.getEnumFacing());
 
         if (!RayCastUtil.overBlock(new Vector2f(targetYaw, targetPitch), blockFace, enumFacing.getEnumFacing())) {
@@ -718,7 +713,7 @@ public class Scaffold extends Module {
 			if (condition)
 				action.run();
 		};
-
+		
 		setKeyBind.accept(sneak, () -> mc.gameSettings.keyBindSneak.setPressed(Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())));
 		setKeyBind.accept(jump, () -> mc.gameSettings.keyBindJump.setPressed(Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())));
 		setKeyBind.accept(right, () -> mc.gameSettings.keyBindRight.setPressed(Keyboard.isKeyDown(mc.gameSettings.keyBindRight.getKeyCode())));

@@ -91,7 +91,7 @@ public class Clutch extends Module {
 		final Vec3i offset = new Vec3i(0, 0, 0);
 
 		if (PlayerUtil.blockRelativeToPlayer(offset.getX(), -1 + offset.getY(), offset.getZ())
-				.isReplaceable(mc.theWorld, new BlockPos(mc.player).down())) {
+				.isReplaceable(mc.world, new BlockPos(mc.player).down())) {
 			ticksOnAir++;
 		} else {
 			ticksOnAir = 0;
@@ -130,7 +130,7 @@ public class Clutch extends Module {
 			Vec3 hitVec = RayCastUtil.rayCast(RotationHandler.rotations,
 					mc.playerController.getBlockReachDistance()).hitVec;
 
-			if (mc.playerController.onPlayerRightClick(mc.player, mc.theWorld, PlayerUtil.getItemStack(), blockFace,
+			if (mc.playerController.onPlayerRightClick(mc.player, mc.world, PlayerUtil.getItemStack(), blockFace,
 					enumFacing.getEnumFacing(), hitVec)) {
 				PacketUtil.send(new C0APacketAnimation());
 			}
