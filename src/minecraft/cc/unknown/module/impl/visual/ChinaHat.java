@@ -23,8 +23,8 @@ public final class ChinaHat extends Module {
 	private final ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Normal"))
 			.add(new SubMode("Umbrella"))
-			.add(new SubMode("53XO"))
-			.setDefault("53XO");
+			.add(new SubMode("Hex"))
+			.setDefault("Hex");
 	
     private final BooleanValue showInFirstPerson = new BooleanValue("Show in First Person", this, true);
     
@@ -47,9 +47,9 @@ public final class ChinaHat extends Module {
         GlStateManager.disableCull();
         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 
-        final double x = mc.player.lastTickPosX + (mc.player.posX - mc.player.lastTickPosX) * mc.timer.renderPartialTicks - mc.getRenderManager().viewerPosX;
-        final double y = (mc.player.lastTickPosY + (mc.player.posY - mc.player.lastTickPosY) * mc.timer.renderPartialTicks - mc.getRenderManager().viewerPosY) + mc.player.getEyeHeight() + 0.5 + (mc.player.isSneaking() ? -0.2 : 0);
-        final double z = mc.player.lastTickPosZ + (mc.player.posZ - mc.player.lastTickPosZ) * mc.timer.renderPartialTicks - mc.getRenderManager().viewerPosZ;
+        final double x = mc.player.lastTickPosX + (mc.player.posX - mc.player.lastTickPosX) * event.getPartialTicks() - mc.getRenderManager().viewerPosX;
+        final double y = (mc.player.lastTickPosY + (mc.player.posY - mc.player.lastTickPosY) * event.getPartialTicks() - mc.getRenderManager().viewerPosY) + mc.player.getEyeHeight() + 0.5 + (mc.player.isSneaking() ? -0.2 : 0);
+        final double z = mc.player.lastTickPosZ + (mc.player.posZ - mc.player.lastTickPosZ) * event.getPartialTicks() - mc.getRenderManager().viewerPosZ;
 
         Color c;
 
@@ -60,7 +60,7 @@ public final class ChinaHat extends Module {
         boolean increaseCount = false;
 
         switch (mode.getValue().getName()) {
-            case "53XO":
+            case "Hex":
                 q = 8;
                 increaseCount = true;
                 break;

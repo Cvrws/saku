@@ -27,8 +27,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
-@ModuleInfo(aliases = "Blue Archive", description = "blue archive fan made", category = Category.VISUALS)
-public final class BlueArchive extends Module {
+@ModuleInfo(aliases = "Stickers", description = "Stickers/Pegatinas", category = Category.VISUALS)
+public final class Stickers extends Module {
 	
 	private final ModeValue haloType = new ModeValue("Halo Type", this)
 			.add(new SubMode("Shiroko"))
@@ -42,13 +42,11 @@ public final class BlueArchive extends Module {
 	private final BooleanValue showInFirstPerson = new BooleanValue("First Person", this, true, () -> haloType.is("None"));
 
 	private final ModeValue stickerType = new ModeValue("Sticker Type", this)
-			.add(new SubMode("Aris"))
 			.add(new SubMode("Shiroko"))
-			.add(new SubMode("Azusa"))
+			.add(new SubMode("53XO"))
 			.add(new SubMode("Mika"))
-			.add(new SubMode("Ibuki"))
 			.add(new SubMode("None"))
-			.setDefault("Aris");
+			.setDefault("53XO");
 	
 	private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));
 	private final Vector2f scale = new Vector2f(RenderUtil.GENERIC_SCALE, RenderUtil.GENERIC_SCALE);
@@ -62,20 +60,14 @@ public final class BlueArchive extends Module {
         StickerData sticker = null;
         
         switch (stickerType.getValue().getName()) {
-            case "Aris":
-                sticker = new StickerData("sakura/images/aris.png", 150, 160);
-                break;
             case "Shiroko":
                 sticker = new StickerData("sakura/images/shiroko.png", 85, 160);
                 break;
-            case "Azusa":
-                sticker = new StickerData("sakura/images/azusa.png", 120, 160);
+            case "53XO":
+                sticker = new StickerData("sakura/images/jupo.png", 85, 130);
                 break;
             case "Mika":
                 sticker = new StickerData("sakura/images/mika.png", 95, 160);
-                break;
-            case "Ibuki":
-                sticker = new StickerData("sakura/images/ibuki.png", 100, 170);
                 break;
         }
 

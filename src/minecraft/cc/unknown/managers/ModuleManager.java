@@ -139,7 +139,7 @@ public final class ModuleManager {
         this.put(Chams.class, new Chams());
         this.put(NameTags.class, new NameTags());
         this.put(NoCameraClip.class, new NoCameraClip());
-        this.put(BlueArchive.class, new BlueArchive());
+        this.put(Stickers.class, new Stickers());
         this.put(ExtraSensoryPerception.class, new ExtraSensoryPerception());
         this.put(Streamer.class, new Streamer());
         this.put(MusicPlayer.class, new MusicPlayer());

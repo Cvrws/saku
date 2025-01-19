@@ -79,7 +79,7 @@ public class Sakura {
         
     	mc.displayGuiScreen(new SakuMenu());
     	
-        this.firstStart = false;
+        this.firstStart = true;
     	
     	LOGGER.info("Initialized successfully.");
     }

@@ -30,8 +30,8 @@ public final class PointerESP extends Module {
 
         for (Entity entity : mc.world.loadedEntityList) {
             if(entity instanceof EntityPlayer && entity != mc.player) {
-                double pos1 = (((entity.posX + (entity.posX - entity.lastTickPosX) * mc.timer.renderPartialTicks) - playerOffsetX) * 0.2);
-                double pos2 = (((entity.posZ + (entity.posZ - entity.lastTickPosZ) * mc.timer.renderPartialTicks) - playerOffSetZ) * 0.2);
+                double pos1 = (((entity.posX + (entity.posX - entity.lastTickPosX) * event.getPartialTicks()) - playerOffsetX) * 0.2);
+                double pos2 = (((entity.posZ + (entity.posZ - entity.lastTickPosZ) * event.getPartialTicks()) - playerOffSetZ) * 0.2);
                 double cos = Math.cos(mc.player.rotationYaw * (Math.PI * 2 / 360));
                 double sin = Math.sin(mc.player.rotationYaw * (Math.PI * 2 / 360));
                 double rotY = -(pos2 * cos - pos1 * sin);
