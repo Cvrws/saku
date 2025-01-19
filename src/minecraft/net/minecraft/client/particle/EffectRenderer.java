@@ -1,13 +1,15 @@
 package net.minecraft.client.particle;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Callable;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -154,24 +156,20 @@ public class EffectRenderer
 
     public void updateEffects()
     {
-        for (int i = 0; i < 4; ++i)
-        {
-            this.updateEffectLayer(i);
-        }
+        try {
+            for(int i = 0; i < 4; ++i)
+                this.updateEffectLayer(i);
 
-        List<EntityParticleEmitter> list = Lists.<EntityParticleEmitter>newArrayList();
+            for(final Iterator<EntityParticleEmitter> it = this.particleEmitters.iterator(); it.hasNext(); ) {
+                final EntityParticleEmitter entityParticleEmitter = it.next();
 
-        for (EntityParticleEmitter entityparticleemitter : this.particleEmitters)
-        {
-            entityparticleemitter.onUpdate();
+                entityParticleEmitter.onUpdate();
 
-            if (entityparticleemitter.isDead)
-            {
-                list.add(entityparticleemitter);
+                if(entityParticleEmitter.isDead)
+                    it.remove();
             }
+        }catch(final ConcurrentModificationException ignored) {
         }
-
-        this.particleEmitters.removeAll(list);
     }
 
     private void updateEffectLayer(int layer)

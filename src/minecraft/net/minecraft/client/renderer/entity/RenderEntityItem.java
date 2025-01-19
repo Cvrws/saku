@@ -1,7 +1,14 @@
 package net.minecraft.client.renderer.entity;
 
 import java.util.Random;
+
+import org.lwjgl.opengl.GL11;
+
+import cc.unknown.Sakura;
+import cc.unknown.module.impl.visual.ItemPhysics;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.model.IBakedModel;
@@ -13,6 +20,9 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderEntityItem extends Render<EntityItem>
 {
+    private static final Random RANDOM = new Random();
+    public static long tick;
+    private static double rotation = 0.0D;
     private final RenderItem itemRenderer;
     private Random field_177079_e = new Random();
 
@@ -84,70 +94,149 @@ public class RenderEntityItem extends Render<EntityItem>
 
         return i;
     }
-
+    
     public void doRender(EntityItem entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
-        ItemStack itemstack = entity.getEntityItem();
-        this.field_177079_e.setSeed(187L);
-        boolean flag = false;
+        ItemPhysics itemPhysics = Sakura.instance.getModuleManager().get(ItemPhysics.class);
+        if (itemPhysics != null && itemPhysics.isEnabled()) {
+            if (!entity.onGround) {
+                rotation *= 1.005f;
+                entity.rotationPitch += rotation;
+            }
 
-        if (this.bindEntityTexture(entity))
-        {
-            this.renderManager.renderEngine.getTexture(this.getEntityTexture(entity)).setBlurMipmap(false, false);
-            flag = true;
-        }
+            final Minecraft mc = Minecraft.getInstance();
 
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.alphaFunc(516, 0.1F);
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.pushMatrix();
-        IBakedModel ibakedmodel = this.itemRenderer.getItemModelMesher().getItemModel(itemstack);
-        int i = this.func_177077_a(entity, x, y, z, partialTicks, ibakedmodel);
+            //ItemPhysics pro rendering
+            rotation = 2;
+            if (!mc.inGameHasFocus) rotation = 0;
 
-        for (int j = 0; j < i; ++j)
-        {
-            if (ibakedmodel.isGui3d())
-            {
-                GlStateManager.pushMatrix();
+            final ItemStack itemstack = entity.getEntityItem();
+            final int i = itemstack != null && itemstack.getItem() != null ? Item.getIdFromItem(itemstack.getItem()) + itemstack.getMetadata() : 187;
+            RANDOM.setSeed(i);
 
-                if (j > 0)
-                {
-                    float f = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-                    float f1 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-                    float f2 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-                    GlStateManager.translate(f, f1, f2);
+            mc.getTextureManager().bindTexture(getEntityTexture(entity));
+            mc.getTextureManager().getTexture(getEntityTexture(entity)).setBlurMipmap(false, false);
+
+            GlStateManager.enableRescaleNormal();
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+            GlStateManager.enableBlend();
+            RenderHelper.enableStandardItemLighting();
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            GlStateManager.pushMatrix();
+            final IBakedModel ibakedmodel = mc.getRenderItem().getItemModelMesher().getItemModel(itemstack);
+            final boolean flag1 = ibakedmodel.isGui3d();
+            final boolean is3D = ibakedmodel.isGui3d();
+            final int j = func_177078_a(itemstack);
+
+            GlStateManager.translate((float) x, (float) y, (float) z);
+
+            if (ibakedmodel.isGui3d()) GlStateManager.scale(0.5F, 0.5F, 0.5F);
+
+            GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
+            GL11.glRotatef(entity.rotationYaw, 0.0F, 0.0F, 1.0F);
+
+            GlStateManager.translate(0, 0, is3D ? -0.08 : -0.04);
+
+            //Handle Rotations
+            if (is3D || mc.getRenderManager().options != null) {
+                if (is3D) {
+                    if (!entity.onGround) {
+                        entity.rotationPitch += rotation;
+                    }
+                } else {
+                    if (!Double.isNaN(entity.posX) && !Double.isNaN(entity.posY) && !Double.isNaN(entity.posZ) && entity.worldObj != null) {
+                        if (entity.onGround) {
+                            entity.rotationPitch = 0;
+                        } else {
+                            entity.rotationPitch += rotation;
+                        }
+                    }
                 }
 
-                GlStateManager.scale(0.5F, 0.5F, 0.5F);
-                ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
-                this.itemRenderer.renderItem(itemstack, ibakedmodel);
-                GlStateManager.popMatrix();
+                GlStateManager.rotate(entity.rotationPitch, 1, 0, 0.0F);
             }
-            else
-            {
+
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            for (int k = 0; k < j; k++) {
                 GlStateManager.pushMatrix();
-                ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
-                this.itemRenderer.renderItem(itemstack, ibakedmodel);
-                GlStateManager.popMatrix();
-                float f3 = ibakedmodel.getItemCameraTransforms().ground.scale.x;
-                float f4 = ibakedmodel.getItemCameraTransforms().ground.scale.y;
-                float f5 = ibakedmodel.getItemCameraTransforms().ground.scale.z;
-                GlStateManager.translate(0.0F * f3, 0.0F * f4, 0.046875F * f5);
+                if (flag1) {
+                    if (k > 0) {
+                        final float f7 = (RANDOM.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                        final float f9 = (RANDOM.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                        final float f6 = (RANDOM.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                        GlStateManager.translate(f7, f9, f6);
+                    }
+
+                    mc.getRenderItem().renderItem(itemstack, ibakedmodel);
+                    GlStateManager.popMatrix();
+                } else {
+                    mc.getRenderItem().renderItem(itemstack, ibakedmodel);
+                    GlStateManager.popMatrix();
+                    GlStateManager.translate(0.0F, 0.0F, 0.05375F);
+                }
             }
+
+            GlStateManager.popMatrix();
+            GlStateManager.disableRescaleNormal();
+            GlStateManager.disableBlend();
+            mc.getTextureManager().bindTexture(getEntityTexture(entity));
+            mc.getTextureManager().getTexture(getEntityTexture(entity)).restoreLastBlurMipmap();
+        } else {
+            final ItemStack itemstack = entity.getEntityItem();
+            this.field_177079_e.setSeed(187L);
+            boolean flag = false;
+
+            if (this.bindEntityTexture(entity)) {
+                this.renderManager.renderEngine.getTexture(this.getEntityTexture(entity)).setBlurMipmap(false, false);
+                flag = true;
+            }
+
+            GlStateManager.enableRescaleNormal();
+            GlStateManager.alphaFunc(516, 0.1F);
+            GlStateManager.enableBlend();
+            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.pushMatrix();
+            final IBakedModel ibakedmodel = this.itemRenderer.getItemModelMesher().getItemModel(itemstack);
+            final int i = this.func_177077_a(entity, x, y, z, partialTicks, ibakedmodel);
+
+            for (int j = 0; j < i; ++j) {
+                if (ibakedmodel.isGui3d()) {
+                    GlStateManager.pushMatrix();
+
+                    if (j > 0) {
+                        final float f = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                        final float f1 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                        final float f2 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                        GlStateManager.translate(f, f1, f2);
+                    }
+
+                    GlStateManager.scale(0.5F, 0.5F, 0.5F);
+                    ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
+                    this.itemRenderer.renderItem(itemstack, ibakedmodel);
+                    GlStateManager.popMatrix();
+                } else {
+                    GlStateManager.pushMatrix();
+                    ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
+                    this.itemRenderer.renderItem(itemstack, ibakedmodel);
+                    GlStateManager.popMatrix();
+                    final float f3 = ibakedmodel.getItemCameraTransforms().ground.scale.x;
+                    final float f4 = ibakedmodel.getItemCameraTransforms().ground.scale.y;
+                    final float f5 = ibakedmodel.getItemCameraTransforms().ground.scale.z;
+                    GlStateManager.translate(0.0F * f3, 0.0F * f4, 0.046875F * f5);
+                }
+            }
+
+            GlStateManager.popMatrix();
+            GlStateManager.disableRescaleNormal();
+            GlStateManager.disableBlend();
+            this.bindEntityTexture(entity);
+
+            if (flag) {
+                this.renderManager.renderEngine.getTexture(this.getEntityTexture(entity)).restoreLastBlurMipmap();
+            }
+
+            super.doRender(entity, x, y, z, entityYaw, partialTicks);
         }
-
-        GlStateManager.popMatrix();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.disableBlend();
-        this.bindEntityTexture(entity);
-
-        if (flag)
-        {
-            this.renderManager.renderEngine.getTexture(this.getEntityTexture(entity)).restoreLastBlurMipmap();
-        }
-
-        super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
 
     protected ResourceLocation getEntityTexture(EntityItem entity)

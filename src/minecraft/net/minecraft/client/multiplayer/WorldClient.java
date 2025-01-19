@@ -1,6 +1,10 @@
 package net.minecraft.client.multiplayer;
 
 import com.google.common.collect.Sets;
+
+import cc.unknown.Sakura;
+import cc.unknown.module.impl.visual.Invisibles;
+
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -235,6 +239,7 @@ public class WorldClient extends World {
 	}
 
 	public void doVoidFogParticles(int posX, int posY, int posZ) {
+		Invisibles invisibles = Sakura.instance.getModuleManager().get(Invisibles.class);
 		int i = 16;
 		Random random = new Random();
 		ItemStack itemstack = this.mc.player.getHeldItem();
@@ -250,7 +255,7 @@ public class WorldClient extends World {
 			IBlockState iblockstate = this.getBlockState(blockpos$mutableblockpos);
 			iblockstate.getBlock().randomDisplayTick(this, blockpos$mutableblockpos, iblockstate, random);
 
-			if (flag && iblockstate.getBlock() == Blocks.barrier) {
+			if ((flag || invisibles.isEnabled() && invisibles.barriers.getValue()) && iblockstate.getBlock() == Blocks.barrier) {
 				this.spawnParticle(EnumParticleTypes.BARRIER, (double) ((float) k + 0.5F), (double) ((float) l + 0.5F),
 						(double) ((float) i1 + 0.5F), 0.0D, 0.0D, 0.0D, new int[0]);
 			}

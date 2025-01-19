@@ -16,62 +16,34 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.player.EntityPlayer;
 
-@ModuleInfo(aliases = "Chams", description = "Renderiza a los jugadores detras de bloques o paredes", category = Category.VISUALS)
+@ModuleInfo(aliases = "Chams", description = "Renderiza a los jugadores detras de paredes", category = Category.VISUALS)
 public final class Chams extends Module {
 	
 	@EventLink
 	public final Listener<PreRenderLivingEntityEvent> onPreRenderLiving = event -> {
-        if (event.getTarget() instanceof EntityPlayer && event.getTarget() != mc.player) {
-            GL11.glEnable(32823);
-            GL11.glPolygonOffset(1.0F, -1100000.0F);
-			RenderHelper.disableStandardItemLighting();
-			mc.entityRenderer.disableLightmap();
-        }
+		render(1);
 	};
 	
     @EventLink
-    public final Listener<Render3DEvent> onRender3D = event -> {
+    public final Listener<PostRenderLivingEntityEvent> onPostRenderLiving = event -> {
+    	render(2);
+    };
+    
+    private void render(int pre) {
 		for (EntityPlayer player : mc.world.playerEntities) {
 			if (player == mc.player || player.isDead || player == null) {
 				continue;
 			}
 			
-			final float partialTicks = mc.timer.renderPartialTicks;
-			final double renderPosX = mc.getRenderManager().renderPosX;
-			final double renderPosY = mc.getRenderManager().renderPosY;
-			final double renderPosZ = mc.getRenderManager().renderPosZ;
-			final Render<EntityPlayer> render = mc.getRenderManager().getEntityRenderObject(player);
-			if (render == null) continue;
-	
-			Color color = new Color(0);
-			if (color.getAlpha() <= 0) continue;
-	
-			if (player == mc.player) {
-				RenderHelper.disableStandardItemLighting();
-				mc.entityRenderer.disableLightmap();
+			switch (pre) {
+			case 1:
+	            GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+	            GL11.glPolygonOffset(1.0F, -1000000F);
+	            break;
+			case 2:
+	            GL11.glPolygonOffset(1.0F, 1000000F);
+	            GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
 			}
-			
-			double x = player.prevPosX + (player.posX - player.prevPosX) * partialTicks - renderPosX;
-			double y = player.prevPosY + (player.posY - player.prevPosY) * partialTicks - renderPosY;
-			double z = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks - renderPosZ;
-			float yaw = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * partialTicks;
-	
-
-			GL11.glColor4f(1.0f, 1.0f, 1.0f, color.getAlpha());
-
-			render.doRender(player, x, y, z, yaw, partialTicks);
-			RenderHelper.disableStandardItemLighting();
-			mc.entityRenderer.disableLightmap();
 		}
-    };
-	
-    @EventLink
-    public final Listener<PostRenderLivingEntityEvent> onPostRenderLiving = event -> {
-    	if (event.getTarget() instanceof EntityPlayer && event.getTarget() != mc.player) {
-            GL11.glDisable(32823);
-            GL11.glPolygonOffset(1.0F, 1100000.0F);
-			RenderHelper.disableStandardItemLighting();
-			mc.entityRenderer.disableLightmap();
-        }
-    };
+    }
 }
