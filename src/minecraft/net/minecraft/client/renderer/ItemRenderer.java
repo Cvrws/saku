@@ -344,7 +344,7 @@ public class ItemRenderer
                             break;
 
                         case BLOCK:
-                            this.transformFirstPersonItem(f, 0.0F);
+                            this.transformFirstPersonItem(f, f1);
                             this.doBlockTransformations();
                             break;
 
@@ -374,54 +374,7 @@ public class ItemRenderer
 
     public void renderOverlays(float partialTicks)
     {
-        GlStateManager.disableAlpha();
-
-        if (this.mc.player.isEntityInsideOpaqueBlock())
-        {
-            IBlockState iblockstate = this.mc.world.getBlockState(new BlockPos(this.mc.player));
-            BlockPos blockpos = new BlockPos(this.mc.player);
-            EntityPlayer entityplayer = this.mc.player;
-
-            for (int i = 0; i < 8; ++i)
-            {
-                double d0 = entityplayer.posX + (double)(((float)((i >> 0) % 2) - 0.5F) * entityplayer.width * 0.8F);
-                double d1 = entityplayer.posY + (double)(((float)((i >> 1) % 2) - 0.5F) * 0.1F);
-                double d2 = entityplayer.posZ + (double)(((float)((i >> 2) % 2) - 0.5F) * entityplayer.width * 0.8F);
-                BlockPos blockpos1 = new BlockPos(d0, d1 + (double)entityplayer.getEyeHeight(), d2);
-                IBlockState iblockstate1 = this.mc.world.getBlockState(blockpos1);
-
-                if (iblockstate1.getBlock().isVisuallyOpaque())
-                {
-                    iblockstate = iblockstate1;
-                    blockpos = blockpos1;
-                }
-            }
-
-            if (iblockstate.getBlock().getRenderType() != -1)
-            {
-                Object object = Reflector.getFieldValue(Reflector.RenderBlockOverlayEvent_OverlayType_BLOCK);
-
-                if (!Reflector.callBoolean(Reflector.ForgeEventFactory_renderBlockOverlay, new Object[] {this.mc.player, Float.valueOf(partialTicks), object, iblockstate, blockpos}))
-                {
-                    this.renderBlockInHand(partialTicks, this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
-                }
-            }
-        }
-
-        if (!this.mc.player.isSpectator())
-        {
-            if (this.mc.player.isInsideOfMaterial(Material.water) && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderWaterOverlay, new Object[] {this.mc.player, Float.valueOf(partialTicks)}))
-            {
-                this.renderWaterOverlayTexture(partialTicks);
-            }
-
-            if (this.mc.player.isBurning() && !Reflector.callBoolean(Reflector.ForgeEventFactory_renderFireOverlay, new Object[] {this.mc.player, Float.valueOf(partialTicks)}))
-            {
-                this.renderFireInFirstPerson(partialTicks);
-            }
-        }
-
-        GlStateManager.enableAlpha();
+ 
     }
 
     private void renderBlockInHand(float partialTicks, TextureAtlasSprite atlas)
@@ -453,34 +406,7 @@ public class ItemRenderer
 
     private void renderWaterOverlayTexture(float partialTicks)
     {
-        if (!Config.isShaders() || Shaders.isUnderwaterOverlay())
-        {
-            this.mc.getTextureManager().bindTexture(RES_UNDERWATER_OVERLAY);
-            Tessellator tessellator = Tessellator.getInstance();
-            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-            float f = this.mc.player.getBrightness(partialTicks);
-            GlStateManager.color(f, f, f, 0.5F);
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-            GlStateManager.pushMatrix();
-            float f1 = 4.0F;
-            float f2 = -1.0F;
-            float f3 = 1.0F;
-            float f4 = -1.0F;
-            float f5 = 1.0F;
-            float f6 = -0.5F;
-            float f7 = -this.mc.player.rotationYaw / 64.0F;
-            float f8 = this.mc.player.rotationPitch / 64.0F;
-            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-            worldrenderer.pos(-1.0D, -1.0D, -0.5D).tex((double)(4.0F + f7), (double)(4.0F + f8)).endVertex();
-            worldrenderer.pos(1.0D, -1.0D, -0.5D).tex((double)(0.0F + f7), (double)(4.0F + f8)).endVertex();
-            worldrenderer.pos(1.0D, 1.0D, -0.5D).tex((double)(0.0F + f7), (double)(0.0F + f8)).endVertex();
-            worldrenderer.pos(-1.0D, 1.0D, -0.5D).tex((double)(4.0F + f7), (double)(0.0F + f8)).endVertex();
-            tessellator.draw();
-            GlStateManager.popMatrix();
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            GlStateManager.disableBlend();
-        }
+
     }
 
     private void renderFireInFirstPerson(float partialTicks)

@@ -134,7 +134,6 @@ public final class NameTags extends Module {
 	    GlStateManager.pushMatrix();
 	    GlStateManager.enableBlend();
 	    GlStateManager.enableAlpha();
-	    RenderHelper.enableStandardItemLighting();
 	    fixGlintShit();
 	    mc.getRenderItem().zLevel = -150.0F;
 
@@ -144,7 +143,6 @@ public final class NameTags extends Module {
 	    	mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, stack, x, y);
 	    }
 	    mc.getRenderItem().zLevel = 0.0F;
-	    RenderHelper.disableStandardItemLighting();
 
 	    renderEnchantText(stack, x, y);
 

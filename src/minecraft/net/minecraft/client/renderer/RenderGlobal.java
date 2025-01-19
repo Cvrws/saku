@@ -403,35 +403,11 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 
-        if (this.starVBO != null)
-        {
-            this.starVBO.deleteGlBuffers();
-        }
-
-        if (this.starGLCallList >= 0)
-        {
-            GLAllocation.deleteDisplayLists(this.starGLCallList);
-            this.starGLCallList = -1;
-        }
-
-        if (this.vboEnabled)
-        {
-            this.starVBO = new VertexBuffer(this.vertexBufferFormat);
-            this.renderStars(worldrenderer);
-            worldrenderer.finishDrawing();
-            worldrenderer.reset();
-            this.starVBO.bufferData(worldrenderer.getByteBuffer());
-        }
-        else
-        {
-            this.starGLCallList = GLAllocation.generateDisplayLists(1);
-            GlStateManager.pushMatrix();
-            GL11.glNewList(this.starGLCallList, GL11.GL_COMPILE);
-            this.renderStars(worldrenderer);
-            tessellator.draw();
-            GL11.glEndList();
-            GlStateManager.popMatrix();
-        }
+        this.starVBO = new VertexBuffer(this.vertexBufferFormat);
+        this.renderStars(worldrenderer);
+        worldrenderer.finishDrawing();
+        worldrenderer.reset();
+        this.starVBO.bufferData(worldrenderer.getByteBuffer());
     }
 
     private void renderStars(WorldRenderer worldRendererIn)
@@ -1739,7 +1715,47 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
 
             if (afloat != null && Config.isSunMoonEnabled())
             {
+                GlStateManager.disableTexture2D();
 
+                if (flag)
+                {
+                    Shaders.disableTexture2D();
+                }
+
+                GlStateManager.shadeModel(7425);
+                GlStateManager.pushMatrix();
+                GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
+                GlStateManager.rotate(MathHelper.sin(this.theWorld.getCelestialAngleRadians(partialTicks)) < 0.0F ? 180.0F : 0.0F, 0.0F, 0.0F, 1.0F);
+                GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);
+                float f6 = afloat[0];
+                float f7 = afloat[1];
+                float f8 = afloat[2];
+
+                if (pass != 2)
+                {
+                    float f9 = (f6 * 30.0F + f7 * 59.0F + f8 * 11.0F) / 100.0F;
+                    float f10 = (f6 * 30.0F + f7 * 70.0F) / 100.0F;
+                    float f11 = (f6 * 30.0F + f8 * 70.0F) / 100.0F;
+                    f6 = f9;
+                    f7 = f10;
+                    f8 = f11;
+                }
+
+                worldrenderer.begin(6, DefaultVertexFormats.POSITION_COLOR);
+                worldrenderer.pos(0.0D, 100.0D, 0.0D).color(f6, f7, f8, afloat[3]).endVertex();
+                int j = 16;
+
+                for (int l = 0; l <= 16; ++l)
+                {
+                    float f18 = (float)l * (float)Math.PI * 2.0F / 16.0F;
+                    float f12 = MathHelper.sin(f18);
+                    float f13 = MathHelper.cos(f18);
+                    worldrenderer.pos((double)(f12 * 120.0F), (double)(f13 * 120.0F), (double)(-f13 * 40.0F * afloat[3])).color(afloat[0], afloat[1], afloat[2], 0.0F).endVertex();
+                }
+
+                tessellator.draw();
+                GlStateManager.popMatrix();
+                GlStateManager.shadeModel(7424);
             }
 
             GlStateManager.enableTexture2D();

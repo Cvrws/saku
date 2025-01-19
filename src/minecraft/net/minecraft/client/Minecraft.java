@@ -1826,46 +1826,47 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			eventClick.setShouldRightClick(true);
 			Sakura.instance.getEventBus().handle(eventClick);
 			this.player.inventory.currentItem = eventClick.getSlot();
-			
-			if (eventClick.isCancelled()) return;
-			
-			if (this.player.isUsingItem()) {
-				if (!this.gameSettings.keyBindUseItem.isKeyDown()) {
-					this.playerController.onStoppedUsingItem(this.player);
+			if (!eventClick.isCancelled()) {
+				if (this.player.isUsingItem()) {
+					if (!this.gameSettings.keyBindUseItem.isKeyDown()) {
+						this.playerController.onStoppedUsingItem(this.player);
+					}
+
+					while(this.gameSettings.keyBindAttack.isPressed()) {
+					}
+
+					while(this.gameSettings.keyBindUseItem.isPressed()) {
+					}
+
+					while(this.gameSettings.keyBindPickBlock.isPressed()) {
+					}
+				} else {
+					while(this.gameSettings.keyBindAttack.isPressed()) {
+						this.clickMouse();
+					}
+					
+					if (eventClick.isShouldRightClick()) {
+						while(this.gameSettings.keyBindUseItem.isPressed()) {
+							this.rightClickMouse();
+						}
+					}
+
+					while(this.gameSettings.keyBindPickBlock.isPressed()) {
+						this.middleClickMouse();
+					}
 				}
 
-				while (this.gameSettings.keyBindAttack.isPressed()) {
-					;
-				}
+	            if (eventClick.isShouldRightClick()
+	               && this.gameSettings.keyBindUseItem.isKeyDown()
+	               && this.rightClickDelayTimer == 0
+	               && !this.player.isUsingItem()) {
+	               this.rightClickMouse();
+	            }
 
-				while (this.gameSettings.keyBindUseItem.isPressed()) {
-					;
-				}
-
-				while (this.gameSettings.keyBindPickBlock.isPressed()) {
-					;
-				}
-			} else {
-				while (this.gameSettings.keyBindAttack.isPressed()) {
-					this.clickMouse();
-				}
-
-				while (this.gameSettings.keyBindUseItem.isPressed()) {
-					this.rightClickMouse();
-				}
-
-				while (this.gameSettings.keyBindPickBlock.isPressed()) {
-					this.middleClickMouse();
-				}
+	            this.sendClickBlockToController(this.currentScreen == null && this.gameSettings.keyBindAttack.isKeyDown() && this.inGameHasFocus);
 			}
-
-			if (this.gameSettings.keyBindUseItem.isKeyDown() && this.rightClickDelayTimer == 0
-					&& !this.player.isUsingItem()) {
-				this.rightClickMouse();
-			}
-
-			this.sendClickBlockToController(
-					this.currentScreen == null && this.gameSettings.keyBindAttack.isKeyDown() && this.inGameHasFocus);
+			
+			this.player.inventory.currentItem = oldSlot;
 		}
 
 		if (this.world != null) {

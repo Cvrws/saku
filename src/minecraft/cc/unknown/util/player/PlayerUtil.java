@@ -557,7 +557,7 @@ public class PlayerUtil implements Accessor {
 			return true;
 		}
 
-		if (mc.player.isOnSameTeam((EntityLivingBase) player)) {
+		if (mc.player.isOnSameTeam(player)) {
 			return true;
 		}
 

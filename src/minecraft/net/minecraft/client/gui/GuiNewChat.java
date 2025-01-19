@@ -1,26 +1,38 @@
 package net.minecraft.client.gui;
 
-import com.google.common.collect.Lists;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.collect.Lists;
+
+import cc.unknown.Sakura;
+import cc.unknown.module.impl.visual.UnlimitedChat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class GuiNewChat extends Gui
 {
-    private static final Logger logger = LogManager.getLogger();
-    private final Minecraft mc;
-    private final List<String> sentMessages = Lists.<String>newArrayList();
-    private final List<ChatLine> chatLines = Lists.<ChatLine>newArrayList();
-    private final List<ChatLine> drawnChatLines = Lists.<ChatLine>newArrayList();
-    private int scrollPos;
-    private boolean isScrolled;
+	private static final Logger logger = LogManager.getLogger();
+	private final Minecraft mc;
+	private final List<String> sentMessages = Lists.<String>newArrayList();
+	private final List<ChatLine> chatLines = Lists.<ChatLine>newArrayList();
+	private final List<ChatLine> drawnChatLines = Lists.<ChatLine>newArrayList();
+	private int scrollPos;
+	private boolean isScrolled;
+	private int line;
+	private int sameMessageAmount;
+	private String lastMessage;
+	
+	private final HashMap<String,String> stringCache = new HashMap<>();
 
     public GuiNewChat(Minecraft mcIn)
     {
@@ -120,10 +132,23 @@ public class GuiNewChat extends Gui
         this.sentMessages.clear();
     }
 
-    public void printChatMessage(IChatComponent chatComponent)
-    {
-        this.printChatMessageWithOptionalDeletion(chatComponent, 0);
-    }
+	public void printChatMessage(IChatComponent chatComponent) {
+        String text = fixString(chatComponent.getFormattedText());
+        if (text.equals(this.lastMessage)) {
+            (Minecraft.getInstance()).ingameGUI.getChatGUI().deleteChatLine(this.line);
+            this.sameMessageAmount++;
+            this.lastMessage = text;
+            chatComponent.appendText(ChatFormatting.WHITE + " (" + "x" + this.sameMessageAmount + ")");
+        } else {
+            this.sameMessageAmount = 1;
+            this.lastMessage = text;
+        }
+        this.line++;
+        if (this.line > 256)
+            this.line = 0;
+
+        this.printChatMessageWithOptionalDeletion(chatComponent, this.line);		
+	}
 
     public void printChatMessageWithOptionalDeletion(IChatComponent chatComponent, int chatLineId)
     {
@@ -133,40 +158,38 @@ public class GuiNewChat extends Gui
 
     private void setChatLine(IChatComponent chatComponent, int chatLineId, int updateCounter, boolean displayOnly)
     {
-        if (chatLineId != 0)
-        {
-            this.deleteChatLine(chatLineId);
-        }
+    	if (chatLineId != 0) {
+			this.deleteChatLine(chatLineId);
+		}
 
-        int i = MathHelper.floor_float((float)this.getChatWidth() / this.getChatScale());
-        List<IChatComponent> list = GuiUtilRenderComponents.splitText(chatComponent, i, this.mc.fontRendererObj, false, false);
-        boolean flag = this.getChatOpen();
+		int i = MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale());
+		List<IChatComponent> list = GuiUtilRenderComponents.splitText(chatComponent, i, this.mc.fontRendererObj,
+				false, false);
+		boolean flag = this.getChatOpen();
 
-        for (IChatComponent ichatcomponent : list)
-        {
-            if (flag && this.scrollPos > 0)
-            {
-                this.isScrolled = true;
-                this.scroll(1);
-            }
+		for (IChatComponent ichatcomponent : list) {
+			if (flag && this.scrollPos > 0) {
+				this.isScrolled = true;
+				this.scroll(1);
+			}
 
-            this.drawnChatLines.add(0, new ChatLine(updateCounter, ichatcomponent, chatLineId));
-        }
+			this.drawnChatLines.add(0, new ChatLine(updateCounter, ichatcomponent, chatLineId));
+		}
 
-        while (this.drawnChatLines.size() > 100)
-        {
-            this.drawnChatLines.remove(this.drawnChatLines.size() - 1);
-        }
+		final UnlimitedChat unlimitedChat = Sakura.instance.getModuleManager().get(UnlimitedChat.class);
+		int maxSize = unlimitedChat == null || !unlimitedChat.isEnabled() ? 200 : 100000;
 
-        if (!displayOnly)
-        {
-            this.chatLines.add(0, new ChatLine(updateCounter, chatComponent, chatLineId));
+		while (this.drawnChatLines.size() > maxSize) {
+			this.drawnChatLines.remove(this.drawnChatLines.size() - 1);
+		}
 
-            while (this.chatLines.size() > 100)
-            {
-                this.chatLines.remove(this.chatLines.size() - 1);
-            }
-        }
+		if (!displayOnly) {
+			this.chatLines.add(0, new ChatLine(updateCounter, chatComponent, chatLineId));
+
+			while (this.chatLines.size() > maxSize) {
+				this.chatLines.remove(this.chatLines.size() - 1);
+			}
+		}
     }
 
     public void refreshChat()
@@ -339,5 +362,24 @@ public class GuiNewChat extends Gui
     public int getLineCount()
     {
         return this.getChatHeight() / 9;
+    }
+    
+    private String fixString(String str) {
+        if (stringCache.containsKey(str)) return stringCache.get(str);
+
+        str = str.replaceAll("\uF8FF", "");
+
+        StringBuilder sb = new StringBuilder();
+        for (char c : str.toCharArray()) {
+            if ((int) c > (33 + 65248) && (int) c < (128 + 65248))
+                sb.append(Character.toChars((int) c - 65248));
+            else
+                sb.append(c);
+        }
+
+        String result = sb.toString();
+        stringCache.put(str, result);
+
+        return result;
     }
 }
