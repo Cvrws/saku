@@ -55,11 +55,6 @@ public class GuiIngameMenu extends GuiScreen
                 {
                     this.mc.displayGuiScreen(new SakuMenu());
                 }
-                else if (flag1)
-                {
-                    RealmsBridge realmsbridge = new RealmsBridge();
-                    realmsbridge.switchToRealms(new SakuMenu());
-                }
                 else
                 {
                     this.mc.displayGuiScreen(new GuiMultiplayer(new SakuMenu()));

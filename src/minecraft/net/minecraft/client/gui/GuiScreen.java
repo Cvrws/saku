@@ -31,7 +31,6 @@ import cc.unknown.util.Accessor;
 import cc.unknown.util.render.BackgroundUtil;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.stream.GuiTwitchUserMode;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -49,7 +48,6 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatFormatting;
 import net.minecraft.util.IChatComponent;
-import tv.twitch.chat.ChatUserInfo;
 
 public abstract class GuiScreen extends Gui implements GuiYesNoCallback, Accessor {
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -323,14 +321,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback, Accesso
 					this.setText(clickevent.getValue(), true);
 				} else if (clickevent.getAction() == ClickEvent.Action.RUN_COMMAND) {
 					this.sendChatMessage(clickevent.getValue(), false);
-				} else if (clickevent.getAction() == ClickEvent.Action.TWITCH_USER_INFO) {
-					ChatUserInfo chatuserinfo = this.mc.getTwitchStream().func_152926_a(clickevent.getValue());
-
-					if (chatuserinfo != null) {
-						this.mc.displayGuiScreen(new GuiTwitchUserMode(this.mc.getTwitchStream(), chatuserinfo));
-					} else {
-						LOGGER.error("Tried to handle twitch user but couldn\'t find them!");
-					}
 				} else {
 					LOGGER.error("Don\'t know how to handle " + clickevent);
 				}
