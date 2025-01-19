@@ -93,7 +93,7 @@ public class WTap extends Module {
 				mc.gameSettings.keyBindForward.pressed = false;
 				break;
 			case "Silent":
-				mc.player.sprintingTicksLeft = 0;
+				mc.player.sprintingTicksLeft = 1;
 				break;
 			}
 		} else if (ticks == hits.getValue().intValue()) {
@@ -102,7 +102,7 @@ public class WTap extends Module {
 				mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
 				break;
 			case "Silent":
-				mc.player.sprintingTicksLeft = 1;
+				mc.player.sprintingTicksLeft = 0;
 				break;
 			}
 		}

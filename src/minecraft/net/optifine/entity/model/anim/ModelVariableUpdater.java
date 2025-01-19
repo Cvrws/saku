@@ -5,24 +5,32 @@ import net.optifine.expr.ExpressionParser;
 import net.optifine.expr.IExpressionFloat;
 import net.optifine.expr.ParseException;
 
-public class ModelVariableUpdater {
-    private final String modelVariableName;
-    private final String expressionText;
+public class ModelVariableUpdater
+{
+    private String modelVariableName;
+    private String expressionText;
     private ModelVariableFloat modelVariable;
     private IExpressionFloat expression;
 
-    public boolean initialize(final IModelResolver mr) {
+    public boolean initialize(IModelResolver mr)
+    {
         this.modelVariable = mr.getModelVariable(this.modelVariableName);
 
-        if (this.modelVariable == null) {
+        if (this.modelVariable == null)
+        {
             Config.warn("Model variable not found: " + this.modelVariableName);
             return false;
-        } else {
-            try {
-                final ExpressionParser expressionparser = new ExpressionParser(mr);
+        }
+        else
+        {
+            try
+            {
+                ExpressionParser expressionparser = new ExpressionParser(mr);
                 this.expression = expressionparser.parseFloat(this.expressionText);
                 return true;
-            } catch (final ParseException parseexception) {
+            }
+            catch (ParseException parseexception)
+            {
                 Config.warn("Error parsing expression: " + this.expressionText);
                 Config.warn(parseexception.getClass().getName() + ": " + parseexception.getMessage());
                 return false;
@@ -30,13 +38,15 @@ public class ModelVariableUpdater {
         }
     }
 
-    public ModelVariableUpdater(final String modelVariableName, final String expressionText) {
+    public ModelVariableUpdater(String modelVariableName, String expressionText)
+    {
         this.modelVariableName = modelVariableName;
         this.expressionText = expressionText;
     }
 
-    public void update() {
-        final float f = this.expression.eval();
+    public void update()
+    {
+        float f = this.expression.eval();
         this.modelVariable.setValue(f);
     }
 }

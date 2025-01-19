@@ -116,7 +116,7 @@ public class PlayerUtil implements Accessor {
 	}
 
 	public Block block(final Vector3d pos) {
-		return block(new BlockPos(new Vec3i(pos.field_181059_a, pos.field_181060_b, pos.field_181061_c)));
+		return block(new BlockPos(new Vec3i(pos.x, pos.y, pos.z)));
 	}
 
 	public boolean lookingAtBlock(final BlockPos blockFace, final float yaw, final float pitch,
@@ -310,46 +310,18 @@ public class PlayerUtil implements Accessor {
 		return distance;
 	}
 
-	/**
-	 * Checks if a potion is good
-	 *
-	 * @return good potion
-	 */
 	public boolean goodPotion(final int id) {
 		return GOOD_POTIONS.containsKey(id);
 	}
 
-	/**
-	 * Gets a potions ranking
-	 *
-	 * @return potion ranking
-	 */
 	public int potionRanking(final int id) {
 		return GOOD_POTIONS.getOrDefault(id, -1);
 	}
 
-	/**
-	 * Checks if the player is in a liquid
-	 *
-	 * @return in liquid
-	 */
 	public boolean inLiquid() {
 		return mc.player.isInWater() || mc.player.isInLava();
 	}
 
-	/**
-	 * Fake damages the player
-	 */
-	public void fakeDamage() {
-		mc.player.handleHealthUpdate((byte) 2);
-		mc.ingameGUI.healthUpdateCounter = mc.ingameGUI.updateCounter + 20;
-	}
-
-	/**
-	 * Checks if the player is near a block
-	 *
-	 * @return block near
-	 */
 	public boolean blockNear(final int range) {
 		for (int x = -range; x <= range; ++x) {
 			for (int y = -range; y <= range; ++y) {
@@ -382,11 +354,6 @@ public class PlayerUtil implements Accessor {
 		return false;
 	}
 
-	/**
-	 * Checks if the player is inside a block
-	 *
-	 * @return inside block
-	 */
 	public boolean insideBlock() {
 		if (mc.player.ticksExisted < 5) {
 			return false;
@@ -412,9 +379,6 @@ public class PlayerUtil implements Accessor {
 		return false;
 	}
 
-	/**
-	 * Sends a click to Minecraft legitimately
-	 */
 	public void sendClick(final int button, final boolean state) {
 		final int keyBind = button == 0 ? mc.gameSettings.keyBindAttack.getKeyCode()
 				: mc.gameSettings.keyBindUseItem.getKeyCode();

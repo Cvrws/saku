@@ -8,42 +8,38 @@ import net.minecraft.client.renderer.entity.layers.LayerHeldItem;
 import net.minecraft.entity.monster.EntityGiantZombie;
 import net.minecraft.util.ResourceLocation;
 
-public class RenderGiantZombie extends RenderLiving<EntityGiantZombie> {
+public class RenderGiantZombie extends RenderLiving<EntityGiantZombie>
+{
     private static final ResourceLocation zombieTextures = new ResourceLocation("textures/entity/zombie/zombie.png");
+    private float scale;
 
-    /**
-     * Scale of the model to use
-     */
-    private final float scale;
-
-    public RenderGiantZombie(final RenderManager renderManagerIn, final ModelBase modelBaseIn, final float shadowSizeIn, final float scaleIn) {
+    public RenderGiantZombie(RenderManager renderManagerIn, ModelBase modelBaseIn, float shadowSizeIn, float scaleIn)
+    {
         super(renderManagerIn, modelBaseIn, shadowSizeIn * scaleIn);
         this.scale = scaleIn;
         this.addLayer(new LayerHeldItem(this));
-        this.addLayer(new LayerBipedArmor(this) {
-            protected void initArmor() {
-                this.field_177189_c = new ModelZombie(0.5F, true);
-                this.field_177186_d = new ModelZombie(1.0F, true);
+        this.addLayer(new LayerBipedArmor(this)
+        {
+            protected void initArmor()
+            {
+                this.modelLeggings = new ModelZombie(0.5F, true);
+                this.modelArmor = new ModelZombie(1.0F, true);
             }
         });
     }
 
-    public void transformHeldFull3DItemLayer() {
+    public void transformHeldFull3DItemLayer()
+    {
         GlStateManager.translate(0.0F, 0.1875F, 0.0F);
     }
 
-    /**
-     * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
-     * entityLiving, partialTickTime
-     */
-    protected void preRenderCallback(final EntityGiantZombie entitylivingbaseIn, final float partialTickTime) {
+    protected void preRenderCallback(EntityGiantZombie entitylivingbaseIn, float partialTickTime)
+    {
         GlStateManager.scale(this.scale, this.scale, this.scale);
     }
 
-    /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-     */
-    protected ResourceLocation getEntityTexture(final EntityGiantZombie entity) {
+    protected ResourceLocation getEntityTexture(EntityGiantZombie entity)
+    {
         return zombieTextures;
     }
 }

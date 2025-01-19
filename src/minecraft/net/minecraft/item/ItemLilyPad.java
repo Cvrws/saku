@@ -11,38 +11,46 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
-public class ItemLilyPad extends ItemColored {
-    public ItemLilyPad(final Block block) {
+public class ItemLilyPad extends ItemColored
+{
+    public ItemLilyPad(Block block)
+    {
         super(block, false);
     }
 
-    /**
-     * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
-     */
-    public ItemStack onItemRightClick(final ItemStack itemStackIn, final World worldIn, final EntityPlayer playerIn) {
-        final MovingObjectPosition movingobjectposition = this.getMovingObjectPositionFromPlayer(worldIn, playerIn, true);
+    public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn)
+    {
+        MovingObjectPosition movingobjectposition = this.getMovingObjectPositionFromPlayer(worldIn, playerIn, true);
 
-        if (movingobjectposition == null) {
+        if (movingobjectposition == null)
+        {
             return itemStackIn;
-        } else {
-            if (movingobjectposition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-                final BlockPos blockpos = movingobjectposition.getBlockPos();
+        }
+        else
+        {
+            if (movingobjectposition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+            {
+                BlockPos blockpos = movingobjectposition.getBlockPos();
 
-                if (!worldIn.isBlockModifiable(playerIn, blockpos)) {
+                if (!worldIn.isBlockModifiable(playerIn, blockpos))
+                {
                     return itemStackIn;
                 }
 
-                if (!playerIn.canPlayerEdit(blockpos.offset(movingobjectposition.sideHit), movingobjectposition.sideHit, itemStackIn)) {
+                if (!playerIn.canPlayerEdit(blockpos.offset(movingobjectposition.sideHit), movingobjectposition.sideHit, itemStackIn))
+                {
                     return itemStackIn;
                 }
 
-                final BlockPos blockpos1 = blockpos.up();
-                final IBlockState iblockstate = worldIn.getBlockState(blockpos);
+                BlockPos blockpos1 = blockpos.up();
+                IBlockState iblockstate = worldIn.getBlockState(blockpos);
 
-                if (iblockstate.getBlock().getMaterial() == Material.water && iblockstate.getValue(BlockLiquid.LEVEL).intValue() == 0 && worldIn.isAirBlock(blockpos1)) {
+                if (iblockstate.getBlock().getMaterial() == Material.water && ((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue() == 0 && worldIn.isAirBlock(blockpos1))
+                {
                     worldIn.setBlockState(blockpos1, Blocks.waterlily.getDefaultState());
 
-                    if (!playerIn.capabilities.isCreativeMode) {
+                    if (!playerIn.capabilities.isCreativeMode)
+                    {
                         --itemStackIn.stackSize;
                     }
 
@@ -54,7 +62,8 @@ public class ItemLilyPad extends ItemColored {
         }
     }
 
-    public int getColorFromItemStack(final ItemStack stack, final int renderPass) {
+    public int getColorFromItemStack(ItemStack stack, int renderPass)
+    {
         return Blocks.waterlily.getRenderColor(Blocks.waterlily.getStateFromMeta(stack.getMetadata()));
     }
 }

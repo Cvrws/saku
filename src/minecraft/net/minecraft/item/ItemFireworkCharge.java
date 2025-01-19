@@ -1,34 +1,45 @@
 package net.minecraft.item;
 
+import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.util.StatCollector;
 
-import java.util.List;
-
-public class ItemFireworkCharge extends Item {
-    public int getColorFromItemStack(final ItemStack stack, final int renderPass) {
-        if (renderPass != 1) {
+public class ItemFireworkCharge extends Item
+{
+    public int getColorFromItemStack(ItemStack stack, int renderPass)
+    {
+        if (renderPass != 1)
+        {
             return super.getColorFromItemStack(stack, renderPass);
-        } else {
-            final NBTBase nbtbase = getExplosionTag(stack, "Colors");
+        }
+        else
+        {
+            NBTBase nbtbase = getExplosionTag(stack, "Colors");
 
-            if (!(nbtbase instanceof NBTTagIntArray)) {
+            if (!(nbtbase instanceof NBTTagIntArray))
+            {
                 return 9079434;
-            } else {
-                final NBTTagIntArray nbttagintarray = (NBTTagIntArray) nbtbase;
-                final int[] aint = nbttagintarray.getIntArray();
+            }
+            else
+            {
+                NBTTagIntArray nbttagintarray = (NBTTagIntArray)nbtbase;
+                int[] aint = nbttagintarray.getIntArray();
 
-                if (aint.length == 1) {
+                if (aint.length == 1)
+                {
                     return aint[0];
-                } else {
+                }
+                else
+                {
                     int i = 0;
                     int j = 0;
                     int k = 0;
 
-                    for (final int l : aint) {
+                    for (int l : aint)
+                    {
                         i += (l & 16711680) >> 16;
                         j += (l & 65280) >> 8;
                         k += (l & 255) >> 0;
@@ -43,11 +54,14 @@ public class ItemFireworkCharge extends Item {
         }
     }
 
-    public static NBTBase getExplosionTag(final ItemStack stack, final String key) {
-        if (stack.hasTagCompound()) {
-            final NBTTagCompound nbttagcompound = stack.getTagCompound().getCompoundTag("Explosion");
+    public static NBTBase getExplosionTag(ItemStack stack, String key)
+    {
+        if (stack.hasTagCompound())
+        {
+            NBTTagCompound nbttagcompound = stack.getTagCompound().getCompoundTag("Explosion");
 
-            if (nbttagcompound != null) {
+            if (nbttagcompound != null)
+            {
                 return nbttagcompound.getTag(key);
             }
         }
@@ -55,54 +69,61 @@ public class ItemFireworkCharge extends Item {
         return null;
     }
 
-    /**
-     * allows items to add custom lines of information to the mouseover description
-     *
-     * @param tooltip  All lines to display in the Item's tooltip. This is a List of Strings.
-     * @param advanced Whether the setting "Advanced tooltips" is enabled
-     */
-    public void addInformation(final ItemStack stack, final EntityPlayer playerIn, final List<String> tooltip, final boolean advanced) {
-        if (stack.hasTagCompound()) {
-            final NBTTagCompound nbttagcompound = stack.getTagCompound().getCompoundTag("Explosion");
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+    {
+        if (stack.hasTagCompound())
+        {
+            NBTTagCompound nbttagcompound = stack.getTagCompound().getCompoundTag("Explosion");
 
-            if (nbttagcompound != null) {
+            if (nbttagcompound != null)
+            {
                 addExplosionInfo(nbttagcompound, tooltip);
             }
         }
     }
 
-    public static void addExplosionInfo(final NBTTagCompound nbt, final List<String> tooltip) {
-        final byte b0 = nbt.getByte("Type");
+    public static void addExplosionInfo(NBTTagCompound nbt, List<String> tooltip)
+    {
+        byte b0 = nbt.getByte("Type");
 
-        if (b0 >= 0 && b0 <= 4) {
+        if (b0 >= 0 && b0 <= 4)
+        {
             tooltip.add(StatCollector.translateToLocal("item.fireworksCharge.type." + b0).trim());
-        } else {
+        }
+        else
+        {
             tooltip.add(StatCollector.translateToLocal("item.fireworksCharge.type").trim());
         }
 
-        final int[] aint = nbt.getIntArray("Colors");
+        int[] aint = nbt.getIntArray("Colors");
 
-        if (aint.length > 0) {
+        if (aint.length > 0)
+        {
             boolean flag = true;
             String s = "";
 
-            for (final int i : aint) {
-                if (!flag) {
+            for (int i : aint)
+            {
+                if (!flag)
+                {
                     s = s + ", ";
                 }
 
                 flag = false;
                 boolean flag1 = false;
 
-                for (int j = 0; j < ItemDye.dyeColors.length; ++j) {
-                    if (i == ItemDye.dyeColors[j]) {
+                for (int j = 0; j < ItemDye.dyeColors.length; ++j)
+                {
+                    if (i == ItemDye.dyeColors[j])
+                    {
                         flag1 = true;
                         s = s + StatCollector.translateToLocal("item.fireworksCharge." + EnumDyeColor.byDyeDamage(j).getUnlocalizedName());
                         break;
                     }
                 }
 
-                if (!flag1) {
+                if (!flag1)
+                {
                     s = s + StatCollector.translateToLocal("item.fireworksCharge.customColor");
                 }
             }
@@ -110,29 +131,35 @@ public class ItemFireworkCharge extends Item {
             tooltip.add(s);
         }
 
-        final int[] aint1 = nbt.getIntArray("FadeColors");
+        int[] aint1 = nbt.getIntArray("FadeColors");
 
-        if (aint1.length > 0) {
+        if (aint1.length > 0)
+        {
             boolean flag2 = true;
             String s1 = StatCollector.translateToLocal("item.fireworksCharge.fadeTo") + " ";
 
-            for (final int l : aint1) {
-                if (!flag2) {
+            for (int l : aint1)
+            {
+                if (!flag2)
+                {
                     s1 = s1 + ", ";
                 }
 
                 flag2 = false;
                 boolean flag5 = false;
 
-                for (int k = 0; k < 16; ++k) {
-                    if (l == ItemDye.dyeColors[k]) {
+                for (int k = 0; k < 16; ++k)
+                {
+                    if (l == ItemDye.dyeColors[k])
+                    {
                         flag5 = true;
                         s1 = s1 + StatCollector.translateToLocal("item.fireworksCharge." + EnumDyeColor.byDyeDamage(k).getUnlocalizedName());
                         break;
                     }
                 }
 
-                if (!flag5) {
+                if (!flag5)
+                {
                     s1 = s1 + StatCollector.translateToLocal("item.fireworksCharge.customColor");
                 }
             }
@@ -140,15 +167,17 @@ public class ItemFireworkCharge extends Item {
             tooltip.add(s1);
         }
 
-        final boolean flag3 = nbt.getBoolean("Trail");
+        boolean flag3 = nbt.getBoolean("Trail");
 
-        if (flag3) {
+        if (flag3)
+        {
             tooltip.add(StatCollector.translateToLocal("item.fireworksCharge.trail"));
         }
 
-        final boolean flag4 = nbt.getBoolean("Flicker");
+        boolean flag4 = nbt.getBoolean("Flicker");
 
-        if (flag4) {
+        if (flag4)
+        {
             tooltip.add(StatCollector.translateToLocal("item.fireworksCharge.flicker"));
         }
     }

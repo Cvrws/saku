@@ -5,83 +5,57 @@ import java.util.List;
 
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.other.ServerKickEvent;
-import cc.unknown.handlers.ConnectionHandler;
-import cc.unknown.ui.menu.saku.SakuMenu;
-import cc.unknown.util.render.font.impl.mc.FontRenderer;
-import net.minecraft.client.multiplayer.GuiConnecting;
-import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IChatComponent;
 
-public class GuiDisconnected extends GuiScreen {
-    private final String reason;
-    private final IChatComponent message;
+public class GuiDisconnected extends GuiScreen
+{
+    private String reason;
+    private IChatComponent message;
     private List<String> multilineMessage;
     private final GuiScreen parentScreen;
     private int field_175353_i;
 
-    public GuiDisconnected(final GuiScreen screen, final String reasonLocalizationKey, final IChatComponent chatComp) {
+    public GuiDisconnected(GuiScreen screen, String reasonLocalizationKey, IChatComponent chatComp)
+    {
         this.parentScreen = screen;
-        this.reason = I18n.format(reasonLocalizationKey);
+        this.reason = I18n.format(reasonLocalizationKey, new Object[0]);
         this.message = chatComp;
     }
 
-    /**
-     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
-     * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
-     */
-    protected void keyTyped(final char typedChar, final int keyCode) throws IOException {
-        if (keyCode == 1) {
-            this.mc.displayGuiScreen(null);
-
-            if (this.mc.currentScreen == null) {
-                this.mc.setIngameFocus();
-            }
-        }
+    protected void keyTyped(char typedChar, int keyCode) throws IOException
+    {
     }
 
-    /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
-     */
-    public void initGui() {
-
+    public void initGui()
+    {
         this.buttonList.clear();
         this.multilineMessage = this.fontRendererObj.listFormattedStringToWidth(this.message.getFormattedText(), this.width - 50);
-        this.field_175353_i = this.multilineMessage.size() * FontRenderer.FONT_HEIGHT;
-        int padding = 3;
-
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 2 + this.field_175353_i / 2 + FontRenderer.FONT_HEIGHT, 100 - padding, 20, "Leave"));
-        this.buttonList.add(new GuiButton(1, this.width / 2 + padding, this.height / 2 + this.field_175353_i / 2 + FontRenderer.FONT_HEIGHT, 100 - padding, 20, "Reconnect"));
-
+        this.field_175353_i = this.multilineMessage.size() * this.fontRendererObj.FONT_HEIGHT;
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 2 + this.field_175353_i / 2 + this.fontRendererObj.FONT_HEIGHT, I18n.format("gui.toMenu", new Object[0])));
         Sakura.instance.getEventBus().handle(new ServerKickEvent(multilineMessage));
     }
 
-    /**
-     * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
-     */
-    protected void actionPerformed(final GuiButton button) throws IOException {
-        if (button.id == 0) {
+    protected void actionPerformed(GuiButton button) throws IOException
+    {
+        if (button.id == 0)
+        {
             this.mc.displayGuiScreen(this.parentScreen);
-        }
-
-        if (button.id == 1) {
-            this.mc.displayGuiScreen(new GuiConnecting(new GuiMultiplayer(new SakuMenu()), this.mc, new ServerData("", ConnectionHandler.ip, false)));
         }
     }
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
-    public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    {
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRendererObj, this.reason, this.width / 2, this.height / 2 - this.field_175353_i / 2 - FontRenderer.FONT_HEIGHT * 2, 11184810);
+        this.drawCenteredString(this.fontRendererObj, this.reason, this.width / 2, this.height / 2 - this.field_175353_i / 2 - this.fontRendererObj.FONT_HEIGHT * 2, 11184810);
         int i = this.height / 2 - this.field_175353_i / 2;
 
-        if (this.multilineMessage != null) {
-            for (final String s : this.multilineMessage) {
+        if (this.multilineMessage != null)
+        {
+            for (String s : this.multilineMessage)
+            {
                 this.drawCenteredString(this.fontRendererObj, s, this.width / 2, i, 16777215);
-                i += FontRenderer.FONT_HEIGHT;
+                i += this.fontRendererObj.FONT_HEIGHT;
             }
         }
 

@@ -290,6 +290,7 @@ of.options.MIPMAP_TYPE.tooltip.4=  Liniar - netezire normala
 of.options.MIPMAP_TYPE.tooltip.5=  Biliniar - netezire fina
 of.options.MIPMAP_TYPE.tooltip.6=  Triliniar - netezire foarte fina (foarte lent)
 
+
 of.options.AA_LEVEL=Antialiasing
 of.options.AA_LEVEL.tooltip.1=Antialiasing
 of.options.AA_LEVEL.tooltip.2= OPRIT - (implicit) fara antialiasing (rapid)

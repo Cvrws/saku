@@ -170,10 +170,6 @@ public class PlayerAPI extends ScriptEntityLiving {
         return MC.player.hurtTime;
     }
 
-    public void fakeDamage() {
-        PlayerUtil.fakeDamage();
-    }
-
     public boolean isUsingItem() {
         return Minecraft.getInstance().player.isUsingItem();
     }

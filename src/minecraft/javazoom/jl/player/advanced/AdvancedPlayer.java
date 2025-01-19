@@ -221,12 +221,7 @@ public class AdvancedPlayer {
 	public boolean setVolumen(final float volume) {
 		if (this.audio instanceof JavaSoundAudioDevice) {
 			final JavaSoundAudioDevice jsaudio = (JavaSoundAudioDevice) this.audio;
-			try {
-				jsaudio.write(null, 0, 0);
-			} catch (JavaLayerException ex) {
-				ex.printStackTrace();
-			}
-			jsaudio.setLineGain(volume);
+			jsaudio.setVolumeControl(volume);
 		}
 		return false;
 	}

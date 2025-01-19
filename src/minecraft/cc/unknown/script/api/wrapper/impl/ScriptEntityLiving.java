@@ -52,10 +52,6 @@ public class ScriptEntityLiving extends ScriptEntity {
         return this.wrappedLiving.maxHurtTime;
     }
 
-    public int getLastHurtTime() {
-        return this.wrappedLiving.lastHurtTime;
-    }
-
     public ScriptItemStack getHeldItemStack() {
         return new ScriptItemStack(this.wrappedLiving.getHeldItem());
     }

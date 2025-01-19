@@ -12,54 +12,68 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-public class BlockDropper extends BlockDispenser {
+public class BlockDropper extends BlockDispenser
+{
     private final IBehaviorDispenseItem dropBehavior = new BehaviorDefaultDispenseItem();
 
-    protected IBehaviorDispenseItem getBehavior(final ItemStack stack) {
+    protected IBehaviorDispenseItem getBehavior(ItemStack stack)
+    {
         return this.dropBehavior;
     }
 
-    /**
-     * Returns a new instance of a block's tile entity class. Called on placing the block.
-     */
-    public TileEntity createNewTileEntity(final World worldIn, final int meta) {
+    public TileEntity createNewTileEntity(World worldIn, int meta)
+    {
         return new TileEntityDropper();
     }
 
-    protected void dispense(final World worldIn, final BlockPos pos) {
-        final BlockSourceImpl blocksourceimpl = new BlockSourceImpl(worldIn, pos);
-        final TileEntityDispenser tileentitydispenser = blocksourceimpl.getBlockTileEntity();
+    protected void dispense(World worldIn, BlockPos pos)
+    {
+        BlockSourceImpl blocksourceimpl = new BlockSourceImpl(worldIn, pos);
+        TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
 
-        if (tileentitydispenser != null) {
-            final int i = tileentitydispenser.getDispenseSlot();
+        if (tileentitydispenser != null)
+        {
+            int i = tileentitydispenser.getDispenseSlot();
 
-            if (i < 0) {
+            if (i < 0)
+            {
                 worldIn.playAuxSFX(1001, pos, 0);
-            } else {
-                final ItemStack itemstack = tileentitydispenser.getStackInSlot(i);
+            }
+            else
+            {
+                ItemStack itemstack = tileentitydispenser.getStackInSlot(i);
 
-                if (itemstack != null) {
-                    final EnumFacing enumfacing = worldIn.getBlockState(pos).getValue(FACING);
-                    final BlockPos blockpos = pos.offset(enumfacing);
-                    final IInventory iinventory = TileEntityHopper.getInventoryAtPosition(worldIn, blockpos.getX(), blockpos.getY(), blockpos.getZ());
+                if (itemstack != null)
+                {
+                    EnumFacing enumfacing = (EnumFacing)worldIn.getBlockState(pos).getValue(FACING);
+                    BlockPos blockpos = pos.offset(enumfacing);
+                    IInventory iinventory = TileEntityHopper.getInventoryAtPosition(worldIn, (double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ());
                     ItemStack itemstack1;
 
-                    if (iinventory == null) {
+                    if (iinventory == null)
+                    {
                         itemstack1 = this.dropBehavior.dispense(blocksourceimpl, itemstack);
 
-                        if (itemstack1 != null && itemstack1.stackSize <= 0) {
+                        if (itemstack1 != null && itemstack1.stackSize <= 0)
+                        {
                             itemstack1 = null;
                         }
-                    } else {
+                    }
+                    else
+                    {
                         itemstack1 = TileEntityHopper.putStackInInventoryAllSlots(iinventory, itemstack.copy().splitStack(1), enumfacing.getOpposite());
 
-                        if (itemstack1 == null) {
+                        if (itemstack1 == null)
+                        {
                             itemstack1 = itemstack.copy();
 
-                            if (--itemstack1.stackSize <= 0) {
+                            if (--itemstack1.stackSize <= 0)
+                            {
                                 itemstack1 = null;
                             }
-                        } else {
+                        }
+                        else
+                        {
                             itemstack1 = itemstack.copy();
                         }
                     }

@@ -6,62 +6,74 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public class HttpPipelineSender extends Thread {
+public class HttpPipelineSender extends Thread
+{
     private HttpPipelineConnection httpPipelineConnection = null;
     private static final String CRLF = "\r\n";
-    private static final Charset ASCII = StandardCharsets.US_ASCII;
+    private static Charset ASCII = Charset.forName("ASCII");
 
-    public HttpPipelineSender(final HttpPipelineConnection httpPipelineConnection) {
+    public HttpPipelineSender(HttpPipelineConnection httpPipelineConnection)
+    {
         super("HttpPipelineSender");
         this.httpPipelineConnection = httpPipelineConnection;
     }
 
-    public void run() {
+    public void run()
+    {
         HttpPipelineRequest httppipelinerequest = null;
 
-        try {
+        try
+        {
             this.connect();
 
-            while (!Thread.interrupted()) {
+            while (!Thread.interrupted())
+            {
                 httppipelinerequest = this.httpPipelineConnection.getNextRequestSend();
-                final HttpRequest httprequest = httppipelinerequest.getHttpRequest();
-                final OutputStream outputstream = this.httpPipelineConnection.getOutputStream();
+                HttpRequest httprequest = httppipelinerequest.getHttpRequest();
+                OutputStream outputstream = this.httpPipelineConnection.getOutputStream();
                 this.writeRequest(httprequest, outputstream);
                 this.httpPipelineConnection.onRequestSent(httppipelinerequest);
             }
-        } catch (final InterruptedException var4) {
+        }
+        catch (InterruptedException var4)
+        {
             return;
-        } catch (final Exception exception) {
+        }
+        catch (Exception exception)
+        {
             this.httpPipelineConnection.onExceptionSend(httppipelinerequest, exception);
         }
     }
 
-    private void connect() throws IOException {
-        final String s = this.httpPipelineConnection.getHost();
-        final int i = this.httpPipelineConnection.getPort();
-        final Proxy proxy = this.httpPipelineConnection.getProxy();
-        final Socket socket = new Socket(proxy);
+    private void connect() throws IOException
+    {
+        String s = this.httpPipelineConnection.getHost();
+        int i = this.httpPipelineConnection.getPort();
+        Proxy proxy = this.httpPipelineConnection.getProxy();
+        Socket socket = new Socket(proxy);
         socket.connect(new InetSocketAddress(s, i), 5000);
         this.httpPipelineConnection.setSocket(socket);
     }
 
-    private void writeRequest(final HttpRequest req, final OutputStream out) throws IOException {
+    private void writeRequest(HttpRequest req, OutputStream out) throws IOException
+    {
         this.write(out, req.getMethod() + " " + req.getFile() + " " + req.getHttp() + "\r\n");
-        final Map<String, String> map = req.getHeaders();
+        Map<String, String> map = req.getHeaders();
 
-        for (final String s : map.keySet()) {
-            final String s1 = req.getHeaders().get(s);
+        for (String s : map.keySet())
+        {
+            String s1 = (String)req.getHeaders().get(s);
             this.write(out, s + ": " + s1 + "\r\n");
         }
 
         this.write(out, "\r\n");
     }
 
-    private void write(final OutputStream out, final String str) throws IOException {
-        final byte[] abyte = str.getBytes(ASCII);
+    private void write(OutputStream out, String str) throws IOException
+    {
+        byte[] abyte = str.getBytes(ASCII);
         out.write(abyte);
     }
 }

@@ -692,7 +692,7 @@ public final class RenderUtil implements Accessor {
 	}
 
 	public void drawOutlineBoundingBox(final AxisAlignedBB bb, Color color) {
-		RenderGlobal.func_181563_a(bb, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		RenderGlobal.drawOutlinedBoundingBox(bb, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}
 	
     public void drawTriangle(float cx, float cy, float r, float n, Color color){

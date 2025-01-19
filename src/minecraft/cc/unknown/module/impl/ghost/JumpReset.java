@@ -25,7 +25,7 @@ public class JumpReset extends Module {
 	private final NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
 
 	@EventLink
-	public final Listener<MoveInputEvent> onMove = event -> {
+	public final Listener<MoveInputEvent> onMoveInput = event -> {
         if (onlyClick.getValue() && mc.player.isSwingInProgress) {
             return;
         }

@@ -67,6 +67,7 @@ of.message.capeOF.reloadCape=Kappen lastes på nytt om 15 sekunder.
 of.message.capeOF.error1=Mojang-autentisering mislykket.
 of.message.capeOF.error2=Feil: %s
 
+
 # Video settings
 
 options.graphics.tooltip.1=Visuell kvalitet
@@ -307,6 +308,7 @@ of.options.MIPMAP_TYPE.tooltip.3=  Nærmeste - grov utjevning (hurtigste)
 of.options.MIPMAP_TYPE.tooltip.4=  Lineær - normal utjevning
 of.options.MIPMAP_TYPE.tooltip.5=  Bilineær - fin utjevning
 of.options.MIPMAP_TYPE.tooltip.6=  Trelineær - fineste utjevning (langsomste)
+
 
 of.options.AA_LEVEL=Kantutjevning
 of.options.AA_LEVEL.tooltip.1=Kantutjevning

@@ -1,28 +1,29 @@
 package net.minecraft.block.properties;
 
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 
-import com.google.common.collect.ImmutableSet;
+public class PropertyBool extends PropertyHelper<Boolean>
+{
+    private final ImmutableSet<Boolean> allowedValues = ImmutableSet.<Boolean>of(Boolean.valueOf(true), Boolean.valueOf(false));
 
-public class PropertyBool extends PropertyHelper<Boolean> {
-    private final ImmutableSet<Boolean> allowedValues = ImmutableSet.of(true, false);
-
-    protected PropertyBool(final String name) {
+    protected PropertyBool(String name)
+    {
         super(name, Boolean.class);
     }
 
-    public Collection<Boolean> getAllowedValues() {
+    public Collection<Boolean> getAllowedValues()
+    {
         return this.allowedValues;
     }
 
-    public static PropertyBool create(final String name) {
+    public static PropertyBool create(String name)
+    {
         return new PropertyBool(name);
     }
 
-    /**
-     * Get the name for the given value.
-     */
-    public String getName(final Boolean value) {
+    public String getName(Boolean value)
+    {
         return value.toString();
     }
 }

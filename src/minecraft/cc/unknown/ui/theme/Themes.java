@@ -8,7 +8,6 @@ import static net.minecraft.util.ChatFormatting.GOLD;
 import static net.minecraft.util.ChatFormatting.GRAY;
 import static net.minecraft.util.ChatFormatting.GREEN;
 import static net.minecraft.util.ChatFormatting.LIGHT_PURPLE;
-import static net.minecraft.util.ChatFormatting.NONE;
 import static net.minecraft.util.ChatFormatting.RED;
 import static net.minecraft.util.ChatFormatting.YELLOW;
 

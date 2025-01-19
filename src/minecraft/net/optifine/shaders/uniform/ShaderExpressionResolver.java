@@ -1,65 +1,80 @@
 package net.optifine.shaders.uniform;
 
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.optifine.expr.ConstantFloat;
 import net.optifine.expr.IExpression;
 import net.optifine.expr.IExpressionResolver;
 import net.optifine.shaders.SMCLog;
 
-import java.util.HashMap;
-import java.util.Map;
+public class ShaderExpressionResolver implements IExpressionResolver
+{
+    private Map<String, IExpression> mapExpressions = new HashMap();
 
-public class ShaderExpressionResolver implements IExpressionResolver {
-    private final Map<String, IExpression> mapExpressions = new HashMap();
-
-    public ShaderExpressionResolver(final Map<String, IExpression> map) {
+    public ShaderExpressionResolver(Map<String, IExpression> map)
+    {
         this.registerExpressions();
 
-        for (final String s : map.keySet()) {
-            final IExpression iexpression = map.get(s);
+        for (String s : map.keySet())
+        {
+            IExpression iexpression = (IExpression)map.get(s);
             this.registerExpression(s, iexpression);
         }
     }
 
-    private void registerExpressions() {
-        final ShaderParameterFloat[] ashaderparameterfloat = ShaderParameterFloat.values();
+    private void registerExpressions()
+    {
+        ShaderParameterFloat[] ashaderparameterfloat = ShaderParameterFloat.values();
 
-        for (int i = 0; i < ashaderparameterfloat.length; ++i) {
-            final ShaderParameterFloat shaderparameterfloat = ashaderparameterfloat[i];
+        for (int i = 0; i < ashaderparameterfloat.length; ++i)
+        {
+            ShaderParameterFloat shaderparameterfloat = ashaderparameterfloat[i];
             this.addParameterFloat(this.mapExpressions, shaderparameterfloat);
         }
 
-        final ShaderParameterBool[] ashaderparameterbool = ShaderParameterBool.values();
+        ShaderParameterBool[] ashaderparameterbool = ShaderParameterBool.values();
 
-        for (int k = 0; k < ashaderparameterbool.length; ++k) {
-            final ShaderParameterBool shaderparameterbool = ashaderparameterbool[k];
+        for (int k = 0; k < ashaderparameterbool.length; ++k)
+        {
+            ShaderParameterBool shaderparameterbool = ashaderparameterbool[k];
             this.mapExpressions.put(shaderparameterbool.getName(), shaderparameterbool);
         }
 
-        for (final BiomeGenBase biomegenbase : BiomeGenBase.BIOME_ID_MAP.values()) {
+        for (BiomeGenBase biomegenbase : BiomeGenBase.BIOME_ID_MAP.values())
+        {
             String s = biomegenbase.biomeName.trim();
             s = "BIOME_" + s.toUpperCase().replace(' ', '_');
-            final int j = biomegenbase.biomeID;
-            final IExpression iexpression = new ConstantFloat((float) j);
+            int j = biomegenbase.biomeID;
+            IExpression iexpression = new ConstantFloat((float)j);
             this.registerExpression(s, iexpression);
         }
     }
 
-    private void addParameterFloat(final Map<String, IExpression> map, final ShaderParameterFloat spf) {
-        final String[] astring = spf.getIndexNames1();
+    private void addParameterFloat(Map<String, IExpression> map, ShaderParameterFloat spf)
+    {
+        String[] astring = spf.getIndexNames1();
 
-        if (astring == null) {
+        if (astring == null)
+        {
             map.put(spf.getName(), new ShaderParameterIndexed(spf));
-        } else {
-            for (int i = 0; i < astring.length; ++i) {
-                final String s = astring[i];
-                final String[] astring1 = spf.getIndexNames2();
+        }
+        else
+        {
+            for (int i = 0; i < astring.length; ++i)
+            {
+                String s = astring[i];
+                String[] astring1 = spf.getIndexNames2();
 
-                if (astring1 == null) {
+                if (astring1 == null)
+                {
                     map.put(spf.getName() + "." + s, new ShaderParameterIndexed(spf, i));
-                } else {
-                    for (int j = 0; j < astring1.length; ++j) {
-                        final String s1 = astring1[j];
+                }
+                else
+                {
+                    for (int j = 0; j < astring1.length; ++j)
+                    {
+                        String s1 = astring1[j];
                         map.put(spf.getName() + "." + s + "." + s1, new ShaderParameterIndexed(spf, i, j));
                     }
                 }
@@ -67,21 +82,27 @@ public class ShaderExpressionResolver implements IExpressionResolver {
         }
     }
 
-    public boolean registerExpression(final String name, final IExpression expr) {
-        if (this.mapExpressions.containsKey(name)) {
+    public boolean registerExpression(String name, IExpression expr)
+    {
+        if (this.mapExpressions.containsKey(name))
+        {
             SMCLog.warning("Expression already defined: " + name);
             return false;
-        } else {
+        }
+        else
+        {
             this.mapExpressions.put(name, expr);
             return true;
         }
     }
 
-    public IExpression getExpression(final String name) {
-        return this.mapExpressions.get(name);
+    public IExpression getExpression(String name)
+    {
+        return (IExpression)this.mapExpressions.get(name);
     }
 
-    public boolean hasExpression(final String name) {
+    public boolean hasExpression(String name)
+    {
         return this.mapExpressions.containsKey(name);
     }
 }

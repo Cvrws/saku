@@ -23,16 +23,13 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ResourceLocation;
 
 public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
-	/**
-	 * this field is used to indicate the 3-pixel wide arms
-	 */
-	private final boolean smallArms;
+	private boolean smallArms;
 
-	public RenderPlayer(final RenderManager renderManager) {
+	public RenderPlayer(RenderManager renderManager) {
 		this(renderManager, false);
 	}
 
-	public RenderPlayer(final RenderManager renderManager, final boolean useSmallArms) {
+	public RenderPlayer(RenderManager renderManager, boolean useSmallArms) {
 		super(renderManager, new ModelPlayer(0.0F, useSmallArms), 0.5F);
 		this.smallArms = useSmallArms;
 		this.addLayer(new LayerBipedArmor(this));
@@ -49,16 +46,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 		return (ModelPlayer) super.getMainModel();
 	}
 
-	/**
-	 * Actually renders the given argument. This is a synthetic bridge method,
-	 * always casting down its argument and then handing it off to a worker function
-	 * which does the actual work. In all probabilty, the class Render is generic
-	 * (Render<T extends Entity>) and this method has signature public void
-	 * doRender(T entity, double d, double d1, double d2, float f, float f1). But
-	 * JAD is pre 1.5 so doe
-	 *
-	 * @param entityYaw The yaw rotation of the passed entity
-	 */
 	public void doRender(AbstractClientPlayer entity, double x, double y, double z, float entityYaw,
 			float partialTicks) {
 		if (!entity.isUser() || this.renderManager.livingPlayer == entity) {
@@ -73,15 +60,15 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 		}
 	}
 
-	private void setModelVisibilities(final AbstractClientPlayer clientPlayer) {
-		final ModelPlayer modelplayer = this.getMainModel();
+	private void setModelVisibilities(AbstractClientPlayer clientPlayer) {
+		ModelPlayer modelplayer = this.getMainModel();
 
 		if (clientPlayer.isSpectator()) {
 			modelplayer.setInvisible(false);
 			modelplayer.bipedHead.showModel = true;
 			modelplayer.bipedHeadwear.showModel = true;
 		} else {
-			final ItemStack itemstack = clientPlayer.inventory.getCurrentItem();
+			ItemStack itemstack = clientPlayer.inventory.getCurrentItem();
 			modelplayer.setInvisible(true);
 			modelplayer.bipedHeadwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.HAT);
 			modelplayer.bipedBodyWear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.JACKET);
@@ -107,7 +94,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 						&& Sakura.instance.getModuleManager().get(KillAura.class).canBlock();
 
 				if (flag || clientPlayer.getItemInUseCount() > 0) {
-					final EnumAction enumaction = itemstack.getItemUseAction();
+					EnumAction enumaction = itemstack.getItemUseAction();
 
 					if (enumaction == EnumAction.BLOCK) {
 						modelplayer.heldItemRight = 3;
@@ -119,11 +106,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 		}
 	}
 
-	/**
-	 * Returns the location of an entity's texture. Doesn't seem to be called unless
-	 * you call Render.bindEntityTexture.
-	 */
-	protected ResourceLocation getEntityTexture(final AbstractClientPlayer entity) {
+	protected ResourceLocation getEntityTexture(AbstractClientPlayer entity) {
 		return entity.getLocationSkin();
 	}
 
@@ -131,12 +114,8 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 		GlStateManager.translate(0.0F, 0.1875F, 0.0F);
 	}
 
-	/**
-	 * Allows the render to do any OpenGL state modifications necessary before the
-	 * model is rendered. Args: entityLiving, partialTickTime
-	 */
-	protected void preRenderCallback(final AbstractClientPlayer entitylivingbaseIn, final float partialTickTime) {
-		final float f = 0.9375F;
+	protected void preRenderCallback(AbstractClientPlayer entitylivingbaseIn, float partialTickTime) {
+		float f = 0.9375F;
 		GlStateManager.scale(f, f, f);
 	}
 
@@ -157,10 +136,10 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 		super.renderOffsetLivingLabel(entityIn, x, y, z, str, p_177069_9_, p_177069_10_);
 	}
 
-	public void renderRightArm(final AbstractClientPlayer clientPlayer) {
-		final float f = 1.0F;
+	public void renderRightArm(AbstractClientPlayer clientPlayer) {
+		float f = 1.0F;
 		GlStateManager.color(f, f, f);
-		final ModelPlayer modelplayer = this.getMainModel();
+		ModelPlayer modelplayer = this.getMainModel();
 		this.setModelVisibilities(clientPlayer);
 		modelplayer.swingProgress = 0.0F;
 		modelplayer.isSneak = false;
@@ -168,10 +147,10 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 		modelplayer.renderRightArm();
 	}
 
-	public void renderLeftArm(final AbstractClientPlayer clientPlayer) {
-		final float f = 1.0F;
+	public void renderLeftArm(AbstractClientPlayer clientPlayer) {
+		float f = 1.0F;
 		GlStateManager.color(f, f, f);
-		final ModelPlayer modelplayer = this.getMainModel();
+		ModelPlayer modelplayer = this.getMainModel();
 		this.setModelVisibilities(clientPlayer);
 		modelplayer.isSneak = false;
 		modelplayer.swingProgress = 0.0F;
@@ -179,11 +158,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 		modelplayer.renderLeftArm();
 	}
 
-	/**
-	 * Sets a simple glTranslate on a LivingEntity.
-	 */
-	protected void renderLivingAt(final AbstractClientPlayer entityLivingBaseIn, final double x, final double y,
-			final double z) {
+	protected void renderLivingAt(AbstractClientPlayer entityLivingBaseIn, double x, double y, double z) {
 		if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.isPlayerSleeping()) {
 			super.renderLivingAt(entityLivingBaseIn, x + (double) entityLivingBaseIn.renderOffsetX,
 					y + (double) entityLivingBaseIn.renderOffsetY, z + (double) entityLivingBaseIn.renderOffsetZ);
@@ -192,8 +167,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 		}
 	}
 
-	protected void rotateCorpse(final AbstractClientPlayer bat, final float p_77043_2_, final float p_77043_3_,
-			final float partialTicks) {
+	protected void rotateCorpse(AbstractClientPlayer bat, float p_77043_2_, float p_77043_3_, float partialTicks) {
 		if (bat.isEntityAlive() && bat.isPlayerSleeping()) {
 			GlStateManager.rotate(bat.getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
 			GlStateManager.rotate(this.getDeathMaxRotation(bat), 0.0F, 0.0F, 1.0F);

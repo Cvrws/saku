@@ -1,16 +1,13 @@
 package net.minecraft.server.integrated;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Futures;
-
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ThreadLanServerPing;
@@ -35,17 +32,17 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
+import net.minecraft.world.demo.DemoWorldServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.optifine.ClearWater;
 import net.optifine.reflect.Reflector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public class IntegratedServer extends MinecraftServer {
+public class IntegratedServer extends MinecraftServer
+{
     private static final Logger logger = LogManager.getLogger();
-
-    /**
-     * The Minecraft instance.
-     */
     private final Minecraft mc;
     private final WorldSettings theWorldSettings;
     private boolean isGamePaused;
@@ -56,104 +53,134 @@ public class IntegratedServer extends MinecraftServer {
     public BlockPos difficultyUpdatePos = null;
     public DifficultyInstance difficultyLast = null;
 
-    public IntegratedServer(final Minecraft mcIn) {
+    public IntegratedServer(Minecraft mcIn)
+    {
         super(mcIn.getProxy(), new File(mcIn.mcDataDir, USER_CACHE_FILE.getName()));
         this.mc = mcIn;
         this.theWorldSettings = null;
     }
 
-    public IntegratedServer(final Minecraft mcIn, final String folderName, final String worldName, final WorldSettings settings) {
+    public IntegratedServer(Minecraft mcIn, String folderName, String worldName, WorldSettings settings)
+    {
         super(new File(mcIn.mcDataDir, "saves"), mcIn.getProxy(), new File(mcIn.mcDataDir, USER_CACHE_FILE.getName()));
         this.setServerOwner(mcIn.getSession().getUsername());
         this.setFolderName(folderName);
         this.setWorldName(worldName);
+        this.setDemo(mcIn.isDemo());
         this.canCreateBonusChest(settings.isBonusChestEnabled());
         this.setBuildLimit(256);
         this.setConfigManager(new IntegratedPlayerList(this));
         this.mc = mcIn;
-        this.theWorldSettings = settings;
-        final ISaveHandler isavehandler = this.getActiveAnvilConverter().getSaveLoader(folderName, false);
-        final WorldInfo worldinfo = isavehandler.loadWorldInfo();
+        this.theWorldSettings = this.isDemo() ? DemoWorldServer.demoWorldSettings : settings;
+        ISaveHandler isavehandler = this.getActiveAnvilConverter().getSaveLoader(folderName, false);
+        WorldInfo worldinfo = isavehandler.loadWorldInfo();
 
-        if (worldinfo != null) {
-            final NBTTagCompound nbttagcompound = worldinfo.getPlayerNBTTagCompound();
+        if (worldinfo != null)
+        {
+            NBTTagCompound nbttagcompound = worldinfo.getPlayerNBTTagCompound();
 
-            if (nbttagcompound != null && nbttagcompound.hasKey("Dimension")) {
-                final int i = nbttagcompound.getInteger("Dimension");
+            if (nbttagcompound != null && nbttagcompound.hasKey("Dimension"))
+            {
+                int i = nbttagcompound.getInteger("Dimension");
                 PacketThreadUtil.lastDimensionId = i;
                 this.mc.loadingScreen.setLoadingProgress(-1);
             }
         }
     }
 
-    protected ServerCommandManager createNewCommandManager() {
+    protected ServerCommandManager createNewCommandManager()
+    {
         return new IntegratedServerCommandManager();
     }
 
-    protected void loadAllWorlds(final String p_71247_1_, final String p_71247_2_, final long seed, final WorldType type, final String p_71247_6_) {
-        this.convertMapIfNeeded(p_71247_1_);
-        final boolean flag = Reflector.DimensionManager.exists();
+    protected void loadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, String worldNameIn2)
+    {
+        this.convertMapIfNeeded(saveName);
+        boolean flag = Reflector.DimensionManager.exists();
 
-        if (!flag) {
+        if (!flag)
+        {
             this.worldServers = new WorldServer[3];
             this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
         }
 
-        final ISaveHandler isavehandler = this.getActiveAnvilConverter().getSaveLoader(p_71247_1_, true);
+        ISaveHandler isavehandler = this.getActiveAnvilConverter().getSaveLoader(saveName, true);
         this.setResourcePackFromWorld(this.getFolderName(), isavehandler);
         WorldInfo worldinfo = isavehandler.loadWorldInfo();
 
-        if (worldinfo == null) {
-            worldinfo = new WorldInfo(this.theWorldSettings, p_71247_2_);
-        } else {
-            worldinfo.setWorldName(p_71247_2_);
+        if (worldinfo == null)
+        {
+            worldinfo = new WorldInfo(this.theWorldSettings, worldNameIn);
+        }
+        else
+        {
+            worldinfo.setWorldName(worldNameIn);
         }
 
-        if (flag) {
-            final WorldServer worldserver = (WorldServer) (new WorldServer(this, isavehandler, worldinfo, 0, this.theProfiler)).init();
+        if (flag)
+        {
+            WorldServer worldserver = this.isDemo() ? (WorldServer)((WorldServer)(new DemoWorldServer(this, isavehandler, worldinfo, 0, this.theProfiler)).init()) : (WorldServer)(new WorldServer(this, isavehandler, worldinfo, 0, this.theProfiler)).init();
             worldserver.initialize(this.theWorldSettings);
-            final Integer[] ainteger = (Integer[]) Reflector.call(Reflector.DimensionManager_getStaticDimensionIDs, new Object[0]);
-            final Integer[] ainteger1 = ainteger;
-            final int i = ainteger.length;
+            Integer[] ainteger = (Integer[])((Integer[])Reflector.call(Reflector.DimensionManager_getStaticDimensionIDs, new Object[0]));
+            Integer[] ainteger1 = ainteger;
+            int i = ainteger.length;
 
-            for (int j = 0; j < i; ++j) {
-                final int k = ainteger1[j].intValue();
-                final WorldServer worldserver1 = k == 0 ? worldserver : (WorldServer) (new WorldServerMulti(this, isavehandler, k, worldserver, this.theProfiler)).init();
+            for (int j = 0; j < i; ++j)
+            {
+                int k = ainteger1[j].intValue();
+                WorldServer worldserver1 = k == 0 ? worldserver : (WorldServer)((WorldServer)(new WorldServerMulti(this, isavehandler, k, worldserver, this.theProfiler)).init());
                 worldserver1.addWorldAccess(new WorldManager(this, worldserver1));
 
-                if (!this.isSinglePlayer()) {
+                if (!this.isSinglePlayer())
+                {
                     worldserver1.getWorldInfo().setGameType(this.getGameType());
                 }
 
-                if (Reflector.EventBus.exists()) {
-                    Reflector.postForgeBusEvent(Reflector.WorldEvent_Load_Constructor, worldserver1);
+                if (Reflector.EventBus.exists())
+                {
+                    Reflector.postForgeBusEvent(Reflector.WorldEvent_Load_Constructor, new Object[] {worldserver1});
                 }
             }
 
-            this.getConfigurationManager().setPlayerManager(new WorldServer[]{worldserver});
+            this.getConfigurationManager().setPlayerManager(new WorldServer[] {worldserver});
 
-            if (worldserver.getWorldInfo().getDifficulty() == null) {
+            if (worldserver.getWorldInfo().getDifficulty() == null)
+            {
                 this.setDifficultyForAllWorlds(this.mc.gameSettings.difficulty);
             }
-        } else {
-            for (int l = 0; l < this.worldServers.length; ++l) {
+        }
+        else
+        {
+            for (int l = 0; l < this.worldServers.length; ++l)
+            {
                 int i1 = 0;
 
-                if (l == 1) {
+                if (l == 1)
+                {
                     i1 = -1;
                 }
 
-                if (l == 2) {
+                if (l == 2)
+                {
                     i1 = 1;
                 }
 
-                if (l == 0) {
-                	this.worldServers[l] = (WorldServer) (new WorldServer(this, isavehandler, worldinfo, i1, this.theProfiler)).init();
-                    
+                if (l == 0)
+                {
+                    if (this.isDemo())
+                    {
+                        this.worldServers[l] = (WorldServer)(new DemoWorldServer(this, isavehandler, worldinfo, i1, this.theProfiler)).init();
+                    }
+                    else
+                    {
+                        this.worldServers[l] = (WorldServer)(new WorldServer(this, isavehandler, worldinfo, i1, this.theProfiler)).init();
+                    }
 
                     this.worldServers[l].initialize(this.theWorldSettings);
-                } else {
-                    this.worldServers[l] = (WorldServer) (new WorldServerMulti(this, isavehandler, i1, this.worldServers[0], this.theProfiler)).init();
+                }
+                else
+                {
+                    this.worldServers[l] = (WorldServer)(new WorldServerMulti(this, isavehandler, i1, this.worldServers[0], this.theProfiler)).init();
                 }
 
                 this.worldServers[l].addWorldAccess(new WorldManager(this, this.worldServers[l]));
@@ -161,7 +188,8 @@ public class IntegratedServer extends MinecraftServer {
 
             this.getConfigurationManager().setPlayerManager(this.worldServers);
 
-            if (this.worldServers[0].getWorldInfo().getDifficulty() == null) {
+            if (this.worldServers[0].getWorldInfo().getDifficulty() == null)
+            {
                 this.setDifficultyForAllWorlds(this.mc.gameSettings.difficulty);
             }
         }
@@ -169,10 +197,8 @@ public class IntegratedServer extends MinecraftServer {
         this.initialWorldChunkLoad();
     }
 
-    /**
-     * Initialises the server and starts it.
-     */
-    protected boolean startServer() throws IOException {
+    protected boolean startServer() throws IOException
+    {
         logger.info("Starting integrated minecraft server version 1.9");
         this.setOnlineMode(true);
         this.setCanSpawnAnimals(true);
@@ -182,10 +208,12 @@ public class IntegratedServer extends MinecraftServer {
         logger.info("Generating keypair");
         this.setKeyPair(CryptManager.generateKeyPair());
 
-        if (Reflector.FMLCommonHandler_handleServerAboutToStart.exists()) {
-            final Object object = Reflector.call(Reflector.FMLCommonHandler_instance);
+        if (Reflector.FMLCommonHandler_handleServerAboutToStart.exists())
+        {
+            Object object = Reflector.call(Reflector.FMLCommonHandler_instance, new Object[0]);
 
-            if (!Reflector.callBoolean(object, Reflector.FMLCommonHandler_handleServerAboutToStart, this)) {
+            if (!Reflector.callBoolean(object, Reflector.FMLCommonHandler_handleServerAboutToStart, new Object[] {this}))
+            {
                 return false;
             }
         }
@@ -193,59 +221,72 @@ public class IntegratedServer extends MinecraftServer {
         this.loadAllWorlds(this.getFolderName(), this.getWorldName(), this.theWorldSettings.getSeed(), this.theWorldSettings.getTerrainType(), this.theWorldSettings.getWorldName());
         this.setMOTD(this.getServerOwner() + " - " + this.worldServers[0].getWorldInfo().getWorldName());
 
-        if (Reflector.FMLCommonHandler_handleServerStarting.exists()) {
-            final Object object1 = Reflector.call(Reflector.FMLCommonHandler_instance);
+        if (Reflector.FMLCommonHandler_handleServerStarting.exists())
+        {
+            Object object1 = Reflector.call(Reflector.FMLCommonHandler_instance, new Object[0]);
 
-            if (Reflector.FMLCommonHandler_handleServerStarting.getReturnType() == Boolean.TYPE) {
-                return Reflector.callBoolean(object1, Reflector.FMLCommonHandler_handleServerStarting, this);
+            if (Reflector.FMLCommonHandler_handleServerStarting.getReturnType() == Boolean.TYPE)
+            {
+                return Reflector.callBoolean(object1, Reflector.FMLCommonHandler_handleServerStarting, new Object[] {this});
             }
 
-            Reflector.callVoid(object1, Reflector.FMLCommonHandler_handleServerStarting, this);
+            Reflector.callVoid(object1, Reflector.FMLCommonHandler_handleServerStarting, new Object[] {this});
         }
 
         return true;
     }
 
-    /**
-     * Main function called by run() every loop.
-     */
-    public void tick() {
+    public void tick()
+    {
         this.onTick();
-        final boolean flag = this.isGamePaused;
+        boolean flag = this.isGamePaused;
         this.isGamePaused = Minecraft.getInstance().getNetHandler() != null && Minecraft.getInstance().isGamePaused();
 
-        if (!flag && this.isGamePaused) {
+        if (!flag && this.isGamePaused)
+        {
             logger.info("Saving and pausing game...");
             this.getConfigurationManager().saveAllPlayerData();
             this.saveAllWorlds(false);
         }
 
-        if (this.isGamePaused) {
-            synchronized (this.futureTaskQueue) {
-                while (!this.futureTaskQueue.isEmpty()) {
-                    Util.func_181617_a((FutureTask) this.futureTaskQueue.poll(), logger);
+        if (this.isGamePaused)
+        {
+            synchronized (this.futureTaskQueue)
+            {
+                while (!this.futureTaskQueue.isEmpty())
+                {
+                    Util.runTask((FutureTask)this.futureTaskQueue.poll(), logger);
                 }
             }
-        } else {
+        }
+        else
+        {
             super.tick();
 
-            if (this.mc.gameSettings.renderDistanceChunks != this.getConfigurationManager().getViewDistance()) {
-                logger.info("Changing view distance to {}, from {}", new Object[]{Integer.valueOf(this.mc.gameSettings.renderDistanceChunks), Integer.valueOf(this.getConfigurationManager().getViewDistance())});
+            if (this.mc.gameSettings.renderDistanceChunks != this.getConfigurationManager().getViewDistance())
+            {
+                logger.info("Changing view distance to {}, from {}", new Object[] {Integer.valueOf(this.mc.gameSettings.renderDistanceChunks), Integer.valueOf(this.getConfigurationManager().getViewDistance())});
                 this.getConfigurationManager().setViewDistance(this.mc.gameSettings.renderDistanceChunks);
             }
 
-            if (this.mc.world != null) {
-                final WorldInfo worldinfo1 = this.worldServers[0].getWorldInfo();
-                final WorldInfo worldinfo = this.mc.world.getWorldInfo();
+            if (this.mc.world != null)
+            {
+                WorldInfo worldinfo1 = this.worldServers[0].getWorldInfo();
+                WorldInfo worldinfo = this.mc.world.getWorldInfo();
 
-                if (!worldinfo1.isDifficultyLocked() && worldinfo.getDifficulty() != worldinfo1.getDifficulty()) {
-                    logger.info("Changing difficulty to {}, from {}", new Object[]{worldinfo.getDifficulty(), worldinfo1.getDifficulty()});
+                if (!worldinfo1.isDifficultyLocked() && worldinfo.getDifficulty() != worldinfo1.getDifficulty())
+                {
+                    logger.info("Changing difficulty to {}, from {}", new Object[] {worldinfo.getDifficulty(), worldinfo1.getDifficulty()});
                     this.setDifficultyForAllWorlds(worldinfo.getDifficulty());
-                } else if (worldinfo.isDifficultyLocked() && !worldinfo1.isDifficultyLocked()) {
-                    logger.info("Locking difficulty to {}", new Object[]{worldinfo.getDifficulty()});
+                }
+                else if (worldinfo.isDifficultyLocked() && !worldinfo1.isDifficultyLocked())
+                {
+                    logger.info("Locking difficulty to {}", new Object[] {worldinfo.getDifficulty()});
 
-                    for (final WorldServer worldserver : this.worldServers) {
-                        if (worldserver != null) {
+                    for (WorldServer worldserver : this.worldServers)
+                    {
+                        if (worldserver != null)
+                        {
                             worldserver.getWorldInfo().setDifficultyLocked(true);
                         }
                     }
@@ -254,135 +295,146 @@ public class IntegratedServer extends MinecraftServer {
         }
     }
 
-    public boolean canStructuresSpawn() {
+    public boolean canStructuresSpawn()
+    {
         return false;
     }
 
-    public WorldSettings.GameType getGameType() {
+    public WorldSettings.GameType getGameType()
+    {
         return this.theWorldSettings.getGameType();
     }
 
-    /**
-     * Get the server's difficulty
-     */
-    public EnumDifficulty getDifficulty() {
+    public EnumDifficulty getDifficulty()
+    {
         return this.mc.world == null ? this.mc.gameSettings.difficulty : this.mc.world.getWorldInfo().getDifficulty();
     }
 
-    /**
-     * Defaults to false.
-     */
-    public boolean isHardcore() {
+    public boolean isHardcore()
+    {
         return this.theWorldSettings.getHardcoreEnabled();
     }
 
-    public boolean func_181034_q() {
+    public boolean shouldBroadcastRconToOps()
+    {
         return true;
     }
 
-    public boolean func_183002_r() {
+    public boolean shouldBroadcastConsoleToOps()
+    {
         return true;
     }
 
-    /**
-     * par1 indicates if a log message should be output.
-     */
-    public void saveAllWorlds(final boolean dontLog) {
-        if (dontLog) {
-            final int i = this.getTickCounter();
-            final int j = this.mc.gameSettings.ofAutoSaveTicks;
+    public void saveAllWorlds(boolean dontLog)
+    {
+        if (dontLog)
+        {
+            int i = this.getTickCounter();
+            int j = this.mc.gameSettings.ofAutoSaveTicks;
 
-            if ((long) i < this.ticksSaveLast + (long) j) {
+            if ((long)i < this.ticksSaveLast + (long)j)
+            {
                 return;
             }
 
-            this.ticksSaveLast = i;
+            this.ticksSaveLast = (long)i;
         }
 
         super.saveAllWorlds(dontLog);
     }
 
-    public File getDataDirectory() {
+    public File getDataDirectory()
+    {
         return this.mc.mcDataDir;
     }
 
-    public boolean isDedicatedServer() {
+    public boolean isDedicatedServer()
+    {
         return false;
     }
 
-    public boolean func_181035_ah() {
+    public boolean shouldUseNativeTransport()
+    {
         return false;
     }
 
-    /**
-     * Called on exit from the main run() loop.
-     */
-    protected void finalTick(final CrashReport report) {
+    protected void finalTick(CrashReport report)
+    {
         this.mc.crashed(report);
     }
 
-    /**
-     * Adds the server info, including from theWorldServer, to the crash report.
-     */
-    public CrashReport addServerInfoToCrashReport(CrashReport report) {
+    public CrashReport addServerInfoToCrashReport(CrashReport report)
+    {
         report = super.addServerInfoToCrashReport(report);
-        report.getCategory().addCrashSectionCallable("Type", new Callable<String>() {
-            public String call() throws Exception {
+        report.getCategory().addCrashSectionCallable("Type", new Callable<String>()
+        {
+            public String call() throws Exception
+            {
                 return "Integrated Server (map_client.txt)";
             }
         });
-        report.getCategory().addCrashSectionCallable("Is Modded", new Callable<String>() {
-            public String call() throws Exception {
+        report.getCategory().addCrashSectionCallable("Is Modded", new Callable<String>()
+        {
+            public String call() throws Exception
+            {
                 String s = ClientBrandRetriever.getClientModName();
 
-                if (!s.equals("vanilla")) {
-                    return "Definitely; Client brand changed to '" + s + "'";
-                } else {
+                if (!s.equals("vanilla"))
+                {
+                    return "Definitely; Client brand changed to \'" + s + "\'";
+                }
+                else
+                {
                     s = IntegratedServer.this.getServerModName();
-                    return !s.equals("vanilla") ? "Definitely; Server brand changed to '" + s + "'" : (Minecraft.class.getSigners() == null ? "Very likely; Jar signature invalidated" : "Probably not. Jar signature remains and both client + server brands are untouched.");
+                    return !s.equals("vanilla") ? "Definitely; Server brand changed to \'" + s + "\'" : (Minecraft.class.getSigners() == null ? "Very likely; Jar signature invalidated" : "Probably not. Jar signature remains and both client + server brands are untouched.");
                 }
             }
         });
         return report;
     }
 
-    public void setDifficultyForAllWorlds(final EnumDifficulty difficulty) {
+    public void setDifficultyForAllWorlds(EnumDifficulty difficulty)
+    {
         super.setDifficultyForAllWorlds(difficulty);
 
-        if (this.mc.world != null) {
+        if (this.mc.world != null)
+        {
             this.mc.world.getWorldInfo().setDifficulty(difficulty);
         }
     }
 
-    public void addServerStatsToSnooper(final PlayerUsageSnooper playerSnooper) {
+    public void addServerStatsToSnooper(PlayerUsageSnooper playerSnooper)
+    {
         super.addServerStatsToSnooper(playerSnooper);
         playerSnooper.addClientStat("snooper_partner", this.mc.getPlayerUsageSnooper().getUniqueID());
     }
 
-    /**
-     * Returns whether snooping is enabled or not.
-     */
-    public boolean isSnooperEnabled() {
+    public boolean isSnooperEnabled()
+    {
         return Minecraft.getInstance().isSnooperEnabled();
     }
 
-    /**
-     * On dedicated does nothing. On integrated, sets commandsAllowedForAll, gameType and allows external connections.
-     */
-    public String shareToLAN(final WorldSettings.GameType type, final boolean allowCheats) {
-        try {
+    public String shareToLAN(WorldSettings.GameType type, boolean allowCheats)
+    {
+        try
+        {
             int i = -1;
 
-            try {
+            try
+            {
                 i = HttpUtil.getSuitableLanPort();
-            } catch (final IOException var5) {
+            }
+            catch (IOException var5)
+            {
+                ;
             }
 
-            if (i <= 0) {
+            if (i <= 0)
+            {
                 i = 25564;
             }
 
-            this.getNetworkSystem().addLanEndpoint(null, i);
+            this.getNetworkSystem().addLanEndpoint((InetAddress)null, i);
             logger.info("Started on " + i);
             this.isPublic = true;
             this.lanServerPing = new ThreadLanServerPing(this.getMOTD(), i + "");
@@ -390,31 +442,34 @@ public class IntegratedServer extends MinecraftServer {
             this.getConfigurationManager().setGameType(type);
             this.getConfigurationManager().setCommandsAllowedForAll(allowCheats);
             return i + "";
-        } catch (final IOException var6) {
+        }
+        catch (IOException var6)
+        {
             return null;
         }
     }
 
-    /**
-     * Saves all necessary data as preparation for stopping the server.
-     */
-    public void stopServer() {
+    public void stopServer()
+    {
         super.stopServer();
 
-        if (this.lanServerPing != null) {
+        if (this.lanServerPing != null)
+        {
             this.lanServerPing.interrupt();
             this.lanServerPing = null;
         }
     }
 
-    /**
-     * Sets the serverRunning variable to false, in order to get the server to shut down.
-     */
-    public void initiateShutdown() {
-        if (!Reflector.MinecraftForge.exists() || this.isServerRunning()) {
-            Futures.getUnchecked(this.addScheduledTask(new Runnable() {
-                public void run() {
-                    for (final EntityPlayerMP entityplayermp : Lists.newArrayList(IntegratedServer.this.getConfigurationManager().func_181057_v())) {
+    public void initiateShutdown()
+    {
+        if (!Reflector.MinecraftForge.exists() || this.isServerRunning())
+        {
+            Futures.getUnchecked(this.addScheduledTask(new Runnable()
+            {
+                public void run()
+                {
+                    for (EntityPlayerMP entityplayermp : Lists.newArrayList(IntegratedServer.this.getConfigurationManager().getPlayerList()))
+                    {
                         IntegratedServer.this.getConfigurationManager().playerLoggedOut(entityplayermp);
                     }
                 }
@@ -423,78 +478,85 @@ public class IntegratedServer extends MinecraftServer {
 
         super.initiateShutdown();
 
-        if (this.lanServerPing != null) {
+        if (this.lanServerPing != null)
+        {
             this.lanServerPing.interrupt();
             this.lanServerPing = null;
         }
     }
 
-    public void setStaticInstance() {
+    public void setStaticInstance()
+    {
         this.setInstance();
     }
 
-    /**
-     * Returns true if this integrated server is open to LAN
-     */
-    public boolean getPublic() {
+    public boolean getPublic()
+    {
         return this.isPublic;
     }
 
-    /**
-     * Sets the game type for all worlds.
-     */
-    public void setGameType(final WorldSettings.GameType gameMode) {
+    public void setGameType(WorldSettings.GameType gameMode)
+    {
         this.getConfigurationManager().setGameType(gameMode);
     }
 
-    /**
-     * Return whether command blocks are enabled.
-     */
-    public boolean isCommandBlockEnabled() {
+    public boolean isCommandBlockEnabled()
+    {
         return true;
     }
 
-    public int getOpPermissionLevel() {
+    public int getOpPermissionLevel()
+    {
         return 4;
     }
 
-    private void onTick() {
-        for (final WorldServer worldserver : this.worldServers) {
+    private void onTick()
+    {
+        for (WorldServer worldserver : Arrays.asList(this.worldServers))
+        {
             this.onTick(worldserver);
         }
     }
 
-    public DifficultyInstance getDifficultyAsync(final World p_getDifficultyAsync_1_, final BlockPos p_getDifficultyAsync_2_) {
+    public DifficultyInstance getDifficultyAsync(World p_getDifficultyAsync_1_, BlockPos p_getDifficultyAsync_2_)
+    {
         this.difficultyUpdateWorld = p_getDifficultyAsync_1_;
         this.difficultyUpdatePos = p_getDifficultyAsync_2_;
         return this.difficultyLast;
     }
 
-    private void onTick(final WorldServer p_onTick_1_) {
-        if (!Config.isTimeDefault()) {
+    private void onTick(WorldServer p_onTick_1_)
+    {
+        if (!Config.isTimeDefault())
+        {
             this.fixWorldTime(p_onTick_1_);
         }
 
-        if (!Config.isWeatherEnabled()) {
+        if (!Config.isWeatherEnabled())
+        {
             this.fixWorldWeather(p_onTick_1_);
         }
 
-        if (Config.waterOpacityChanged) {
+        if (Config.waterOpacityChanged)
+        {
             Config.waterOpacityChanged = false;
             ClearWater.updateWaterOpacity(Config.getGameSettings(), p_onTick_1_);
         }
 
-        if (this.difficultyUpdateWorld == p_onTick_1_ && this.difficultyUpdatePos != null) {
+        if (this.difficultyUpdateWorld == p_onTick_1_ && this.difficultyUpdatePos != null)
+        {
             this.difficultyLast = p_onTick_1_.getDifficultyForLocation(this.difficultyUpdatePos);
             this.difficultyUpdateWorld = null;
             this.difficultyUpdatePos = null;
         }
     }
 
-    private void fixWorldWeather(final WorldServer p_fixWorldWeather_1_) {
-        final WorldInfo worldinfo = p_fixWorldWeather_1_.getWorldInfo();
+    private void fixWorldWeather(WorldServer p_fixWorldWeather_1_)
+    {
+        WorldInfo worldinfo = p_fixWorldWeather_1_.getWorldInfo();
 
-        if (worldinfo.isRaining() || worldinfo.isThundering()) {
+        if (worldinfo.isRaining() || worldinfo.isThundering())
+        {
             worldinfo.setRainTime(0);
             worldinfo.setRaining(false);
             p_fixWorldWeather_1_.setRainStrength(0.0F);
@@ -507,29 +569,37 @@ public class IntegratedServer extends MinecraftServer {
         }
     }
 
-    private void fixWorldTime(final WorldServer p_fixWorldTime_1_) {
-        final WorldInfo worldinfo = p_fixWorldTime_1_.getWorldInfo();
+    private void fixWorldTime(WorldServer p_fixWorldTime_1_)
+    {
+        WorldInfo worldinfo = p_fixWorldTime_1_.getWorldInfo();
 
-        if (worldinfo.getGameType().getID() == 1) {
-            final long i = p_fixWorldTime_1_.getWorldTime();
-            final long j = i % 24000L;
+        if (worldinfo.getGameType().getID() == 1)
+        {
+            long i = p_fixWorldTime_1_.getWorldTime();
+            long j = i % 24000L;
 
-            if (Config.isTimeDayOnly()) {
-                if (j <= 1000L) {
+            if (Config.isTimeDayOnly())
+            {
+                if (j <= 1000L)
+                {
                     p_fixWorldTime_1_.setWorldTime(i - j + 1001L);
                 }
 
-                if (j >= 11000L) {
+                if (j >= 11000L)
+                {
                     p_fixWorldTime_1_.setWorldTime(i - j + 24001L);
                 }
             }
 
-            if (Config.isTimeNightOnly()) {
-                if (j <= 14000L) {
+            if (Config.isTimeNightOnly())
+            {
+                if (j <= 14000L)
+                {
                     p_fixWorldTime_1_.setWorldTime(i - j + 14001L);
                 }
 
-                if (j >= 22000L) {
+                if (j >= 22000L)
+                {
                     p_fixWorldTime_1_.setWorldTime(i - j + 24000L + 14001L);
                 }
             }

@@ -34,7 +34,6 @@ public final class ModuleManager {
         this.put(STap.class, new STap());
         this.put(Regen.class, new Regen());
         this.put(Misplace.class, new Misplace());
-        this.put(TeleportAura.class, new TeleportAura());
         
         // Ghost
         this.put(AimAssist.class, new AimAssist());
@@ -75,7 +74,6 @@ public final class ModuleManager {
         this.put(FastBreak.class, new FastBreak());
         this.put(FastPlace.class, new FastPlace());
         this.put(LegitScaffold.class, new LegitScaffold());
-        this.put(SafeWalk.class, new SafeWalk());
         this.put(Spammer.class, new Spammer());
         this.put(CancelPackets.class, new CancelPackets());
         this.put(Breaker.class, new Breaker());
@@ -92,7 +90,6 @@ public final class ModuleManager {
         this.put(MidClick.class, new MidClick());
         this.put(Insults.class, new Insults());
         this.put(AutoLeave.class, new AutoLeave());
-        this.put(AltGenerator.class, new AltGenerator());
         this.put(MurderMystery.class, new MurderMystery());
         this.put(ChatBypass.class, new ChatBypass());
         this.put(NoGuiClose.class, new NoGuiClose());

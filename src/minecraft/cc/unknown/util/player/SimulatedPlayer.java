@@ -1171,7 +1171,7 @@ public class SimulatedPlayer implements Accessor {
             BiomeGenBase base = worldObj.getBiomeGenForCoords(pos);
             if (base.enableSnow) return false;
             else if (worldObj.canSnowAt(pos, false)) return false;
-            else return base.canSpawnLightningBolt();
+            else return base.canRain();
         }
     }
 

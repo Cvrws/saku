@@ -1,19 +1,22 @@
 package net.optifine.shaders;
 
-public enum ProgramStage {
+public enum ProgramStage
+{
     NONE(""),
     SHADOW("shadow"),
     GBUFFERS("gbuffers"),
     DEFERRED("deferred"),
     COMPOSITE("composite");
 
-    private final String name;
+    private String name;
 
-    ProgramStage(final String name) {
+    private ProgramStage(String name)
+    {
         this.name = name;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return this.name;
     }
 }

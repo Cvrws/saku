@@ -123,7 +123,7 @@ public class Player {
 	public boolean setVolumen(final float volume) {
 		if (this.audio instanceof JavaSoundAudioDevice) {
 			final JavaSoundAudioDevice jsaudio = (JavaSoundAudioDevice) this.audio;
-			jsaudio.setLineGain(volume);
+			jsaudio.setVolumeControl(volume);
 		}
 		return false;
 	}

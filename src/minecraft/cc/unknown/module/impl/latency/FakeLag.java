@@ -124,100 +124,7 @@ public final class FakeLag extends Module {
     @EventLink
     public final Listener<PacketSendEvent> onSend = event -> {
         final Packet<?> packet = event.getPacket();
-        
-        if (packet instanceof S01PacketPong) {
-            return;
-        }
-
-        if (packet instanceof S08PacketPlayerPosLook) {
-        	blink(false);
-            return;
-        }
-
-        if (packet instanceof S12PacketEntityVelocity) {
-            S12PacketEntityVelocity velocityPacket = (S12PacketEntityVelocity) packet;
-            if (mc.player.getEntityId() == velocityPacket.getEntityID()) {
-            	blink(false);
-                return;
-            }
-        }
-
-        if (packet instanceof S27PacketExplosion) {
-            S27PacketExplosion explosionPacket = (S27PacketExplosion) packet;
-            if (explosionPacket.field_149153_g != 0f || explosionPacket.field_149152_f != 0f || explosionPacket.field_149159_h != 0f) {
-            	blink(false);
-                return;
-            }
-        }
-
-        if (!resetTimer.finished(recoilTime.getValue().intValue())) return;
-
-        if (mc.isSingleplayer() || mc.currentServerData == null) {
-        	blink(false);
-            return;
-        }
-        
-        if (mc.player.isDead || event.isCancelled() || allowedDistToEnemy.getSecondValue().floatValue() > 0.0 && wasNearEnemy || ignoreWholeTick) {
-            return;
-        }
-
-        if (pauseOnNoMove.getValue() && !MoveUtil.isMoving()) {
-            blink(false);
-            return;
-        }
-
-        if (mc.player.getHealth() < mc.player.getMaxHealth()) {
-            if (mc.player.hurtTime != 0) {
-            	blink(false);
-                return;
-            }
-        }
-
-        if (getModule(Scaffold.class).isEnabled() || getModule(LegitScaffold.class).isEnabled()) {
-        	blink(false);
-            return;
-        }
-
-        
-        if (mc.currentScreen instanceof GuiChat || mc.currentScreen instanceof RiceGui) {
-        	blink(false);
-        	return;
-        }
-        
-        if (pauseOnChest.getValue() && mc.currentScreen instanceof GuiContainer) {
-        	blink(false);
-            return;
-        }
-
-        if (blinkOnAction.getValue() && packet instanceof C02PacketUseEntity || mc.player.isEating()) {
-        	blink(false);
-            return;
-        }
-        
-        if (packet instanceof C00Handshake || packet instanceof C00PacketServerQuery || packet instanceof C01PacketPing || 
-                packet instanceof C01PacketChatMessage) {
-                return;
-        }
-        
-        if (packet instanceof C0EPacketClickWindow || packet instanceof C0DPacketCloseWindow) {
-        	blink(false);
-            return;
-        }
-
-        if (packet instanceof C08PacketPlayerBlockPlacement || 
-            packet instanceof C07PacketPlayerDigging || packet instanceof C12PacketUpdateSign || 
-            packet instanceof C19PacketResourcePackStatus) {
-        	blink(false);
-            return;
-        }
-
         event.setCancelled(true);
-        
-        if (packet instanceof C03PacketPlayer && ((C03PacketPlayer) packet).isMoving()) {
-            synchronized (positions) {
-                positions.add(new PositionData(((C03PacketPlayer) packet).getPos(), System.currentTimeMillis(), mc.player.renderYawOffset, RotationHandler.rotations));
-            }
-        }
 
         synchronized (packetQueue) {
             packetQueue.add(new TimedPacket(packet, System.currentTimeMillis()));
@@ -226,9 +133,7 @@ public final class FakeLag extends Module {
     
     @EventLink
     public final Listener<GameEvent> onGame = event -> {
-        WorldClient world = mc.world;
-
-        if (mc.player == null || world == null) {
+        if (mc.player == null || mc.world == null) {
             return;
         }
 
@@ -239,7 +144,7 @@ public final class FakeLag extends Module {
 
             wasNearEnemy = false;
 
-            for (EntityPlayer otherPlayer : world.playerEntities) {
+            for (EntityPlayer otherPlayer : mc.world.playerEntities) {
                 if (otherPlayer == mc.player) {
                     continue;
                 }

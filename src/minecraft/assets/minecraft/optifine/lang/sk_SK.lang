@@ -304,6 +304,7 @@ of.options.MIPMAP_TYPE.tooltip.4=  Lineárna - normálne vyhladzovanie
 of.options.MIPMAP_TYPE.tooltip.5=  Bilineárna - jemné vyhladzovanie
 of.options.MIPMAP_TYPE.tooltip.6=  Trilineárna - najjemnejšie vyhladzovanie (najpomalšie)
 
+
 of.options.AA_LEVEL=Antialiasing
 of.options.AA_LEVEL.tooltip.1=Antialiasing (vyhladzovanie okrajov)
 of.options.AA_LEVEL.tooltip.2= VYP - (štandard) žiadne vyhladzovanie okrajov (rýchlejšie)

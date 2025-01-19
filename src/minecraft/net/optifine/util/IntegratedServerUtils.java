@@ -1,7 +1,6 @@
 package net.optifine.util;
 
 import java.util.UUID;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.integrated.IntegratedServer;
@@ -13,32 +12,48 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
-public class IntegratedServerUtils {
-    public static WorldServer getWorldServer() {
-        final Minecraft minecraft = Config.getMinecraft();
-        final World world = minecraft.world;
+public class IntegratedServerUtils
+{
+    public static WorldServer getWorldServer()
+    {
+        Minecraft minecraft = Config.getMinecraft();
+        World world = minecraft.world;
 
-        if (world == null) {
+        if (world == null)
+        {
             return null;
-        } else if (!minecraft.isIntegratedServerRunning()) {
+        }
+        else if (!minecraft.isIntegratedServerRunning())
+        {
             return null;
-        } else {
-            final IntegratedServer integratedserver = minecraft.getIntegratedServer();
+        }
+        else
+        {
+            IntegratedServer integratedserver = minecraft.getIntegratedServer();
 
-            if (integratedserver == null) {
+            if (integratedserver == null)
+            {
                 return null;
-            } else {
-                final WorldProvider worldprovider = world.provider;
+            }
+            else
+            {
+                WorldProvider worldprovider = world.provider;
 
-                if (worldprovider == null) {
+                if (worldprovider == null)
+                {
                     return null;
-                } else {
-                    final int i = worldprovider.getDimensionId();
+                }
+                else
+                {
+                    int i = worldprovider.getDimensionId();
 
-                    try {
-                        final WorldServer worldserver = integratedserver.worldServerForDimension(i);
+                    try
+                    {
+                        WorldServer worldserver = integratedserver.worldServerForDimension(i);
                         return worldserver;
-                    } catch (final NullPointerException var6) {
+                    }
+                    catch (NullPointerException var6)
+                    {
                         return null;
                     }
                 }
@@ -46,29 +61,40 @@ public class IntegratedServerUtils {
         }
     }
 
-    public static Entity getEntity(final UUID uuid) {
-        final WorldServer worldserver = getWorldServer();
+    public static Entity getEntity(UUID uuid)
+    {
+        WorldServer worldserver = getWorldServer();
 
-        if (worldserver == null) {
+        if (worldserver == null)
+        {
             return null;
-        } else {
-            final Entity entity = worldserver.getEntityFromUuid(uuid);
+        }
+        else
+        {
+            Entity entity = worldserver.getEntityFromUuid(uuid);
             return entity;
         }
     }
 
-    public static TileEntity getTileEntity(final BlockPos pos) {
-        final WorldServer worldserver = getWorldServer();
+    public static TileEntity getTileEntity(BlockPos pos)
+    {
+        WorldServer worldserver = getWorldServer();
 
-        if (worldserver == null) {
+        if (worldserver == null)
+        {
             return null;
-        } else {
-            final Chunk chunk = worldserver.getChunkProvider().provideChunk(pos.getX() >> 4, pos.getZ() >> 4);
+        }
+        else
+        {
+            Chunk chunk = worldserver.getChunkProvider().provideChunk(pos.getX() >> 4, pos.getZ() >> 4);
 
-            if (chunk == null) {
+            if (chunk == null)
+            {
                 return null;
-            } else {
-                final TileEntity tileentity = chunk.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
+            }
+            else
+            {
+                TileEntity tileentity = chunk.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
                 return tileentity;
             }
         }

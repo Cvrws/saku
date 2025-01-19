@@ -4,7 +4,8 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.util.ChatFormatting;
 import net.minecraft.util.IStringSerializable;
 
-public enum EnumDyeColor implements IStringSerializable {
+public enum EnumDyeColor implements IStringSerializable
+{
     WHITE(0, 15, "white", "white", MapColor.snowColor, ChatFormatting.WHITE),
     ORANGE(1, 14, "orange", "orange", MapColor.adobeColor, ChatFormatting.GOLD),
     MAGENTA(2, 13, "magenta", "magenta", MapColor.magentaColor, ChatFormatting.AQUA),
@@ -31,7 +32,8 @@ public enum EnumDyeColor implements IStringSerializable {
     private final MapColor mapColor;
     private final ChatFormatting chatColor;
 
-    EnumDyeColor(final int meta, final int dyeDamage, final String name, final String unlocalizedName, final MapColor mapColorIn, final ChatFormatting chatColor) {
+    private EnumDyeColor(int meta, int dyeDamage, String name, String unlocalizedName, MapColor mapColorIn, ChatFormatting chatColor)
+    {
         this.meta = meta;
         this.dyeDamage = dyeDamage;
         this.name = name;
@@ -40,48 +42,59 @@ public enum EnumDyeColor implements IStringSerializable {
         this.chatColor = chatColor;
     }
 
-    public int getMetadata() {
+    public int getMetadata()
+    {
         return this.meta;
     }
 
-    public int getDyeDamage() {
+    public int getDyeDamage()
+    {
         return this.dyeDamage;
     }
 
-    public String getUnlocalizedName() {
+    public String getUnlocalizedName()
+    {
         return this.unlocalizedName;
     }
 
-    public MapColor getMapColor() {
+    public MapColor getMapColor()
+    {
         return this.mapColor;
     }
 
-    public static EnumDyeColor byDyeDamage(int damage) {
-        if (damage < 0 || damage >= DYE_DMG_LOOKUP.length) {
+    public static EnumDyeColor byDyeDamage(int damage)
+    {
+        if (damage < 0 || damage >= DYE_DMG_LOOKUP.length)
+        {
             damage = 0;
         }
 
         return DYE_DMG_LOOKUP[damage];
     }
 
-    public static EnumDyeColor byMetadata(int meta) {
-        if (meta < 0 || meta >= META_LOOKUP.length) {
+    public static EnumDyeColor byMetadata(int meta)
+    {
+        if (meta < 0 || meta >= META_LOOKUP.length)
+        {
             meta = 0;
         }
 
         return META_LOOKUP[meta];
     }
 
-    public String toString() {
+    public String toString()
+    {
         return this.unlocalizedName;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return this.name;
     }
 
     static {
-        for (final EnumDyeColor enumdyecolor : values()) {
+        for (EnumDyeColor enumdyecolor : values())
+        {
             META_LOOKUP[enumdyecolor.getMetadata()] = enumdyecolor;
             DYE_DMG_LOOKUP[enumdyecolor.getDyeDamage()] = enumdyecolor;
         }

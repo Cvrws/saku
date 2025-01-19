@@ -57,9 +57,6 @@ public final class BlueArchive extends Module {
     
     @EventLink
     public final Listener<Render2DEvent> onRender2D = event -> {
-        int screenWidth = sr.getScaledWidth();
-        int screenHeight = sr.getScaledHeight();
-
         Vector2d pos = position.position;
 
         StickerData sticker = null;

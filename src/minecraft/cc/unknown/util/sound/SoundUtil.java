@@ -1,28 +1,37 @@
 package cc.unknown.util.sound;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class SoundUtil {
-	private Clip clip;
+    private Player player;
 
-	public void playLocalSound() {
-		try {
-			clip = AudioSystem.getClip();
-			clip.open(AudioSystem.getAudioInputStream(SoundUtil.class.getResource("/assets/minecraft/sakura/sound/knockknock.wav")));
-			clip.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    public void playLocalSound() {
+        try {
+            InputStream inputStream = SoundUtil.class.getResourceAsStream("/assets/minecraft/sakura/sound/knockknock.mp3");
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
 
-	public void stopLocalSound() {
-		if (clip != null && clip.isRunning()) {
-			clip.stop();
-			clip.close();
-		}
-	}
+            player = new Player(bufferedInputStream);
+            new Thread(() -> {
+                try {
+                    player.play();
+                } catch (JavaLayerException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stopLocalSound() {
+        if (player != null) {
+            player.close();
+        }
+    }
 }

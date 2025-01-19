@@ -43,7 +43,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 
-@ModuleInfo(aliases = {"Breaker", "fucker"}, description = "Rompe automaticamente la cama", category = Category.WORLD)
+@ModuleInfo(aliases = {"Breaker", "fucker"}, description = "Rompe automaticamente la cama/huevo", category = Category.WORLD)
 public class Breaker extends Module {
 	
     public final ModeValue mode = new ModeValue("Mode", this)
@@ -193,35 +193,42 @@ public class Breaker extends Module {
                     }
                 }
             }
+            
             if (blockToBreak.distance(player.getPosition()) <= Range.getValue().floatValue()) {
                 if (rotate.getValue()) {
                     rotate(blockToBreak);
                 }
-                
+
                 int slot = SlotUtil.findTool(blockToBreak);
                 if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(slot));
                 if (slot != -1) hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, slot);
                 else hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, mc.player.inventory.currentItem);
                 if (!mc.player.onGround) hardness *= airMultipalyer.getValue().floatValue();
 
+                Block currentBlock = PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ());
+                if (currentBlock instanceof BlockDragonEgg) {
+                    PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.START_DESTROY_BLOCK, blockToBreak, EnumFacing.DOWN));
+                    PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.STOP_DESTROY_BLOCK, blockToBreak, EnumFacing.DOWN));
+                    mc.player.swingItem();
+                    breaking = false;
+                    return;
+                }
+
                 if (damagetoblock == 0) {
                     PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.START_DESTROY_BLOCK, blockToBreak, EnumFacing.DOWN));
                 }
+
                 mc.player.swingItem();
                 damagetoblock += hardness;
                 mc.world.sendBlockBreakProgress(player.getEntityId(), blockToBreak, (int) (damagetoblock * 10 - 1));
-                if (damagetoblock >= (PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ()) instanceof BlockBed ? 1-fastBreakBed.getValue().floatValue() : 1-fastBreakNormal.getValue().floatValue())) {
+
+                if (damagetoblock >= (currentBlock instanceof BlockBed ? 1 - fastBreakBed.getValue().floatValue() : 1 - fastBreakNormal.getValue().floatValue())) {
                     damagetoblock = 0;
 
                     PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.STOP_DESTROY_BLOCK, blockToBreak, EnumFacing.DOWN));
                     mc.playerController.onPlayerDestroyBlock(blockToBreak, EnumFacing.UP);
                 }
-                if (damagetoblock >= (PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ()) instanceof BlockDragonEgg ? 1-fastBreakBed.getValue().floatValue() : 1-fastBreakNormal.getValue().floatValue())) {
-                	damagetoblock = 0;
-                	
-                	PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.STOP_DESTROY_BLOCK, blockToBreak, EnumFacing.DOWN));
-                	mc.playerController.onPlayerDestroyBlock(blockToBreak, EnumFacing.UP);
-                }
+
                 if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
             }
         } else {
@@ -247,7 +254,6 @@ public class Breaker extends Module {
         } else {
             breaking = false;
         }
-
     };
 
     @EventLink

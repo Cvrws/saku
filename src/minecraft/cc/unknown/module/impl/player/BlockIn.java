@@ -62,63 +62,6 @@ public class BlockIn extends Module {
 
 	@EventLink
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-		if (getModule(LegitScaffold.class).isEnabled() || getModule(Scaffold.class).isEnabled()
-				|| (!mc.gameSettings.keyBindSneak.isKeyDown()))
-			return;
 
-		long currentTime = System.currentTimeMillis();
-
-		int placed = 0;
-
-		if (currentRot == null) {
-			currentRot = new Vector2f(RotationHandler.rotations.x, RotationHandler.rotations.y);
-		}
-		
-		final Vec3i offset = new Vec3i(0, 0, 0);
-
-		Vec3 hitVec = RayCastUtil.rayCast(RotationHandler.rotations,
-				mc.playerController.getBlockReachDistance()).hitVec;
-
-		mc.player.rotationYaw = currentRot.x;
-		mc.player.rotationPitch = currentRot.y;
-
-		targetBlock = PlayerUtil.getPlacePossibility(offset.getX(), offset.getY(), offset.getZ());
-
-		if (targetBlock == null) {
-			return;
-		}
-
-		enumFacing = PlayerUtil.getEnumFacing(targetBlock);
-
-		if (enumFacing == null) {
-			return;
-		}
-
-		final BlockPos position = new BlockPos(targetBlock.xCoord, targetBlock.yCoord, targetBlock.zCoord);
-
-		blockFace = position.add(enumFacing.getOffset().xCoord, enumFacing.getOffset().yCoord, enumFacing.getOffset().zCoord);
-
-		if (blockFace == null || enumFacing == null) {
-			return;
-		}
-
-		if (targetBlock == null || enumFacing == null || blockFace == null) {
-			return;
-		}
-
-		if (mc.playerController.onPlayerRightClick(mc.player, mc.world, PlayerUtil.getItemStack(), blockFace, enumFacing.getEnumFacing(), hitVec)) {
-			if (silentSwing.getValue()) {
-				mc.player.sendQueue.addToSendQueue(new C0APacketAnimation());
-			} else {
-				mc.player.swingItem();
-				mc.getItemRenderer().resetEquippedProgress();
-			}
-
-			lastPlace = currentTime;
-			placed++;
-		}
-
-		if (placed == 0)
-			toggle();
 	};
 }

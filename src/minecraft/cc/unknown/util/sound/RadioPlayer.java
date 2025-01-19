@@ -15,14 +15,20 @@ import cc.unknown.module.impl.other.MusicPlayer;
 import cc.unknown.util.client.StopWatch;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
+import lombok.Getter;
+import lombok.Setter;
 
 public class RadioPlayer {
     private Thread thread;
     private Player player = null;
+    @Getter @Setter private String current;
     private FloatControl control = null;
     private final StopWatch timer = new StopWatch();
 
     public void start(final String url) {
+    	MusicPlayer musicPlayer = Sakura.instance.getModuleManager().get(MusicPlayer.class);
+    	assert musicPlayer != null;
+    	
         if (this.timer.finished(5L)) {
             (this.thread = new Thread(() -> {
                 try {
@@ -36,6 +42,7 @@ public class RadioPlayer {
                         ignored.printStackTrace();
                     }
 
+                    //setVolume();
                     this.player.play();
                 } catch (JavaLayerException | NoSuchAlgorithmException | KeyManagementException e2) {
                 	
@@ -59,4 +66,5 @@ public class RadioPlayer {
 
         new Thread(musicTask).start();
     }
+
 }

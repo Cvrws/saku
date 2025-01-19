@@ -37,22 +37,14 @@ import net.minecraft.util.BlockPos;
 @ModuleInfo(aliases = "No Slow", description = "Remueve la lentitud al utilizar algunos objetos.", category = Category.MOVEMENT)
 public class NoSlow extends Module {
 	
-	private final ModeValue eventType = new ModeValue("Event Type", this)
-			.add(new SubMode("Pre Attack"))
-			.add(new SubMode("Post Attack"))
-			.add(new SubMode("Pre Position"))
-			.add(new SubMode("Post Position"))
-			.setDefault("Pre Attack");
-	
-	private final ModeValue mode = new ModeValue("Bypass Type", this)
-			.add(new SubMode("Switch / 3"))
-			.add(new SubMode("Alice"))
-			.add(new SubMode("Test"))
+	private final ModeValue mode = new ModeValue("Type", this)
+			.add(new SubMode("Pre Switch"))
+			.add(new SubMode("Post Switch"))
+			.add(new SubMode("Switch"))
 			.add(new SubMode("Vanilla"))
 			.setDefault("Vanilla");
 	
 	private final NumberValue itemDurationTime = new NumberValue("Item Use Duration", this, 1, 0, 1, 1);
-	
 	private final NumberValue forward = new NumberValue("Forward", this, 1, 0.2, 1, 0.1);
 	private final NumberValue strafe = new NumberValue("Strafe", this, 1, 0.2, 1, 0.1);
 	
@@ -60,11 +52,26 @@ public class NoSlow extends Module {
 	private final BooleanValue bow = new BooleanValue("Bow", this, true);
 	private final BooleanValue comestibles = new BooleanValue("Comestibles", this, true);
 	private final BooleanValue sprint = new BooleanValue("Sprint", this, true);
+
+	@Override
+	public void onDisable() {
+		mc.timer.timerSpeed = 1.0F;
+	}
+
+	@Override
+	public void onEnable() {
+		mc.timer.timerSpeed = 1.0F;
+	}
 	
 	@EventLink
-	public final Listener<SlowDownEvent> onSlowDown = event -> {		
-		if (mc.player.moveForward != 0.0F || mc.player.moveStrafing != 0.0F) {
-			if (conditionables()) {
+	public final Listener<SlowDownEvent> onSlowDown = event -> {
+		if (!isInGame()) return;
+	    ItemStack item = PlayerUtil.getItemStack();
+		
+	    if (item == null) return;
+		
+		if (item != null && (mc.player.moveForward != 0.0F || mc.player.moveStrafing != 0.0F)) {
+			if ((sword.getValue() && item.getItem() instanceof ItemSword) || (bow.getValue() && item.getItem() instanceof ItemBow) || (comestibles.getValue() && item.getItem() instanceof ItemFood || item.getItem() instanceof ItemBucketMilk || item.getItem() instanceof ItemPotion)) {
 				event.setSprint(sprint.getValue());
 				event.setForwardMultiplier(forward.getValue().floatValue());
 				event.setStrafeMultiplier(strafe.getValue().floatValue());
@@ -73,59 +80,41 @@ public class NoSlow extends Module {
 	};
 	
 	@EventLink
-	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-		if (eventType.is("Pre Attack")) {
-			 bypass(mode.getValue().getName());
-		}
-	};
-	
-	@EventLink
-	public final Listener<PostUpdateEvent> onPostUpdate = event -> {
-		if (eventType.is("Post Attack")) {
-			 bypass(mode.getValue().getName());
-		}
-	};
-	
-	@EventLink
-	public final Listener<PreMotionEvent> onPreMotion = event -> {
-		if (eventType.is("Pre Position")) {
-			 bypass(mode.getValue().getName());
-		}
-	};
-	
-	@EventLink
 	public final Listener<PostMotionEvent> onPostMotion = event -> {
-		if (eventType.is("Post Position")) {
-			 bypass(mode.getValue().getName());
-		}
+	    if (!isInGame()) return;
+	    ItemStack item = PlayerUtil.getItemStack();
+	    if (item == null) return;
+	    
+        if (mc.player.getItemInUseDuration() == itemDurationTime.getValue().intValue()) {
+			if ((sword.getValue() && item.getItem() instanceof ItemSword) || (bow.getValue() && item.getItem() instanceof ItemBow) || (comestibles.getValue() && item.getItem() instanceof ItemFood || item.getItem() instanceof ItemBucketMilk || item.getItem() instanceof ItemPotion)) {
+				if (mode.is("Post Switch")) {
+					PacketUtil.send(new C09PacketHeldItemChange((mc.player.inventory.currentItem + 1) % 3));
+					PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
+				}
+			}
+        }
 	};
 
-	private void bypass(String mode) {	    
+	@EventLink
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
+	    if (!isInGame()) return;
+	    ItemStack item = PlayerUtil.getItemStack();
+	    if (item == null) return;
+	    
         if (mc.player.getItemInUseDuration() == itemDurationTime.getValue().intValue()) {
-			if (conditionables()) {
-				switch (mode) {
-				case "Switch / 3":
+			if ((sword.getValue() && item.getItem() instanceof ItemSword) || (bow.getValue() && item.getItem() instanceof ItemBow) || (comestibles.getValue() && item.getItem() instanceof ItemFood || item.getItem() instanceof ItemBucketMilk || item.getItem() instanceof ItemPotion)) {
+				switch (mode.getValue().getName()) {
+				case "Pre Switch":
 					PacketUtil.send(new C09PacketHeldItemChange((mc.player.inventory.currentItem + 1) % 3));
 					PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
 					break;
-				case "Test":
-		            PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 8 + 1));
-		            PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 7 + 2));
-		            PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
-					break;
-				case "Alice":
-			        if (mc.player.ticksExisted % 3 == 0) {
-			        	PacketUtil.send(new C08PacketPlayerBlockPlacement(new BlockPos(-1, -1, -1), 1, null, 0, 0, 0));
-			        }
+				case "Switch":
+			        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 8 + 1));
+			        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 7 + 2));
+			        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
 					break;
 				}
 			}
         }
-	}
-	
-	private boolean conditionables() {
-	    ItemStack item = PlayerUtil.getItemStack();
-	    if (item == null) return false;   
-		return (sword.getValue() && item.getItem() instanceof ItemSword) || (bow.getValue() && item.getItem() instanceof ItemBow) || (comestibles.getValue() && item.getItem() instanceof ItemFood || item.getItem() instanceof ItemBucketMilk || item.getItem() instanceof ItemPotion);
-	}
+	};
 }

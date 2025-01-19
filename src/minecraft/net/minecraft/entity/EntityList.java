@@ -2,15 +2,71 @@ package net.minecraft.entity;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.minecraft.entity.ai.EntityMinecartMobSpawner;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.entity.item.*;
-import net.minecraft.entity.monster.*;
-import net.minecraft.entity.passive.*;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.item.EntityEnderEye;
+import net.minecraft.entity.item.EntityEnderPearl;
+import net.minecraft.entity.item.EntityExpBottle;
+import net.minecraft.entity.item.EntityFallingBlock;
+import net.minecraft.entity.item.EntityFireworkRocket;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.item.EntityMinecartChest;
+import net.minecraft.entity.item.EntityMinecartEmpty;
+import net.minecraft.entity.item.EntityMinecartFurnace;
+import net.minecraft.entity.item.EntityMinecartHopper;
+import net.minecraft.entity.item.EntityMinecartTNT;
+import net.minecraft.entity.item.EntityPainting;
+import net.minecraft.entity.item.EntityTNTPrimed;
+import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.monster.EntityBlaze;
+import net.minecraft.entity.monster.EntityCaveSpider;
+import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntityEndermite;
+import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityGiantZombie;
+import net.minecraft.entity.monster.EntityGuardian;
+import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.monster.EntityMagmaCube;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.EntityPigZombie;
+import net.minecraft.entity.monster.EntitySilverfish;
+import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.monster.EntitySnowman;
+import net.minecraft.entity.monster.EntitySpider;
+import net.minecraft.entity.monster.EntityWitch;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.passive.EntityCow;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.passive.EntityMooshroom;
+import net.minecraft.entity.passive.EntityOcelot;
+import net.minecraft.entity.passive.EntityPig;
+import net.minecraft.entity.passive.EntityRabbit;
+import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.entity.passive.EntitySquid;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.*;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityEgg;
+import net.minecraft.entity.projectile.EntityLargeFireball;
+import net.minecraft.entity.projectile.EntityPotion;
+import net.minecraft.entity.projectile.EntitySmallFireball;
+import net.minecraft.entity.projectile.EntitySnowball;
+import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
@@ -18,32 +74,36 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-public class EntityList {
+public class EntityList
+{
     private static final Logger logger = LogManager.getLogger();
-    private static final Map<String, Class<? extends Entity>> stringToClassMapping = Maps.newHashMap();
-    private static final Map<Class<? extends Entity>, String> classToStringMapping = Maps.newHashMap();
-    private static final Map<Integer, Class<? extends Entity>> idToClassMapping = Maps.newHashMap();
-    private static final Map<Class<? extends Entity>, Integer> classToIDMapping = Maps.newHashMap();
-    private static final Map<String, Integer> stringToIDMapping = Maps.newHashMap();
-    public static final Map<Integer, EntityList.EntityEggInfo> entityEggs = Maps.newLinkedHashMap();
+    private static final Map < String, Class <? extends Entity >> stringToClassMapping = Maps. < String, Class <? extends Entity >> newHashMap();
+    private static final Map < Class <? extends Entity > , String > classToStringMapping = Maps. < Class <? extends Entity > , String > newHashMap();
+    private static final Map < Integer, Class <? extends Entity >> idToClassMapping = Maps. < Integer, Class <? extends Entity >> newHashMap();
+    private static final Map < Class <? extends Entity > , Integer > classToIDMapping = Maps. < Class <? extends Entity > , Integer > newHashMap();
+    private static final Map<String, Integer> stringToIDMapping = Maps.<String, Integer>newHashMap();
+    public static final Map<Integer, EntityList.EntityEggInfo> entityEggs = Maps.<Integer, EntityList.EntityEggInfo>newLinkedHashMap();
 
-    /**
-     * adds a mapping between Entity classes and both a string representation and an ID
-     */
-    private static void addMapping(final Class<? extends Entity> entityClass, final String entityName, final int id) {
-        if (stringToClassMapping.containsKey(entityName)) {
+    private static void addMapping(Class <? extends Entity > entityClass, String entityName, int id)
+    {
+        if (stringToClassMapping.containsKey(entityName))
+        {
             throw new IllegalArgumentException("ID is already registered: " + entityName);
-        } else if (idToClassMapping.containsKey(Integer.valueOf(id))) {
+        }
+        else if (idToClassMapping.containsKey(Integer.valueOf(id)))
+        {
             throw new IllegalArgumentException("ID is already registered: " + id);
-        } else if (id == 0) {
+        }
+        else if (id == 0)
+        {
             throw new IllegalArgumentException("Cannot register to reserved id: " + id);
-        } else if (entityClass == null) {
+        }
+        else if (entityClass == null)
+        {
             throw new IllegalArgumentException("Cannot register null clazz for id: " + id);
-        } else {
+        }
+        else
+        {
             stringToClassMapping.put(entityName, entityClass);
             classToStringMapping.put(entityClass, entityName);
             idToClassMapping.put(Integer.valueOf(id), entityClass);
@@ -52,133 +112,137 @@ public class EntityList {
         }
     }
 
-    /**
-     * Adds a entity mapping with egg info.
-     */
-    private static void addMapping(final Class<? extends Entity> entityClass, final String entityName, final int entityID, final int baseColor, final int spotColor) {
+    private static void addMapping(Class <? extends Entity > entityClass, String entityName, int entityID, int baseColor, int spotColor)
+    {
         addMapping(entityClass, entityName, entityID);
         entityEggs.put(Integer.valueOf(entityID), new EntityList.EntityEggInfo(entityID, baseColor, spotColor));
     }
 
-    /**
-     * Create a new instance of an entity in the world by using the entity name.
-     */
-    public static Entity createEntityByName(final String entityName, final World worldIn) {
+    public static Entity createEntityByName(String entityName, World worldIn)
+    {
         Entity entity = null;
 
-        try {
-            final Class<? extends Entity> oclass = stringToClassMapping.get(entityName);
+        try
+        {
+            Class <? extends Entity > oclass = (Class)stringToClassMapping.get(entityName);
 
-            if (oclass != null) {
-                entity = oclass.getConstructor(new Class[]{World.class}).newInstance(new Object[]{worldIn});
+            if (oclass != null)
+            {
+                entity = (Entity)oclass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {worldIn});
             }
-        } catch (final Exception exception) {
+        }
+        catch (Exception exception)
+        {
             exception.printStackTrace();
         }
 
         return entity;
     }
 
-    /**
-     * create a new instance of an entity from NBT store
-     *
-     * @param nbt The NBT compound
-     */
-    public static Entity createEntityFromNBT(final NBTTagCompound nbt, final World worldIn) {
+    public static Entity createEntityFromNBT(NBTTagCompound nbt, World worldIn)
+    {
         Entity entity = null;
 
-        if ("Minecart".equals(nbt.getString("id"))) {
+        if ("Minecart".equals(nbt.getString("id")))
+        {
             nbt.setString("id", EntityMinecart.EnumMinecartType.byNetworkID(nbt.getInteger("Type")).getName());
             nbt.removeTag("Type");
         }
 
-        try {
-            final Class<? extends Entity> oclass = stringToClassMapping.get(nbt.getString("id"));
+        try
+        {
+            Class <? extends Entity > oclass = (Class)stringToClassMapping.get(nbt.getString("id"));
 
-            if (oclass != null) {
-                entity = oclass.getConstructor(new Class[]{World.class}).newInstance(new Object[]{worldIn});
+            if (oclass != null)
+            {
+                entity = (Entity)oclass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {worldIn});
             }
-        } catch (final Exception exception) {
+        }
+        catch (Exception exception)
+        {
             exception.printStackTrace();
         }
 
-        if (entity != null) {
+        if (entity != null)
+        {
             entity.readFromNBT(nbt);
-        } else {
+        }
+        else
+        {
             logger.warn("Skipping Entity with id " + nbt.getString("id"));
         }
 
         return entity;
     }
 
-    /**
-     * Create a new instance of an entity in the world by using an entity ID.
-     */
-    public static Entity createEntityByID(final int entityID, final World worldIn) {
+    public static Entity createEntityByID(int entityID, World worldIn)
+    {
         Entity entity = null;
 
-        try {
-            final Class<? extends Entity> oclass = getClassFromID(entityID);
+        try
+        {
+            Class <? extends Entity > oclass = getClassFromID(entityID);
 
-            if (oclass != null) {
-                entity = oclass.getConstructor(new Class[]{World.class}).newInstance(new Object[]{worldIn});
+            if (oclass != null)
+            {
+                entity = (Entity)oclass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {worldIn});
             }
-        } catch (final Exception exception) {
+        }
+        catch (Exception exception)
+        {
             exception.printStackTrace();
         }
 
-        if (entity == null) {
+        if (entity == null)
+        {
             logger.warn("Skipping Entity with id " + entityID);
         }
 
         return entity;
     }
 
-    /**
-     * gets the entityID of a specific entity
-     */
-    public static int getEntityID(final Entity entityIn) {
-        final Integer integer = classToIDMapping.get(entityIn.getClass());
+    public static int getEntityID(Entity entityIn)
+    {
+        Integer integer = (Integer)classToIDMapping.get(entityIn.getClass());
         return integer == null ? 0 : integer.intValue();
     }
 
-    public static Class<? extends Entity> getClassFromID(final int entityID) {
-        return idToClassMapping.get(Integer.valueOf(entityID));
+    public static Class <? extends Entity > getClassFromID(int entityID)
+    {
+        return (Class)idToClassMapping.get(Integer.valueOf(entityID));
     }
 
-    /**
-     * Gets the string representation of a specific entity.
-     */
-    public static String getEntityString(final Entity entityIn) {
-        return classToStringMapping.get(entityIn.getClass());
+    public static String getEntityString(Entity entityIn)
+    {
+        return (String)classToStringMapping.get(entityIn.getClass());
     }
 
-    /**
-     * Returns the ID assigned to it's string representation
-     */
-    public static int getIDFromString(final String entityName) {
-        final Integer integer = stringToIDMapping.get(entityName);
+    public static int getIDFromString(String entityName)
+    {
+        Integer integer = (Integer)stringToIDMapping.get(entityName);
         return integer == null ? 90 : integer.intValue();
     }
 
-    /**
-     * Finds the class using IDtoClassMapping and classToStringMapping
-     */
-    public static String getStringFromID(final int entityID) {
-        return classToStringMapping.get(getClassFromID(entityID));
+    public static String getStringFromID(int entityID)
+    {
+        return (String)classToStringMapping.get(getClassFromID(entityID));
     }
 
-    public static void func_151514_a() {
+    public static void func_151514_a()
+    {
     }
 
-    public static List<String> getEntityNameList() {
-        final Set<String> set = stringToClassMapping.keySet();
-        final List<String> list = Lists.newArrayList();
+    public static List<String> getEntityNameList()
+    {
+        Set<String> set = stringToClassMapping.keySet();
+        List<String> list = Lists.<String>newArrayList();
 
-        for (final String s : set) {
-            final Class<? extends Entity> oclass = stringToClassMapping.get(s);
+        for (String s : set)
+        {
+            Class <? extends Entity > oclass = (Class)stringToClassMapping.get(s);
 
-            if ((oclass.getModifiers() & 1024) != 1024) {
+            if ((oclass.getModifiers() & 1024) != 1024)
+            {
                 list.add(s);
             }
         }
@@ -187,23 +251,29 @@ public class EntityList {
         return list;
     }
 
-    public static boolean isStringEntityName(final Entity entityIn, final String entityName) {
+    public static boolean isStringEntityName(Entity entityIn, String entityName)
+    {
         String s = getEntityString(entityIn);
 
-        if (s == null && entityIn instanceof EntityPlayer) {
+        if (s == null && entityIn instanceof EntityPlayer)
+        {
             s = "Player";
-        } else if (s == null && entityIn instanceof EntityLightningBolt) {
+        }
+        else if (s == null && entityIn instanceof EntityLightningBolt)
+        {
             s = "LightningBolt";
         }
 
         return entityName.equals(s);
     }
 
-    public static boolean isStringValidEntityName(final String entityName) {
+    public static boolean isStringValidEntityName(String entityName)
+    {
         return "Player".equals(entityName) || getEntityNameList().contains(entityName);
     }
 
-    static {
+    static
+    {
         addMapping(EntityItem.class, "Item", 1);
         addMapping(EntityXPOrb.class, "XPOrb", 2);
         addMapping(EntityEgg.class, "ThrownEgg", 7);
@@ -268,14 +338,16 @@ public class EntityList {
         addMapping(EntityEnderCrystal.class, "EnderCrystal", 200);
     }
 
-    public static class EntityEggInfo {
+    public static class EntityEggInfo
+    {
         public final int spawnedID;
         public final int primaryColor;
         public final int secondaryColor;
         public final StatBase field_151512_d;
         public final StatBase field_151513_e;
 
-        public EntityEggInfo(final int id, final int baseColor, final int spotColor) {
+        public EntityEggInfo(int id, int baseColor, int spotColor)
+        {
             this.spawnedID = id;
             this.primaryColor = baseColor;
             this.secondaryColor = spotColor;

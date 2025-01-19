@@ -5,27 +5,22 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.EntityLeashKnot;
 import net.minecraft.util.ResourceLocation;
 
-public class RenderLeashKnot extends Render<EntityLeashKnot> {
+public class RenderLeashKnot extends Render<EntityLeashKnot>
+{
     private static final ResourceLocation leashKnotTextures = new ResourceLocation("textures/entity/lead_knot.png");
-    private final ModelLeashKnot leashKnotModel = new ModelLeashKnot();
+    private ModelLeashKnot leashKnotModel = new ModelLeashKnot();
 
-    public RenderLeashKnot(final RenderManager renderManagerIn) {
+    public RenderLeashKnot(RenderManager renderManagerIn)
+    {
         super(renderManagerIn);
     }
 
-    /**
-     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
-     * (Render<T extends Entity>) and this method has signature public void doRender(T entity, double d, double d1,
-     * double d2, float f, float f1). But JAD is pre 1.5 so doe
-     *
-     * @param entityYaw The yaw rotation of the passed entity
-     */
-    public void doRender(final EntityLeashKnot entity, final double x, final double y, final double z, final float entityYaw, final float partialTicks) {
+    public void doRender(EntityLeashKnot entity, double x, double y, double z, float entityYaw, float partialTicks)
+    {
         GlStateManager.pushMatrix();
         GlStateManager.disableCull();
-        GlStateManager.translate((float) x, (float) y, (float) z);
-        final float f = 0.0625F;
+        GlStateManager.translate((float)x, (float)y, (float)z);
+        float f = 0.0625F;
         GlStateManager.enableRescaleNormal();
         GlStateManager.scale(-1.0F, -1.0F, 1.0F);
         GlStateManager.enableAlpha();
@@ -35,10 +30,8 @@ public class RenderLeashKnot extends Render<EntityLeashKnot> {
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
 
-    /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-     */
-    protected ResourceLocation getEntityTexture(final EntityLeashKnot entity) {
+    protected ResourceLocation getEntityTexture(EntityLeashKnot entity)
+    {
         return leashKnotTextures;
     }
 }

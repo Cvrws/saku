@@ -42,7 +42,7 @@ import net.minecraft.src.Config;
 public class Sakura {
 
     public static final String NAME = "Sakura";
-    public static final String VERSION = "5.7";
+    public static final String VERSION = "5.8";
 
     public static final Sakura instance = new Sakura();
     public static final CustomLogger LOGGER = new CustomLogger(Sakura.class);
@@ -79,7 +79,7 @@ public class Sakura {
         
     	mc.displayGuiScreen(new SakuMenu());
     	
-        this.firstStart = true;
+        this.firstStart = false;
     	
     	LOGGER.info("Initialized successfully.");
     }
@@ -153,17 +153,18 @@ public class Sakura {
     }
     
     private void initAutoOptimization() {
+        boolean isAndroid = System.getProperty("os.name", "").toLowerCase().contains("android");
+
     	mc.gameSettings.ofFastRender = Config.isShaders() ? false : true;
 		mc.gameSettings.ofChunkUpdatesDynamic = true;
 		mc.gameSettings.ofSmartAnimations = true;
-        mc.gameSettings.ofShowGlErrors = false;
-        mc.gameSettings.ofRenderRegions = true;
-    	mc.gameSettings.ofSmoothFps = false;
+        mc.gameSettings.ofShowGlErrors = false;        
+        mc.gameSettings.ofRenderRegions = isAndroid ? false : true;
+        mc.gameSettings.ofSmoothFps = false;
         mc.gameSettings.ofFastMath = true;
         mc.gameSettings.useVbo = true;
         mc.gameSettings.guiScale = 2;
     }
-    
 
 	private void register(Object... handlers) {
 	    for (Object handler : handlers) {

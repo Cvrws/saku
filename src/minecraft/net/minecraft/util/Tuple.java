@@ -1,33 +1,26 @@
 package net.minecraft.util;
 
-public class Tuple<A, B> {
-    private A a;
-    private B b;
+import lombok.Setter;
 
-    public Tuple(final A aIn, final B bIn) {
-        this.a = aIn;
-        this.b = bIn;
+@Setter
+public class Tuple<A, B>
+{
+    private A first;
+    private B second;
+
+    public Tuple(A aIn, B bIn)
+    {
+        this.first = aIn;
+        this.second = bIn;
     }
 
-    /**
-     * Get the first Object in the Tuple
-     */
-    public A getFirst() {
-        return this.a;
+    public A getFirst()
+    {
+        return this.first;
     }
 
-    /**
-     * Get the second Object in the Tuple
-     */
-    public B getSecond() {
-        return this.b;
-    }
-
-    public void setFirst(A a) {
-        this.a = a;
-    }
-
-    public void setSecond(B b) {
-        this.b = b;
+    public B getSecond()
+    {
+        return this.second;
     }
 }

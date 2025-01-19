@@ -7,36 +7,17 @@ import net.minecraft.inventory.ContainerHorseInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiScreenHorseInventory extends GuiContainer {
+public class GuiScreenHorseInventory extends GuiContainer
+{
     private static final ResourceLocation horseGuiTextures = new ResourceLocation("textures/gui/container/horse.png");
-    private static final Minecraft mc = Minecraft.getInstance();
-
-    /**
-     * The player inventory bound to this GUI.
-     */
-    private final IInventory playerInventory;
-
-    /**
-     * The horse inventory bound to this GUI.
-     */
-    private final IInventory horseInventory;
-
-    /**
-     * The EntityHorse whose inventory is currently being accessed.
-     */
-    private final EntityHorse horseEntity;
-
-    /**
-     * The mouse x-position recorded during the last rendered frame.
-     */
+    private IInventory playerInventory;
+    private IInventory horseInventory;
+    private EntityHorse horseEntity;
     private float mousePosx;
-
-    /**
-     * The mouse y-position recorded during the last renderered frame.
-     */
     private float mousePosY;
 
-    public GuiScreenHorseInventory(final IInventory playerInv, final IInventory horseInv, final EntityHorse horse) {
+    public GuiScreenHorseInventory(IInventory playerInv, IInventory horseInv, EntityHorse horse)
+    {
         super(new ContainerHorseInventory(playerInv, horseInv, horse, Minecraft.getInstance().player));
         this.playerInventory = playerInv;
         this.horseInventory = horseInv;
@@ -44,41 +25,37 @@ public class GuiScreenHorseInventory extends GuiContainer {
         this.allowUserInput = false;
     }
 
-    /**
-     * Draw the foreground layer for the GuiContainer (everything in front of the items). Args : mouseX, mouseY
-     */
-    protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY) {
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+    {
         this.fontRendererObj.draw(this.horseInventory.getDisplayName().getUnformattedText(), 8, 6, 4210752);
         this.fontRendererObj.draw(this.playerInventory.getDisplayName().getUnformattedText(), 8, this.ySize - 96 + 2, 4210752);
     }
 
-    /**
-     * Args : renderPartialTicks, mouseX, mouseY
-     */
-    protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(horseGuiTextures);
-        final int i = (this.width - this.xSize) / 2;
-        final int j = (this.height - this.ySize) / 2;
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
 
-        if (this.horseEntity.isChested()) {
+        if (this.horseEntity.isChested())
+        {
             this.drawTexturedModalRect(i + 79, j + 17, 0, this.ySize, 90, 54);
         }
 
-        if (this.horseEntity.canWearArmor()) {
+        if (this.horseEntity.canWearArmor())
+        {
             this.drawTexturedModalRect(i + 7, j + 35, 0, this.ySize + 54, 18, 18);
         }
 
-        GuiInventory.drawEntityOnScreen(i + 51, j + 60, 17, (float) (i + 51) - this.mousePosx, (float) (j + 75 - 50) - this.mousePosY, this.horseEntity);
+        GuiInventory.drawEntityOnScreen(i + 51, j + 60, 17, (float)(i + 51) - this.mousePosx, (float)(j + 75 - 50) - this.mousePosY, this.horseEntity);
     }
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
-    public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
-        this.mousePosx = (float) mouseX;
-        this.mousePosY = (float) mouseY;
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    {
+        this.mousePosx = (float)mouseX;
+        this.mousePosY = (float)mouseY;
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

@@ -7,7 +7,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.optifine.expr.ExpressionType;
 import net.optifine.expr.IExpressionBool;
 
-public enum ShaderParameterBool implements IExpressionBool {
+public enum ShaderParameterBool implements IExpressionBool
+{
     IS_ALIVE("is_alive"),
     IS_BURNING("is_burning"),
     IS_CHILD("is_child"),
@@ -23,30 +24,36 @@ public enum ShaderParameterBool implements IExpressionBool {
     IS_SPRINTING("is_sprinting"),
     IS_WET("is_wet");
 
-    private final String name;
-    private final RenderManager renderManager;
+    private String name;
+    private RenderManager renderManager;
     private static final ShaderParameterBool[] VALUES = values();
 
-    ShaderParameterBool(final String name) {
+    private ShaderParameterBool(String name)
+    {
         this.name = name;
         this.renderManager = Minecraft.getInstance().getRenderManager();
     }
 
-    public String getName() {
+    public String getName()
+    {
         return this.name;
     }
 
-    public ExpressionType getExpressionType() {
+    public ExpressionType getExpressionType()
+    {
         return ExpressionType.BOOL;
     }
 
-    public boolean eval() {
-        final Entity entity = Minecraft.getInstance().getRenderViewEntity();
+    public boolean eval()
+    {
+        Entity entity = Minecraft.getInstance().getRenderViewEntity();
 
-        if (entity instanceof EntityLivingBase) {
-            final EntityLivingBase entitylivingbase = (EntityLivingBase) entity;
+        if (entity instanceof EntityLivingBase)
+        {
+            EntityLivingBase entitylivingbase = (EntityLivingBase)entity;
 
-            switch (this) {
+            switch (this)
+            {
                 case IS_ALIVE:
                     return entitylivingbase.isEntityAlive();
 
@@ -85,22 +92,26 @@ public enum ShaderParameterBool implements IExpressionBool {
 
                 case IS_WET:
                     return entitylivingbase.isWet();
-			default:
-				break;
             }
         }
 
         return false;
     }
 
-    public static ShaderParameterBool parse(final String str) {
-        if (str == null) {
+    public static ShaderParameterBool parse(String str)
+    {
+        if (str == null)
+        {
             return null;
-        } else {
-            for (int i = 0; i < VALUES.length; ++i) {
-                final ShaderParameterBool shaderparameterbool = VALUES[i];
+        }
+        else
+        {
+            for (int i = 0; i < VALUES.length; ++i)
+            {
+                ShaderParameterBool shaderparameterbool = VALUES[i];
 
-                if (shaderparameterbool.getName().equals(str)) {
+                if (shaderparameterbool.getName().equals(str))
+                {
                     return shaderparameterbool;
                 }
             }

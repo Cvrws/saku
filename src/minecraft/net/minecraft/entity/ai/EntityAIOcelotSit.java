@@ -10,79 +10,87 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class EntityAIOcelotSit extends EntityAIMoveToBlock {
-    private final EntityOcelot field_151493_a;
+public class EntityAIOcelotSit extends EntityAIMoveToBlock
+{
+    private final EntityOcelot ocelot;
 
-    public EntityAIOcelotSit(final EntityOcelot p_i45315_1_, final double p_i45315_2_) {
-        super(p_i45315_1_, p_i45315_2_, 8);
-        this.field_151493_a = p_i45315_1_;
+    public EntityAIOcelotSit(EntityOcelot ocelotIn, double p_i45315_2_)
+    {
+        super(ocelotIn, p_i45315_2_, 8);
+        this.ocelot = ocelotIn;
     }
 
-    /**
-     * Returns whether the EntityAIBase should begin execution.
-     */
-    public boolean shouldExecute() {
-        return this.field_151493_a.isTamed() && !this.field_151493_a.isSitting() && super.shouldExecute();
+    public boolean shouldExecute()
+    {
+        return this.ocelot.isTamed() && !this.ocelot.isSitting() && super.shouldExecute();
     }
 
-    /**
-     * Returns whether an in-progress EntityAIBase should continue executing
-     */
-    public boolean continueExecuting() {
+    public boolean continueExecuting()
+    {
         return super.continueExecuting();
     }
 
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
-    public void startExecuting() {
+    public void startExecuting()
+    {
         super.startExecuting();
-        this.field_151493_a.getAISit().setSitting(false);
+        this.ocelot.getAISit().setSitting(false);
     }
 
-    /**
-     * Resets the task
-     */
-    public void resetTask() {
+    public void resetTask()
+    {
         super.resetTask();
-        this.field_151493_a.setSitting(false);
+        this.ocelot.setSitting(false);
     }
 
-    /**
-     * Updates the task
-     */
-    public void updateTask() {
+    public void updateTask()
+    {
         super.updateTask();
-        this.field_151493_a.getAISit().setSitting(false);
+        this.ocelot.getAISit().setSitting(false);
 
-        if (!this.getIsAboveDestination()) {
-            this.field_151493_a.setSitting(false);
-        } else if (!this.field_151493_a.isSitting()) {
-            this.field_151493_a.setSitting(true);
+        if (!this.getIsAboveDestination())
+        {
+            this.ocelot.setSitting(false);
+        }
+        else if (!this.ocelot.isSitting())
+        {
+            this.ocelot.setSitting(true);
         }
     }
 
-    /**
-     * Return true to set given position as destination
-     */
-    protected boolean shouldMoveTo(final World worldIn, final BlockPos pos) {
-        if (!worldIn.isAirBlock(pos.up())) {
+    protected boolean shouldMoveTo(World worldIn, BlockPos pos)
+    {
+        if (!worldIn.isAirBlock(pos.up()))
+        {
             return false;
-        } else {
-            final IBlockState iblockstate = worldIn.getBlockState(pos);
-            final Block block = iblockstate.getBlock();
+        }
+        else
+        {
+            IBlockState iblockstate = worldIn.getBlockState(pos);
+            Block block = iblockstate.getBlock();
 
-            if (block == Blocks.chest) {
-                final TileEntity tileentity = worldIn.getTileEntity(pos);
+            if (block == Blocks.chest)
+            {
+                TileEntity tileentity = worldIn.getTileEntity(pos);
 
-                return tileentity instanceof TileEntityChest && ((TileEntityChest) tileentity).numPlayersUsing < 1;
-            } else {
-                if (block == Blocks.lit_furnace) {
+                if (tileentity instanceof TileEntityChest && ((TileEntityChest)tileentity).numPlayersUsing < 1)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (block == Blocks.lit_furnace)
+                {
                     return true;
                 }
 
-                return block == Blocks.bed && iblockstate.getValue(BlockBed.PART) != BlockBed.EnumPartType.HEAD;
+                if (block == Blocks.bed && iblockstate.getValue(BlockBed.PART) != BlockBed.EnumPartType.HEAD)
+                {
+                    return true;
+                }
             }
+
+            return false;
         }
     }
 }

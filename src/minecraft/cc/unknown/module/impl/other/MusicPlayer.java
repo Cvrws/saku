@@ -14,10 +14,11 @@ import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.sound.RadioPlayer;
 import cc.unknown.value.impl.ModeValue;
+import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.StringValue;
 import cc.unknown.value.impl.SubMode;
 import javazoom.jl.player.advanced.AdvancedPlayer;
@@ -28,9 +29,14 @@ import javazoom.jl.player.advanced.PlaybackListener;
 public class MusicPlayer extends Module {
 
     private final ModeValue mode = new ModeValue("Type", this)
-            .add(new SubMode("I Love Radio"))
+            .add(new SubMode("Rock"))
+            .add(new SubMode("Phonk"))
+            .add(new SubMode("Trap"))
             .add(new SubMode("NCS"))
+            .add(new SubMode("Party"))
+            .add(new SubMode("Classic"))
             .add(new SubMode("NightCore"))
+            .add(new SubMode("Other"))
             .add(new SubMode("90s"))
             .add(new SubMode("Local"))
             .setDefault("Local");
@@ -55,7 +61,7 @@ public class MusicPlayer extends Module {
         stopLocal();
         started = false;
     }
-
+    
     @EventLink(value = Priority.EXTREMELY_HIGH)
     public final Listener<TickEvent> onTick = event -> {
         if (started) {
@@ -97,19 +103,38 @@ public class MusicPlayer extends Module {
 
     private void playOtherMusic(String mode) {
         Runnable musicRunnable = () -> {
+            if (radio != null) {
+                radio.stop();
+            }
+            
             switch (mode) {
-                case "I Love Radio":
-                    connectToMusic("https://streams.ilovemusic.de/iloveradio1.mp3");
-                    break;
-                case "NCS":
-                    connectToMusic("http://stream.laut.fm/my-webradio");
-                    break;
-                case "NightCore":
-                    connectToMusic("http://stream.laut.fm/nightcoremusic");
-                    break;
-                case "90s":
-                    connectToMusic("http://stream.laut.fm/eurobeat");
-                    break;
+            case "Trap":
+            	connectToMusic("https://stream.laut.fm/trap");
+            	break;
+            case "Phonk":
+            	connectToMusic("https://stream.laut.fm/phonk");
+            	break;
+            case "Rock":
+            	connectToMusic("https://stream.laut.fm/radio-barbarossa");
+            	break;
+            case "NCS":
+            	connectToMusic("https://stream.laut.fm/ncsradio.m3u");
+            	break;
+            case "NightCore":
+            	connectToMusic("https://stream.laut.fm/music4gamers");
+            	break;
+            case "Party":
+            	connectToMusic("https://stream.laut.fm/djzubi");
+            	break;
+            case "90s":
+            	connectToMusic("http://stream.laut.fm/eurobeat");
+            	break;
+            case "Classic":
+            	connectToMusic("https://stream.laut.fm/classics");
+            	break;
+            case "Other":
+            	connectToMusic("https://stream.laut.fm/estacionmix");
+            	break;
             }
         };
 

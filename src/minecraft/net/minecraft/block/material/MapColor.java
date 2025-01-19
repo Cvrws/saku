@@ -1,9 +1,7 @@
 package net.minecraft.block.material;
 
-public class MapColor {
-    /**
-     * Holds all the 16 colors used on maps, very similar of a pallete system.
-     */
+public class MapColor
+{
     public static final MapColor[] mapColorArray = new MapColor[64];
     public static final MapColor airColor = new MapColor(0, 0);
     public static final MapColor grassColor = new MapColor(1, 8368696);
@@ -41,45 +39,50 @@ public class MapColor {
     public static final MapColor emeraldColor = new MapColor(33, 55610);
     public static final MapColor obsidianColor = new MapColor(34, 8476209);
     public static final MapColor netherrackColor = new MapColor(35, 7340544);
-
-    /**
-     * Holds the color in RGB value that will be rendered on maps.
-     */
     public int colorValue;
-
-    /**
-     * Holds the index of the color used on map.
-     */
     public final int colorIndex;
 
-    private MapColor(final int index, final int color) {
-        if (index >= 0 && index <= 63) {
+    private MapColor(int index, int color)
+    {
+        if (index >= 0 && index <= 63)
+        {
             this.colorIndex = index;
             this.colorValue = color;
             mapColorArray[index] = this;
-        } else {
+        }
+        else
+        {
             throw new IndexOutOfBoundsException("Map colour ID must be between 0 and 63 (inclusive)");
         }
     }
 
-    public int func_151643_b(final int p_151643_1_) {
+    public int getMapColor(int p_151643_1_)
+    {
         int i = 220;
 
-        if (p_151643_1_ == 3) {
+        if (p_151643_1_ == 3)
+        {
             i = 135;
         }
 
-        if (p_151643_1_ == 2) {
+        if (p_151643_1_ == 2)
+        {
             i = 255;
         }
 
-        if (p_151643_1_ == 0) {
+        if (p_151643_1_ == 1)
+        {
+            i = 220;
+        }
+
+        if (p_151643_1_ == 0)
+        {
             i = 180;
         }
 
-        final int j = (this.colorValue >> 16 & 255) * i / 255;
-        final int k = (this.colorValue >> 8 & 255) * i / 255;
-        final int l = (this.colorValue & 255) * i / 255;
+        int j = (this.colorValue >> 16 & 255) * i / 255;
+        int k = (this.colorValue >> 8 & 255) * i / 255;
+        int l = (this.colorValue & 255) * i / 255;
         return -16777216 | j << 16 | k << 8 | l;
     }
 }

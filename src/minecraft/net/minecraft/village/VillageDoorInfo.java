@@ -3,98 +3,107 @@ package net.minecraft.village;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
-public class VillageDoorInfo {
-    /**
-     * a block representing the door. Could be either upper or lower part
-     */
+public class VillageDoorInfo
+{
     private final BlockPos doorBlockPos;
     private final BlockPos insideBlock;
-
-    /**
-     * the inside direction is where can see less sky
-     */
     private final EnumFacing insideDirection;
     private int lastActivityTimestamp;
     private boolean isDetachedFromVillageFlag;
     private int doorOpeningRestrictionCounter;
 
-    public VillageDoorInfo(final BlockPos p_i45871_1_, final int p_i45871_2_, final int p_i45871_3_, final int p_i45871_4_) {
-        this(p_i45871_1_, getFaceDirection(p_i45871_2_, p_i45871_3_), p_i45871_4_);
+    public VillageDoorInfo(BlockPos pos, int p_i45871_2_, int p_i45871_3_, int p_i45871_4_)
+    {
+        this(pos, getFaceDirection(p_i45871_2_, p_i45871_3_), p_i45871_4_);
     }
 
-    private static EnumFacing getFaceDirection(final int deltaX, final int deltaZ) {
+    private static EnumFacing getFaceDirection(int deltaX, int deltaZ)
+    {
         return deltaX < 0 ? EnumFacing.WEST : (deltaX > 0 ? EnumFacing.EAST : (deltaZ < 0 ? EnumFacing.NORTH : EnumFacing.SOUTH));
     }
 
-    public VillageDoorInfo(final BlockPos p_i45872_1_, final EnumFacing p_i45872_2_, final int p_i45872_3_) {
-        this.doorBlockPos = p_i45872_1_;
-        this.insideDirection = p_i45872_2_;
-        this.insideBlock = p_i45872_1_.offset(p_i45872_2_, 2);
-        this.lastActivityTimestamp = p_i45872_3_;
+    public VillageDoorInfo(BlockPos pos, EnumFacing facing, int timestamp)
+    {
+        this.doorBlockPos = pos;
+        this.insideDirection = facing;
+        this.insideBlock = pos.offset(facing, 2);
+        this.lastActivityTimestamp = timestamp;
     }
 
-    /**
-     * Returns the squared distance between this door and the given coordinate.
-     */
-    public int getDistanceSquared(final int p_75474_1_, final int p_75474_2_, final int p_75474_3_) {
-        return (int) this.doorBlockPos.distanceSq(p_75474_1_, p_75474_2_, p_75474_3_);
+    public int getDistanceSquared(int x, int y, int z)
+    {
+        return (int)this.doorBlockPos.distanceSq((double)x, (double)y, (double)z);
     }
 
-    public int getDistanceToDoorBlockSq(final BlockPos p_179848_1_) {
-        return (int) p_179848_1_.distanceSq(this.getDoorBlockPos());
+    public int getDistanceToDoorBlockSq(BlockPos pos)
+    {
+        return (int)pos.distanceSq(this.getDoorBlockPos());
     }
 
-    public int getDistanceToInsideBlockSq(final BlockPos p_179846_1_) {
-        return (int) this.insideBlock.distanceSq(p_179846_1_);
+    public int getDistanceToInsideBlockSq(BlockPos pos)
+    {
+        return (int)this.insideBlock.distanceSq(pos);
     }
 
-    public boolean func_179850_c(final BlockPos p_179850_1_) {
-        final int i = p_179850_1_.getX() - this.doorBlockPos.getX();
-        final int j = p_179850_1_.getZ() - this.doorBlockPos.getY();
+    public boolean func_179850_c(BlockPos pos)
+    {
+        int i = pos.getX() - this.doorBlockPos.getX();
+        int j = pos.getZ() - this.doorBlockPos.getY();
         return i * this.insideDirection.getFrontOffsetX() + j * this.insideDirection.getFrontOffsetZ() >= 0;
     }
 
-    public void resetDoorOpeningRestrictionCounter() {
+    public void resetDoorOpeningRestrictionCounter()
+    {
         this.doorOpeningRestrictionCounter = 0;
     }
 
-    public void incrementDoorOpeningRestrictionCounter() {
+    public void incrementDoorOpeningRestrictionCounter()
+    {
         ++this.doorOpeningRestrictionCounter;
     }
 
-    public int getDoorOpeningRestrictionCounter() {
+    public int getDoorOpeningRestrictionCounter()
+    {
         return this.doorOpeningRestrictionCounter;
     }
 
-    public BlockPos getDoorBlockPos() {
+    public BlockPos getDoorBlockPos()
+    {
         return this.doorBlockPos;
     }
 
-    public BlockPos getInsideBlockPos() {
+    public BlockPos getInsideBlockPos()
+    {
         return this.insideBlock;
     }
 
-    public int getInsideOffsetX() {
+    public int getInsideOffsetX()
+    {
         return this.insideDirection.getFrontOffsetX() * 2;
     }
 
-    public int getInsideOffsetZ() {
+    public int getInsideOffsetZ()
+    {
         return this.insideDirection.getFrontOffsetZ() * 2;
     }
 
-    public int getInsidePosY() {
+    public int getInsidePosY()
+    {
         return this.lastActivityTimestamp;
     }
 
-    public void func_179849_a(final int p_179849_1_) {
-        this.lastActivityTimestamp = p_179849_1_;
+    public void func_179849_a(int timestamp)
+    {
+        this.lastActivityTimestamp = timestamp;
     }
 
-    public boolean getIsDetachedFromVillageFlag() {
+    public boolean getIsDetachedFromVillageFlag()
+    {
         return this.isDetachedFromVillageFlag;
     }
 
-    public void setIsDetachedFromVillageFlag(final boolean p_179853_1_) {
-        this.isDetachedFromVillageFlag = p_179853_1_;
+    public void setIsDetachedFromVillageFlag(boolean detached)
+    {
+        this.isDetachedFromVillageFlag = detached;
     }
 }

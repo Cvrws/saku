@@ -20,17 +20,12 @@ public class Flight extends Module {
 	private final NumberValue speed = new NumberValue("Speed", this, 1, 0.1, 9.5, 0.1);
 
     private final BooleanValue disableOnTeleport = new BooleanValue("Disable on Teleport", this, false);
-    private final BooleanValue fakeDamage = new BooleanValue("Fake Damage", this, false);
     private final BooleanValue stopOnDisable = new BooleanValue("Stop on Disable", this, false);
 
     private boolean teleported;
 
     @Override
     public void onEnable() {
-        if (fakeDamage.getValue() && mc.player.ticksExisted > 1) {
-            PlayerUtil.fakeDamage();
-        }
-
         teleported = false;
     }
 

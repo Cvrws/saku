@@ -193,7 +193,7 @@ public class ServerScoreboard extends Scoreboard
     {
         List<Packet> list = this.func_96550_d(p_96549_1_);
 
-        for (EntityPlayerMP entityplayermp : this.scoreboardMCServer.getConfigurationManager().func_181057_v())
+        for (EntityPlayerMP entityplayermp : this.scoreboardMCServer.getConfigurationManager().getPlayerList())
         {
             for (Packet packet : list)
             {
@@ -224,7 +224,7 @@ public class ServerScoreboard extends Scoreboard
     {
         List<Packet> list = this.func_96548_f(p_96546_1_);
 
-        for (EntityPlayerMP entityplayermp : this.scoreboardMCServer.getConfigurationManager().func_181057_v())
+        for (EntityPlayerMP entityplayermp : this.scoreboardMCServer.getConfigurationManager().getPlayerList())
         {
             for (Packet packet : list)
             {

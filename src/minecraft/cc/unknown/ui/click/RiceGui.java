@@ -135,7 +135,7 @@ public class RiceGui extends GuiScreen implements Accessor {
 
         mouseX = (int) mouse.x;
         mouseY = (int) mouse.y;
-        partialTicks = mc.getTimer().renderPartialTicks;
+        partialTicks = mc.timer.renderPartialTicks;
 
         if (dragging) {
 

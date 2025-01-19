@@ -3,34 +3,43 @@ package net.optifine.expr;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class TestExpressions {
-    public static void main(final String[] args) throws Exception {
-        final ExpressionParser expressionparser = new ExpressionParser(null);
+public class TestExpressions
+{
+    public static void main(String[] args) throws Exception
+    {
+        ExpressionParser expressionparser = new ExpressionParser((IExpressionResolver)null);
 
-        while (true) {
-            try {
-                final InputStreamReader inputstreamreader = new InputStreamReader(System.in);
-                final BufferedReader bufferedreader = new BufferedReader(inputstreamreader);
-                final String s = bufferedreader.readLine();
+        while (true)
+        {
+            try
+            {
+                InputStreamReader inputstreamreader = new InputStreamReader(System.in);
+                BufferedReader bufferedreader = new BufferedReader(inputstreamreader);
+                String s = bufferedreader.readLine();
 
-                if (s.length() <= 0) {
+                if (s.length() <= 0)
+                {
                     return;
                 }
 
-                final IExpression iexpression = expressionparser.parse(s);
+                IExpression iexpression = expressionparser.parse(s);
 
-                if (iexpression instanceof IExpressionFloat) {
-                    final IExpressionFloat iexpressionfloat = (IExpressionFloat) iexpression;
-                    final float f = iexpressionfloat.eval();
+                if (iexpression instanceof IExpressionFloat)
+                {
+                    IExpressionFloat iexpressionfloat = (IExpressionFloat)iexpression;
+                    float f = iexpressionfloat.eval();
                     System.out.println("" + f);
                 }
 
-                if (iexpression instanceof IExpressionBool) {
-                    final IExpressionBool iexpressionbool = (IExpressionBool) iexpression;
-                    final boolean flag = iexpressionbool.eval();
+                if (iexpression instanceof IExpressionBool)
+                {
+                    IExpressionBool iexpressionbool = (IExpressionBool)iexpression;
+                    boolean flag = iexpressionbool.eval();
                     System.out.println("" + flag);
                 }
-            } catch (final Exception exception) {
+            }
+            catch (Exception exception)
+            {
                 exception.printStackTrace();
             }
         }

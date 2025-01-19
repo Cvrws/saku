@@ -16,48 +16,61 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
 
-public class BlockWorkbench extends Block {
-    protected BlockWorkbench() {
+public class BlockWorkbench extends Block
+{
+    protected BlockWorkbench()
+    {
         super(Material.wood);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
 
-    public boolean onBlockActivated(final World worldIn, final BlockPos pos, final IBlockState state, final EntityPlayer playerIn, final EnumFacing side, final float hitX, final float hitY, final float hitZ) {
-        if (worldIn.isRemote) {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    {
+        if (worldIn.isRemote)
+        {
             return true;
-        } else {
+        }
+        else
+        {
             playerIn.displayGui(new BlockWorkbench.InterfaceCraftingTable(worldIn, pos));
             playerIn.triggerAchievement(StatList.field_181742_Z);
             return true;
         }
     }
 
-    public static class InterfaceCraftingTable implements IInteractionObject {
+    public static class InterfaceCraftingTable implements IInteractionObject
+    {
         private final World world;
         private final BlockPos position;
 
-        public InterfaceCraftingTable(final World worldIn, final BlockPos pos) {
+        public InterfaceCraftingTable(World worldIn, BlockPos pos)
+        {
             this.world = worldIn;
             this.position = pos;
         }
 
-        public String getName() {
+        public String getName()
+        {
             return null;
         }
 
-        public boolean hasCustomName() {
+        public boolean hasCustomName()
+        {
             return false;
         }
 
-        public IChatComponent getDisplayName() {
-            return new ChatComponentTranslation(Blocks.crafting_table.getUnlocalizedName() + ".name");
+        public IChatComponent getDisplayName()
+        {
+            return new ChatComponentTranslation(Blocks.crafting_table.getUnlocalizedName() + ".name", new Object[0]);
         }
 
-        public Container createContainer(final InventoryPlayer playerInventory, final EntityPlayer playerIn) {
+        public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
+        {
             return new ContainerWorkbench(playerInventory, this.world, this.position);
         }
 
-        public String getGuiID() {
+        public String getGuiID()
+        {
             return "minecraft:crafting_table";
         }
     }

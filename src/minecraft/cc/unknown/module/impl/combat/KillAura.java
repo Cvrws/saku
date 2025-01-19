@@ -53,6 +53,7 @@ import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.Vec3;
@@ -182,7 +183,7 @@ public final class KillAura extends Module {
 	public void getTargets() {
 		double range = this.preRange.getValue().doubleValue();
 
-		targets = TargetUtil.getTarget(range);
+		targets = TargetUtil.getTargets(range);
 
 		if (attackMode.is("Switch")) {
 			targets.removeAll(pastTargets);
@@ -196,7 +197,7 @@ public final class KillAura extends Module {
 
 		if (targets.isEmpty()) {
 			pastTargets.clear();
-			targets = TargetUtil.getTarget(range + expandRange);
+			targets = TargetUtil.getTargets(range + expandRange);
 		}
 
 		switch (sorting.getValue().getName()) {
@@ -365,7 +366,7 @@ public final class KillAura extends Module {
                                 break;
                         }
                     } else if (item instanceof ItemHoe) {
-                        switch (((ItemHoe) item).getToolMaterial()) {
+                        switch (((ItemTool) item).getToolMaterial()) {
                             case WOOD:
                             case GOLD:
                                 speed = 1;

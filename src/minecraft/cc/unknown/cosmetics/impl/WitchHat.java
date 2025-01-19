@@ -2,7 +2,6 @@ package cc.unknown.cosmetics.impl;
 
 import java.io.IOException;
 
-import org.apache.logging.log4j.core.util.Booleans;
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.cosmetics.CosmeticBase;

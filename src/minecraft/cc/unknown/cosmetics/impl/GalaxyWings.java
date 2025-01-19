@@ -1,6 +1,5 @@
 package cc.unknown.cosmetics.impl;
 
-import org.apache.logging.log4j.core.util.Booleans;
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.cosmetics.CosmeticController;

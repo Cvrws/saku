@@ -8,7 +8,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.optifine.expr.ExpressionType;
 import net.optifine.expr.IExpressionFloat;
 
-public enum RenderEntityParameterFloat implements IExpressionFloat {
+public enum RenderEntityParameterFloat implements IExpressionFloat
+{
     LIMB_SWING("limb_swing"),
     LIMB_SWING_SPEED("limb_speed"),
     AGE("age"),
@@ -23,38 +24,47 @@ public enum RenderEntityParameterFloat implements IExpressionFloat {
     MOVE_STRAFING("move_strafing"),
     PARTIAL_TICKS("partial_ticks"),
     POS_X("pos_x"),
-    POS_Y("pos_Y"),
-    POS_Z("pos_Z"),
+    POS_Y("pos_y"),
+    POS_Z("pos_z"),
     REVENGE_TIME("revenge_time"),
     SWING_PROGRESS("swing_progress");
 
-    private final String name;
-    private final RenderManager renderManager;
+    private String name;
+    private RenderManager renderManager;
     private static final RenderEntityParameterFloat[] VALUES = values();
 
-    RenderEntityParameterFloat(final String name) {
+    private RenderEntityParameterFloat(String name)
+    {
         this.name = name;
         this.renderManager = Minecraft.getInstance().getRenderManager();
     }
 
-    public String getName() {
+    public String getName()
+    {
         return this.name;
     }
 
-    public ExpressionType getExpressionType() {
+    public ExpressionType getExpressionType()
+    {
         return ExpressionType.FLOAT;
     }
 
-    public float eval() {
-        final Render render = this.renderManager.renderRender;
+    public float eval()
+    {
+        Render render = this.renderManager.renderRender;
 
-        if (render == null) {
+        if (render == null)
+        {
             return 0.0F;
-        } else {
-            if (render instanceof RendererLivingEntity) {
-                final RendererLivingEntity rendererlivingentity = (RendererLivingEntity) render;
+        }
+        else
+        {
+            if (render instanceof RendererLivingEntity)
+            {
+                RendererLivingEntity rendererlivingentity = (RendererLivingEntity)render;
 
-                switch (this) {
+                switch (this)
+                {
                     case LIMB_SWING:
                         return rendererlivingentity.renderLimbSwing;
 
@@ -74,21 +84,23 @@ public enum RenderEntityParameterFloat implements IExpressionFloat {
                         return rendererlivingentity.renderScaleFactor;
 
                     default:
-                        final EntityLivingBase entitylivingbase = rendererlivingentity.renderEntity;
+                        EntityLivingBase entitylivingbase = rendererlivingentity.renderEntity;
 
-                        if (entitylivingbase == null) {
+                        if (entitylivingbase == null)
+                        {
                             return 0.0F;
                         }
 
-                        switch (this) {
+                        switch (this)
+                        {
                             case HEALTH:
                                 return entitylivingbase.getHealth();
 
                             case HURT_TIME:
-                                return (float) entitylivingbase.hurtTime;
+                                return (float)entitylivingbase.hurtTime;
 
                             case IDLE_TIME:
-                                return (float) entitylivingbase.getAge();
+                                return (float)entitylivingbase.getAge();
 
                             case MAX_HEALTH:
                                 return entitylivingbase.getMaxHealth();
@@ -100,21 +112,19 @@ public enum RenderEntityParameterFloat implements IExpressionFloat {
                                 return entitylivingbase.moveStrafing;
 
                             case POS_X:
-                                return (float) entitylivingbase.posX;
+                                return (float)entitylivingbase.posX;
 
                             case POS_Y:
-                                return (float) entitylivingbase.posY;
+                                return (float)entitylivingbase.posY;
 
                             case POS_Z:
-                                return (float) entitylivingbase.posZ;
+                                return (float)entitylivingbase.posZ;
 
                             case REVENGE_TIME:
-                                return (float) entitylivingbase.getRevengeTimer();
+                                return (float)entitylivingbase.getRevengeTimer();
 
                             case SWING_PROGRESS:
                                 return entitylivingbase.getSwingProgress(rendererlivingentity.renderPartialTicks);
-						default:
-							break;
                         }
                 }
             }
@@ -123,14 +133,20 @@ public enum RenderEntityParameterFloat implements IExpressionFloat {
         }
     }
 
-    public static RenderEntityParameterFloat parse(final String str) {
-        if (str == null) {
+    public static RenderEntityParameterFloat parse(String str)
+    {
+        if (str == null)
+        {
             return null;
-        } else {
-            for (int i = 0; i < VALUES.length; ++i) {
-                final RenderEntityParameterFloat renderentityparameterfloat = VALUES[i];
+        }
+        else
+        {
+            for (int i = 0; i < VALUES.length; ++i)
+            {
+                RenderEntityParameterFloat renderentityparameterfloat = VALUES[i];
 
-                if (renderentityparameterfloat.getName().equals(str)) {
+                if (renderentityparameterfloat.getName().equals(str))
+                {
                     return renderentityparameterfloat;
                 }
             }

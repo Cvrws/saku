@@ -1,7 +1,8 @@
 package net.optifine.expr;
 
-public enum ExpressionType {
+public enum ExpressionType
+{
     FLOAT,
     FLOAT_ARRAY,
-    BOOL
+    BOOL;
 }

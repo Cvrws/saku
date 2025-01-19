@@ -12,6 +12,8 @@ import org.lwjgl.Sys;
 
 import com.google.common.collect.Lists;
 
+import cc.unknown.ui.menu.saku.api.TextField;
+import cc.unknown.ui.resourcepack.SearchResourcePacks;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.ResourcePackListEntry;
 import net.minecraft.client.resources.ResourcePackListEntryDefault;
@@ -19,23 +21,31 @@ import net.minecraft.client.resources.ResourcePackListEntryFound;
 import net.minecraft.client.resources.ResourcePackRepository;
 import net.minecraft.util.Util;
 
-public class GuiScreenResourcePacks extends GuiScreen {
+public class GuiScreenResourcePacks extends GuiScreen
+{
     private static final Logger logger = LogManager.getLogger();
     private final GuiScreen parentScreen;
     private List<ResourcePackListEntry> availableResourcePacks;
     private List<ResourcePackListEntry> selectedResourcePacks;
     private GuiResourcePackAvailable availableResourcePacksList;
     private GuiResourcePackSelected selectedResourcePacksList;
+    private GuiResourcePackAvailable availablePacksClone;
     private boolean changed = false;
+    
+    private TextField searchField;
+    private SearchResourcePacks searchResourcePack = new SearchResourcePacks((GuiScreenResourcePacks) this);
 
-    public GuiScreenResourcePacks(final GuiScreen parentScreenIn) {
+    public GuiScreenResourcePacks(GuiScreen parentScreenIn)
+    {
         this.parentScreen = parentScreenIn;
     }
 
     @Override
     public void initGui() {
+    	String s1 = searchField == null ? "" : searchField.getText();
+    	
         this.buttonList.add(new GuiOptionButton(2, this.width / 2 - 180, this.height - 48, I18n.format("resourcePack.openFolder")));
-        this.buttonList.add(new GuiOptionButton(1, this.width / 2 + 30, this.height - 48, I18n.format("gui.done")));
+        this.buttonList.add(new GuiOptionButton(1, this.width / 2 + 4, this.height - 48, I18n.format("gui.done")));
 
         if (!this.changed) {
             this.availableResourcePacks = Lists.newArrayList();
@@ -62,28 +72,38 @@ public class GuiScreenResourcePacks extends GuiScreen {
         this.selectedResourcePacksList = new GuiResourcePackSelected(this.mc, 200, this.height, this.selectedResourcePacks);
         this.selectedResourcePacksList.setSlotXBoundsFromLeft(this.width / 2 + 4);
         this.selectedResourcePacksList.registerScrollButtons(7, 8);
+        
+        this.availablePacksClone = this.availableResourcePacksList;
+        searchField = new TextField(3, fontRendererObj, width / 2 - 4 - 200, height - 24, 200, 20);
+        searchField.setText(s1);
+        searchResourcePack.initGui(buttonList);
     }
 
     @Override
-    public void handleMouseInput() throws IOException {
+    public void handleMouseInput() throws IOException
+    {
         super.handleMouseInput();
         this.selectedResourcePacksList.handleMouseInput();
         this.availableResourcePacksList.handleMouseInput();
     }
 
-    public boolean hasResourcePackEntry(final ResourcePackListEntry p_146961_1_) {
+    public boolean hasResourcePackEntry(ResourcePackListEntry p_146961_1_)
+    {
         return this.selectedResourcePacks.contains(p_146961_1_);
     }
 
-    public List<ResourcePackListEntry> getListContaining(final ResourcePackListEntry p_146962_1_) {
+    public List<ResourcePackListEntry> getListContaining(ResourcePackListEntry p_146962_1_)
+    {
         return this.hasResourcePackEntry(p_146962_1_) ? this.selectedResourcePacks : this.availableResourcePacks;
     }
 
-    public List<ResourcePackListEntry> getAvailableResourcePacks() {
+    public List<ResourcePackListEntry> getAvailableResourcePacks()
+    {
         return this.availableResourcePacks;
     }
 
-    public List<ResourcePackListEntry> getSelectedResourcePacks() {
+    public List<ResourcePackListEntry> getSelectedResourcePacks()
+    {
         return this.selectedResourcePacks;
     }
 
@@ -166,22 +186,35 @@ public class GuiScreenResourcePacks extends GuiScreen {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         this.availableResourcePacksList.mouseClicked(mouseX, mouseY, mouseButton);
         this.selectedResourcePacksList.mouseClicked(mouseX, mouseY, mouseButton);
+        searchField.mouseClicked(mouseX, mouseY, mouseButton);
+        if (searchField != null) searchField.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
-    protected void mouseReleased(final int mouseX, final int mouseY, final int state) {
+    protected void mouseReleased(int mouseX, int mouseY, int state)
+    {
         super.mouseReleased(mouseX, mouseY, state);
     }
 
     @Override
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
-        this.drawBackground(0);
-        this.availableResourcePacksList.drawScreen(mouseX, mouseY, partialTicks);
-        this.selectedResourcePacksList.drawScreen(mouseX, mouseY, partialTicks);
+    	searchResourcePack.drawScreen(availableResourcePacksList, selectedResourcePacksList, mouseX, mouseY, partialTicks, fontRendererObj, width);
+        searchField.drawTextBox();
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
+    
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
 
-    public void markChanged() {
+        if (this.searchField != null) {
+            this.searchField.textboxKeyTyped(typedChar, keyCode);
+        }
+        availableResourcePacksList = searchResourcePack.updateList(searchField, availablePacksClone, availableResourcePacks, mc, width, height);
+    }
+
+    public void markChanged()
+    {
         this.changed = true;
     }
 }

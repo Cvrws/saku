@@ -8,23 +8,14 @@ import net.minecraft.inventory.ContainerHopper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiHopper extends GuiContainer {
-    /**
-     * The ResourceLocation containing the gui texture for the hopper
-     */
+public class GuiHopper extends GuiContainer
+{
     private static final ResourceLocation HOPPER_GUI_TEXTURE = new ResourceLocation("textures/gui/container/hopper.png");
+    private IInventory playerInventory;
+    private IInventory hopperInventory;
 
-    /**
-     * The player inventory currently bound to this GUI instance
-     */
-    private final IInventory playerInventory;
-
-    /**
-     * The hopper inventory bound to this GUI instance
-     */
-    private final IInventory hopperInventory;
-
-    public GuiHopper(final InventoryPlayer playerInv, final IInventory hopperInv) {
+    public GuiHopper(InventoryPlayer playerInv, IInventory hopperInv)
+    {
         super(new ContainerHopper(playerInv, hopperInv, Minecraft.getInstance().player));
         this.playerInventory = playerInv;
         this.hopperInventory = hopperInv;
@@ -32,22 +23,18 @@ public class GuiHopper extends GuiContainer {
         this.ySize = 133;
     }
 
-    /**
-     * Draw the foreground layer for the GuiContainer (everything in front of the items). Args : mouseX, mouseY
-     */
-    protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY) {
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+    {
         this.fontRendererObj.draw(this.hopperInventory.getDisplayName().getUnformattedText(), 8, 6, 4210752);
         this.fontRendererObj.draw(this.playerInventory.getDisplayName().getUnformattedText(), 8, this.ySize - 96 + 2, 4210752);
     }
 
-    /**
-     * Args : renderPartialTicks, mouseX, mouseY
-     */
-    protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(HOPPER_GUI_TEXTURE);
-        final int i = (this.width - this.xSize) / 2;
-        final int j = (this.height - this.ySize) / 2;
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
     }
 }

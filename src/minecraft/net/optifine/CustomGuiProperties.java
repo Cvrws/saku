@@ -3,7 +3,6 @@ package net.optifine;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import net.minecraft.client.gui.GuiEnchantment;
 import net.minecraft.client.gui.GuiHopper;
 import net.minecraft.client.gui.GuiScreen;
@@ -39,7 +38,8 @@ import net.optifine.reflect.ReflectorField;
 import net.optifine.util.StrUtils;
 import net.optifine.util.TextureUtils;
 
-public class CustomGuiProperties {
+public class CustomGuiProperties
+{
     private String fileName = null;
     private String basePath = null;
     private CustomGuiProperties.EnumContainer container = null;
@@ -55,8 +55,8 @@ public class CustomGuiProperties {
     private VillagerProfession[] professions = null;
     private CustomGuiProperties.EnumVariant[] variants = null;
     private EnumDyeColor[] colors = null;
-    private static final CustomGuiProperties.EnumVariant[] VARIANTS_HORSE = new CustomGuiProperties.EnumVariant[]{CustomGuiProperties.EnumVariant.HORSE, CustomGuiProperties.EnumVariant.DONKEY, CustomGuiProperties.EnumVariant.MULE, CustomGuiProperties.EnumVariant.LLAMA};
-    private static final CustomGuiProperties.EnumVariant[] VARIANTS_DISPENSER = new CustomGuiProperties.EnumVariant[]{CustomGuiProperties.EnumVariant.DISPENSER, CustomGuiProperties.EnumVariant.DROPPER};
+    private static final CustomGuiProperties.EnumVariant[] VARIANTS_HORSE = new CustomGuiProperties.EnumVariant[] {CustomGuiProperties.EnumVariant.HORSE, CustomGuiProperties.EnumVariant.DONKEY, CustomGuiProperties.EnumVariant.MULE, CustomGuiProperties.EnumVariant.LLAMA};
+    private static final CustomGuiProperties.EnumVariant[] VARIANTS_DISPENSER = new CustomGuiProperties.EnumVariant[] {CustomGuiProperties.EnumVariant.DISPENSER, CustomGuiProperties.EnumVariant.DROPPER};
     private static final CustomGuiProperties.EnumVariant[] VARIANTS_INVALID = new CustomGuiProperties.EnumVariant[0];
     private static final EnumDyeColor[] COLORS_INVALID = new EnumDyeColor[0];
     private static final ResourceLocation ANVIL_GUI_TEXTURE = new ResourceLocation("textures/gui/container/anvil.png");
@@ -73,11 +73,12 @@ public class CustomGuiProperties {
     private static final ResourceLocation SHULKER_BOX_GUI_TEXTURE = new ResourceLocation("textures/gui/container/shulker_box.png");
     private static final ResourceLocation VILLAGER_GUI_TEXTURE = new ResourceLocation("textures/gui/container/villager.png");
 
-    public CustomGuiProperties(final Properties props, final String path) {
-        final ConnectedParser connectedparser = new ConnectedParser("CustomGuis");
+    public CustomGuiProperties(Properties props, String path)
+    {
+        ConnectedParser connectedparser = new ConnectedParser("CustomGuis");
         this.fileName = connectedparser.parseName(path);
         this.basePath = connectedparser.parseBasePath(path);
-        this.container = (CustomGuiProperties.EnumContainer) connectedparser.parseEnum(props.getProperty("container"), CustomGuiProperties.EnumContainer.values(), "container");
+        this.container = (CustomGuiProperties.EnumContainer)connectedparser.parseEnum(props.getProperty("container"), CustomGuiProperties.EnumContainer.values(), "container");
         this.textureLocations = parseTextureLocations(props, "texture", this.container, "textures/gui/", this.basePath);
         this.nbtName = connectedparser.parseNbtTagValue("name", props.getProperty("name"));
         this.biomes = connectedparser.parseBiomes(props.getProperty("biomes"));
@@ -88,28 +89,35 @@ public class CustomGuiProperties {
         this.ender = connectedparser.parseBooleanObject(props.getProperty("ender"));
         this.levels = connectedparser.parseRangeListInt(props.getProperty("levels"));
         this.professions = connectedparser.parseProfessions(props.getProperty("professions"));
-        final CustomGuiProperties.EnumVariant[] acustomguiproperties$enumvariant = getContainerVariants(this.container);
-        this.variants = (CustomGuiProperties.EnumVariant[]) connectedparser.parseEnums(props.getProperty("variants"), acustomguiproperties$enumvariant, "variants", VARIANTS_INVALID);
+        CustomGuiProperties.EnumVariant[] acustomguiproperties$enumvariant = getContainerVariants(this.container);
+        this.variants = (CustomGuiProperties.EnumVariant[])((CustomGuiProperties.EnumVariant[])connectedparser.parseEnums(props.getProperty("variants"), acustomguiproperties$enumvariant, "variants", VARIANTS_INVALID));
         this.colors = parseEnumDyeColors(props.getProperty("colors"));
     }
 
-    private static CustomGuiProperties.EnumVariant[] getContainerVariants(final CustomGuiProperties.EnumContainer cont) {
+    private static CustomGuiProperties.EnumVariant[] getContainerVariants(CustomGuiProperties.EnumContainer cont)
+    {
         return cont == CustomGuiProperties.EnumContainer.HORSE ? VARIANTS_HORSE : (cont == CustomGuiProperties.EnumContainer.DISPENSER ? VARIANTS_DISPENSER : new CustomGuiProperties.EnumVariant[0]);
     }
 
-    private static EnumDyeColor[] parseEnumDyeColors(String str) {
-        if (str == null) {
+    private static EnumDyeColor[] parseEnumDyeColors(String str)
+    {
+        if (str == null)
+        {
             return null;
-        } else {
+        }
+        else
+        {
             str = str.toLowerCase();
-            final String[] astring = Config.tokenize(str, " ");
-            final EnumDyeColor[] aenumdyecolor = new EnumDyeColor[astring.length];
+            String[] astring = Config.tokenize(str, " ");
+            EnumDyeColor[] aenumdyecolor = new EnumDyeColor[astring.length];
 
-            for (int i = 0; i < astring.length; ++i) {
-                final String s = astring[i];
-                final EnumDyeColor enumdyecolor = parseEnumDyeColor(s);
+            for (int i = 0; i < astring.length; ++i)
+            {
+                String s = astring[i];
+                EnumDyeColor enumdyecolor = parseEnumDyeColor(s);
 
-                if (enumdyecolor == null) {
+                if (enumdyecolor == null)
+                {
                     warn("Invalid color: " + s);
                     return COLORS_INVALID;
                 }
@@ -121,20 +129,27 @@ public class CustomGuiProperties {
         }
     }
 
-    private static EnumDyeColor parseEnumDyeColor(final String str) {
-        if (str == null) {
+    private static EnumDyeColor parseEnumDyeColor(String str)
+    {
+        if (str == null)
+        {
             return null;
-        } else {
-            final EnumDyeColor[] aenumdyecolor = EnumDyeColor.values();
+        }
+        else
+        {
+            EnumDyeColor[] aenumdyecolor = EnumDyeColor.values();
 
-            for (int i = 0; i < aenumdyecolor.length; ++i) {
-                final EnumDyeColor enumdyecolor = aenumdyecolor[i];
+            for (int i = 0; i < aenumdyecolor.length; ++i)
+            {
+                EnumDyeColor enumdyecolor = aenumdyecolor[i];
 
-                if (enumdyecolor.getName().equals(str)) {
+                if (enumdyecolor.getName().equals(str))
+                {
                     return enumdyecolor;
                 }
 
-                if (enumdyecolor.getUnlocalizedName().equals(str)) {
+                if (enumdyecolor.getUnlocalizedName().equals(str))
+                {
                     return enumdyecolor;
                 }
             }
@@ -143,14 +158,19 @@ public class CustomGuiProperties {
         }
     }
 
-    private static ResourceLocation parseTextureLocation(String str, final String basePath) {
-        if (str == null) {
+    private static ResourceLocation parseTextureLocation(String str, String basePath)
+    {
+        if (str == null)
+        {
             return null;
-        } else {
+        }
+        else
+        {
             str = str.trim();
             String s = TextureUtils.fixResourcePath(str, basePath);
 
-            if (!s.endsWith(".png")) {
+            if (!s.endsWith(".png"))
+            {
                 s = s + ".png";
             }
 
@@ -158,31 +178,36 @@ public class CustomGuiProperties {
         }
     }
 
-    private static Map<ResourceLocation, ResourceLocation> parseTextureLocations(final Properties props, final String property, final CustomGuiProperties.EnumContainer container, final String pathPrefix, final String basePath) {
-        final Map<ResourceLocation, ResourceLocation> map = new HashMap();
-        final String s = props.getProperty(property);
+    private static Map<ResourceLocation, ResourceLocation> parseTextureLocations(Properties props, String property, CustomGuiProperties.EnumContainer container, String pathPrefix, String basePath)
+    {
+        Map<ResourceLocation, ResourceLocation> map = new HashMap();
+        String s = props.getProperty(property);
 
-        if (s != null) {
-            final ResourceLocation resourcelocation = getGuiTextureLocation(container);
-            final ResourceLocation resourcelocation1 = parseTextureLocation(s, basePath);
+        if (s != null)
+        {
+            ResourceLocation resourcelocation = getGuiTextureLocation(container);
+            ResourceLocation resourcelocation1 = parseTextureLocation(s, basePath);
 
-            if (resourcelocation != null && resourcelocation1 != null) {
+            if (resourcelocation != null && resourcelocation1 != null)
+            {
                 map.put(resourcelocation, resourcelocation1);
             }
         }
 
-        final String s5 = property + ".";
+        String s5 = property + ".";
 
-        for (final Object e : props.keySet()) {
-            final String s1 = (String) e;
-            if (s1.startsWith(s5)) {
+        for (Object o : props.keySet())
+        {
+            String s1 = (String) o;
+            if (s1.startsWith(s5))
+            {
                 String s2 = s1.substring(s5.length());
                 s2 = s2.replace('\\', '/');
                 s2 = StrUtils.removePrefixSuffix(s2, "/", ".png");
-                final String s3 = pathPrefix + s2 + ".png";
-                final String s4 = props.getProperty(s1);
-                final ResourceLocation resourcelocation2 = new ResourceLocation(s3);
-                final ResourceLocation resourcelocation3 = parseTextureLocation(s4, basePath);
+                String s3 = pathPrefix + s2 + ".png";
+                String s4 = props.getProperty(s1);
+                ResourceLocation resourcelocation2 = new ResourceLocation(s3);
+                ResourceLocation resourcelocation3 = parseTextureLocation(s4, basePath);
                 map.put(resourcelocation2, resourcelocation3);
             }
         }
@@ -190,96 +215,129 @@ public class CustomGuiProperties {
         return map;
     }
 
-    private static ResourceLocation getGuiTextureLocation(final CustomGuiProperties.EnumContainer container) {
-        switch (container) {
-            case ANVIL:
-                return ANVIL_GUI_TEXTURE;
+    private static ResourceLocation getGuiTextureLocation(CustomGuiProperties.EnumContainer container)
+    {
+        if (container == null)
+        {
+            return null;
+        }
+        else
+        {
+            switch (container)
+            {
+                case ANVIL:
+                    return ANVIL_GUI_TEXTURE;
 
-            case BEACON:
-                return BEACON_GUI_TEXTURE;
+                case BEACON:
+                    return BEACON_GUI_TEXTURE;
 
-            case BREWING_STAND:
-                return BREWING_STAND_GUI_TEXTURE;
+                case BREWING_STAND:
+                    return BREWING_STAND_GUI_TEXTURE;
 
-            case CHEST:
-                return CHEST_GUI_TEXTURE;
+                case CHEST:
+                    return CHEST_GUI_TEXTURE;
 
-            case CRAFTING:
-                return CRAFTING_TABLE_GUI_TEXTURE;
+                case CRAFTING:
+                    return CRAFTING_TABLE_GUI_TEXTURE;
 
-            case CREATIVE:
-                return null;
+                case CREATIVE:
+                    return null;
 
-            case DISPENSER:
-                return DISPENSER_GUI_TEXTURE;
+                case DISPENSER:
+                    return DISPENSER_GUI_TEXTURE;
 
-            case ENCHANTMENT:
-                return ENCHANTMENT_TABLE_GUI_TEXTURE;
+                case ENCHANTMENT:
+                    return ENCHANTMENT_TABLE_GUI_TEXTURE;
 
-            case FURNACE:
-                return FURNACE_GUI_TEXTURE;
+                case FURNACE:
+                    return FURNACE_GUI_TEXTURE;
 
-            case HOPPER:
-                return HOPPER_GUI_TEXTURE;
+                case HOPPER:
+                    return HOPPER_GUI_TEXTURE;
 
-            case HORSE:
-                return HORSE_GUI_TEXTURE;
+                case HORSE:
+                    return HORSE_GUI_TEXTURE;
 
-            case INVENTORY:
-                return INVENTORY_GUI_TEXTURE;
+                case INVENTORY:
+                    return INVENTORY_GUI_TEXTURE;
 
-            case SHULKER_BOX:
-                return SHULKER_BOX_GUI_TEXTURE;
+                case SHULKER_BOX:
+                    return SHULKER_BOX_GUI_TEXTURE;
 
-            case VILLAGER:
-                return VILLAGER_GUI_TEXTURE;
+                case VILLAGER:
+                    return VILLAGER_GUI_TEXTURE;
 
-            default:
-                return null;
+                default:
+                    return null;
+            }
         }
     }
 
-    public boolean isValid(final String path) {
-        if (this.fileName != null && this.fileName.length() > 0) {
-            if (this.basePath == null) {
+    public boolean isValid(String path)
+    {
+        if (this.fileName != null && this.fileName.length() > 0)
+        {
+            if (this.basePath == null)
+            {
                 warn("No base path found: " + path);
                 return false;
-            } else if (this.container == null) {
+            }
+            else if (this.container == null)
+            {
                 warn("No container found: " + path);
                 return false;
-            } else if (this.textureLocations.isEmpty()) {
+            }
+            else if (this.textureLocations.isEmpty())
+            {
                 warn("No texture found: " + path);
                 return false;
-            } else if (this.professions == ConnectedParser.PROFESSIONS_INVALID) {
+            }
+            else if (this.professions == ConnectedParser.PROFESSIONS_INVALID)
+            {
                 warn("Invalid professions or careers: " + path);
                 return false;
-            } else if (this.variants == VARIANTS_INVALID) {
+            }
+            else if (this.variants == VARIANTS_INVALID)
+            {
                 warn("Invalid variants: " + path);
                 return false;
-            } else if (this.colors == COLORS_INVALID) {
+            }
+            else if (this.colors == COLORS_INVALID)
+            {
                 warn("Invalid colors: " + path);
                 return false;
-            } else {
+            }
+            else
+            {
                 return true;
             }
-        } else {
+        }
+        else
+        {
             warn("No name found: " + path);
             return false;
         }
     }
 
-    private static void warn(final String str) {
+    private static void warn(String str)
+    {
         Config.warn("[CustomGuis] " + str);
     }
 
-    private boolean matchesGeneral(final CustomGuiProperties.EnumContainer ec, final BlockPos pos, final IBlockAccess blockAccess) {
-        if (this.container != ec) {
+    private boolean matchesGeneral(CustomGuiProperties.EnumContainer ec, BlockPos pos, IBlockAccess blockAccess)
+    {
+        if (this.container != ec)
+        {
             return false;
-        } else {
-            if (this.biomes != null) {
-                final BiomeGenBase biomegenbase = blockAccess.getBiomeGenForCoords(pos);
+        }
+        else
+        {
+            if (this.biomes != null)
+            {
+                BiomeGenBase biomegenbase = blockAccess.getBiomeGenForCoords(pos);
 
-                if (!Matches.biome(biomegenbase, this.biomes)) {
+                if (!Matches.biome(biomegenbase, this.biomes))
+                {
                     return false;
                 }
             }
@@ -288,19 +346,26 @@ public class CustomGuiProperties {
         }
     }
 
-    public boolean matchesPos(final CustomGuiProperties.EnumContainer ec, final BlockPos pos, final IBlockAccess blockAccess, final GuiScreen screen) {
-        if (!this.matchesGeneral(ec, pos, blockAccess)) {
+    public boolean matchesPos(CustomGuiProperties.EnumContainer ec, BlockPos pos, IBlockAccess blockAccess, GuiScreen screen)
+    {
+        if (!this.matchesGeneral(ec, pos, blockAccess))
+        {
             return false;
-        } else {
-            if (this.nbtName != null) {
-                final String s = getName(screen);
+        }
+        else
+        {
+            if (this.nbtName != null)
+            {
+                String s = getName(screen);
 
-                if (!this.nbtName.matchesValue(s)) {
+                if (!this.nbtName.matchesValue(s))
+                {
                     return false;
                 }
             }
 
-            switch (ec) {
+            switch (ec)
+            {
                 case BEACON:
                     return this.matchesBeacon(pos, blockAccess);
 
@@ -316,105 +381,141 @@ public class CustomGuiProperties {
         }
     }
 
-    public static String getName(final GuiScreen screen) {
-        final IWorldNameable iworldnameable = getWorldNameable(screen);
+    public static String getName(GuiScreen screen)
+    {
+        IWorldNameable iworldnameable = getWorldNameable(screen);
         return iworldnameable == null ? null : iworldnameable.getDisplayName().getUnformattedText();
     }
 
-    private static IWorldNameable getWorldNameable(final GuiScreen screen) {
-        return screen instanceof GuiBeacon ? getWorldNameable(screen, Reflector.GuiBeacon_tileBeacon) : (screen instanceof GuiBrewingStand ? getWorldNameable(screen, Reflector.GuiBrewingStand_tileBrewingStand) : (screen instanceof GuiChest ? getWorldNameable(screen, Reflector.GuiChest_lowerChestInventory) : (screen instanceof GuiDispenser ? ((GuiDispenser) screen).dispenserInventory : (screen instanceof GuiEnchantment ? getWorldNameable(screen, Reflector.GuiEnchantment_nameable) : (screen instanceof GuiFurnace ? getWorldNameable(screen, Reflector.GuiFurnace_tileFurnace) : (screen instanceof GuiHopper ? getWorldNameable(screen, Reflector.GuiHopper_hopperInventory) : null))))));
+    private static IWorldNameable getWorldNameable(GuiScreen screen)
+    {
+        return (IWorldNameable)(screen instanceof GuiBeacon ? getWorldNameable(screen, Reflector.GuiBeacon_tileBeacon) : (screen instanceof GuiBrewingStand ? getWorldNameable(screen, Reflector.GuiBrewingStand_tileBrewingStand) : (screen instanceof GuiChest ? getWorldNameable(screen, Reflector.GuiChest_lowerChestInventory) : (screen instanceof GuiDispenser ? ((GuiDispenser)screen).dispenserInventory : (screen instanceof GuiEnchantment ? getWorldNameable(screen, Reflector.GuiEnchantment_nameable) : (screen instanceof GuiFurnace ? getWorldNameable(screen, Reflector.GuiFurnace_tileFurnace) : (screen instanceof GuiHopper ? getWorldNameable(screen, Reflector.GuiHopper_hopperInventory) : null)))))));
     }
 
-    private static IWorldNameable getWorldNameable(final GuiScreen screen, final ReflectorField fieldInventory) {
-        final Object object = Reflector.getFieldValue(screen, fieldInventory);
-        return !(object instanceof IWorldNameable) ? null : (IWorldNameable) object;
+    private static IWorldNameable getWorldNameable(GuiScreen screen, ReflectorField fieldInventory)
+    {
+        Object object = Reflector.getFieldValue(screen, fieldInventory);
+        return !(object instanceof IWorldNameable) ? null : (IWorldNameable)object;
     }
 
-    private boolean matchesBeacon(final BlockPos pos, final IBlockAccess blockAccess) {
-        final TileEntity tileentity = blockAccess.getTileEntity(pos);
+    private boolean matchesBeacon(BlockPos pos, IBlockAccess blockAccess)
+    {
+        TileEntity tileentity = blockAccess.getTileEntity(pos);
 
-        if (!(tileentity instanceof TileEntityBeacon)) {
+        if (!(tileentity instanceof TileEntityBeacon))
+        {
             return false;
-        } else {
-            final TileEntityBeacon tileentitybeacon = (TileEntityBeacon) tileentity;
+        }
+        else
+        {
+            TileEntityBeacon tileentitybeacon = (TileEntityBeacon)tileentity;
 
-            if (this.levels != null) {
-                final NBTTagCompound nbttagcompound = new NBTTagCompound();
+            if (this.levels != null)
+            {
+                NBTTagCompound nbttagcompound = new NBTTagCompound();
                 tileentitybeacon.writeToNBT(nbttagcompound);
-                final int i = nbttagcompound.getInteger("Levels");
+                int i = nbttagcompound.getInteger("Levels");
 
-                return this.levels.isInRange(i);
-            }
-
-            return true;
-        }
-    }
-
-    private boolean matchesChest(final BlockPos pos, final IBlockAccess blockAccess) {
-        final TileEntity tileentity = blockAccess.getTileEntity(pos);
-
-        if (tileentity instanceof TileEntityChest) {
-            final TileEntityChest tileentitychest = (TileEntityChest) tileentity;
-            return this.matchesChest(tileentitychest, pos, blockAccess);
-        } else if (tileentity instanceof TileEntityEnderChest) {
-            final TileEntityEnderChest tileentityenderchest = (TileEntityEnderChest) tileentity;
-            return this.matchesEnderChest(tileentityenderchest, pos, blockAccess);
-        } else {
-            return false;
-        }
-    }
-
-    private boolean matchesChest(final TileEntityChest tec, final BlockPos pos, final IBlockAccess blockAccess) {
-        final boolean flag = tec.adjacentChestXNeg != null || tec.adjacentChestXPos != null || tec.adjacentChestZNeg != null || tec.adjacentChestZPos != null;
-        final boolean flag1 = tec.getChestType() == 1;
-        final boolean flag2 = CustomGuis.isChristmas;
-        final boolean flag3 = false;
-        return this.matchesChest(flag, flag1, flag2, flag3);
-    }
-
-    private boolean matchesEnderChest(final TileEntityEnderChest teec, final BlockPos pos, final IBlockAccess blockAccess) {
-        return this.matchesChest(false, false, false, true);
-    }
-
-    private boolean matchesChest(final boolean isLarge, final boolean isTrapped, final boolean isChristmas, final boolean isEnder) {
-        return (this.large == null || this.large.booleanValue() == isLarge) && ((this.trapped == null || this.trapped.booleanValue() == isTrapped) && ((this.christmas == null || this.christmas.booleanValue() == isChristmas) && (this.ender == null || this.ender.booleanValue() == isEnder)));
-    }
-
-    private boolean matchesDispenser(final BlockPos pos, final IBlockAccess blockAccess) {
-        final TileEntity tileentity = blockAccess.getTileEntity(pos);
-
-        if (!(tileentity instanceof TileEntityDispenser)) {
-            return false;
-        } else {
-            final TileEntityDispenser tileentitydispenser = (TileEntityDispenser) tileentity;
-
-            if (this.variants != null) {
-                final CustomGuiProperties.EnumVariant customguiproperties$enumvariant = this.getDispenserVariant(tileentitydispenser);
-
-                return Config.equalsOne(customguiproperties$enumvariant, this.variants);
-            }
-
-            return true;
-        }
-    }
-
-    private CustomGuiProperties.EnumVariant getDispenserVariant(final TileEntityDispenser ted) {
-        return ted instanceof TileEntityDropper ? CustomGuiProperties.EnumVariant.DROPPER : CustomGuiProperties.EnumVariant.DISPENSER;
-    }
-
-    public boolean matchesEntity(final CustomGuiProperties.EnumContainer ec, final Entity entity, final IBlockAccess blockAccess) {
-        if (!this.matchesGeneral(ec, entity.getPosition(), blockAccess)) {
-            return false;
-        } else {
-            if (this.nbtName != null) {
-                final String s = entity.getName();
-
-                if (!this.nbtName.matchesValue(s)) {
+                if (!this.levels.isInRange(i))
+                {
                     return false;
                 }
             }
 
-            switch (ec) {
+            return true;
+        }
+    }
+
+    private boolean matchesChest(BlockPos pos, IBlockAccess blockAccess)
+    {
+        TileEntity tileentity = blockAccess.getTileEntity(pos);
+
+        if (tileentity instanceof TileEntityChest)
+        {
+            TileEntityChest tileentitychest = (TileEntityChest)tileentity;
+            return this.matchesChest(tileentitychest, pos, blockAccess);
+        }
+        else if (tileentity instanceof TileEntityEnderChest)
+        {
+            TileEntityEnderChest tileentityenderchest = (TileEntityEnderChest)tileentity;
+            return this.matchesEnderChest(tileentityenderchest, pos, blockAccess);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private boolean matchesChest(TileEntityChest tec, BlockPos pos, IBlockAccess blockAccess)
+    {
+        boolean flag = tec.adjacentChestXNeg != null || tec.adjacentChestXPos != null || tec.adjacentChestZNeg != null || tec.adjacentChestZPos != null;
+        boolean flag1 = tec.getChestType() == 1;
+        boolean flag2 = CustomGuis.isChristmas;
+        boolean flag3 = false;
+        return this.matchesChest(flag, flag1, flag2, flag3);
+    }
+
+    private boolean matchesEnderChest(TileEntityEnderChest teec, BlockPos pos, IBlockAccess blockAccess)
+    {
+        return this.matchesChest(false, false, false, true);
+    }
+
+    private boolean matchesChest(boolean isLarge, boolean isTrapped, boolean isChristmas, boolean isEnder)
+    {
+        return this.large != null && this.large.booleanValue() != isLarge ? false : (this.trapped != null && this.trapped.booleanValue() != isTrapped ? false : (this.christmas != null && this.christmas.booleanValue() != isChristmas ? false : this.ender == null || this.ender.booleanValue() == isEnder));
+    }
+
+    private boolean matchesDispenser(BlockPos pos, IBlockAccess blockAccess)
+    {
+        TileEntity tileentity = blockAccess.getTileEntity(pos);
+
+        if (!(tileentity instanceof TileEntityDispenser))
+        {
+            return false;
+        }
+        else
+        {
+            TileEntityDispenser tileentitydispenser = (TileEntityDispenser)tileentity;
+
+            if (this.variants != null)
+            {
+                CustomGuiProperties.EnumVariant customguiproperties$enumvariant = this.getDispenserVariant(tileentitydispenser);
+
+                if (!Config.equalsOne(customguiproperties$enumvariant, this.variants))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    private CustomGuiProperties.EnumVariant getDispenserVariant(TileEntityDispenser ted)
+    {
+        return ted instanceof TileEntityDropper ? CustomGuiProperties.EnumVariant.DROPPER : CustomGuiProperties.EnumVariant.DISPENSER;
+    }
+
+    public boolean matchesEntity(CustomGuiProperties.EnumContainer ec, Entity entity, IBlockAccess blockAccess)
+    {
+        if (!this.matchesGeneral(ec, entity.getPosition(), blockAccess))
+        {
+            return false;
+        }
+        else
+        {
+            if (this.nbtName != null)
+            {
+                String s = entity.getName();
+
+                if (!this.nbtName.matchesValue(s))
+                {
+                    return false;
+                }
+            }
+
+            switch (ec)
+            {
                 case HORSE:
                     return this.matchesHorse(entity, blockAccess);
 
@@ -427,58 +528,79 @@ public class CustomGuiProperties {
         }
     }
 
-    private boolean matchesVillager(final Entity entity, final IBlockAccess blockAccess) {
-        if (!(entity instanceof EntityVillager)) {
+    private boolean matchesVillager(Entity entity, IBlockAccess blockAccess)
+    {
+        if (!(entity instanceof EntityVillager))
+        {
             return false;
-        } else {
-            final EntityVillager entityvillager = (EntityVillager) entity;
+        }
+        else
+        {
+            EntityVillager entityvillager = (EntityVillager)entity;
 
-            if (this.professions != null) {
-                final int i = entityvillager.getProfession();
-                final int j = Reflector.getFieldValueInt(entityvillager, Reflector.EntityVillager_careerId, -1);
+            if (this.professions != null)
+            {
+                int i = entityvillager.getProfession();
+                int j = Reflector.getFieldValueInt(entityvillager, Reflector.EntityVillager_careerId, -1);
 
-                if (j < 0) {
+                if (j < 0)
+                {
                     return false;
                 }
 
                 boolean flag = false;
 
-                for (int k = 0; k < this.professions.length; ++k) {
-                    final VillagerProfession villagerprofession = this.professions[k];
+                for (int k = 0; k < this.professions.length; ++k)
+                {
+                    VillagerProfession villagerprofession = this.professions[k];
 
-                    if (villagerprofession.matches(i, j)) {
+                    if (villagerprofession.matches(i, j))
+                    {
                         flag = true;
                         break;
                     }
                 }
 
-                return flag;
+                if (!flag)
+                {
+                    return false;
+                }
             }
 
             return true;
         }
     }
 
-    private boolean matchesHorse(final Entity entity, final IBlockAccess blockAccess) {
-        if (!(entity instanceof EntityHorse)) {
+    private boolean matchesHorse(Entity entity, IBlockAccess blockAccess)
+    {
+        if (!(entity instanceof EntityHorse))
+        {
             return false;
-        } else {
-            final EntityHorse entityhorse = (EntityHorse) entity;
+        }
+        else
+        {
+            EntityHorse entityhorse = (EntityHorse)entity;
 
-            if (this.variants != null) {
-                final CustomGuiProperties.EnumVariant customguiproperties$enumvariant = this.getHorseVariant(entityhorse);
+            if (this.variants != null)
+            {
+                CustomGuiProperties.EnumVariant customguiproperties$enumvariant = this.getHorseVariant(entityhorse);
 
-                return Config.equalsOne(customguiproperties$enumvariant, this.variants);
+                if (!Config.equalsOne(customguiproperties$enumvariant, this.variants))
+                {
+                    return false;
+                }
             }
 
             return true;
         }
     }
 
-    private CustomGuiProperties.EnumVariant getHorseVariant(final EntityHorse entity) {
-        final int i = entity.getHorseType();
+    private CustomGuiProperties.EnumVariant getHorseVariant(EntityHorse entity)
+    {
+        int i = entity.getHorseType();
 
-        switch (i) {
+        switch (i)
+        {
             case 0:
                 return CustomGuiProperties.EnumVariant.HORSE;
 
@@ -493,20 +615,24 @@ public class CustomGuiProperties {
         }
     }
 
-    public CustomGuiProperties.EnumContainer getContainer() {
+    public CustomGuiProperties.EnumContainer getContainer()
+    {
         return this.container;
     }
 
-    public ResourceLocation getTextureLocation(final ResourceLocation loc) {
-        final ResourceLocation resourcelocation = this.textureLocations.get(loc);
+    public ResourceLocation getTextureLocation(ResourceLocation loc)
+    {
+        ResourceLocation resourcelocation = (ResourceLocation)this.textureLocations.get(loc);
         return resourcelocation == null ? loc : resourcelocation;
     }
 
-    public String toString() {
+    public String toString()
+    {
         return "name: " + this.fileName + ", container: " + this.container + ", textures: " + this.textureLocations;
     }
 
-    public enum EnumContainer {
+    public static enum EnumContainer
+    {
         ANVIL,
         BEACON,
         BREWING_STAND,
@@ -525,12 +651,13 @@ public class CustomGuiProperties {
         public static final CustomGuiProperties.EnumContainer[] VALUES = values();
     }
 
-    private enum EnumVariant {
+    private static enum EnumVariant
+    {
         HORSE,
         DONKEY,
         MULE,
         LLAMA,
         DISPENSER,
-        DROPPER
+        DROPPER;
     }
 }

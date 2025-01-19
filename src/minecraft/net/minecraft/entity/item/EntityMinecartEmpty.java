@@ -1,27 +1,35 @@
 package net.minecraft.entity.item;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-public class EntityMinecartEmpty extends EntityMinecart {
-    public EntityMinecartEmpty(final World worldIn) {
+public class EntityMinecartEmpty extends EntityMinecart
+{
+    public EntityMinecartEmpty(World worldIn)
+    {
         super(worldIn);
     }
 
-    public EntityMinecartEmpty(final World worldIn, final double p_i1723_2_, final double p_i1723_4_, final double p_i1723_6_) {
-        super(worldIn, p_i1723_2_, p_i1723_4_, p_i1723_6_);
+    public EntityMinecartEmpty(World worldIn, double x, double y, double z)
+    {
+        super(worldIn, x, y, z);
     }
 
-    /**
-     * First layer of player interaction
-     */
-    public boolean interactFirst(final EntityPlayer playerIn) {
-        if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != playerIn) {
+    public boolean interactFirst(EntityPlayer playerIn)
+    {
+        if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != playerIn)
+        {
             return true;
-        } else if (this.riddenByEntity != null && this.riddenByEntity != playerIn) {
+        }
+        else if (this.riddenByEntity != null && this.riddenByEntity != playerIn)
+        {
             return false;
-        } else {
-            if (!this.worldObj.isRemote) {
+        }
+        else
+        {
+            if (!this.worldObj.isRemote)
+            {
                 playerIn.mountEntity(this);
             }
 
@@ -29,16 +37,17 @@ public class EntityMinecartEmpty extends EntityMinecart {
         }
     }
 
-    /**
-     * Called every tick the minecart is on an activator rail. Args: x, y, z, is the rail receiving power
-     */
-    public void onActivatorRailPass(final int x, final int y, final int z, final boolean receivingPower) {
-        if (receivingPower) {
-            if (this.riddenByEntity != null) {
-                this.riddenByEntity.mountEntity(null);
+    public void onActivatorRailPass(int x, int y, int z, boolean receivingPower)
+    {
+        if (receivingPower)
+        {
+            if (this.riddenByEntity != null)
+            {
+                this.riddenByEntity.mountEntity((Entity)null);
             }
 
-            if (this.getRollingAmplitude() == 0) {
+            if (this.getRollingAmplitude() == 0)
+            {
                 this.setRollingDirection(-this.getRollingDirection());
                 this.setRollingAmplitude(10);
                 this.setDamage(50.0F);
@@ -47,7 +56,8 @@ public class EntityMinecartEmpty extends EntityMinecart {
         }
     }
 
-    public EntityMinecart.EnumMinecartType getMinecartType() {
+    public EntityMinecart.EnumMinecartType getMinecartType()
+    {
         return EntityMinecart.EnumMinecartType.RIDEABLE;
     }
 }

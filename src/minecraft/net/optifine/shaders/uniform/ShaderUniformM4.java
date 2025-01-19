@@ -1,42 +1,51 @@
 package net.optifine.shaders.uniform;
 
+import java.nio.FloatBuffer;
 import org.lwjgl.opengl.ARBShaderObjects;
 
-import java.nio.FloatBuffer;
-
-public class ShaderUniformM4 extends ShaderUniformBase {
+public class ShaderUniformM4 extends ShaderUniformBase
+{
     private boolean transpose;
     private FloatBuffer matrix;
 
-    public ShaderUniformM4(final String name) {
+    public ShaderUniformM4(String name)
+    {
         super(name);
     }
 
-    public void setValue(final boolean transpose, final FloatBuffer matrix) {
+    public void setValue(boolean transpose, FloatBuffer matrix)
+    {
         this.transpose = transpose;
         this.matrix = matrix;
-        final int i = this.getLocation();
+        int i = this.getLocation();
 
-        if (i >= 0) {
+        if (i >= 0)
+        {
             ARBShaderObjects.glUniformMatrix4ARB(i, transpose, matrix);
             this.checkGLError();
         }
     }
 
-    public float getValue(final int row, final int col) {
-        if (this.matrix == null) {
+    public float getValue(int row, int col)
+    {
+        if (this.matrix == null)
+        {
             return 0.0F;
-        } else {
-            final int i = this.transpose ? col * 4 + row : row * 4 + col;
-            final float f = this.matrix.get(i);
+        }
+        else
+        {
+            int i = this.transpose ? col * 4 + row : row * 4 + col;
+            float f = this.matrix.get(i);
             return f;
         }
     }
 
-    protected void onProgramSet(final int program) {
+    protected void onProgramSet(int program)
+    {
     }
 
-    protected void resetValue() {
+    protected void resetValue()
+    {
         this.matrix = null;
     }
 }

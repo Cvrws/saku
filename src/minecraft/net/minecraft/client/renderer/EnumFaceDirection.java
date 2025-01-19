@@ -1,9 +1,9 @@
 package net.minecraft.client.renderer;
 
-import lombok.RequiredArgsConstructor;
 import net.minecraft.util.EnumFacing;
 
-public enum EnumFaceDirection {
+public enum EnumFaceDirection
+{
     DOWN(new EnumFaceDirection.VertexInformation[]{new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.WEST_INDEX, EnumFaceDirection.Constants.DOWN_INDEX, EnumFaceDirection.Constants.SOUTH_INDEX), new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.WEST_INDEX, EnumFaceDirection.Constants.DOWN_INDEX, EnumFaceDirection.Constants.NORTH_INDEX), new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.EAST_INDEX, EnumFaceDirection.Constants.DOWN_INDEX, EnumFaceDirection.Constants.NORTH_INDEX), new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.EAST_INDEX, EnumFaceDirection.Constants.DOWN_INDEX, EnumFaceDirection.Constants.SOUTH_INDEX)}),
     UP(new EnumFaceDirection.VertexInformation[]{new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.WEST_INDEX, EnumFaceDirection.Constants.UP_INDEX, EnumFaceDirection.Constants.NORTH_INDEX), new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.WEST_INDEX, EnumFaceDirection.Constants.UP_INDEX, EnumFaceDirection.Constants.SOUTH_INDEX), new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.EAST_INDEX, EnumFaceDirection.Constants.UP_INDEX, EnumFaceDirection.Constants.SOUTH_INDEX), new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.EAST_INDEX, EnumFaceDirection.Constants.UP_INDEX, EnumFaceDirection.Constants.NORTH_INDEX)}),
     NORTH(new EnumFaceDirection.VertexInformation[]{new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.EAST_INDEX, EnumFaceDirection.Constants.UP_INDEX, EnumFaceDirection.Constants.NORTH_INDEX), new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.EAST_INDEX, EnumFaceDirection.Constants.DOWN_INDEX, EnumFaceDirection.Constants.NORTH_INDEX), new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.WEST_INDEX, EnumFaceDirection.Constants.DOWN_INDEX, EnumFaceDirection.Constants.NORTH_INDEX), new EnumFaceDirection.VertexInformation(EnumFaceDirection.Constants.WEST_INDEX, EnumFaceDirection.Constants.UP_INDEX, EnumFaceDirection.Constants.NORTH_INDEX)}),
@@ -14,16 +14,19 @@ public enum EnumFaceDirection {
     private static final EnumFaceDirection[] facings = new EnumFaceDirection[6];
     private final EnumFaceDirection.VertexInformation[] vertexInfos;
 
-    public static EnumFaceDirection getFacing(final EnumFacing facing) {
+    public static EnumFaceDirection getFacing(EnumFacing facing)
+    {
         return facings[facing.getIndex()];
     }
 
-    EnumFaceDirection(final EnumFaceDirection.VertexInformation[] vertexInfosIn) {
+    private EnumFaceDirection(EnumFaceDirection.VertexInformation[] vertexInfosIn)
+    {
         this.vertexInfos = vertexInfosIn;
     }
 
-    public EnumFaceDirection.VertexInformation getVertexInformation(final int p_179025_1_) {
-        return this.vertexInfos[p_179025_1_];
+    public EnumFaceDirection.VertexInformation getVertexInformation(int index)
+    {
+        return this.vertexInfos[index];
     }
 
     static {
@@ -44,10 +47,16 @@ public enum EnumFaceDirection {
         public static final int WEST_INDEX = EnumFacing.WEST.getIndex();
     }
 
-    @RequiredArgsConstructor
     public static class VertexInformation {
         public final int xIndex;
         public final int yIndex;
         public final int zIndex;
+
+        private VertexInformation(int xIndexIn, int yIndexIn, int zIndexIn)
+        {
+            this.xIndex = xIndexIn;
+            this.yIndex = yIndexIn;
+            this.zIndex = zIndexIn;
+        }
     }
 }

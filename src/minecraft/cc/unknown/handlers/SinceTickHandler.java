@@ -20,8 +20,10 @@ public class SinceTickHandler implements Accessor {
 
 	@EventLink(value = Priority.VERY_LOW)
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-		if (mc.player.hurtTime > 0 && mc.player.motionY / 8000.0D > 0.1 && Math.hypot(mc.player.motionZ / 8000.0D, mc.player.motionX / 8000.0D) > 0.2) {
-			mc.player.ticksSinceVelocity++;	
+		int hurt = mc.player.hurtTime;
+		
+		if (hurt > 0 && mc.player.motionY / 8000.0D > 0.1 && Math.hypot(mc.player.motionZ / 8000.0D, mc.player.motionX / 8000.0D) > 0.2) {
+			mc.player.ticksSinceVelocity++;
 		}
 		mc.player.ticksSinceVelocity = 0;
 	};

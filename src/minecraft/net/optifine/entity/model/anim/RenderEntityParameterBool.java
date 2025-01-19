@@ -8,7 +8,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.optifine.expr.ExpressionType;
 import net.optifine.expr.IExpressionBool;
 
-public enum RenderEntityParameterBool implements IExpressionBool {
+public enum RenderEntityParameterBool implements IExpressionBool
+{
     IS_ALIVE("is_alive"),
     IS_BURNING("is_burning"),
     IS_CHILD("is_child"),
@@ -24,38 +25,48 @@ public enum RenderEntityParameterBool implements IExpressionBool {
     IS_SPRINTING("is_sprinting"),
     IS_WET("is_wet");
 
-    private final String name;
-    private final RenderManager renderManager;
+    private String name;
+    private RenderManager renderManager;
     private static final RenderEntityParameterBool[] VALUES = values();
 
-    RenderEntityParameterBool(final String name) {
+    private RenderEntityParameterBool(String name)
+    {
         this.name = name;
         this.renderManager = Minecraft.getInstance().getRenderManager();
     }
 
-    public String getName() {
+    public String getName()
+    {
         return this.name;
     }
 
-    public ExpressionType getExpressionType() {
+    public ExpressionType getExpressionType()
+    {
         return ExpressionType.BOOL;
     }
 
-    public boolean eval() {
-        final Render render = this.renderManager.renderRender;
+    public boolean eval()
+    {
+        Render render = this.renderManager.renderRender;
 
-        if (render == null) {
+        if (render == null)
+        {
             return false;
-        } else {
-            if (render instanceof RendererLivingEntity) {
-                final RendererLivingEntity rendererlivingentity = (RendererLivingEntity) render;
-                final EntityLivingBase entitylivingbase = rendererlivingentity.renderEntity;
+        }
+        else
+        {
+            if (render instanceof RendererLivingEntity)
+            {
+                RendererLivingEntity rendererlivingentity = (RendererLivingEntity)render;
+                EntityLivingBase entitylivingbase = rendererlivingentity.renderEntity;
 
-                if (entitylivingbase == null) {
+                if (entitylivingbase == null)
+                {
                     return false;
                 }
 
-                switch (this) {
+                switch (this)
+                {
                     case IS_ALIVE:
                         return entitylivingbase.isEntityAlive();
 
@@ -94,8 +105,6 @@ public enum RenderEntityParameterBool implements IExpressionBool {
 
                     case IS_WET:
                         return entitylivingbase.isWet();
-				default:
-					break;
                 }
             }
 
@@ -103,14 +112,20 @@ public enum RenderEntityParameterBool implements IExpressionBool {
         }
     }
 
-    public static RenderEntityParameterBool parse(final String str) {
-        if (str == null) {
+    public static RenderEntityParameterBool parse(String str)
+    {
+        if (str == null)
+        {
             return null;
-        } else {
-            for (int i = 0; i < VALUES.length; ++i) {
-                final RenderEntityParameterBool renderentityparameterbool = VALUES[i];
+        }
+        else
+        {
+            for (int i = 0; i < VALUES.length; ++i)
+            {
+                RenderEntityParameterBool renderentityparameterbool = VALUES[i];
 
-                if (renderentityparameterbool.getName().equals(str)) {
+                if (renderentityparameterbool.getName().equals(str))
+                {
                     return renderentityparameterbool;
                 }
             }

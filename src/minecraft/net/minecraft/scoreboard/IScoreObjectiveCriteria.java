@@ -1,10 +1,8 @@
 package net.minecraft.scoreboard;
 
+import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatFormatting;
 

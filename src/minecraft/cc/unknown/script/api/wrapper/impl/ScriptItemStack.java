@@ -11,7 +11,7 @@ public class ScriptItemStack extends ScriptWrapper<ItemStack> {
     }
 
     public int getAmount() {
-        return this.wrapped.getStackSize();
+        return this.wrapped.stackSize;
     }
 
     public int getMaxAmount() {

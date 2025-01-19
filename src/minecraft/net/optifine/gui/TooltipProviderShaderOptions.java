@@ -13,70 +13,87 @@ import net.optifine.shaders.config.ShaderOption;
 import net.optifine.shaders.gui.GuiButtonShaderOption;
 import net.optifine.util.StrUtils;
 
-public class TooltipProviderShaderOptions extends TooltipProviderOptions {
-    public String[] getTooltipLines(final GuiButton btn, final int width) {
-        if (!(btn instanceof GuiButtonShaderOption)) {
+public class TooltipProviderShaderOptions extends TooltipProviderOptions
+{
+    public String[] getTooltipLines(GuiButton btn, int width)
+    {
+        if (!(btn instanceof GuiButtonShaderOption))
+        {
             return null;
-        } else {
-            final GuiButtonShaderOption guibuttonshaderoption = (GuiButtonShaderOption) btn;
-            final ShaderOption shaderoption = guibuttonshaderoption.getShaderOption();
-            final String[] astring = this.makeTooltipLines(shaderoption, width);
+        }
+        else
+        {
+            GuiButtonShaderOption guibuttonshaderoption = (GuiButtonShaderOption)btn;
+            ShaderOption shaderoption = guibuttonshaderoption.getShaderOption();
+            String[] astring = this.makeTooltipLines(shaderoption, width);
             return astring;
         }
     }
 
-    private String[] makeTooltipLines(final ShaderOption so, final int width) {
-        final String s = so.getNameText();
-        final String s1 = Config.normalize(so.getDescriptionText()).trim();
-        final String[] astring = this.splitDescription(s1);
-        final GameSettings gamesettings = Config.getGameSettings();
+    private String[] makeTooltipLines(ShaderOption so, int width)
+    {
+        String s = so.getNameText();
+        String s1 = Config.normalize(so.getDescriptionText()).trim();
+        String[] astring = this.splitDescription(s1);
+        GameSettings gamesettings = Config.getGameSettings();
         String s2 = null;
 
-        if (!s.equals(so.getName()) && gamesettings.advancedItemTooltips) {
+        if (!s.equals(so.getName()) && gamesettings.advancedItemTooltips)
+        {
             s2 = "\u00a78" + Lang.get("of.general.id") + ": " + so.getName();
         }
 
         String s3 = null;
 
-        if (so.getPaths() != null && gamesettings.advancedItemTooltips) {
-            s3 = "\u00a78" + Lang.get("of.general.from") + ": " + Config.arrayToString(so.getPaths());
+        if (so.getPaths() != null && gamesettings.advancedItemTooltips)
+        {
+            s3 = "\u00a78" + Lang.get("of.general.from") + ": " + Config.arrayToString((Object[])so.getPaths());
         }
 
         String s4 = null;
 
-        if (so.getValueDefault() != null && gamesettings.advancedItemTooltips) {
-            final String s5 = so.isEnabled() ? so.getValueText(so.getValueDefault()) : Lang.get("of.general.ambiguous");
+        if (so.getValueDefault() != null && gamesettings.advancedItemTooltips)
+        {
+            String s5 = so.isEnabled() ? so.getValueText(so.getValueDefault()) : Lang.get("of.general.ambiguous");
             s4 = "\u00a78" + Lang.getDefault() + ": " + s5;
         }
 
-        final List<String> list = new ArrayList();
+        List<String> list = new ArrayList();
         list.add(s);
-        list.addAll(Arrays.asList(astring));
+        list.addAll(Arrays.<String>asList(astring));
 
-        if (s2 != null) {
+        if (s2 != null)
+        {
             list.add(s2);
         }
 
-        if (s3 != null) {
+        if (s3 != null)
+        {
             list.add(s3);
         }
 
-        if (s4 != null) {
+        if (s4 != null)
+        {
             list.add(s4);
         }
 
-        final String[] astring1 = this.makeTooltipLines(width, list);
+        String[] astring1 = this.makeTooltipLines(width, list);
         return astring1;
     }
 
-    private String[] splitDescription(String desc) {
-        if (desc.length() <= 0) {
+    private String[] splitDescription(String desc)
+    {
+        if (desc.length() <= 0)
+        {
             return new String[0];
-        } else {
+        }
+        else
+        {
             desc = StrUtils.removePrefix(desc, "//");
-            final String[] astring = desc.split("\\. ");
+            String[] astring = desc.split("\\. ");
 
-            for (int i = 0; i < astring.length; ++i) {
+            for (int i = 0; i < astring.length; ++i)
+            {
                 astring[i] = "- " + astring[i].trim();
                 astring[i] = StrUtils.removeSuffix(astring[i], ".");
             }
@@ -85,18 +102,25 @@ public class TooltipProviderShaderOptions extends TooltipProviderOptions {
         }
     }
 
-    private String[] makeTooltipLines(final int width, final List<String> args) {
-        final FontRenderer fontrenderer = Config.getMinecraft().fontRendererObj;
-        final List<String> list = new ArrayList();
+    private String[] makeTooltipLines(int width, List<String> args)
+    {
+        FontRenderer fontrenderer = Config.getMinecraft().fontRendererObj;
+        List<String> list = new ArrayList();
 
-        for (int i = 0; i < args.size(); ++i) {
-            final String s = args.get(i);
+        for (int i = 0; i < args.size(); ++i)
+        {
+            String s = (String)args.get(i);
 
-            if (s != null && !s.isEmpty()) {
-                list.addAll(fontrenderer.listFormattedStringToWidth(s, width));
+            if (s != null && s.length() > 0)
+            {
+                for (String s1 : fontrenderer.listFormattedStringToWidth(s, width))
+                {
+                    list.add(s1);
+                }
             }
         }
 
-        return list.toArray(new String[list.size()]);
+        String[] astring = (String[])((String[])list.toArray(new String[list.size()]));
+        return astring;
     }
 }

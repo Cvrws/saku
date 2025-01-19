@@ -14,77 +14,76 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public class PlayerControllerOF extends PlayerControllerMP {
+public class PlayerControllerOF extends PlayerControllerMP
+{
     private boolean acting = false;
     private BlockPos lastClickBlockPos = null;
     private Entity lastClickEntity = null;
 
-    public PlayerControllerOF(final Minecraft mcIn, final NetHandlerPlayClient netHandler) {
+    public PlayerControllerOF(Minecraft mcIn, NetHandlerPlayClient netHandler)
+    {
         super(mcIn, netHandler);
     }
 
-    /**
-     * Called when the player is hitting a block with an item.
-     *
-     * @param loc  location of the block being clicked
-     * @param face Blockface being clicked
-     */
-    public boolean clickBlock(final BlockPos loc, final EnumFacing face) {
+    public boolean clickBlock(BlockPos loc, EnumFacing face)
+    {
         this.acting = true;
         this.lastClickBlockPos = loc;
-        final boolean flag = super.clickBlock(loc, face);
+        boolean flag = super.clickBlock(loc, face);
         this.acting = false;
         return flag;
     }
 
-    public boolean onPlayerDamageBlock(final BlockPos posBlock, final EnumFacing directionFacing) {
+    public boolean onPlayerDamageBlock(BlockPos posBlock, EnumFacing directionFacing)
+    {
         this.acting = true;
         this.lastClickBlockPos = posBlock;
-        final boolean flag = super.onPlayerDamageBlock(posBlock, directionFacing);
+        boolean flag = super.onPlayerDamageBlock(posBlock, directionFacing);
         this.acting = false;
         return flag;
     }
 
-    /**
-     * Notifies the server of things like consuming food, etc...
-     */
-    public boolean sendUseItem(final EntityPlayer player, final World worldIn, final ItemStack stack) {
+    public boolean sendUseItem(EntityPlayer player, World worldIn, ItemStack stack)
+    {
         this.acting = true;
-        final boolean flag = super.sendUseItem(player, worldIn, stack);
+        boolean flag = super.sendUseItem(player, worldIn, stack);
         this.acting = false;
         return flag;
     }
 
-    public boolean onPlayerRightClick(final EntityPlayerSP p_178890_1, final WorldClient p_178890_2, final ItemStack p_178890_3, final BlockPos p_178890_4, final EnumFacing p_178890_5, final Vec3 p_178890_6) {
+    public boolean onPlayerRightClick(EntityPlayerSP p_178890_1, WorldClient p_178890_2, ItemStack p_178890_3, BlockPos p_178890_4, EnumFacing p_178890_5, Vec3 p_178890_6)
+    {
         this.acting = true;
         this.lastClickBlockPos = p_178890_4;
-        final boolean flag = super.onPlayerRightClick(p_178890_1, p_178890_2, p_178890_3, p_178890_4, p_178890_5, p_178890_6);
+        boolean flag = super.onPlayerRightClick(p_178890_1, p_178890_2, p_178890_3, p_178890_4, p_178890_5, p_178890_6);
         this.acting = false;
         return flag;
     }
 
-    /**
-     * Send packet to server - player is interacting with another entity (left click)
-     */
-    public boolean interactWithEntitySendPacket(final EntityPlayer player, final Entity target) {
+    public boolean interactWithEntitySendPacket(EntityPlayer player, Entity target)
+    {
         this.lastClickEntity = target;
         return super.interactWithEntitySendPacket(player, target);
     }
 
-    public boolean isPlayerRightClickingOnEntity(final EntityPlayer player, final Entity target, final MovingObjectPosition ray) {
+    public boolean isPlayerRightClickingOnEntity(EntityPlayer player, Entity target, MovingObjectPosition ray)
+    {
         this.lastClickEntity = target;
         return super.isPlayerRightClickingOnEntity(player, target, ray);
     }
 
-    public boolean isActing() {
+    public boolean isActing()
+    {
         return this.acting;
     }
 
-    public BlockPos getLastClickBlockPos() {
+    public BlockPos getLastClickBlockPos()
+    {
         return this.lastClickBlockPos;
     }
 
-    public Entity getLastClickEntity() {
+    public Entity getLastClickEntity()
+    {
         return this.lastClickEntity;
     }
 }

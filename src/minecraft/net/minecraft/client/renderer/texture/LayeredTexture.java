@@ -1,6 +1,11 @@
 package net.minecraft.client.renderer.texture;
 
 import com.google.common.collect.Lists;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.src.Config;
 import net.minecraft.util.ResourceLocation;
@@ -8,49 +13,57 @@ import net.optifine.shaders.ShadersTex;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
-public class LayeredTexture extends AbstractTexture {
+public class LayeredTexture extends AbstractTexture
+{
     private static final Logger logger = LogManager.getLogger();
     public final List<String> layeredTextureNames;
     private ResourceLocation textureLocation;
 
-    public LayeredTexture(final String... textureNames) {
+    public LayeredTexture(String... textureNames)
+    {
         this.layeredTextureNames = Lists.newArrayList(textureNames);
 
-        if (textureNames.length > 0 && textureNames[0] != null) {
+        if (textureNames.length > 0 && textureNames[0] != null)
+        {
             this.textureLocation = new ResourceLocation(textureNames[0]);
         }
     }
 
-    public void loadTexture(final IResourceManager resourceManager) throws IOException {
+    public void loadTexture(IResourceManager resourceManager) throws IOException
+    {
         this.deleteGlTexture();
         BufferedImage bufferedimage = null;
 
-        try {
-            for (final String s : this.layeredTextureNames) {
-                if (s != null) {
-                    final InputStream inputstream = resourceManager.getResource(new ResourceLocation(s)).getInputStream();
-                    final BufferedImage bufferedimage1 = TextureUtil.readBufferedImage(inputstream);
+        try
+        {
+            for (String s : this.layeredTextureNames)
+            {
+                if (s != null)
+                {
+                    InputStream inputstream = resourceManager.getResource(new ResourceLocation(s)).getInputStream();
+                    BufferedImage bufferedimage1 = TextureUtil.readBufferedImage(inputstream);
 
-                    if (bufferedimage == null) {
+                    if (bufferedimage == null)
+                    {
                         bufferedimage = new BufferedImage(bufferedimage1.getWidth(), bufferedimage1.getHeight(), 2);
                     }
 
-                    bufferedimage.getGraphics().drawImage(bufferedimage1, 0, 0, null);
+                    bufferedimage.getGraphics().drawImage(bufferedimage1, 0, 0, (ImageObserver)null);
                 }
             }
-        } catch (final IOException ioexception) {
-            logger.error("Couldn't load layered image", ioexception);
+        }
+        catch (IOException ioexception)
+        {
+            logger.error((String)"Couldn\'t load layered image", (Throwable)ioexception);
             return;
         }
 
-        if (Config.isShaders()) {
+        if (Config.isShaders())
+        {
             ShadersTex.loadSimpleTexture(this.getGlTextureId(), bufferedimage, false, false, resourceManager, this.textureLocation, this.getMultiTexID());
-        } else {
+        }
+        else
+        {
             TextureUtil.uploadTextureImage(this.getGlTextureId(), bufferedimage);
         }
     }

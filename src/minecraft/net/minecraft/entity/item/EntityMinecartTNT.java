@@ -13,57 +13,65 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
-public class EntityMinecartTNT extends EntityMinecart {
+public class EntityMinecartTNT extends EntityMinecart
+{
     private int minecartTNTFuse = -1;
 
-    public EntityMinecartTNT(final World worldIn) {
+    public EntityMinecartTNT(World worldIn)
+    {
         super(worldIn);
     }
 
-    public EntityMinecartTNT(final World worldIn, final double p_i1728_2_, final double p_i1728_4_, final double p_i1728_6_) {
-        super(worldIn, p_i1728_2_, p_i1728_4_, p_i1728_6_);
+    public EntityMinecartTNT(World worldIn, double x, double y, double z)
+    {
+        super(worldIn, x, y, z);
     }
 
-    public EntityMinecart.EnumMinecartType getMinecartType() {
+    public EntityMinecart.EnumMinecartType getMinecartType()
+    {
         return EntityMinecart.EnumMinecartType.TNT;
     }
 
-    public IBlockState getDefaultDisplayTile() {
+    public IBlockState getDefaultDisplayTile()
+    {
         return Blocks.tnt.getDefaultState();
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
-    public void onUpdate() {
+    public void onUpdate()
+    {
         super.onUpdate();
 
-        if (this.minecartTNTFuse > 0) {
+        if (this.minecartTNTFuse > 0)
+        {
             --this.minecartTNTFuse;
-            this.worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, this.posX, this.posY + 0.5D, this.posZ, 0.0D, 0.0D, 0.0D);
-        } else if (this.minecartTNTFuse == 0) {
+            this.worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, this.posX, this.posY + 0.5D, this.posZ, 0.0D, 0.0D, 0.0D, new int[0]);
+        }
+        else if (this.minecartTNTFuse == 0)
+        {
             this.explodeCart(this.motionX * this.motionX + this.motionZ * this.motionZ);
         }
 
-        if (this.isCollidedHorizontally) {
-            final double d0 = this.motionX * this.motionX + this.motionZ * this.motionZ;
+        if (this.isCollidedHorizontally)
+        {
+            double d0 = this.motionX * this.motionX + this.motionZ * this.motionZ;
 
-            if (d0 >= 0.009999999776482582D) {
+            if (d0 >= 0.009999999776482582D)
+            {
                 this.explodeCart(d0);
             }
         }
     }
 
-    /**
-     * Called when the entity is attacked.
-     */
-    public boolean attackEntityFrom(final DamageSource source, final float amount) {
-        final Entity entity = source.getSourceOfDamage();
+    public boolean attackEntityFrom(DamageSource source, float amount)
+    {
+        Entity entity = source.getSourceOfDamage();
 
-        if (entity instanceof EntityArrow) {
-            final EntityArrow entityarrow = (EntityArrow) entity;
+        if (entity instanceof EntityArrow)
+        {
+            EntityArrow entityarrow = (EntityArrow)entity;
 
-            if (entityarrow.isBurning()) {
+            if (entityarrow.isBurning())
+            {
                 this.explodeCart(entityarrow.motionX * entityarrow.motionX + entityarrow.motionY * entityarrow.motionY + entityarrow.motionZ * entityarrow.motionZ);
             }
         }
@@ -71,116 +79,116 @@ public class EntityMinecartTNT extends EntityMinecart {
         return super.attackEntityFrom(source, amount);
     }
 
-    public void killMinecart(final DamageSource p_94095_1_) {
-        super.killMinecart(p_94095_1_);
-        final double d0 = this.motionX * this.motionX + this.motionZ * this.motionZ;
+    public void killMinecart(DamageSource source)
+    {
+        super.killMinecart(source);
+        double d0 = this.motionX * this.motionX + this.motionZ * this.motionZ;
 
-        if (!p_94095_1_.isExplosion() && this.worldObj.getGameRules().getGameRuleBooleanValue("doEntityDrops")) {
+        if (!source.isExplosion() && this.worldObj.getGameRules().getBoolean("doEntityDrops"))
+        {
             this.entityDropItem(new ItemStack(Blocks.tnt, 1), 0.0F);
         }
 
-        if (p_94095_1_.isFireDamage() || p_94095_1_.isExplosion() || d0 >= 0.009999999776482582D) {
+        if (source.isFireDamage() || source.isExplosion() || d0 >= 0.009999999776482582D)
+        {
             this.explodeCart(d0);
         }
     }
 
-    /**
-     * Makes the minecart explode.
-     */
-    protected void explodeCart(final double p_94103_1_) {
-        if (!this.worldObj.isRemote) {
+    protected void explodeCart(double p_94103_1_)
+    {
+        if (!this.worldObj.isRemote)
+        {
             double d0 = Math.sqrt(p_94103_1_);
 
-            if (d0 > 5.0D) {
+            if (d0 > 5.0D)
+            {
                 d0 = 5.0D;
             }
 
-            this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, (float) (4.0D + this.rand.nextDouble() * 1.5D * d0), true);
+            this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, (float)(4.0D + this.rand.nextDouble() * 1.5D * d0), true);
             this.setDead();
         }
     }
 
-    public void fall(final float distance, final float damageMultiplier) {
-        if (distance >= 3.0F) {
-            final float f = distance / 10.0F;
-            this.explodeCart(f * f);
+    public void fall(float distance, float damageMultiplier)
+    {
+        if (distance >= 3.0F)
+        {
+            float f = distance / 10.0F;
+            this.explodeCart((double)(f * f));
         }
 
         super.fall(distance, damageMultiplier);
     }
 
-    /**
-     * Called every tick the minecart is on an activator rail. Args: x, y, z, is the rail receiving power
-     */
-    public void onActivatorRailPass(final int x, final int y, final int z, final boolean receivingPower) {
-        if (receivingPower && this.minecartTNTFuse < 0) {
+    public void onActivatorRailPass(int x, int y, int z, boolean receivingPower)
+    {
+        if (receivingPower && this.minecartTNTFuse < 0)
+        {
             this.ignite();
         }
     }
 
-    public void handleHealthUpdate(final byte id) {
-        if (id == 10) {
+    public void handleStatusUpdate(byte id)
+    {
+        if (id == 10)
+        {
             this.ignite();
-        } else {
-            super.handleHealthUpdate(id);
+        }
+        else
+        {
+            super.handleStatusUpdate(id);
         }
     }
 
-    /**
-     * Ignites this TNT cart.
-     */
-    public void ignite() {
+    public void ignite()
+    {
         this.minecartTNTFuse = 80;
 
-        if (!this.worldObj.isRemote) {
-            this.worldObj.setEntityState(this, (byte) 10);
+        if (!this.worldObj.isRemote)
+        {
+            this.worldObj.setEntityState(this, (byte)10);
 
-            if (!this.isSilent()) {
+            if (!this.isSilent())
+            {
                 this.worldObj.playSoundAtEntity(this, "game.tnt.primed", 1.0F, 1.0F);
             }
         }
     }
 
-    /**
-     * Gets the remaining fuse time in ticks.
-     */
-    public int getFuseTicks() {
+    public int getFuseTicks()
+    {
         return this.minecartTNTFuse;
     }
 
-    /**
-     * Returns true if the TNT minecart is ignited.
-     */
-    public boolean isIgnited() {
+    public boolean isIgnited()
+    {
         return this.minecartTNTFuse > -1;
     }
 
-    /**
-     * Explosion resistance of a block relative to this entity
-     */
-    public float getExplosionResistance(final Explosion explosionIn, final World worldIn, final BlockPos pos, final IBlockState blockStateIn) {
+    public float getExplosionResistance(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn)
+    {
         return !this.isIgnited() || !BlockRailBase.isRailBlock(blockStateIn) && !BlockRailBase.isRailBlock(worldIn, pos.up()) ? super.getExplosionResistance(explosionIn, worldIn, pos, blockStateIn) : 0.0F;
     }
 
-    public boolean verifyExplosion(final Explosion explosionIn, final World worldIn, final BlockPos pos, final IBlockState blockStateIn, final float p_174816_5_) {
-        return (!this.isIgnited() || !BlockRailBase.isRailBlock(blockStateIn) && !BlockRailBase.isRailBlock(worldIn, pos.up())) && super.verifyExplosion(explosionIn, worldIn, pos, blockStateIn, p_174816_5_);
+    public boolean verifyExplosion(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn, float p_174816_5_)
+    {
+        return !this.isIgnited() || !BlockRailBase.isRailBlock(blockStateIn) && !BlockRailBase.isRailBlock(worldIn, pos.up()) ? super.verifyExplosion(explosionIn, worldIn, pos, blockStateIn, p_174816_5_) : false;
     }
 
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
-    protected void readEntityFromNBT(final NBTTagCompound tagCompund) {
+    protected void readEntityFromNBT(NBTTagCompound tagCompund)
+    {
         super.readEntityFromNBT(tagCompund);
 
-        if (tagCompund.hasKey("TNTFuse", 99)) {
+        if (tagCompund.hasKey("TNTFuse", 99))
+        {
             this.minecartTNTFuse = tagCompund.getInteger("TNTFuse");
         }
     }
 
-    /**
-     * (abstract) Protected helper method to write subclass entity data to NBT.
-     */
-    protected void writeEntityToNBT(final NBTTagCompound tagCompound) {
+    protected void writeEntityToNBT(NBTTagCompound tagCompound)
+    {
         super.writeEntityToNBT(tagCompound);
         tagCompound.setInteger("TNTFuse", this.minecartTNTFuse);
     }

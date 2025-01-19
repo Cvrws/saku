@@ -2,43 +2,48 @@ package net.optifine.util;
 
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.src.Config;
 
-public class CacheObjectArray {
-    private static final ArrayDeque<int[]> arrays = new ArrayDeque();
-    private static final int maxCacheSize = 10;
+public class CacheObjectArray
+{
+    private static ArrayDeque<int[]> arrays = new ArrayDeque();
+    private static int maxCacheSize = 10;
 
-    private static synchronized int[] allocateArray(final int size) {
-        int[] aint = arrays.pollLast();
+    private static synchronized int[] allocateArray(int size)
+    {
+        int[] aint = (int[])arrays.pollLast();
 
-        if (aint == null || aint.length < size) {
+        if (aint == null || aint.length < size)
+        {
             aint = new int[size];
         }
 
         return aint;
     }
 
-    public static synchronized void freeArray(final int[] ints) {
-        if (arrays.size() < maxCacheSize) {
+    public static synchronized void freeArray(int[] ints)
+    {
+        if (arrays.size() < maxCacheSize)
+        {
             arrays.add(ints);
         }
     }
 
-    public static void main(final String[] args) throws Exception {
-        final int i = 4096;
-        final int j = 500000;
+    public static void main(String[] args) throws Exception
+    {
+        int i = 4096;
+        int j = 500000;
         testNew(i, j);
         testClone(i, j);
         testNewObj(i, j);
         testCloneObj(i, j);
         testNewObjDyn(IBlockState.class, i, j);
-        final long k = testNew(i, j);
-        final long l = testClone(i, j);
-        final long i1 = testNewObj(i, j);
-        final long j1 = testCloneObj(i, j);
-        final long k1 = testNewObjDyn(IBlockState.class, i, j);
+        long k = testNew(i, j);
+        long l = testClone(i, j);
+        long i1 = testNewObj(i, j);
+        long j1 = testCloneObj(i, j);
+        long k1 = testNewObjDyn(IBlockState.class, i, j);
         Config.dbg("New: " + k);
         Config.dbg("Clone: " + l);
         Config.dbg("NewObj: " + i1);
@@ -46,60 +51,70 @@ public class CacheObjectArray {
         Config.dbg("NewObjDyn: " + k1);
     }
 
-    private static long testClone(final int size, final int count) {
-        final long i = System.currentTimeMillis();
-        final int[] aint = new int[size];
+    private static long testClone(int size, int count)
+    {
+        long i = System.currentTimeMillis();
+        int[] aint = new int[size];
 
-        for (int j = 0; j < count; ++j) {
-            final int[] aint1 = aint.clone();
+        for (int j = 0; j < count; ++j)
+        {
+            int[] aint1 = (int[])aint.clone();
         }
 
-        final long k = System.currentTimeMillis();
+        long k = System.currentTimeMillis();
         return k - i;
     }
 
-    private static long testNew(final int size, final int count) {
-        final long i = System.currentTimeMillis();
+    private static long testNew(int size, int count)
+    {
+        long i = System.currentTimeMillis();
 
-        for (int j = 0; j < count; ++j) {
-            final int[] aint = (int[]) Array.newInstance(Integer.TYPE, size);
+        for (int j = 0; j < count; ++j)
+        {
+            int[] aint = (int[])((int[])Array.newInstance(Integer.TYPE, size));
         }
 
-        final long k = System.currentTimeMillis();
+        long k = System.currentTimeMillis();
         return k - i;
     }
 
-    private static long testCloneObj(final int size, final int count) {
-        final long i = System.currentTimeMillis();
-        final IBlockState[] aiblockstate = new IBlockState[size];
+    private static long testCloneObj(int size, int count)
+    {
+        long i = System.currentTimeMillis();
+        IBlockState[] aiblockstate = new IBlockState[size];
 
-        for (int j = 0; j < count; ++j) {
-            final IBlockState[] aiblockstate1 = aiblockstate.clone();
+        for (int j = 0; j < count; ++j)
+        {
+            IBlockState[] aiblockstate1 = (IBlockState[])aiblockstate.clone();
         }
 
-        final long k = System.currentTimeMillis();
+        long k = System.currentTimeMillis();
         return k - i;
     }
 
-    private static long testNewObj(final int size, final int count) {
-        final long i = System.currentTimeMillis();
+    private static long testNewObj(int size, int count)
+    {
+        long i = System.currentTimeMillis();
 
-        for (int j = 0; j < count; ++j) {
-            final IBlockState[] aiblockstate = new IBlockState[size];
+        for (int j = 0; j < count; ++j)
+        {
+            IBlockState[] aiblockstate = new IBlockState[size];
         }
 
-        final long k = System.currentTimeMillis();
+        long k = System.currentTimeMillis();
         return k - i;
     }
 
-    private static long testNewObjDyn(final Class cls, final int size, final int count) {
-        final long i = System.currentTimeMillis();
+    private static long testNewObjDyn(Class cls, int size, int count)
+    {
+        long i = System.currentTimeMillis();
 
-        for (int j = 0; j < count; ++j) {
-            final Object[] aobject = (Object[]) Array.newInstance(cls, size);
+        for (int j = 0; j < count; ++j)
+        {
+            Object[] aobject = (Object[])((Object[])Array.newInstance(cls, size));
         }
 
-        final long k = System.currentTimeMillis();
+        long k = System.currentTimeMillis();
         return k - i;
     }
 }

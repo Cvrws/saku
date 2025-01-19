@@ -110,7 +110,6 @@ public class Scaffold extends Module {
 	private final DescValue general = new DescValue("Basic Settings:", this);
 	private final BooleanValue smoothRotation = new BooleanValue("Smooth Rotation", this, false);
     private final BoundsNumberValue placeDelay = new BoundsNumberValue("Place Delay", this, 0, 0, 0, 5, 1);
-    private final BooleanValue safeWalk = new BooleanValue("Safe Walk", this, false);
 	private final BooleanValue spoof = new BooleanValue("Spoof Slot", this, true);
 	private final BooleanValue silentSwing = new BooleanValue("Silent Swing", this, true);
 	private final BoundsNumberValue timer = new BoundsNumberValue("Timer", this, 1, 1, 0.1, 10, 0.05);
@@ -312,8 +311,6 @@ public class Scaffold extends Module {
         }
         
 		for (recursion = 0; recursion <= recursions; recursion++) {
-			mc.player.safeWalk = this.safeWalk.getValue();
-
 			resetBinds(false, false, true, true, false, false);
 
 			if (expand.getValue().intValue() != 0) {
@@ -394,7 +391,7 @@ public class Scaffold extends Module {
 
 			ItemStack items = PlayerUtil.getItemStack();
 			
-			if (items.getItem() instanceof ItemBlock && items.realStackSize > 0) {
+			if (items.getItem() instanceof ItemBlock && items.stackSize > 0) {
                 if (canPlace && (RayCastUtil.overBlock(enumFacing.getEnumFacing(), blockFace, rayCast.getValue().getName().equals("Strict")) || rayCast.getValue().getName().equals("Off"))) {
                     this.place();
 
@@ -527,6 +524,10 @@ public class Scaffold extends Module {
 
 		case "Legit":
             if ((PlayerUtil.blockRelativeToPlayer(0, -1, 0) instanceof BlockAir)) {
+    			if (placements <= 0) {
+    				this.sneakingTicks = 1;
+    				placements = sneakEvery.getRandomBetween().intValue();
+    			}
             	KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             } else {
             	mc.gameSettings.keyBindSneak.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindSneak);

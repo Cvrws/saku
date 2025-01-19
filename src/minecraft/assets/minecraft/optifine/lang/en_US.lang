@@ -309,6 +309,7 @@ of.options.MIPMAP_TYPE.tooltip.4=  Linear - normal smoothing
 of.options.MIPMAP_TYPE.tooltip.5=  Bilinear - fine smoothing
 of.options.MIPMAP_TYPE.tooltip.6=  Trilinear - finest smoothing (slowest)
 
+
 of.options.AA_LEVEL=Antialiasing
 of.options.AA_LEVEL.tooltip.1=Antialiasing
 of.options.AA_LEVEL.tooltip.2= OFF - (default) no antialiasing (faster)
@@ -555,7 +556,7 @@ options.biomeBlendRadius.tooltip.2=  OFF - no blending (fastest)
 options.biomeBlendRadius.tooltip.3=  5x5 - normal blending (default)
 options.biomeBlendRadius.tooltip.4=  15x15 - maximal blending (slowest)
 options.biomeBlendRadius.tooltip.5=Higher values may generate significant lag spikes
-options.biomeBlendRadius.tooltip.6=add slow down the chunk loading speed.
+options.biomeBlendRadius.tooltip.6=and slow down the chunk loading speed.
 
 # Performance
 

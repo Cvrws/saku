@@ -109,7 +109,7 @@ public class TextField extends Gui {
             this.moveCursorBy(i - this.selectionEnd + l);
 
             if (this.guiResponder != null) {
-                this.guiResponder.setEntryValue(this.id, this.text);
+                this.guiResponder.func_175319_a(this.id, this.text);
             }
         }
     }
@@ -157,7 +157,7 @@ public class TextField extends Gui {
                     }
 
                     if (this.guiResponder != null) {
-                        this.guiResponder.setEntryValue(this.id, this.text);
+                        this.guiResponder.func_175319_a(this.id, this.text);
                     }
                 }
             }

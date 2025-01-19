@@ -25,8 +25,10 @@ public class FastPlace extends Module {
 
 	private final BooleanValue blocks = new BooleanValue("Blocks", this, true);
 	private final NumberValue blockDelay = new NumberValue("Block Delay", this, 50.0, 0.0, 300.0, 1, () -> !blocks.getValue());
-	private final BooleanValue projectiles = new BooleanValue("Egg/SnowBall", this, false);
-	private final NumberValue projectileDelay = new NumberValue("Egg/SnowBall Delay", this, 50.0, 0.0, 300.0, 1, () -> !projectiles.getValue());
+	private final BooleanValue snowBall = new BooleanValue("SnowBall", this, false);
+	private final NumberValue snowBallDelay = new NumberValue("SnowBall Delay", this, 50.0, 0.0, 300.0, 1, () -> !snowBall.getValue());
+	private final BooleanValue egg = new BooleanValue("Egg", this, false);
+	private final NumberValue eggDelay = new NumberValue("Egg Delay", this, 50.0, 0.0, 300.0, 1, () -> !egg.getValue());
 	private final BooleanValue xpBottle = new BooleanValue("Exp Bottle", this, false);
 	private final NumberValue xpBottleDelay = new NumberValue("Exp Bottle Delay", this, 50.0, 0.0, 300.0, 1, () -> !xpBottle.getValue());
 	private StopWatch stopWatch = new StopWatch();
@@ -38,23 +40,34 @@ public class FastPlace extends Module {
 			if (stack != null) {
 				Item item = mc.player.getCurrentEquippedItem().getItem();
 				if (mc.objectMouseOver.typeOfHit == null || mc.objectMouseOver == null || item == null) return;
+				
+				long delay;
+				long random = MathUtil.nextRandom(-30L, 30L).longValue();
+				
 				if (blocks.getValue() && item instanceof ItemBlock && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-					long random = blockDelay.getValue().longValue() == 0.0 ? 0L : blockDelay.getValue().longValue() + MathUtil.nextRandom(-30L, 30L).longValue();
-					if (stopWatch.finished(random)) {
+					delay = blockDelay.getValue().longValue() == 0.0 ? 0L : blockDelay.getValue().longValue() + random;
+					if (stopWatch.finished(delay)) {
 						mc.rightClickMouse();
 						stopWatch.reset();
 					}
 					event.setCancelled();
-				} else if (projectiles.getValue() && item instanceof ItemSnowball || item instanceof ItemEgg) {
-					long random = projectileDelay.getValue().longValue() == 0.0 ? 0L : projectileDelay.getValue().longValue() + MathUtil.nextRandom(-30L, 30L).longValue();
-					if (stopWatch.finished(random)) {
+				} else if (snowBall.getValue() && item instanceof ItemSnowball) {
+					delay = snowBallDelay.getValue().longValue() == 0.0 ? 0L : snowBallDelay.getValue().longValue() + random;
+					if (stopWatch.finished(delay)) {
+						mc.rightClickMouse();
+						stopWatch.reset();
+					}
+					event.setCancelled();
+				} else if (egg.getValue() && item instanceof ItemEgg) {
+					delay = eggDelay.getValue().longValue() == 0.0 ? 0L : eggDelay.getValue().longValue() + random;
+					if (stopWatch.finished(delay)) {
 						mc.rightClickMouse();
 						stopWatch.reset();
 					}
 					event.setCancelled();
 				} else if (xpBottle.getValue() && item instanceof ItemExpBottle) {
-					long random = xpBottleDelay.getValue().longValue() == 0.0 ? 0L : xpBottleDelay.getValue().longValue() + MathUtil.nextRandom(-30L, 30L).longValue();
-					if (stopWatch.finished(random)) {
+					delay = xpBottleDelay.getValue().longValue() == 0.0 ? 0L : xpBottleDelay.getValue().longValue() + random;
+					if (stopWatch.finished(delay)) {
 						mc.rightClickMouse();
 						stopWatch.reset();
 					}

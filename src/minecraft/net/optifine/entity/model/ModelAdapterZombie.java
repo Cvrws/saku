@@ -9,19 +9,23 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderZombie;
 import net.minecraft.entity.monster.EntityZombie;
 
-public class ModelAdapterZombie extends ModelAdapterBiped {
-    public ModelAdapterZombie() {
+public class ModelAdapterZombie extends ModelAdapterBiped
+{
+    public ModelAdapterZombie()
+    {
         super(EntityZombie.class, "zombie", 0.5F);
     }
 
-    public ModelBase makeModel() {
+    public ModelBase makeModel()
+    {
         return new ModelZombie();
     }
 
-    public IEntityRenderer makeEntityRender(final ModelBase modelBase, final float shadowSize) {
-        final RenderManager rendermanager = Minecraft.getInstance().getRenderManager();
-        final RenderZombie renderzombie = new RenderZombie(rendermanager);
-        Render.setModelBipedMain(renderzombie, (ModelBiped) modelBase);
+    public IEntityRenderer makeEntityRender(ModelBase modelBase, float shadowSize)
+    {
+        RenderManager rendermanager = Minecraft.getInstance().getRenderManager();
+        RenderZombie renderzombie = new RenderZombie(rendermanager);
+        Render.setModelBipedMain(renderzombie, (ModelBiped)modelBase);
         renderzombie.mainModel = modelBase;
         renderzombie.shadowSize = shadowSize;
         return renderzombie;

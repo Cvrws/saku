@@ -13,11 +13,11 @@ public class MinecraftAPI extends API {
     }
 
     public float getTimerSpeed() {
-        return MC.getTimer().timerSpeed;
+        return MC.timer.timerSpeed;
     }
 
     public void setTimerSpeed(final float timerSpeed) {
-        MC.getTimer().timerSpeed = timerSpeed;
+        MC.timer.timerSpeed = timerSpeed;
     }
 
     public float getPartialTicks() {

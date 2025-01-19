@@ -22,9 +22,6 @@ import cc.unknown.value.impl.BooleanValue;
 public class Sprint extends Module {
 
 	public final BooleanValue legit = new BooleanValue("Legit", this, true);
-	
-    private float forward = 0;
-    private float strafe = 0;
 
     @EventLink(value = Priority.LOW)
     public final Listener<PreStrafeEvent> onStrafe = event -> {

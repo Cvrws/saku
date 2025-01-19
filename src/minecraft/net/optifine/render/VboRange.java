@@ -2,46 +2,56 @@ package net.optifine.render;
 
 import net.optifine.util.LinkedList;
 
-public class VboRange {
+public class VboRange
+{
     private int position = -1;
     private int size = 0;
-    private final LinkedList.Node<VboRange> node = new LinkedList.Node(this);
+    private LinkedList.Node<VboRange> node = new LinkedList.Node(this);
 
-    public int getPosition() {
+    public int getPosition()
+    {
         return this.position;
     }
 
-    public int getSize() {
+    public int getSize()
+    {
         return this.size;
     }
 
-    public int getPositionNext() {
+    public int getPositionNext()
+    {
         return this.position + this.size;
     }
 
-    public void setPosition(final int position) {
+    public void setPosition(int position)
+    {
         this.position = position;
     }
 
-    public void setSize(final int size) {
+    public void setSize(int size)
+    {
         this.size = size;
     }
 
-    public LinkedList.Node<VboRange> getNode() {
+    public LinkedList.Node<VboRange> getNode()
+    {
         return this.node;
     }
 
-    public VboRange getPrev() {
-        final LinkedList.Node<VboRange> node = this.node.getPrev();
-        return node == null ? null : node.getItem();
+    public VboRange getPrev()
+    {
+        LinkedList.Node<VboRange> node = this.node.getPrev();
+        return node == null ? null : (VboRange)node.getItem();
     }
 
-    public VboRange getNext() {
-        final LinkedList.Node<VboRange> node = this.node.getNext();
-        return node == null ? null : node.getItem();
+    public VboRange getNext()
+    {
+        LinkedList.Node<VboRange> node = this.node.getNext();
+        return node == null ? null : (VboRange)node.getItem();
     }
 
-    public String toString() {
+    public String toString()
+    {
         return "" + this.position + "/" + this.size + "/" + (this.position + this.size);
     }
 }

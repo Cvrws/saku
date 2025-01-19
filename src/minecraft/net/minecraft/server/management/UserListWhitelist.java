@@ -1,41 +1,46 @@
 package net.minecraft.server.management;
 
-import java.io.File;
-
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
+import java.io.File;
 
-public class UserListWhitelist extends UserList<GameProfile, UserListWhitelistEntry> {
-    public UserListWhitelist(final File p_i1132_1_) {
+public class UserListWhitelist extends UserList<GameProfile, UserListWhitelistEntry>
+{
+    public UserListWhitelist(File p_i1132_1_)
+    {
         super(p_i1132_1_);
     }
 
-    protected UserListEntry<GameProfile> createEntry(final JsonObject entryData) {
+    protected UserListEntry<GameProfile> createEntry(JsonObject entryData)
+    {
         return new UserListWhitelistEntry(entryData);
     }
 
-    public String[] getKeys() {
-        final String[] astring = new String[this.getValues().size()];
+    public String[] getKeys()
+    {
+        String[] astring = new String[this.getValues().size()];
         int i = 0;
 
-        for (final UserListWhitelistEntry userlistwhitelistentry : this.getValues().values()) {
-            astring[i++] = userlistwhitelistentry.getValue().getName();
+        for (UserListWhitelistEntry userlistwhitelistentry : this.getValues().values())
+        {
+            astring[i++] = ((GameProfile)userlistwhitelistentry.getValue()).getName();
         }
 
         return astring;
     }
 
-    /**
-     * Gets the key value for the given object
-     */
-    protected String getObjectKey(final GameProfile obj) {
+    protected String getObjectKey(GameProfile obj)
+    {
         return obj.getId().toString();
     }
 
-    public GameProfile func_152706_a(final String p_152706_1_) {
-        for (final UserListWhitelistEntry userlistwhitelistentry : this.getValues().values()) {
-            if (p_152706_1_.equalsIgnoreCase(userlistwhitelistentry.getValue().getName())) {
-                return userlistwhitelistentry.getValue();
+    public GameProfile getBannedProfile(String name)
+    {
+        for (UserListWhitelistEntry userlistwhitelistentry : this.getValues().values())
+        {
+            if (name.equalsIgnoreCase(((GameProfile)userlistwhitelistentry.getValue()).getName()))
+            {
+                return (GameProfile)userlistwhitelistentry.getValue();
             }
         }
 
