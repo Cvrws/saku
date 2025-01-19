@@ -8,8 +8,6 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ResourcePackImageScaler {
-    public final int SIZE = 64;
-
     public BufferedImage scalePackImage(BufferedImage image) {
         if (image == null) return null;
         

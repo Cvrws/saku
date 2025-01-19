@@ -76,7 +76,7 @@ public class SakuMenu extends GuiMainMenu {
         String name = String.format("§fLogged in as §7%s", mc.getSession().getUsername());
         
         if (Sakura.instance.firstStart) {
-        	SoundUtil.playLocalSound();
+        	SoundUtil.playSound();
         	Sakura.instance.firstStart = false;
         }
 

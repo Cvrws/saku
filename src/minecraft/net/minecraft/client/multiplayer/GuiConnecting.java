@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import cc.unknown.Sakura;
 import cc.unknown.event.impl.other.ServerJoinEvent;
+import cc.unknown.util.sound.SoundUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiDisconnected;
@@ -52,6 +53,11 @@ public class GuiConnecting extends GuiScreen
     private void connect(final String ip, final int port)
     {
         Sakura.instance.getEventBus().handle(new ServerJoinEvent(ip, port));
+        
+        if (Sakura.instance.firstStart) {
+        	SoundUtil.stopSound();
+        }
+        
         logger.info("Connecting to " + ip + ", " + port);
         (new Thread("Server Connector #" + CONNECTION_ID.incrementAndGet())
         {
