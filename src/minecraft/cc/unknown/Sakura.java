@@ -1,5 +1,10 @@
 package cc.unknown;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -65,23 +70,30 @@ public class Sakura {
     public static final List<Object> registered = new ArrayList<Object>();
     private final ScheduledExecutorService ex = Executors.newScheduledThreadPool(4);
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private File tempDir;
+    private File firstInitFile;
+
     protected Minecraft mc = Minecraft.getInstance();
 
     public void init() {
-    	Display.setTitle(NAME + " " + VERSION);
-    	Runtime.getRuntime().addShutdownHook(new Thread(ex::shutdown));
-    	
-    	initAutoOptimization();
-    	initManagers();
-    	initHandler();
-    	initVia();
-    	setupDiscordRPC();
-        
-    	mc.displayGuiScreen(new SakuMenu());
-    	
-        this.firstStart = true;
-    	
-    	LOGGER.info("Initialized successfully.");
+        Display.setTitle(NAME + " " + VERSION);
+        Runtime.getRuntime().addShutdownHook(new Thread(ex::shutdown));
+
+        initAutoOptimization();
+        initManagers();
+        initHandler();
+        initVia();
+        setupDiscordRPC();
+
+        checkFirstStart();
+
+        if (firstStart) {
+            initTempFile();
+        }
+
+        mc.displayGuiScreen(new SakuMenu());
+
+        LOGGER.info("Initialized successfully.");
     }
 
     public void terminate() {    	
@@ -178,4 +190,41 @@ public class Sakura {
 	    }
 	}
 
+	private void initTempFile() {
+	    tempDir = new File(System.getProperty("java.io.tmpdir"));
+	    firstInitFile = new File(tempDir, "sound.txt");
+
+	    if (!firstInitFile.exists()) {
+	        try {
+	            if (firstInitFile.createNewFile()) {
+	                try (FileWriter writer = new FileWriter(firstInitFile)) {
+	                    writer.write("[Sakura] First Init Sound");
+	                }
+	                LOGGER.info("File created: " + firstInitFile.getAbsolutePath());
+	            }
+	        } catch (IOException e) {
+	            LOGGER.error("Error creating First Init Sound file", e);
+	        }
+	    }
+	}
+
+	private void checkFirstStart() {
+	    tempDir = new File(System.getProperty("java.io.tmpdir"));
+	    firstInitFile = new File(tempDir, "sound.txt");
+
+	    if (firstInitFile.exists()) {
+	        try (BufferedReader reader = new BufferedReader(new FileReader(firstInitFile))) {
+	            String content = reader.readLine();
+	            if ("[Sakura] First Init Sound".equals(content)) {
+	                this.firstStart = false;
+	                LOGGER.info("First Start detected, canceling sound...");
+	            }
+	        } catch (IOException e) {
+	            LOGGER.error("Error reading sound file", e);
+	        }
+	    } else {
+	        this.firstStart = true;
+	        LOGGER.info("No sound.txt found, initializing sound...");
+	    }
+	}
 }

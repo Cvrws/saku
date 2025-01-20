@@ -27,7 +27,7 @@ public final class MurderMystery extends Module {
 
 	private final BooleanValue checkBow = new BooleanValue("Check bow", this, false);
 	
-	private final BooleanValue drawGold = new BooleanValue("Draw gold ingots esp", this, false);
+	private final BooleanValue drawGold = new BooleanValue("Draw gold ingots esp", this, true);
 	private final BooleanValue drawBow = new BooleanValue("Draw bow esp", this, false);
 	private final BooleanValue drawMurder = new BooleanValue("Draw murder esp", this, false);
 	private final BooleanValue drawDetective = new BooleanValue("Draw detective esp", this, false);
