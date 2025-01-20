@@ -136,7 +136,7 @@ public final class AimAssist extends Module {
 	        return false;
 	    }
 
-	    if (FriendUtil.isFriend(player) && !ignoreFriend.getValue()) {
+	    if (FriendUtil.isFriend(player) && ignoreFriend.getValue()) {
 	        return false;
 	    }
 

@@ -109,31 +109,31 @@ public class MusicPlayer extends Module {
             
             switch (mode) {
             case "Trap":
-            	connectToMusic("https://stream.laut.fm/trap");
+            	connectToMusic("trap");
             	break;
             case "Phonk":
-            	connectToMusic("https://stream.laut.fm/phonk");
+            	connectToMusic("phonk");
             	break;
             case "Rock":
-            	connectToMusic("https://stream.laut.fm/radio-barbarossa");
+            	connectToMusic("radio-barbarossa");
             	break;
             case "NCS":
-            	connectToMusic("https://stream.laut.fm/ncsradio.m3u");
+            	connectToMusic("ncsradio");
             	break;
             case "NightCore":
-            	connectToMusic("https://stream.laut.fm/music4gamers");
+            	connectToMusic("music4gamers");
             	break;
             case "Party":
-            	connectToMusic("https://stream.laut.fm/djzubi");
+            	connectToMusic("djzubi");
             	break;
             case "90s":
-            	connectToMusic("http://stream.laut.fm/eurobeat");
+            	connectToMusic("eurobeat");
             	break;
             case "Classic":
-            	connectToMusic("https://stream.laut.fm/classics");
+            	connectToMusic("classics");
             	break;
             case "Other":
-            	connectToMusic("https://stream.laut.fm/estacionmix");
+            	connectToMusic("estacionmix");
             	break;
             }
         };
@@ -141,8 +141,8 @@ public class MusicPlayer extends Module {
         new Thread(musicRunnable).start();
     }
     
-    private void connectToMusic(String url) {
-        radio.start(url);
+    private void connectToMusic(String instruction) {
+        radio.start("https://stream.laut.fm/" + instruction);
     }
 
     private void loadMusicFiles(String directoryPath) {

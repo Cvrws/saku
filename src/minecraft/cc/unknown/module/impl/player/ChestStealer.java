@@ -4,6 +4,8 @@ import static net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.input.Mouse;
@@ -25,7 +27,9 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBow;
@@ -48,6 +52,7 @@ public class ChestStealer extends Module {
 
 	public static int slot = 0;
 	private int lastItemPos = Integer.MIN_VALUE;
+	private List<Item> excludedItems = Arrays.asList(Items.fishing_rod, Items.bucket);
 	private Random RANDOM = new Random();
 
 	@EventLink
@@ -67,7 +72,9 @@ public class ChestStealer extends Module {
 					ItemStack itemStack = chest.inventorySlots.getSlot(i).getStack();
 					if (itemStack != null) {
 						if (isBestChestItem(itemStack) && isBestItem(itemStack)) {
-							itemPos.add(i);
+						    if (!excludedItems.contains(itemStack.getItem())) {
+						        itemPos.add(i);
+						    }
 						}
 					}
 				}

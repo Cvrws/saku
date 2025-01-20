@@ -86,7 +86,6 @@ public final class ModuleManager {
         this.put(AutoText.class, new AutoText());
         this.put(FPSBoost.class, new FPSBoost());
         this.put(AutoSword.class, new AutoSword());
-        this.put(InternetRelayChat.class, new InternetRelayChat());
         this.put(MidClick.class, new MidClick());
         this.put(Insults.class, new Insults());
         this.put(AutoLeave.class, new AutoLeave());
@@ -97,6 +96,7 @@ public final class ModuleManager {
         // Player
         this.put(AntiFireBall.class, new AntiFireBall());
         this.put(AutoPot.class, new AutoPot());
+        this.put(FastBow.class, new FastBow());
         this.put(NoRotate.class, new NoRotate());
         this.put(FakeHackers.class, new FakeHackers());
         this.put(AutoArmor.class, new AutoArmor());

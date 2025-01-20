@@ -1,8 +1,8 @@
 package cc.unknown.module.impl.player;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -11,30 +11,21 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.value.impl.BooleanValue;
-import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
-import cc.unknown.value.impl.SubMode;
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemAppleGold;
-import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemEgg;
-import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemPickaxe;
-import net.minecraft.item.ItemSnowball;
-import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.network.play.client.C0DPacketCloseWindow;
-import net.minecraft.util.DamageSource;
 
 @ModuleInfo(aliases = { "Inventory Manager", "Inv Manager",
 		"Manager" }, description = "Organiza tu inventario", category = Category.PLAYER)
@@ -58,6 +49,9 @@ public class InventoryManager extends Module {
 
 	private final StopWatch startTimer = new StopWatch();
 	private final StopWatch stopWatch = new StopWatch();
+	private List<Item> garbageItems = Arrays.asList(Items.fishing_rod, Items.bucket, Items.egg, Items.book, Items.flint_and_steel, Items.cake);
+	private List<Block> garbageBlocks = Arrays.asList(Blocks.sand, Blocks.chest, Blocks.cactus, Blocks.trapdoor);
+	private List<Integer> negativePotionIds = Arrays.asList(19, 20, 21, 22);
 	
 	@EventLink
 	public final Listener<MoveInputEvent> onMoveInput = event -> {
@@ -69,79 +63,75 @@ public class InventoryManager extends Module {
 			return;
 		}
 		
-		if (mc.currentScreen instanceof GuiInventory) {
-			for (int i = 9; i < 45; ++i) {
-				if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
-					ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
-					if (stopWatch.elapse(speed.getValue().doubleValue(), false)) {
-						if (swordSlot.getValue().intValue() != 0 && is.getItem() instanceof ItemSword && is == InventoryUtil.bestSword() && mc.player.inventoryContainer.getInventory().contains(InventoryUtil.bestSword()) && mc.player.inventoryContainer.getSlot((int) (35 + swordSlot.getValue().intValue())).getStack() != is && sword.getValue()) {
-							onClick(i, swordSlot.getValue().intValue());
-							
-							stopWatch.reset();
-							if (speed.getValue().doubleValue() != 0) {
-								break;
-							}
-						
-						} else if (bowSlot.getValue().intValue() != 0 && is.getItem() instanceof ItemBow && is == InventoryUtil.bestBow() && mc.player.inventoryContainer.getInventory().contains(InventoryUtil.bestBow()) && mc.player.inventoryContainer.getSlot((int) (35 + bowSlot.getValue().intValue())).getStack() != is && bow.getValue()) {
-							onClick(i, bowSlot.getValue().intValue());
-							
-							stopWatch.reset();
-							if (speed.getValue().doubleValue() != 0) {
-								break;
-							}
-						} else if (goldenAppleSlot.getValue().intValue() != 0 && is.getItem() instanceof ItemAppleGold && is == InventoryUtil.getGoldenAppleSlotInventory() && mc.player.inventoryContainer.getInventory().contains(InventoryUtil.getGoldenAppleSlotInventory()) && mc.player.inventoryContainer.getSlot((int) (35 + goldenAppleSlot.getValue().intValue())).getStack() != is && goldenApple.getValue()) {
-							onClick(i, goldenAppleSlot.getValue().intValue());
-							
-							stopWatch.reset();
-							if (speed.getValue().doubleValue() != 0) {
-								break;
-							}
-						} else if (pickaxeSlot.getValue().intValue() != 0 && is.getItem() instanceof ItemPickaxe && is == InventoryUtil.bestPick() && is != InventoryUtil.bestWeapon() && mc.player.inventoryContainer.getInventory().contains(InventoryUtil.bestPick()) && mc.player.inventoryContainer.getSlot((int) (35 + pickaxeSlot.getValue().intValue())).getStack() != is && pickaxe.getValue()) {
-							onClick(i, pickaxeSlot.getValue().intValue());
+	    if (mc.currentScreen instanceof GuiInventory) {
+	        for (int i = 9; i < 45; ++i) {
+	            if (!mc.player.inventoryContainer.getSlot(i).getHasStack()) {
+	                continue;
+	            }
 
-							stopWatch.reset();
-							if (speed.getValue().doubleValue() != 0) {
-								break;
-							}
-						} else if (axeSlot.getValue().intValue() != 0 && is.getItem() instanceof ItemAxe && is == InventoryUtil.bestAxe() && is != InventoryUtil.bestWeapon() && mc.player.inventoryContainer.getInventory().contains(InventoryUtil.bestAxe()) && mc.player.inventoryContainer.getSlot((int) (35 + axeSlot.getValue().intValue())).getStack() != is && axe.getValue()) {
-							onClick(i, axeSlot.getValue().intValue());
+	            ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
 
-							stopWatch.reset();
-							if (speed.getValue().doubleValue() != 0) {
-								break;
-							}
-						} else if (blockSlot.getValue().intValue() != 0 && is.getItem() instanceof ItemBlock && is == InventoryUtil.getBlockSlotInventory() && mc.player.inventoryContainer.getInventory().contains(InventoryUtil.getBlockSlotInventory()) && mc.player.inventoryContainer.getSlot((int) (35 + blockSlot.getValue().intValue())).getStack() != is && blocks.getValue()) {
-							if (mc.player.inventoryContainer.getSlot((int) (35 + blockSlot.getValue().intValue())).getStack() != null && mc.player.inventoryContainer.getSlot((int) (35 + blockSlot.getValue().intValue())).getStack().getItem() instanceof ItemBlock && !InventoryUtil.invalidBlocks.contains(((ItemBlock) mc.player.inventoryContainer.getSlot((int) (35 + blockSlot.getValue().intValue())).getStack().getItem()).getBlock())) {
-								return;
-							}
-							
-							onClick(i, blockSlot.getValue().intValue());
+	            if (!stopWatch.elapse(speed.getValue().doubleValue(), false)) {
+	                continue;
+	            }
 
-							stopWatch.reset();
-							if (speed.getValue().doubleValue() != 0) {
-								break;
-							}
-						} else if (InventoryUtil.isBadStack(is, true, true) && throwGarbage.getValue()) {
-	                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, 1, 4, mc.player);
+	            if (checkAndMoveItem(i, is, InventoryUtil.bestSword(), swordSlot, ItemSword.class, sword)) break;
+	            if (checkAndMoveItem(i, is, InventoryUtil.bestBow(), bowSlot, ItemBow.class, bow)) break;
+	            if (checkAndMoveItem(i, is, InventoryUtil.getGoldenAppleSlotInventory(), goldenAppleSlot, ItemAppleGold.class, goldenApple)) break;
+	            if (checkAndMoveItem(i, is, InventoryUtil.bestPick(), pickaxeSlot, ItemPickaxe.class, pickaxe, true)) break;
+	            if (checkAndMoveItem(i, is, InventoryUtil.bestAxe(), axeSlot, ItemAxe.class, axe, true)) break;
 
-							stopWatch.reset();
-							if (speed.getValue().doubleValue() != 0) {
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
+	            if (blockSlot.getValue().intValue() != 0 && blocks.getValue()) {
+	                if (is.getItem() instanceof ItemBlock && is == InventoryUtil.getBlockSlotInventory()) {
+	                    ItemStack blockStack = mc.player.inventoryContainer.getSlot(35 + blockSlot.getValue().intValue()).getStack();
+	                    if (blockStack == null || 
+	                        !(blockStack.getItem() instanceof ItemBlock) || 
+	                        InventoryUtil.invalidBlocks.contains(((ItemBlock) blockStack.getItem()).getBlock())) {
+	                        onClick(i, blockSlot.getValue().intValue());
+	                        stopWatch.reset();
+	                        if (speed.getValue().doubleValue() != 0) break;
+	                    }
+	                }
+	            }
+
+	            if (InventoryUtil.isBadStack(is, true, true) || garbageBlocks.contains(Block.getBlockFromItem(is.getItem())) || garbageItems.contains(is.getItem()) || (is.getItem() == Items.potionitem && isNegativePotion(is)) || throwGarbage.getValue()) {
+	                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, 1, 4, mc.player);
+	                stopWatch.reset();
+	                if (speed.getValue().doubleValue() != 0) break;
+	            }
+	        }
+	    }
 	};
 	
 	private void onClick(int i, int slot) {
 		mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, (int) (slot - 1), 2, mc.player);
-		
 	}
-	
-    private int armorReduction(final ItemStack stack) {
-        final ItemArmor armor = (ItemArmor) stack.getItem();
-        return armor.damageReduceAmount + EnchantmentHelper.getEnchantmentModifierDamage(new ItemStack[]{stack}, DamageSource.generic);
+    
+    private boolean checkAndMoveItem(int slot, ItemStack stack, ItemStack bestItem, NumberValue targetSlot, Class<?> itemClass, BooleanValue toggle, boolean excludeBestWeapon) {
+        if (targetSlot.getValue().intValue() != 0 && toggle.getValue()) {
+            if (itemClass.isInstance(stack.getItem()) &&
+                stack == bestItem &&
+                mc.player.inventoryContainer.getInventory().contains(bestItem) &&
+                mc.player.inventoryContainer.getSlot(35 + targetSlot.getValue().intValue()).getStack() != stack &&
+                (!excludeBestWeapon || stack != InventoryUtil.bestWeapon())) {
+
+                onClick(slot, targetSlot.getValue().intValue());
+                stopWatch.reset();
+                return speed.getValue().doubleValue() != 0;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkAndMoveItem(int slot, ItemStack stack, ItemStack bestItem, NumberValue targetSlot, Class<?> itemClass, BooleanValue toggle) {
+        return checkAndMoveItem(slot, stack, bestItem, targetSlot, itemClass, toggle, false);
+    }
+    
+    public boolean isNegativePotion(ItemStack itemStack) {
+        if (itemStack.getItem() == Items.potionitem) {
+            int potionId = itemStack.getMetadata();
+            return negativePotionIds.contains(potionId);
+        }
+        return false;
     }
 }

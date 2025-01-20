@@ -18,10 +18,15 @@ import net.minecraft.client.Minecraft;
 @ModuleInfo(aliases = "FPS Boost", description = "Incrementa tus FPS", category = Category.OTHER)
 public final class FPSBoost extends Module {
 	
+	public BooleanValue noCrosshair = new BooleanValue("No Crosshair", this, false);
 	public BooleanValue noSkins = new BooleanValue("No Skins", this, true);
 	public BooleanValue noCapes = new BooleanValue("No Capes", this, true);
+	public BooleanValue noScoreboard = new BooleanValue("No Scoreboard", this, false);
 	private BooleanValue idle = new BooleanValue("Idle FPS", this, true);
 	public BooleanValue noItemFrame = new BooleanValue("No Item Frames", this, true);
+	public BooleanValue noRenderPortal = new BooleanValue("No Render Portal", this, false);
+	public BooleanValue noPumpkinOverlay = new BooleanValue("No Pumpkin Overlay", this, true);
+	public BooleanValue noBossHealth = new BooleanValue("No Boss Health", this, true);
 	
 	private ArrayList<GLTask> glTasks  = new ArrayList<>();
 	private int before = 0;

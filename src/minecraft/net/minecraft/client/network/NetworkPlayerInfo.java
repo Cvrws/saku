@@ -4,6 +4,9 @@ import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
+
+import cc.unknown.Sakura;
+import cc.unknown.module.impl.other.FPSBoost;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
@@ -72,25 +75,34 @@ public class NetworkPlayerInfo
         return this.locationSkin != null;
     }
 
-    public String getSkinType()
-    {
+    public String getSkinType() {
+    	try {
+        	FPSBoost fpsBoost = Sakura.instance.getModuleManager().get(FPSBoost.class);
+            if (fpsBoost.isEnabled() && fpsBoost.noSkins.getValue())
+                return DefaultPlayerSkin.getSkinType(this.gameProfile.getId());
+        } catch (Exception ignored) {}
         return this.skinType == null ? DefaultPlayerSkin.getSkinType(this.gameProfile.getId()) : this.skinType;
     }
 
-    public ResourceLocation getLocationSkin()
-    {
-        if (this.locationSkin == null)
-        {
+    public ResourceLocation getLocationSkin() {
+        try {
+        	FPSBoost fpsBoost = Sakura.instance.getModuleManager().get(FPSBoost.class);
+            if (fpsBoost.isEnabled() && fpsBoost.noSkins.getValue())
+            	return DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId());
+        } catch (Exception ignored) {}
+        if (this.locationSkin == null) {
             this.loadPlayerTextures();
         }
 
-        return (ResourceLocation)Objects.firstNonNull(this.locationSkin, DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId()));
+        return Objects.firstNonNull(this.locationSkin, DefaultPlayerSkin.getDefaultSkin(this.gameProfile.getId()));
     }
 
-    public ResourceLocation getLocationCape()
-    {
-        if (this.locationCape == null)
-        {
+    public ResourceLocation getLocationCape() {
+        try {
+        	FPSBoost fpsBoost = Sakura.instance.getModuleManager().get(FPSBoost.class);
+            if (fpsBoost.isEnabled() && fpsBoost.noCapes.getValue()) return null;
+        } catch (Exception ignored) {}
+        if (this.locationCape == null) {
             this.loadPlayerTextures();
         }
 

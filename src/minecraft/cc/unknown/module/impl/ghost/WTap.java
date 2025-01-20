@@ -67,6 +67,10 @@ public class WTap extends Module {
 		if (ignoreTeammates.getValue() && PlayerUtil.isTeam((EntityPlayer) event.getTarget(), true, true)) { 
 			return;
 		}
+		
+	    if (event.getTarget().getName().contains("[NPC]") || event.getTarget().getName().contains("MEJORAS") || event.getTarget().getName().contains("CLICK DERECHO")) {
+	        return;
+	    }
 
 		if (onlyMove.getValue() && (!MoveUtil.isMoving() || (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f))) {
 			return;

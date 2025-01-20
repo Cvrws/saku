@@ -1,14 +1,16 @@
 package net.minecraft.client.gui;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import cc.unknown.Sakura;
+import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -470,7 +472,7 @@ public class GuiIngame extends Gui
 
     public void renderDemo(ScaledResolution scaledRes)
     {
-        this.mc.mcProfiler.startSection("demo");
+        /*this.mc.mcProfiler.startSection("demo");
         String s = "";
 
         if (this.mc.world.getTotalWorldTime() >= 120500L)
@@ -484,11 +486,14 @@ public class GuiIngame extends Gui
 
         int i = this.getFontRenderer().width(s);
         this.getFontRenderer().drawWithShadow(s, (float)(scaledRes.getScaledWidth() - i - 10), 5.0F, 16777215);
-        this.mc.mcProfiler.endSection();
+        this.mc.mcProfiler.endSection();*/
     }
 
     protected boolean showCrosshair()
     {
+    	FPSBoost fpsBoost = Sakura.instance.getModuleManager().get(FPSBoost.class);
+    	if (fpsBoost.isEnabled() && fpsBoost.noCrosshair.getValue()) return false;
+    	
         if (this.mc.gameSettings.showDebugInfo && !this.mc.player.hasReducedDebug() && !this.mc.gameSettings.reducedDebugInfo)
         {
             return false;
@@ -522,6 +527,9 @@ public class GuiIngame extends Gui
 
     private void renderScoreboard(ScoreObjective objective, ScaledResolution scaledRes)
     {
+    	FPSBoost fpsBoost = Sakura.instance.getModuleManager().get(FPSBoost.class);
+    	if (fpsBoost.isEnabled() && fpsBoost.noScoreboard.getValue()) return;
+    	
         Scoreboard scoreboard = objective.getScoreboard();
         Collection<Score> collection = scoreboard.getSortedScores(objective);
         List<Score> list = Lists.newArrayList(Iterables.filter(collection, new Predicate<Score>()
@@ -869,6 +877,9 @@ public class GuiIngame extends Gui
 
     private void renderBossHealth()
     {
+    	FPSBoost fpsBoost = Sakura.instance.getModuleManager().get(FPSBoost.class);
+    	if (fpsBoost.isEnabled() && fpsBoost.noBossHealth.getValue()) return;
+    	
         if (BossStatus.bossName != null && BossStatus.statusBarTime > 0)
         {
             --BossStatus.statusBarTime;
@@ -896,6 +907,9 @@ public class GuiIngame extends Gui
 
     private void renderPumpkinOverlay(ScaledResolution scaledRes)
     {
+    	FPSBoost fpsBoost = Sakura.instance.getModuleManager().get(FPSBoost.class);
+    	if (fpsBoost.isEnabled() && fpsBoost.noPumpkinOverlay.getValue()) return;
+    	
         GlStateManager.disableDepth();
         GlStateManager.depthMask(false);
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -973,6 +987,9 @@ public class GuiIngame extends Gui
 
     private void renderPortal(float timeInPortal, ScaledResolution scaledRes)
     {
+    	FPSBoost fpsBoost = Sakura.instance.getModuleManager().get(FPSBoost.class);
+    	if (fpsBoost.isEnabled() && fpsBoost.noRenderPortal.getValue()) return;
+    	
         if (timeInPortal < 1.0F)
         {
             timeInPortal = timeInPortal * timeInPortal;
