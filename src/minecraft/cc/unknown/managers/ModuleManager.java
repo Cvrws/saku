@@ -85,6 +85,7 @@ public final class ModuleManager {
         this.put(AutoRefill.class, new AutoRefill());
         this.put(AutoText.class, new AutoText());
         this.put(FPSBoost.class, new FPSBoost());
+        this.put(ClientSpoofer.class, new ClientSpoofer());
         this.put(AutoSword.class, new AutoSword());
         this.put(MidClick.class, new MidClick());
         this.put(Insults.class, new Insults());

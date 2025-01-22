@@ -9,7 +9,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -27,7 +27,7 @@ public class FakeHackers extends Module {
 	        .setDefault("Sneak");
 	
 	private final NumberValue range = new NumberValue("Range", this, 6, 3.2, 6, 0.1);
-	private final StringValue name = new StringValue("IGN", this, "PepeGamer777");
+	private final TextValue name = new TextValue("IGN", this, "PepeGamer777");
 	
 	@Override
 	public void onDisable() {

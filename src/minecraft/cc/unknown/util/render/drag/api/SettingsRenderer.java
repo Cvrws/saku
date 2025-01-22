@@ -10,7 +10,7 @@ import cc.unknown.ui.click.component.ListValueComponent;
 import cc.unknown.ui.click.component.ModeValueComponent;
 import cc.unknown.ui.click.component.NumberValueComponent;
 import cc.unknown.ui.click.component.PositionValueComponent;
-import cc.unknown.ui.click.component.StringValueComponent;
+import cc.unknown.ui.click.component.TextValueComponent;
 import cc.unknown.ui.click.component.ValueComponent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.ColorUtil;
@@ -25,7 +25,7 @@ import cc.unknown.value.impl.DragValue;
 import cc.unknown.value.impl.ListValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class SettingsRenderer implements Accessor {
@@ -44,8 +44,8 @@ public class SettingsRenderer implements Accessor {
                 valueList.add(new ModeValueComponent(value));
             } else if (value instanceof BooleanValue) {
                 valueList.add(new BooleanValueComponent(value));
-            } else if (value instanceof StringValue) {
-                valueList.add(new StringValueComponent(value));
+            } else if (value instanceof TextValue) {
+                valueList.add(new TextValueComponent(value));
             } else if (value instanceof DescValue) {
             	valueList.add(new DescValueComponent(value));
             } else if (value instanceof NumberValue) {

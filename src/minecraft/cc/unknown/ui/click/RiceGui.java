@@ -15,7 +15,7 @@ import cc.unknown.ui.click.component.BoundsNumberValueComponent;
 import cc.unknown.ui.click.component.ModuleComponent;
 import cc.unknown.ui.click.component.NumberValueComponent;
 import cc.unknown.ui.click.component.SidebarComponent;
-import cc.unknown.ui.click.component.StringValueComponent;
+import cc.unknown.ui.click.component.TextValueComponent;
 import cc.unknown.ui.click.component.ValueComponent;
 import cc.unknown.ui.click.screen.Colors;
 import cc.unknown.ui.click.screen.HomeScreen;
@@ -267,7 +267,7 @@ public class RiceGui extends GuiScreen implements Accessor {
     public boolean activeTextBox() {
         for (final ModuleComponent moduleComponent : moduleList) {
             for (final ValueComponent value : moduleComponent.getValueList()) {
-                if (value instanceof StringValueComponent && value.position != null && ((StringValueComponent) value).textBox.selected && !((StringValueComponent) value).textBox.drawn.finished(50)) {
+                if (value instanceof TextValueComponent && value.position != null && ((TextValueComponent) value).textBox.selected && !((TextValueComponent) value).textBox.drawn.finished(50)) {
                     return true;
                 } else if (value instanceof NumberValueComponent && ((NumberValueComponent) value).valueDisplay.isSelected() && !((NumberValueComponent) value).valueDisplay.drawn.finished(50)) {
                     return true;

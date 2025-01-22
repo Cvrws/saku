@@ -17,6 +17,7 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.ChatUtil;
+import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
@@ -26,6 +27,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.network.play.server.S27PacketExplosion;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.Vec3;
 
 @ModuleInfo(aliases = "Velocity", description = "Modifica tu kb.", category = Category.COMBAT)
@@ -36,8 +38,8 @@ public final class Velocity extends Module {
 			.add(new SubMode("Legit Prediction"))
 			.setDefault("Hypixel");
 
-	private final NumberValue vertical = new NumberValue("Vertical", this, 90, 0, 100, 1, () -> !mode.is("Hypixel"));
 	private final NumberValue horizontal = new NumberValue("Horizontal", this, 100, 0, 100, 1, () -> !mode.is("Hypixel"));
+	private final NumberValue vertical = new NumberValue("Vertical", this, 90, 0, 100, 1, () -> !mode.is("Hypixel"));
 
 	private final BooleanValue delay = new BooleanValue("Delay", this, false, () -> !mode.is("Hypixel"));
 	private final NumberValue delayHorizontal = new NumberValue("Delayed Horizontal", this, 100, 0, 100, 1, () -> !mode.is("Hypixel") || !delay.getValue());
@@ -45,6 +47,10 @@ public final class Velocity extends Module {
 	
 	private final BooleanValue onlyAir = new BooleanValue("Only in Air", this, false, () -> !mode.is("Hypixel"));
 	private final BooleanValue onExplode = new BooleanValue("Explosion Ignore", this, false, () -> !mode.is("Hypixel"));
+	
+	private final BooleanValue notWhileSpeed = new BooleanValue("Not while with potion speed", this, true);
+	private final BooleanValue notWhileJumpBoost = new BooleanValue("Not while with potion jump ", this, true);
+	private final NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
 
 	private int ticks;
 	private double motionY, motionX, motionZ;
@@ -71,7 +77,6 @@ public final class Velocity extends Module {
 	            if (!event.isSneak()) {
 	                ChatUtil.display(map.get(vec3s.get(0)));
 	                event.setStrafe(map.get(vec3s.get(0)));
-	                
 	                mc.player.moveStrafing = map.get(vec3s.get(0));
 	            }
 	        }
@@ -143,6 +148,12 @@ public final class Velocity extends Module {
 	
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
+	    double chanceValue = chance.getValue().doubleValue();
+	    double randomFactor = MathUtil.getRandomFactor(chanceValue);
+
+        if (noAction()) return;
+	    if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
+	    
 		if (mode.is("Hypixel")) {
 			if (delay.getValue()) {
 				ticks++;
@@ -173,5 +184,9 @@ public final class Velocity extends Module {
 	
     private boolean checks() {
         return Stream.<Supplier<Boolean>>of(mc.player::isInLava, mc.player::isBurning, mc.player::isInWater, () -> mc.player.isInWeb).map(Supplier::get).anyMatch(Boolean.TRUE::equals);
+    }
+    
+    private boolean noAction() {
+        return mc.player.getActivePotionEffects().parallelStream().anyMatch(effect -> notWhileSpeed.getValue() && effect.getPotionID() == Potion.moveSpeed.getId() || notWhileJumpBoost.getValue() && effect.getPotionID() == Potion.jump.getId());
     }
 }

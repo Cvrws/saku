@@ -13,22 +13,22 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.DescValue;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 
 @ModuleInfo(aliases = "Auto Text", description = "Envia cualquier mensaje al presionar una tecla", category = Category.OTHER)
 public final class AutoText extends Module {
 	
     private final List<MessagePair> messagePair = Arrays.asList(
             new MessagePair(
-            		new StringValue("Message 1:", this, "hola"), 
+            		new TextValue("Message 1:", this, "hola"), 
             		new DescValue(" ", this), 
-            		new StringValue("Key", this, "BACKSLASH")),
+            		new TextValue("Key", this, "BACKSLASH")),
             
             new MessagePair(
             		new DescValue(" ", this),
-            		new StringValue("Message 2:", this, ":3"), 
+            		new TextValue("Message 2:", this, ":3"), 
             		new DescValue(" ", this), 
-            		new StringValue("Key:", this, "SUBTRACT"))
+            		new TextValue("Key:", this, "SUBTRACT"))
     	);
     
     @EventLink
@@ -50,18 +50,18 @@ public final class AutoText extends Module {
 	
     class MessagePair {
         private final DescValue separate1;
-    	private final StringValue message;
+    	private final TextValue message;
         private final DescValue separate2;
-        private final StringValue key;
+        private final TextValue key;
 
-        public MessagePair(DescValue separate1, StringValue message, DescValue separate2, StringValue key) {
+        public MessagePair(DescValue separate1, TextValue message, DescValue separate2, TextValue key) {
             this.separate1 = separate1;
         	this.message = message;
         	this.separate2 = separate2;
             this.key = key;
         }
         
-        public MessagePair(StringValue message, DescValue separate2, StringValue key) {
+        public MessagePair(TextValue message, DescValue separate2, TextValue key) {
         	this.separate1 = null;
         	this.message = message;
             this.separate2 = separate2;

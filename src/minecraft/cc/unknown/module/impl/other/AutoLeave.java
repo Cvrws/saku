@@ -9,14 +9,14 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S02PacketChat;
 
 @ModuleInfo(aliases = "Auto Leave", description = "Sal del juego automaticámente", category = Category.OTHER)
 public final class AutoLeave extends Module {
 	
-	private final StringValue text = new StringValue("Command", this, "/leave");
+	private final TextValue text = new TextValue("Command", this, "/leave");
 	
 	@EventLink
 	public final Listener<PacketReceiveEvent> onPacket = event -> {

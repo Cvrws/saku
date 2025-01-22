@@ -44,7 +44,7 @@ import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.DescValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.block.BlockAir;
 import net.minecraft.client.settings.GameSettings;
@@ -99,7 +99,7 @@ public class Scaffold extends Module {
 			.add(new SubMode("Auto Jump"))
 			.setDefault("Off");
 	
-    private final StringValue sameyKey = new StringValue("SameY Macro Key:", this, "Y", () -> !rotationMode.is("Snap") && !rotationMode.is("Normal"));
+    private final TextValue sameyKey = new TextValue("SameY Macro Key:", this, "Y", () -> !rotationMode.is("Snap") && !rotationMode.is("Normal"));
 	
 	public final ModeValue yawOffset = new ModeValue("Yaw Offset", this)
 			.add(new SubMode("0"))

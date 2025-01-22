@@ -13,7 +13,7 @@ import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 import cc.unknown.value.impl.SubMode;
 import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.internal.runtime.Undefined;
@@ -94,7 +94,7 @@ public final class ScriptModule extends ScriptHandlerWrapper<Module> {
     public void registerSetting(String type, String name, Object defaultValue, Object... params) {
         switch (type.toLowerCase()) {
             case "string": {
-                new StringValue(name, this.wrapped, (String) defaultValue);
+                new TextValue(name, this.wrapped, (String) defaultValue);
                 break;
             }
             case "number": {
@@ -132,7 +132,7 @@ public final class ScriptModule extends ScriptHandlerWrapper<Module> {
                 array[0] = ((BoundsNumberValue) o).getValue().doubleValue();
                 array[1] = ((BoundsNumberValue) o).getSecondValue().doubleValue();
                 return array;
-            } else if (o instanceof BooleanValue || o instanceof StringValue) {
+            } else if (o instanceof BooleanValue || o instanceof TextValue) {
                 return o.getValue();
             } else if (o instanceof ModeValue) {
                 return ((ModeValue) o).getValue().getName();
@@ -155,8 +155,8 @@ public final class ScriptModule extends ScriptHandlerWrapper<Module> {
                 ((BooleanValue) o).setValue((boolean) value);
             } else if (o instanceof ModeValue) {
                 ((ModeValue) o).setValue((String) value);
-            } else if (o instanceof StringValue) {
-                ((StringValue) o).setValue((String) value);
+            } else if (o instanceof TextValue) {
+                ((TextValue) o).setValue((String) value);
             }
         } catch (Exception ignored) {
         }

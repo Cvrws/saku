@@ -58,7 +58,6 @@ public final class AimAssist extends Module {
 	private final BooleanValue visibilityCheck = new BooleanValue("Visibility Check", this, true);
 	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !visibilityCheck.getValue());
 	private final BooleanValue checkBlockBreak = new BooleanValue("Check Block Break", this, false);
-	private final BooleanValue onlyBed = new BooleanValue("Only Bed", this, false, () -> !checkBlockBreak.getValue());
 	private final BooleanValue weaponOnly = new BooleanValue("Weapons Only", this, false);
 	public EntityPlayer target;
 	private Random random = new Random();
@@ -76,7 +75,7 @@ public final class AimAssist extends Module {
 
 	    double yawSpeed = horizontalSpeed.getValue().doubleValue();
 	    double yawCompl = horizontalCompl.getValue().doubleValue();
-	    double yawOffset = MathUtil.nextSecureRandom(yawSpeed, yawCompl).doubleValue() / 180;
+	    double yawOffset = MathUtil.nextSecure(yawSpeed, yawCompl).doubleValue() / 180;
 	    double yawFov = PlayerUtil.fovFromTarget(target);
 	    double pitchEntity = PlayerUtil.pitchFromTarget(target, 0);
 	    float yawAdjustment = getSpeedRandomize(randomMode.getValue().getName(), yawFov, yawOffset, yawSpeed, yawCompl);
@@ -126,11 +125,9 @@ public final class AimAssist extends Module {
 	    if (player == mc.player || !player.isEntityAlive() || player.deathTime > 0) {
 	        return false;
 	    }
-
+	    
 	    if (EnemyUtil.isEnemy(player)) return false;
-	    if (PlayerUtil.unusedNames(player)) {
-	        return false;
-	    }
+	    if (PlayerUtil.unusedNames(player)) return false;
 
 	    if (!ignoreInvisibles.getValue() && player.isInvisible()) {
 	        return false;
@@ -173,23 +170,8 @@ public final class AimAssist extends Module {
 	        return true;
 	    }
 	    
-	    if (checkBlockBreak.getValue() && mc.objectMouseOver != null) {
-	        BlockPos blockPos = mc.objectMouseOver.getBlockPos();
-	        if (blockPos != null) {
-	            Block block = mc.world.getBlockState(blockPos).getBlock();
-
-	            if (block != Blocks.air) {
-	                if (onlyBed.getValue()) {
-	                    if (block instanceof BlockBed) {
-	                        return true;
-	                    }
-	                } else {
-	                    if (!(block instanceof BlockLiquid) && block instanceof Block) {
-	                        return true;
-	                    }
-	                }
-	            }
-	        }
+	    if (checkBlockBreak.getValue() && mc.playerController.isHittingBlock) {
+	    	return true;
 	    }
 
 	    return false;
@@ -234,8 +216,8 @@ public final class AimAssist extends Module {
 	            break;
 
 	        case "Random Secure":
-	            randomComplement = MathUtil.nextSecureRandom(complement - 1.47328, complement + 2.48293).doubleValue() / 100;
-	            result = calculateResult(fov, offset, speed, MathUtil.nextSecureRandom(speed - 4.723847, speed).doubleValue());
+	            randomComplement = MathUtil.nextSecure(complement - 1.47328, complement + 2.48293).doubleValue() / 100;
+	            result = calculateResult(fov, offset, speed, MathUtil.nextSecure(speed - 4.723847, speed).doubleValue());
 	            break;
 
 	        case "Gaussian":

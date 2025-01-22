@@ -13,7 +13,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -54,9 +54,9 @@ public final class Spammer extends Module {
     private final BooleanValue Randoms = new BooleanValue("Mention Randoms", this, true);
     private final BooleanValue DifferentMessages = new BooleanValue("3 Messages", this, true);
     private final BooleanValue LunarFix = new BooleanValue("Lunar Fix", this, true);
-    private final StringValue msg1 = new StringValue("1-. Message: ", this, "uwu");
-    private final StringValue msg2 = new StringValue("2-. Message: ", this, "owo");
-    private final StringValue msg3 = new StringValue("3-. Message: ", this, ">w<");
+    private final TextValue msg1 = new TextValue("1-. Message: ", this, "uwu");
+    private final TextValue msg2 = new TextValue("2-. Message: ", this, "owo");
+    private final TextValue msg3 = new TextValue("3-. Message: ", this, ">w<");
     private boolean sent;
     
     @EventLink

@@ -100,8 +100,8 @@ public class ConfigFile extends cc.unknown.util.file.File {
                             if (valueJsonObject.has("value")) {
                                 booleanValue.setValue(valueJsonObject.get("value").getAsBoolean());
                             }
-                        } else if (value instanceof StringValue) {
-                            final StringValue stringValue = (StringValue) value;
+                        } else if (value instanceof TextValue) {
+                            final TextValue stringValue = (TextValue) value;
 
                             if (valueJsonObject.has("value")) {
 
@@ -242,8 +242,8 @@ public class ConfigFile extends cc.unknown.util.file.File {
                     } else if (value instanceof NumberValue) {
                         final NumberValue numberValue = (NumberValue) value;
                         valueJsonObject.addProperty("value", numberValue.getValue().doubleValue());
-                    } else if (value instanceof StringValue) {
-                        final StringValue stringValue = (StringValue) value;
+                    } else if (value instanceof TextValue) {
+                        final TextValue stringValue = (TextValue) value;
 
                         String save = stringValue.getValue();
                         save = save.replace("%", "<percentsign>");

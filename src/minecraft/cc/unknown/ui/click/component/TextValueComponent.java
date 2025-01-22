@@ -10,16 +10,16 @@ import cc.unknown.util.render.gui.box.TextAlign;
 import cc.unknown.util.render.gui.box.TextBox;
 import cc.unknown.util.structure.geometry.Vector2d;
 import cc.unknown.value.Value;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 
-public class StringValueComponent extends ValueComponent {
+public class TextValueComponent extends ValueComponent {
 
     public final TextBox textBox = new TextBox(new Vector2d(200, 200), Fonts.ROBOTO.get(16, Weight.LIGHT), Color.WHITE, TextAlign.LEFT, "", 20);
 
-    public StringValueComponent(final Value<?> value) {
+    public TextValueComponent(final Value<?> value) {
         super(value);
 
-        final StringValue stringValue = (StringValue) value;
+        final TextValue stringValue = (TextValue) value;
         textBox.setText(stringValue.getValue());
         textBox.setCursor(stringValue.getValue().length());
     }
@@ -27,7 +27,7 @@ public class StringValueComponent extends ValueComponent {
     @Override
     public void draw(Vector2d position, int mouseX, int mouseY, float partialTicks) {
         this.position = position;
-        final StringValue stringValue = (StringValue) this.value;
+        final TextValue stringValue = (TextValue) this.value;
 
         this.height = 28;
 

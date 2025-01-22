@@ -19,7 +19,7 @@ import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.sound.RadioPlayer;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 import cc.unknown.value.impl.SubMode;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackEvent;
@@ -41,7 +41,7 @@ public class MusicPlayer extends Module {
             .add(new SubMode("Local"))
             .setDefault("Local");
 
-    private final StringValue text = new StringValue("URL:", this, "C:\\Users\\admin\\Music", () -> !mode.is("Local"));
+    private final TextValue text = new TextValue("URL:", this, "C:\\Users\\admin\\Music", () -> !mode.is("Local"));
     
     private boolean started = false;
     private String song = "Loading...";

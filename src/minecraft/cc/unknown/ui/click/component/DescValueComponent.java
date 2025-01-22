@@ -11,7 +11,7 @@ import cc.unknown.util.render.gui.box.TextBox;
 import cc.unknown.util.structure.geometry.Vector2d;
 import cc.unknown.value.Value;
 import cc.unknown.value.impl.DescValue;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 
 public class DescValueComponent extends ValueComponent {
 

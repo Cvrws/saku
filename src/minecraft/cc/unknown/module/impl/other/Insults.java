@@ -18,7 +18,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -27,7 +27,7 @@ public final class Insults extends Module {
 
 	public final Map<String, List<String>> map = new HashMap<>();
 
-	private final StringValue prefix = new StringValue("Prefix", this, "");
+	private final TextValue prefix = new TextValue("Prefix", this, "");
 	private final NumberValue delay = new NumberValue("Delay", this, 0, 0, 50, 1);
 	private final BooleanValue randomizer = new BooleanValue("Randomizer", this, false);
 	private final BooleanValue autoTell = new BooleanValue("Auto Tell", this, false);

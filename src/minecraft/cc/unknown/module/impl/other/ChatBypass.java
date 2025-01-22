@@ -9,7 +9,7 @@ import cc.unknown.event.impl.netty.PacketSendEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 

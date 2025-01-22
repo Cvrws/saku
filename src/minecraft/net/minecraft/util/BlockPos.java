@@ -308,4 +308,8 @@ public class BlockPos extends Vec3i
             return this;
         }
     }
+    
+    public Vec3 getVec() {
+        return new Vec3(this.getX() + 0.5, this.getY() + 0.5, this.getZ() + 0.5);
+    }
 }

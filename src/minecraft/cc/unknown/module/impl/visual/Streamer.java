@@ -16,7 +16,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.player.FriendUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
-import cc.unknown.value.impl.StringValue;
+import cc.unknown.value.impl.TextValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.util.ChatFormatting;
 
@@ -41,7 +41,7 @@ public final class Streamer extends Module {
 			.add(new SubMode("Adm"))
 			.setDefault("Jup");
 	
-    public final StringValue replacement = new StringValue("Spoof Name: ", this, "You");
+    public final TextValue replacement = new TextValue("Spoof Name: ", this, "You");
     
     private Map<String, ChatFormatting> ranks = new HashMap<>();
     

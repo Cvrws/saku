@@ -26,7 +26,7 @@ public class MathUtil {
         }
     }
     
-    public Number nextSecureRandom(Number origin, Number bound) {
+    public Number nextSecure(Number origin, Number bound) {
         if (origin.equals(bound)) return origin;
         SecureRandom secureRandom = new SecureRandom();
 
