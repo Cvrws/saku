@@ -326,7 +326,7 @@ public class CustomGuis
 
     public static void setPlayerControllerOF(PlayerControllerOF playerControllerOF)
     {
-        playerControllerOF = playerControllerOF;
+        CustomGuis.playerControllerOF = playerControllerOF;
     }
 
     private static boolean isChristmas()

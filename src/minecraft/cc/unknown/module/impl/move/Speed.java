@@ -17,7 +17,7 @@ public class Speed extends Module {
     private final ModeValue mode = new ModeValue("Mode", this)
             .add(new VanillaSpeed("Vanilla", this))
             .add(new BlocksMCSpeed("BlocksMC", this))
-            .add(new LibrecraftSpeed("Librecraft", this))
+            .add(new LegitSpeed("Legit", this))
             .add(new LowSpeed("Slow Hop", this))
             .add(new VulcanSpeed("Vulcan", this))
             .setDefault("Vanilla");

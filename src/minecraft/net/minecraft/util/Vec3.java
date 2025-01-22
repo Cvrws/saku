@@ -171,6 +171,12 @@ public class Vec3
         double d2 = this.zCoord * (double)f - this.yCoord * (double)f1;
         return new Vec3(d0, d1, d2);
     }
+    
+    public double distanceXZTo(Vec3 vec) {
+        double d0 = vec.xCoord - this.xCoord;
+        double d2 = vec.zCoord - this.zCoord;
+        return MathHelper.sqrt_double(d0 * d0 + d2 * d2);
+    }
 
     public Vec3 rotateYaw(float yaw)
     {

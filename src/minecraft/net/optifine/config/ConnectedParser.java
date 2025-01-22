@@ -321,7 +321,8 @@ public class ConnectedParser
                             return null;
                         }
 
-                        List<Comparable> list = (List)map.get(s2);
+                        @SuppressWarnings("unlikely-arg-type")
+						List<Comparable> list = (List)map.get(s);
 
                         if (list == null)
                         {

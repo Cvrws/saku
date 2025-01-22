@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -183,6 +184,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.FrameTimer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MetadataSectionEntry;
 import net.minecraft.util.MinecraftError;
 import net.minecraft.util.MouseHelper;
 import net.minecraft.util.MovementInputFromOptions;
@@ -208,8 +210,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	private static final ResourceLocation locationMojangPng = new ResourceLocation("textures/gui/title/mojang.png");
 	public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
 	public static byte[] memoryReserve = new byte[10485760];
-	private static final List<DisplayMode> macDisplayModes = Lists
-			.newArrayList(new DisplayMode[] { new DisplayMode(2560, 1600), new DisplayMode(2880, 1800) });
+	private static final List<DisplayMode> macDisplayModes = Lists.newArrayList(new DisplayMode[] { new DisplayMode(2560, 1600), new DisplayMode(2880, 1800) });
 	private final File fileResourcepacks;
 	private final PropertyMap twitchDetails;
 	private final PropertyMap profileProperties;
@@ -225,8 +226,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	public int displayHeight;
 	private boolean connectedToRealms = false;
 	public Timer timer = new Timer(20.0F);
-	private PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("client", this,
-			MinecraftServer.getCurrentTimeMillis());
+	private PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("client", this, MinecraftServer.getCurrentTimeMillis());
 	public WorldClient world;
 	public RenderGlobal renderGlobal;
 	private RenderManager renderManager;
@@ -314,12 +314,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.launchedVersion = gameConfig.gameInfo.version;
 		this.twitchDetails = gameConfig.userInfo.userProperties;
 		this.profileProperties = gameConfig.userInfo.profileProperties;
-		this.mcDefaultResourcePack = new DefaultResourcePack(
-				(new ResourceIndex(gameConfig.folderInfo.assetsDir, gameConfig.folderInfo.assetIndex))
-						.getResourceMap());
+		this.mcDefaultResourcePack = new DefaultResourcePack((new ResourceIndex(gameConfig.folderInfo.assetsDir, gameConfig.folderInfo.assetIndex)).getResourceMap());
 		this.proxy = gameConfig.userInfo.proxy == null ? Proxy.NO_PROXY : gameConfig.userInfo.proxy;
-		this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy,
-				UUID.randomUUID().toString())).createMinecraftSessionService();
+		this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
 		this.session = gameConfig.userInfo.session;
 		logger.info("Setting user: " + this.session.getUsername());
 		logger.info("(Session ID is " + this.session.getSessionID() + ")");
@@ -394,14 +391,14 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	private void startGame() throws LWJGLException, IOException {
 		this.gameSettings = new GameSettings(this, this.mcDataDir);
 		this.defaultResourcePacks.add(this.mcDefaultResourcePack);
-		this.startTimerHackThread();
+		//this.startTimerHackThread();
 
 		if (this.gameSettings.overrideHeight > 0 && this.gameSettings.overrideWidth > 0) {
 			this.displayWidth = this.gameSettings.overrideWidth;
 			this.displayHeight = this.gameSettings.overrideHeight;
 		}
 
-		logger.info("LWJGL Version: " + Sys.getVersion());
+		logger.info("LWJGL Version: 3.2.4");
 		this.setWindowIcon();
 		this.setInitialDisplayMode();
 		this.createDisplay();
@@ -439,10 +436,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.mcResourceManager.registerReloadListener(new GrassColorReloadListener());
 		this.mcResourceManager.registerReloadListener(new FoliageColorReloadListener());
 		AchievementList.openInventory.setStatStringFormatter(new IStatStringFormat() {
+			@Override
 			public String formatString(String str) {
 				try {
-					return String.format(str, new Object[] { GameSettings
-							.getKeyDisplayString(Minecraft.this.gameSettings.keyBindInventory.getKeyCode()) });
+					return String.format(str, new Object[] { GameSettings.getKeyDisplayString(Minecraft.this.gameSettings.keyBindInventory.getKeyCode()) });
 				} catch (Exception exception) {
 					return "Error: " + exception.getLocalizedMessage();
 				}
@@ -475,8 +472,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.mcResourceManager.registerReloadListener(this.renderItem);
 		this.entityRenderer = new EntityRenderer(this, this.mcResourceManager);
 		this.mcResourceManager.registerReloadListener(this.entityRenderer);
-		this.blockRenderDispatcher = new BlockRendererDispatcher(this.modelManager.getBlockModelShapes(),
-				this.gameSettings);
+		this.blockRenderDispatcher = new BlockRendererDispatcher(this.modelManager.getBlockModelShapes(), this.gameSettings);
 		this.mcResourceManager.registerReloadListener(this.blockRenderDispatcher);
 		this.renderGlobal = new RenderGlobal(this);
 		this.mcResourceManager.registerReloadListener(this.renderGlobal);
@@ -506,21 +502,22 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	}
 
 	private void registerMetadataSerializers() {
-		this.metadataSerializer_.registerMetadataSectionType(new TextureMetadataSectionSerializer(),
-				TextureMetadataSection.class);
-		this.metadataSerializer_.registerMetadataSectionType(new FontMetadataSectionSerializer(),
-				FontMetadataSection.class);
-		this.metadataSerializer_.registerMetadataSectionType(new AnimationMetadataSectionSerializer(),
-				AnimationMetadataSection.class);
-		this.metadataSerializer_.registerMetadataSectionType(new PackMetadataSectionSerializer(),
-				PackMetadataSection.class);
-		this.metadataSerializer_.registerMetadataSectionType(new LanguageMetadataSectionSerializer(),
-				LanguageMetadataSection.class);
+	    List<MetadataSectionEntry> serializers = Arrays.asList(
+	            new MetadataSectionEntry(new TextureMetadataSectionSerializer(), TextureMetadataSection.class),
+	            new MetadataSectionEntry(new FontMetadataSectionSerializer(), FontMetadataSection.class),
+	            new MetadataSectionEntry(new AnimationMetadataSectionSerializer(), AnimationMetadataSection.class),
+	            new MetadataSectionEntry(new PackMetadataSectionSerializer(), PackMetadataSection.class),
+	            new MetadataSectionEntry(new LanguageMetadataSectionSerializer(), LanguageMetadataSection.class)
+	        );
+
+	    for (MetadataSectionEntry entry : serializers) {
+	    	this.metadataSerializer_.registerMetadataSectionType(entry.getSerializer(), entry.getSectionType());
+	    }
 	}
 
 	private void createDisplay() throws LWJGLException {
 		Display.setResizable(true);
-		Display.setTitle("Minecraft 1.8.9");
+		Display.setTitle("Loading Sakura...");
 
 		try {
 			Display.create((new PixelFormat()).withDepthBits(24));
@@ -2694,23 +2691,18 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 				: MusicTicker.MusicType.MENU;
 	}
 	
-	public void dispatchKeypresses() {
-		int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() : Keyboard.getEventKey();
-
-		if (i != 0 && !Keyboard.isRepeatEvent()) {
-			if (!(this.currentScreen instanceof GuiControls)
-					|| ((GuiControls) this.currentScreen).time <= getSystemTime() - 20L) {
-				if (Keyboard.getEventKeyState()) {
-					if (i == this.gameSettings.keyBindFullscreen.getKeyCode()) {
-						this.toggleFullscreen();
-					} else if (i == this.gameSettings.keyBindScreenshot.getKeyCode()) {
-						this.ingameGUI.getChatGUI().printChatMessage(ScreenShotHelper.saveScreenshot(this.mcDataDir,
-								this.displayWidth, this.displayHeight, this.framebufferMc));
-					}
-				}
-			}
-		}
-	}
+    public void dispatchKeypresses() {
+        final int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() : Keyboard.getEventKey();
+        if (i != 0 && !Keyboard.isRepeatEvent())
+            if (!(this.currentScreen instanceof GuiControls) || ((GuiControls) this.currentScreen).time <= getSystemTime() - 20L)
+                if (Keyboard.getEventKeyState()) {
+                    if (i == this.gameSettings.keyBindFullscreen.getKeyCode()) this.toggleFullscreen();
+                    else if (i == this.gameSettings.keyBindScreenshot.getKeyCode()) {
+                        final ScreenShotHelper ss = new ScreenShotHelper(this.ingameGUI, this.mcDataDir, this.displayWidth, this.displayHeight, this.framebufferMc);
+                        ss.run();
+                    }
+                }
+    }
 
 	public MinecraftSessionService getSessionService() {
 		return this.sessionService;

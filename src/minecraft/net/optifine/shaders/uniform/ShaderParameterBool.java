@@ -92,6 +92,8 @@ public enum ShaderParameterBool implements IExpressionBool
 
                 case IS_WET:
                     return entitylivingbase.isWet();
+			default:
+				break;
             }
         }
 

@@ -31,7 +31,7 @@ public class Reach extends Module {
 	private final BooleanValue hitThroughBlocks = new BooleanValue("Hit through blocks", this, false);
 
 	@EventLink
-	public final Listener<MouseEvent> onMouseInput = event -> {
+	public final Listener<MouseEvent> onMouse = event -> {
 		AutoClicker clicker = getModule(AutoClicker.class);
 		if (isInGame() && event.getCode() == 0 && (!clicker.isEnabled() || !Mouse.isButtonDown(0)) || PlayerUtil.isClicking()) {
 			callReach();

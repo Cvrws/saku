@@ -39,7 +39,7 @@ public final class AimAssist extends Module {
 	private NumberValue verticalSpeed = new NumberValue("Vertical Aim Speed", this, 10, 1, 15, 1, () -> !vertical.getValue());
 	private NumberValue verticalCompl = new NumberValue("Vertical Complement", this, 5, 1, 10, 1, () -> !vertical.getValue());
 	private BooleanValue verticalRandom = new BooleanValue("Vertical Random", this, false, () -> !vertical.getValue());
-	private NumberValue verticalRandomization = new NumberValue("Vertical Randomization", this, 1.2, 0.1, 5, 0.01, () -> !verticalRandom.getValue());
+	private NumberValue verticalRandomization = new NumberValue("Vertical Randomization", this, 1.2, 0.1, 5, 0.1, () -> !verticalRandom.getValue());
 
 	private final ModeValue randomMode = new ModeValue("Speed Type", this)
 			.add(new SubMode("Thread Local Random"))
@@ -128,7 +128,7 @@ public final class AimAssist extends Module {
 	    }
 
 	    if (EnemyUtil.isEnemy(player)) return false;
-	    if (player.getName().contains("[NPC]") || player.getName().contains("MEJORAS") || player.getName().contains("CLICK DERECHO")) {
+	    if (PlayerUtil.unusedNames(player)) {
 	        return false;
 	    }
 

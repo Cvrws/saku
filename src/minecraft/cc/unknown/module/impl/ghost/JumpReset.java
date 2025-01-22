@@ -26,6 +26,12 @@ public class JumpReset extends Module {
 
 	@EventLink
 	public final Listener<MoveInputEvent> onMoveInput = event -> {
+	    double chanceValue = chance.getValue().doubleValue();
+	    double randomFactor = MathUtil.getRandomFactor(chanceValue);
+
+        if (noAction()) return;
+	    if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
+	    
         if (onlyClick.getValue() && mc.player.isSwingInProgress) {
             return;
         }
@@ -37,12 +43,6 @@ public class JumpReset extends Module {
         if (disabledWhileHold.getValue() && Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())) {
             return;
         }
-
-	    double chanceValue = chance.getValue().doubleValue();
-	    double randomFactor = MathUtil.getRandomFactor(chanceValue);
-
-        if (noAction()) return;
-	    if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
 	    
 		if (MoveUtil.isMoving() && mc.player.hurtTime > 0 && mc.player.motionY > 0 && (mc.player.ticksSinceVelocity <= 14 || mc.player.onGroundTicks <= 1)) {
 			event.setJump(true);

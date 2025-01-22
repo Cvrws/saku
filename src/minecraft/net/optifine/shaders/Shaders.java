@@ -2023,7 +2023,7 @@ public class Shaders
     public static void startup(Minecraft mc)
     {
         checkShadersModInstalled();
-        mc = mc;
+        Shaders.mc = mc;
         mc = Minecraft.getInstance();
         capabilities = GLContext.getCapabilities();
         glVersionString = GL11.glGetString(GL11.GL_VERSION);
@@ -3413,6 +3413,8 @@ public class Shaders
                         setProgramUniform1i(uniform_shadowcolor0, 13);
                         setProgramUniform1i(uniform_shadowcolor1, 14);
                         setProgramUniform1i(uniform_noisetex, 15);
+				default:
+					break;
                 }
 
                 ItemStack itemstack = mc.player != null ? mc.player.getHeldItem() : null;

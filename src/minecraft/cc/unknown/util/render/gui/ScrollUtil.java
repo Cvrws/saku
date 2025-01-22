@@ -30,7 +30,7 @@ public class ScrollUtil implements Accessor {
     }
 
     public void onRender(boolean update) {
-        if (stopWatch2.finished(50)) {
+        if (stopWatch2.finished(0)) {
             final float wheel = update ? Mouse.getDWheel() * (reverse ? -1 : 1) : 0;
             double stretch = 30;
             active = wheel != 0;

@@ -1,13 +1,10 @@
 package cc.unknown.module.impl.ghost;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
@@ -23,12 +20,9 @@ import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MathHelper;
 
 @ModuleInfo(aliases = "WTap", description = "Suelta brevemente la W después de atacar para aumentar el knockback dado", category = Category.GHOST)
 public class WTap extends Module {
@@ -49,10 +43,8 @@ public class WTap extends Module {
 
 	private final StopWatch stopWatch = new StopWatch();
 	private int ticks;
+	private EntityLivingBase target = null;
 
-	private int hitsSend;
-	private int combo;
-	
 	@EventLink
 	public final Listener<AttackEvent> onAttack = event -> {
 		double chanceValue = chance.getValue().doubleValue();
@@ -68,7 +60,7 @@ public class WTap extends Module {
 			return;
 		}
 		
-	    if (event.getTarget().getName().contains("[NPC]") || event.getTarget().getName().contains("MEJORAS") || event.getTarget().getName().contains("CLICK DERECHO")) {
+	    if (PlayerUtil.unusedNames((EntityPlayer) event.getTarget())) {
 	        return;
 	    }
 
@@ -80,40 +72,40 @@ public class WTap extends Module {
 		case "Normal":
 		case "Silent":
 			if (stopWatch.finished(delay.getValue().intValue())) {
+				if (event.getTarget() != null && event.getTarget() instanceof EntityLivingBase) {
+					target = (EntityLivingBase) event.getTarget();
+					ticks = 2;
+				}
 				stopWatch.reset();
-				ticks = hits.getSecondValue().intValue();
 			}
 			break;
 		}
 	};
 
 	@EventLink
-	public final Listener<PreMotionEvent> onPreUpdate = event -> {
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (getModule(Scaffold.class).isEnabled() || getModule(LegitScaffold.class).isEnabled() || getModule(Clutch.class).isEnabled()) return;
 
-		if (ticks == hits.getSecondValue().intValue()) {
-			switch (mode.getValue().getName()) {
-			case "Normal":
-				mc.gameSettings.keyBindForward.pressed = false;
-				break;
-			case "Silent":
-				mc.player.sprintingTicksLeft = 1;
-				break;
-			}
-		} else if (ticks == hits.getValue().intValue()) {
-			switch (mode.getValue().getName()) {
-			case "Normal":
-				mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
-				break;
-			case "Silent":
-				mc.player.sprintingTicksLeft = 0;
-				break;
-			}
-		}
-
-		if (ticks > 0) {
-			ticks--;
-		}
+		 if (target != null && MoveUtil.isMoving()) {
+			 if (mode.is("Normal")) {
+				switch (ticks) {
+				case 2:
+					mc.gameSettings.keyBindForward.pressed = false;
+					ticks--;
+					break;
+				case 1:
+					mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
+					ticks--;
+					break;
+				}
+			 }
+			 
+			 if (mode.is("Silent")) {
+				 mc.player.sprintingTicksLeft = 0;
+			 }
+			 
+			 target = null;
+		 }
 	};
 
 	private boolean isTwo() {

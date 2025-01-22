@@ -40,7 +40,7 @@ public class GuiDisconnected extends GuiScreen
         int padding = 3;
         
         this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 2 + this.field_175353_i / 2 + this.fontRendererObj.FONT_HEIGHT, I18n.format("gui.toMenu", new Object[0])));
-        this.buttonList.add(new GuiButton(1, this.width / 2 + padding, this.height / 2 + this.field_175353_i / 2 + this.fontRendererObj.FONT_HEIGHT, 100 - padding, 20, "Reconnect"));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 2 + this.field_175353_i / 2 + this.fontRendererObj.FONT_HEIGHT + 22, 200, 20, "Reconnect"));
 
         Sakura.instance.getEventBus().handle(new ServerKickEvent(multilineMessage));
     }

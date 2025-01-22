@@ -560,6 +560,10 @@ public class PlayerUtil implements Accessor {
 		if (mc.player.isOnSameTeam(player)) {
 			return true;
 		}
+		
+		if (PlayerUtil.unusedNames(player)) {
+			return false;
+		}
 
 		if (scoreboard && mc.player.getTeam() != null && player.getTeam() != null && mc.player.getTeam().isSameTeam(player.getTeam())) {
 			return true;
@@ -689,6 +693,93 @@ public class PlayerUtil implements Accessor {
        return new double[]{posX, posY, posZ, motionX, motionY, motionZ};
     }
     
+    public static Vec3 getPredictedPos(float forward, float strafe) {
+        strafe *= 0.98F;
+        forward *= 0.98F;
+        float f4 = 0.91F;
+        double motionX = mc.player.motionX;
+        double motionZ = mc.player.motionZ;
+        double motionY = mc.player.motionY;
+        boolean isSprinting = mc.player.isSprinting();
+
+        if (mc.player.isJumping && mc.player.onGround) {
+            motionY = mc.player.getJumpUpwardsMotion();
+            if (mc.player.isPotionActive(Potion.jump)) {
+                motionY += (float)(mc.player.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F;
+            }
+
+            if (isSprinting) {
+                float f = mc.player.rotationYaw * (float) (Math.PI / 180.0);
+                motionX -= MathHelper.sin(f) * 0.2F;
+                motionZ += MathHelper.cos(f) * 0.2F;
+            }
+        }
+
+        if (mc.player.onGround) {
+            f4 = mc.player
+                    .worldObj
+                    .getBlockState(
+                            new BlockPos(
+                                    MathHelper.floor_double(mc.player.posX),
+                                    MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1,
+                                    MathHelper.floor_double(mc.player.posZ)
+                            )
+                    )
+                    .getBlock()
+                    .slipperiness
+                    * 0.91F;
+        }
+
+        float f3 = 0.16277136F / (f4 * f4 * f4);
+        float friction;
+        if (mc.player.onGround) {
+            friction = mc.player.getAIMoveSpeed() * f3;
+            if (mc.player == mc.player
+                    && mc.player.isSprinting()) {
+                friction = 0.12999998F;
+            }
+        } else {
+            friction = mc.player.jumpMovementFactor;
+        }
+
+        float f = strafe * strafe + forward * forward;
+        if (f >= 1.0E-4F) {
+            f = MathHelper.sqrt_float(f);
+            if (f < 1.0F) {
+                f = 1.0F;
+            }
+
+            f = friction / f;
+            strafe *= f;
+            forward *= f;
+            float f1 = MathHelper.sin(mc.player.rotationYaw * (float) Math.PI / 180.0F);
+            float f2 = MathHelper.cos(mc.player.rotationYaw * (float) Math.PI / 180.0F);
+            motionX += strafe * f2 - forward * f1;
+            motionZ += forward * f2 + strafe * f1;
+        }
+
+        f4 = 0.91F;
+        if (mc.player.onGround) {
+            f4 = mc.player
+                    .worldObj
+                    .getBlockState(
+                            new BlockPos(
+                                    MathHelper.floor_double(mc.player.posX),
+                                    MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1,
+                                    MathHelper.floor_double(mc.player.posZ)
+                            )
+                    )
+                    .getBlock()
+                    .slipperiness
+                    * 0.91F;
+        }
+
+        motionY *= 0.98F;
+        motionX *= f4;
+        motionZ *= f4;
+        return new Vec3(motionX, motionY, motionZ);
+    }
+    
     public Item getItem() {
         ItemStack stack = getItemStack();
         return stack == null ? null : stack.getItem();
@@ -802,5 +893,9 @@ public class PlayerUtil implements Accessor {
 
     public boolean overVoid() {
         return overVoid(mc.player.posX, mc.player.posY, mc.player.posZ);
+    }
+    
+    public boolean unusedNames(EntityPlayer player) {
+    	return player.getName().contains("[NPC]") || player.getName().contains("MEJORAS") || player.getName().contains("CLICK DERECHO");
     }
 }
