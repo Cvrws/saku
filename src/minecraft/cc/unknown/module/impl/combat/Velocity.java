@@ -40,8 +40,8 @@ public final class Velocity extends Module {
 	private final NumberValue horizontal = new NumberValue("Horizontal", this, 100, 0, 100, 1, () -> !mode.is("Hypixel"));
 
 	private final BooleanValue delay = new BooleanValue("Delay", this, false, () -> !mode.is("Hypixel"));
-	private final NumberValue delayHorizontal = new NumberValue("Delayed Horizontal", this, 100, 0, 100, 1, () -> !delay.getValue() && !mode.is("Hypixel"));
-	private final NumberValue delayVertical = new NumberValue("Delayed Vertical", this, 90, 0, 100, 1, () -> !delay.getValue() && !mode.is("Hypixel"));
+	private final NumberValue delayHorizontal = new NumberValue("Delayed Horizontal", this, 100, 0, 100, 1, () -> !mode.is("Hypixel") || !delay.getValue());
+	private final NumberValue delayVertical = new NumberValue("Delayed Vertical", this, 90, 0, 100, 1, () -> !mode.is("Hypixel") || !delay.getValue());
 	
 	private final BooleanValue onlyAir = new BooleanValue("Only in Air", this, false, () -> !mode.is("Hypixel"));
 	private final BooleanValue onExplode = new BooleanValue("Explosion Ignore", this, false, () -> !mode.is("Hypixel"));
@@ -71,9 +71,10 @@ public final class Velocity extends Module {
 	            if (!event.isSneak()) {
 	                ChatUtil.display(map.get(vec3s.get(0)));
 	                event.setStrafe(map.get(vec3s.get(0)));
+	                
+	                mc.player.moveStrafing = map.get(vec3s.get(0));
 	            }
 	        }
-	        
 	        target = null;
 		}
 	};
