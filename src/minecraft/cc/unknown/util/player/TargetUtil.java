@@ -46,20 +46,20 @@ public class TargetUtil implements Accessor {
         return getTargets(players, invisibles, animals, mobs, teams, false);
     }
 
-    public static List<EntityLivingBase> getTargets(boolean players, boolean invisibles, boolean animals, boolean mobs, boolean teams, boolean friends) {
-
-        return mc.world.loadedEntityList.stream()
-                .filter(entity -> entity instanceof EntityLivingBase
-                            && entity != mc.getRenderViewEntity()
-                            && (!FriendUtil.isFriend(entity.getName()) || friends)
-                            && (!(entity instanceof EntityPlayer) || players)
-                            && (!(entity instanceof IMob || entity instanceof INpc) || mobs)
-                            && (!(entity instanceof EntityAnimal || entity instanceof EntityAmbientCreature || entity instanceof EntityWaterMob) || animals)
-                            && (!entity.isInvisible() || invisibles)
-                            && !(entity instanceof EntityArmorStand)
-                )
-                .map(entity -> ((EntityLivingBase) entity))
-                .filter(entity -> !(entity instanceof EntityPlayer) || (!PlayerUtil.isTeam((EntityPlayer) entity) || teams))
-                .collect(Collectors.toList());
-    }
+	public static List<EntityLivingBase> getTargets(boolean players, boolean invisibles, boolean animals, boolean mobs,
+			boolean teams, boolean friends) {
+		return mc.world.loadedEntityList.stream()
+				.filter(entity -> entity instanceof EntityLivingBase && entity != mc.getRenderViewEntity()
+				&& (!FriendUtil.isFriend(entity.getName()) || friends)
+				&& (!(entity instanceof EntityPlayer) || players)
+				&& (!(entity instanceof IMob || entity instanceof INpc) || mobs)
+				&& (!(entity instanceof EntityAnimal || entity instanceof EntityAmbientCreature || entity instanceof EntityWaterMob) || animals)
+				&& (!entity.isInvisible() || invisibles) && !(entity instanceof EntityArmorStand))
+				.map(entity -> ((EntityLivingBase) entity))
+				.filter(entity -> !entity.getName().contains("[NPC]"))
+				.filter(entity -> !entity.getName().contains("CLICK DERECHO"))
+				.filter(entity -> !entity.getName().contains("MEJORAS"))
+				.filter(entity -> !(entity instanceof EntityPlayer && PlayerUtil.isTeam((EntityPlayer) entity, killAura.scoreboardCheckTeam.getValue(), killAura.checkArmorColor.getValue()) && teams))
+				.collect(Collectors.toList());
+	}
 }

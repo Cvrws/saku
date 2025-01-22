@@ -180,7 +180,7 @@ public class LagRange extends Module {
     }
 
     private boolean isTargetCloseOrVisible() {
-       Entity rayTracedEntity = raycast(3, new Vector2f(RotationHandler.lastRotations.x, RotationHandler.lastRotations.y));
+       Entity rayTracedEntity = raycast(3, new Vector2f(RotationHandler.rotations.x, RotationHandler.rotations.y));
        return rayTracedEntity != null && RotationUtil.getDistanceToEntityBox(rayTracedEntity) <= 3.0D;
     }
     

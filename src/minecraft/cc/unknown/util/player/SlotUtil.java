@@ -32,31 +32,29 @@ import net.minecraft.world.World;
 @UtilityClass
 public class SlotUtil implements Accessor {
 
-    public final List<Block> blacklist = Arrays.asList(Blocks.enchanting_table, Blocks.chest, Blocks.ender_chest,
-            Blocks.trapped_chest, Blocks.anvil, Blocks.sand, Blocks.web, Blocks.torch,
-            Blocks.crafting_table, Blocks.furnace, Blocks.waterlily, Blocks.dispenser,
-            Blocks.stone_pressure_plate, Blocks.wooden_pressure_plate, Blocks.noteblock,
-            Blocks.dropper, Blocks.tnt, Blocks.standing_banner, Blocks.wall_banner, Blocks.redstone_torch);
+	public final List<Block> blacklist = Arrays.asList(Blocks.enchanting_table, Blocks.chest, Blocks.ender_chest,
+			Blocks.trapped_chest, Blocks.anvil, Blocks.sand, Blocks.web, Blocks.torch, Blocks.crafting_table,
+			Blocks.furnace, Blocks.waterlily, Blocks.dispenser, Blocks.stone_pressure_plate,
+			Blocks.wooden_pressure_plate, Blocks.noteblock, Blocks.iron_door, Blocks.dropper, Blocks.tnt,
+			Blocks.standing_banner, Blocks.wall_banner, Blocks.redstone_torch, Blocks.oak_door);
 
-    public final List<Block> interactList = Arrays.asList(Blocks.enchanting_table, Blocks.chest, Blocks.ender_chest,
-            Blocks.trapped_chest, Blocks.anvil, Blocks.crafting_table, Blocks.furnace, Blocks.dispenser,
-            Blocks.iron_door, Blocks.oak_door, Blocks.noteblock, Blocks.dropper);
+	public int findBlock() {
+		int slot = -1;
+		int highestStack = -1;
+		for (int i = 0; i < 9; ++i) {
+			final ItemStack itemStack = mc.player.inventory.mainInventory[i];
+			if (itemStack != null && itemStack.getItem() instanceof ItemBlock
+					&& blacklist.stream().noneMatch(block -> block.equals(((ItemBlock) itemStack.getItem()).getBlock()))
+					&& itemStack.stackSize > 0) {
+				if (mc.player.inventory.mainInventory[i].stackSize > highestStack) {
+					highestStack = mc.player.inventory.mainInventory[i].stackSize;
+					slot = i;
+				}
+			}
+		}
+		return slot;
+	}
 
-    public int findBlock() {
-        int slot = -1;
-        int highestStack = -1;
-        for (int i = 0; i < 9; ++i) {
-            final ItemStack itemStack = mc.player.inventory.mainInventory[i];
-            if (itemStack != null && itemStack.getItem() instanceof ItemBlock &&  blacklist.stream().noneMatch(block -> block.equals(((ItemBlock) itemStack.getItem()).getBlock())) && itemStack.stackSize > 0) {
-                if (mc.player.inventory.mainInventory[i].stackSize > highestStack) {
-                    highestStack = mc.player.inventory.mainInventory[i].stackSize;
-                    slot = i;
-                }
-            }
-        }
-        return slot;
-    }
-    
 	private boolean holdWaterBucket() {
 		if (containsItem(mc.player.getHeldItem(), Items.water_bucket)) {
 			return true;
@@ -70,238 +68,244 @@ public class SlotUtil implements Accessor {
 			return false;
 		}
 	}
-	
+
 	private boolean containsItem(ItemStack itemStack, Item item) {
 		return itemStack != null && itemStack.getItem() == item;
 	}
 
-    public int findItem(final Item item) {
-        for (int i = 0; i < 9; i++) {
-            final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
+	public int findItem(final Item item) {
+		for (int i = 0; i < 9; i++) {
+			final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
 
-            if (itemStack == null) {
-                if (item == null) {
-                    return i;
-                }
-                continue;
-            }
+			if (itemStack == null) {
+				if (item == null) {
+					return i;
+				}
+				continue;
+			}
 
-            if (itemStack.getItem() == item) {
-                return i;
-            }
-        }
+			if (itemStack.getItem() == item) {
+				return i;
+			}
+		}
 
-        return -1;
-    }
+		return -1;
+	}
 
-    public int findBlock(final Block block) {
-        for (int i = 0; i < 9; i++) {
-            final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
+	public int findBlock(final Block block) {
+		for (int i = 0; i < 9; i++) {
+			final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
 
-            if (itemStack == null) {
-                if (block == null) {
-                    return i;
-                }
-                continue;
-            }
+			if (itemStack == null) {
+				if (block == null) {
+					return i;
+				}
+				continue;
+			}
 
-            if (itemStack.getItem() instanceof ItemBlock && ((ItemBlock) itemStack.getItem()).getBlock() == block) {
-                return i;
-            }
-        }
+			if (itemStack.getItem() instanceof ItemBlock && ((ItemBlock) itemStack.getItem()).getBlock() == block) {
+				return i;
+			}
+		}
 
-        return -1;
-    }
+		return -1;
+	}
 
-    public int findTool(final BlockPos blockPos) {
-        float bestSpeed = 1;
-        int bestSlot = -1;
+	public int findTool(final BlockPos blockPos) {
+		float bestSpeed = 1;
+		int bestSlot = -1;
 
-        final IBlockState blockState = mc.world.getBlockState(blockPos);
+		final IBlockState blockState = mc.world.getBlockState(blockPos);
 
-        for (int i = 0; i < 9; i++) {
-            final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
+		for (int i = 0; i < 9; i++) {
+			final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
 
-            if (itemStack == null) {
-                continue;
-            }
+			if (itemStack == null) {
+				continue;
+			}
 
-            final float speed = itemStack.getStrVsBlock(blockState.getBlock());
+			final float speed = itemStack.getStrVsBlock(blockState.getBlock());
 
-            if (speed > bestSpeed) {
-                bestSpeed = speed;
-                bestSlot = i;
-            }
-        }
+			if (speed > bestSpeed) {
+				bestSpeed = speed;
+				bestSlot = i;
+			}
+		}
 
-        return bestSlot;
-    }
+		return bestSlot;
+	}
 
-    public ItemStack getCurrentItemInSlot(final int slot) {
-        return slot < 9 && slot >= 0 ? mc.player.inventory.mainInventory[slot] : null;
-    }
+	public ItemStack getCurrentItemInSlot(final int slot) {
+		return slot < 9 && slot >= 0 ? mc.player.inventory.mainInventory[slot] : null;
+	}
 
-    public float getStrVsBlock(final Block blockIn, final int slot) {
-        float f = 1.0F;
+	public float getStrVsBlock(final Block blockIn, final int slot) {
+		float f = 1.0F;
 
-        if (mc.player.inventory.mainInventory[slot] != null) {
-            f *= mc.player.inventory.mainInventory[slot].getStrVsBlock(blockIn);
-        }
-        return f;
-    }
+		if (mc.player.inventory.mainInventory[slot] != null) {
+			f *= mc.player.inventory.mainInventory[slot].getStrVsBlock(blockIn);
+		}
+		return f;
+	}
 
-    public float getPlayerRelativeBlockHardness(final EntityPlayer playerIn, final World worldIn, final BlockPos pos, final int slot) {
-        final Block block = mc.world.getBlockState(pos).getBlock();
-        final float f = block.getBlockHardness(worldIn, pos);
-        return f < 0.0F ? 0.0F : (!canHeldItemHarvest(block, slot) ? getToolDigEfficiency(block, slot) / f / 100.0F : getToolDigEfficiency(block, slot) / f / 30.0F);
-    }
+	public float getPlayerRelativeBlockHardness(final EntityPlayer playerIn, final World worldIn, final BlockPos pos,
+			final int slot) {
+		final Block block = mc.world.getBlockState(pos).getBlock();
+		final float f = block.getBlockHardness(worldIn, pos);
+		return f < 0.0F ? 0.0F
+				: (!canHeldItemHarvest(block, slot) ? getToolDigEfficiency(block, slot) / f / 100.0F
+						: getToolDigEfficiency(block, slot) / f / 30.0F);
+	}
 
-    public boolean canHeldItemHarvest(final Block blockIn, final int slot) {
-        if (blockIn.getMaterial().isToolNotRequired()) {
-            return true;
-        } else {
-            final ItemStack itemstack = mc.player.inventory.getStackInSlot(slot);
-            return itemstack != null && itemstack.canHarvestBlock(blockIn);
-        }
-    }
-    public float getBlockBreakTime(World worldIn, Block block, BlockPos blockIn, int slot,Item item,boolean onGround){
-        int speedMultiplier = 1;
-        boolean stop = false;
-        if(item == null){
-            speedMultiplier = 1;
-            stop = true;
-        }
-        int id;
-        if(!stop) {
-            id = Item.getIdFromItem(item);
-            if (id == 269 || id == 270 || id == 271) {
-                speedMultiplier = 2;
-            }
-            if (id == 273 || id == 274 || id == 275) {
-                speedMultiplier = 4;
-            }
-            if (id == 256 || id == 257 || id == 258) {
-                speedMultiplier = 6;
-            }
-            if (id == 277 || id == 278 || id == 279) {
-                speedMultiplier = 8;
-            }
-            if (id == 284 || id == 285 || id == 286) {
-                speedMultiplier = 12;
-            }
-            if ((id == 267 || id == 268 || id == 272 || id == 276 || id == 283) && block instanceof BlockWeb) {
-                speedMultiplier = (int) 1.5;
-            }
-            if (id == 359 && block instanceof BlockVine) {
-                speedMultiplier = 1;
-            } else if (id == 359 && (block instanceof BlockWeb || block instanceof BlockLeaves)) {
-                speedMultiplier = 15;
-            } else if (id == 359 && block.getBlockHardness(Minecraft.getInstance().world, blockIn) == 0.8) {
-                speedMultiplier = 5;
-            }
-            if (!canHeldItemHarvest(block, slot)) {
-                speedMultiplier = 1;
-            } else if (EnchantmentHelper.getEfficiencyModifier(Minecraft.getInstance().player) != 0) {
-                speedMultiplier += EnchantmentHelper.getEfficiencyModifier(Minecraft.getInstance().player) ^ 2 + 1;
-            }
-        }
-        if (Minecraft.getInstance().player.isPotionActive(Potion.digSpeed))
-            speedMultiplier *= 0.2 * Minecraft.getInstance().player.getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1;
+	public boolean canHeldItemHarvest(final Block blockIn, final int slot) {
+		if (blockIn.getMaterial().isToolNotRequired()) {
+			return true;
+		} else {
+			final ItemStack itemstack = mc.player.inventory.getStackInSlot(slot);
+			return itemstack != null && itemstack.canHarvestBlock(blockIn);
+		}
+	}
 
-        if (Minecraft.getInstance().player.isPotionActive(Potion.digSlowdown)) {
-            final float f1;
+	public float getBlockBreakTime(World worldIn, Block block, BlockPos blockIn, int slot, Item item,
+			boolean onGround) {
+		int speedMultiplier = 1;
+		boolean stop = false;
+		if (item == null) {
+			speedMultiplier = 1;
+			stop = true;
+		}
+		int id;
+		if (!stop) {
+			id = Item.getIdFromItem(item);
+			if (id == 269 || id == 270 || id == 271) {
+				speedMultiplier = 2;
+			}
+			if (id == 273 || id == 274 || id == 275) {
+				speedMultiplier = 4;
+			}
+			if (id == 256 || id == 257 || id == 258) {
+				speedMultiplier = 6;
+			}
+			if (id == 277 || id == 278 || id == 279) {
+				speedMultiplier = 8;
+			}
+			if (id == 284 || id == 285 || id == 286) {
+				speedMultiplier = 12;
+			}
+			if ((id == 267 || id == 268 || id == 272 || id == 276 || id == 283) && block instanceof BlockWeb) {
+				speedMultiplier = (int) 1.5;
+			}
+			if (id == 359 && block instanceof BlockVine) {
+				speedMultiplier = 1;
+			} else if (id == 359 && (block instanceof BlockWeb || block instanceof BlockLeaves)) {
+				speedMultiplier = 15;
+			} else if (id == 359 && block.getBlockHardness(mc.world, blockIn) == 0.8) {
+				speedMultiplier = 5;
+			}
+			if (!canHeldItemHarvest(block, slot)) {
+				speedMultiplier = 1;
+			} else if (EnchantmentHelper.getEfficiencyModifier(mc.player) != 0) {
+				speedMultiplier += EnchantmentHelper.getEfficiencyModifier(mc.player) ^ 2 + 1;
+			}
+		}
+		if (mc.player.isPotionActive(Potion.digSpeed))
+			speedMultiplier *= 0.2 * mc.player.getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1;
 
-            switch (Minecraft.getInstance().player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) {
-                case 0:
-                    f1 = 0.3F;
-                    break;
+		if (mc.player.isPotionActive(Potion.digSlowdown)) {
+			final float f1;
 
-                case 1:
-                    f1 = 0.09F;
-                    break;
+			switch (mc.player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) {
+			case 0:
+				f1 = 0.3F;
+				break;
 
-                case 2:
-                    f1 = 0.0027F;
-                    break;
+			case 1:
+				f1 = 0.09F;
+				break;
 
-                case 3:
-                default:
-                    f1 = 8.1E-4F;
-            }
-            speedMultiplier *= f1;
-        }
-        if (Minecraft.getInstance().player.isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(Minecraft.getInstance().player)) {
-            speedMultiplier /= 5.0F;
-        }
+			case 2:
+				f1 = 0.0027F;
+				break;
 
-        if(!onGround){
-            speedMultiplier /= 5.0F;
-        }
+			case 3:
+			default:
+				f1 = 8.1E-4F;
+			}
+			speedMultiplier *= f1;
+		}
+		if (mc.player.isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(mc.player)) {
+			speedMultiplier /= 5.0F;
+		}
 
-        float damage = speedMultiplier / block.getBlockHardness(worldIn,blockIn);
+		if (!onGround) {
+			speedMultiplier /= 5.0F;
+		}
 
-        if (canHeldItemHarvest(block,slot)) {
-            damage /= 30;
-        } else {
-            damage /= 100;
-        }
+		float damage = speedMultiplier / block.getBlockHardness(worldIn, blockIn);
 
-        if (damage > 1) {
-            return 0;
-        }
+		if (canHeldItemHarvest(block, slot)) {
+			damage /= 30;
+		} else {
+			damage /= 100;
+		}
 
-        int ticks = (int) Math.ceil(1 / damage);
+		if (damage > 1) {
+			return 0;
+		}
 
-        return ticks;
-    }
-    public float getToolDigEfficiency(final Block blockIn, final int slot) {
-        float f = getStrVsBlock(blockIn, slot);
+		int ticks = (int) Math.ceil(1 / damage);
 
-        if (f > 1.0F) {
-            final int i = EnchantmentHelper.getEfficiencyModifier(mc.player);
-            final ItemStack itemstack = getCurrentItemInSlot(slot);
+		return ticks;
+	}
 
-            if (i > 0 && itemstack != null) {
-                f += (float) (i * i + 1);
-            }
-        }
+	public float getToolDigEfficiency(final Block blockIn, final int slot) {
+		float f = getStrVsBlock(blockIn, slot);
 
-        if (mc.player.isPotionActive(Potion.digSpeed)) {
-            f *= 1.0F + (float) (mc.player.getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1) * 0.2F;
-        }
+		if (f > 1.0F) {
+			final int i = EnchantmentHelper.getEfficiencyModifier(mc.player);
+			final ItemStack itemstack = getCurrentItemInSlot(slot);
 
-        if (mc.player.isPotionActive(Potion.digSlowdown)) {
-            final float f1;
+			if (i > 0 && itemstack != null) {
+				f += (float) (i * i + 1);
+			}
+		}
 
-            switch (mc.player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) {
-                case 0:
-                    f1 = 0.3F;
-                    break;
+		if (mc.player.isPotionActive(Potion.digSpeed)) {
+			f *= 1.0F + (float) (mc.player.getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1) * 0.2F;
+		}
 
-                case 1:
-                    f1 = 0.09F;
-                    break;
+		if (mc.player.isPotionActive(Potion.digSlowdown)) {
+			final float f1;
 
-                case 2:
-                    f1 = 0.0027F;
-                    break;
+			switch (mc.player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) {
+			case 0:
+				f1 = 0.3F;
+				break;
 
-                case 3:
-                default:
-                    f1 = 8.1E-4F;
-            }
+			case 1:
+				f1 = 0.09F;
+				break;
 
-            f *= f1;
-        }
+			case 2:
+				f1 = 0.0027F;
+				break;
 
-        if (mc.player.isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(mc.player)) {
-            f /= 5.0F;
-        }
+			case 3:
+			default:
+				f1 = 8.1E-4F;
+			}
 
-        if (!mc.player.onGround) {
-            f /= 5.0F;
-        }
+			f *= f1;
+		}
 
-        return f;
-    }
+		if (mc.player.isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(mc.player)) {
+			f /= 5.0F;
+		}
+
+		if (!mc.player.onGround) {
+			f /= 5.0F;
+		}
+
+		return f;
+	}
 }

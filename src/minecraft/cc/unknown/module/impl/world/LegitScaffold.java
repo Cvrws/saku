@@ -61,9 +61,10 @@ public class LegitScaffold extends Module {
 		shouldBridge = false;
 	}
 
-	@EventLink(value = Priority.LOW)
+	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (!(mc.currentScreen == null) || !isInGame()) return;
+		if (mc.playerController.getCurrentGameType() == WorldSettings.GameType.SPECTATOR) return;
 
 		if (hideSneak.getValue()) {
 			mc.player.hideSneakHeight.reset();
@@ -86,10 +87,6 @@ public class LegitScaffold extends Module {
 			}
 		}
 
-		if (mc.playerController.getCurrentGameType() == WorldSettings.GameType.SPECTATOR) {
-			return;
-		}
-
 		if (blocksOnly.getValue()) {
 			ItemStack i = mc.player.getHeldItem();
 			if (i == null || !(i.getItem() instanceof ItemBlock)) {
@@ -97,14 +94,6 @@ public class LegitScaffold extends Module {
 					isShifting = false;
 					setSneak(false);
 				}
-				return;
-			}
-		}
-
-		if (backwards.getValue()) {
-			if ((mc.player.movementInput.moveForward > 0) && (mc.player.movementInput.moveStrafe == 0)
-					|| mc.player.movementInput.moveForward >= 0) {
-				shouldBridge = false;
 				return;
 			}
 		}
@@ -149,6 +138,16 @@ public class LegitScaffold extends Module {
 		} else {
 			isShifting = false;
 			setSneak(false);
+		}
+	};
+	
+	@EventLink
+	public final Listener<MoveInputEvent> onMoveInput = event -> {
+		if (backwards.getValue()) {
+			if (event.getForward() > 0 && event.getStrafe() == 0 || event.getForward() >= 0) {
+				shouldBridge = false;
+				return;
+			}
 		}
 	};
 
