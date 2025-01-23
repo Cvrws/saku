@@ -3,12 +3,6 @@ package cc.unknown.module.impl.combat;
 import java.util.Comparator;
 import java.util.List;
 
-import com.viaversion.viarewind.protocol.protocol1_8to1_9.Protocol1_8To1_9;
-import com.viaversion.viarewind.utils.PacketUtil;
-import com.viaversion.viaversion.api.Via;
-import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
-import com.viaversion.viaversion.api.type.Type;
-
 import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
@@ -27,6 +21,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.util.player.EnemyUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
@@ -54,6 +49,7 @@ import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.Vec3;
@@ -484,7 +480,7 @@ public final class KillAura extends Module {
 		switch (autoBlock.getValue().getName()) {
 		case "Vanilla ReBlock":
             if (this.blocking) {
-                this.block(false);
+            	PacketUtil.send(new C08PacketPlayerBlockPlacement(mc.player.inventory.getCurrentItem()));
             }
 			break;
 		case "Post":
@@ -519,15 +515,6 @@ public final class KillAura extends Module {
         case "New NCP":
             mc.playerController.sendUseItem(mc.player, mc.world, mc.player.getHeldItem());
 
-            PacketWrapper use_0 = PacketWrapper.create(29, null,
-                    Via.getManager().getConnectionManager().getConnections().iterator().next());
-            use_0.write(Type.VAR_INT, 0);
-            PacketUtil.sendToServer(use_0, Protocol1_8To1_9.class, true, true);
-
-            PacketWrapper use_1 = PacketWrapper.create(29, null,
-                    Via.getManager().getConnectionManager().getConnections().iterator().next());
-            use_1.write(Type.VAR_INT, 1);
-            PacketUtil.sendToServer(use_1, Protocol1_8To1_9.class, true, true);
             mc.gameSettings.keyBindUseItem.pressed = true;
             blocking = true;
             break;

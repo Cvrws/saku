@@ -318,7 +318,7 @@ public class Scoreboard
     {
         if (this.getPlayersTeam(p_96512_1_) != p_96512_2_)
         {
-            throw new IllegalStateException("Player is either on another team or not on any team. Cannot remove from team \'" + p_96512_2_.getRegisteredName() + "\'.");
+            //throw new IllegalStateException("Player is either on another team or not on any team. Cannot remove from team \'" + p_96512_2_.getRegisteredName() + "\'.");
         }
         else
         {

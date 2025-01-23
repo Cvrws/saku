@@ -26,7 +26,6 @@ public final class Criticals extends Module {
             .add(new SubMode("Packet"))
             .add(new SubMode("Verus"))
             .add(new SubMode("Balance"))
-            .add(new SubMode("Freeze"))
             .add(new SubMode("Legit"))
             .setDefault("Balance");
     
@@ -102,19 +101,6 @@ public final class Criticals extends Module {
         				mc.player.jump();
         		}
         		break;
-            case "Freeze":
-                if ((getModule(KillAura.class).target != null || getModule(AimAssist.class).target != null) && mc.player.onGround) {
-                    mc.player.jump();
-                }
-                if (mc.player.fallDistance > 0) {
-                    getModule(Stuck.class).setEnabled(true);
-                    stuckEnabled = true;
-                }
-                if ((getModule(KillAura.class).target == null || getModule(AimAssist.class).target == null) && stuckEnabled) {
-                    getModule(Stuck.class).setEnabled(false);
-                    stuckEnabled = false;
-                }
-            	break;
         }
     };
 

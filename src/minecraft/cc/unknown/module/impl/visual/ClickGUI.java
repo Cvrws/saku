@@ -40,7 +40,7 @@ public final class ClickGUI extends Module {
     public final Listener<GuiKeyBoardEvent> onKey = event -> {
         if (!stopWatch.finished(50)) return;
 
-        if (event.getKeyCode() == this.getKey() || event.getKeyCode() == 1) {
+        if (event.getKeyCode() == this.getKey() || event.getKeyCode() == Keyboard.KEY_ESCAPE) {
             if (mc.currentScreen == null) {
             	if (mode.is("Rice")) {
             		mc.displayGuiScreen(Sakura.instance.getClickGui());

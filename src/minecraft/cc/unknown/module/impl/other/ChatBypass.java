@@ -23,7 +23,7 @@ public final class ChatBypass extends Module {
 			C01PacketChatMessage wrapper = (C01PacketChatMessage) packet;
 			String message = wrapper.getMessage();
 			if (!Arrays.stream(new String[]{"/", "!"}).anyMatch(message::startsWith)) {
-				String m = Arrays.stream(message.split(" ")).map(word -> "i" + word).collect(Collectors.joining(" "));
+				String m = Arrays.stream(message.split(" ")).map(word -> "y" + word).collect(Collectors.joining(" "));
 				wrapper.setMessage(m);
 				event.setPacket(wrapper);
 			}

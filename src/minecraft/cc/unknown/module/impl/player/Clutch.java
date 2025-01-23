@@ -77,7 +77,7 @@ public class Clutch extends Module {
 			lastSlot = mc.player.inventory.currentItem;
 		}
 
-		if (getModule(LegitScaffold.class).isEnabled() || getModule(Scaffold.class).isEnabled() || (!mc.gameSettings.keyBindSneak.isKeyDown()))
+		if (isAnyModuleEnabled(Scaffold.class, LegitScaffold.class) || (!mc.gameSettings.keyBindSneak.isKeyDown()))
 			return;
 
 		final int slot = SlotUtil.findBlock();

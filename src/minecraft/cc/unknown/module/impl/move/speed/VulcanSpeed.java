@@ -15,7 +15,7 @@ public class VulcanSpeed extends Mode<Speed> {
 	}
 
 	@EventLink
-	public final Listener<MoveInputEvent> onInput = inputEvent -> inputEvent.setJump(false);
+	public final Listener<MoveInputEvent> onInput = event -> event.setJump(false);
 
 	@EventLink
 	public final Listener<PreStrafeEvent> onStrafe = event -> {

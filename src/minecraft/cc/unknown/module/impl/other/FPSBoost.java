@@ -19,8 +19,8 @@ import net.minecraft.client.Minecraft;
 public final class FPSBoost extends Module {
 	
 	public BooleanValue noCrosshair = new BooleanValue("No Crosshair", this, false);
-	public BooleanValue noSkins = new BooleanValue("No Skins", this, true);
-	public BooleanValue noCapes = new BooleanValue("No Capes", this, true);
+	public BooleanValue noSkins = new BooleanValue("No Skins", this, false);
+	public BooleanValue noCapes = new BooleanValue("No Capes", this, false);
 	public BooleanValue noScoreboard = new BooleanValue("No Scoreboard", this, false);
 	private BooleanValue idle = new BooleanValue("Idle FPS", this, true);
 	public BooleanValue noItemFrame = new BooleanValue("No Item Frames", this, true);

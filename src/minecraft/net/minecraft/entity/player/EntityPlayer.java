@@ -193,7 +193,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements Accessor 
 		return this.isUsingItem() && this.itemInUse.getItem().getItemUseAction(this.itemInUse) == EnumAction.BLOCK;
 	}
 
-	public void onUpdate() {
+	public void onUpdate() {		
 		this.noClip = this.isSpectator();
 
 		if (this.isSpectator()) {

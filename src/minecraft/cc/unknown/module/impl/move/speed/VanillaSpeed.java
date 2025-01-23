@@ -2,6 +2,7 @@ package cc.unknown.module.impl.move.speed;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.input.MoveInputEvent;
 import cc.unknown.event.impl.player.PreStrafeEvent;
 import cc.unknown.module.impl.move.Speed;
 import cc.unknown.util.player.MoveUtil;
@@ -18,10 +19,11 @@ public class VanillaSpeed extends Mode<Speed> {
 
     @EventLink
     public final Listener<PreStrafeEvent> onStrafe = event -> {
-        if (MoveUtil.isMoving() && mc.player.onGround) {
-            this.mc.player.jump();
-        }
-
         event.setSpeed(speed.getValue().floatValue());
     };
+    
+	@EventLink
+	public final Listener<MoveInputEvent> onMoveInput = event -> {
+		if (MoveUtil.isMoving() && mc.player.onGround) event.setJump(true);
+	};
 }

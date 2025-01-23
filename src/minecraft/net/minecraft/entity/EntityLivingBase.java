@@ -1382,13 +1382,14 @@ public abstract class EntityLivingBase extends Entity {
 
 		this.onLivingUpdate();
 		
-        float yaw = this.rotationYaw;
-        
-        if (this == Minecraft.getInstance().player) yaw = RotationHandler.rotations.x;
+		float yaw = this.rotationYaw;
+		if (this == Minecraft.getInstance().player && RotationHandler.rotations != null) {
+			yaw = RotationHandler.rotations.x;
+		}
 		
-		double d0 = this.posX - this.prevPosX;
-		double d1 = this.posZ - this.prevPosZ;
-		float f = (float) (d0 * d0 + d1 * d1);
+		final double d0 = this.posX - this.prevPosX;
+		final double d1 = this.posZ - this.prevPosZ;
+		final float f = (float) (d0 * d0 + d1 * d1);
 		float f1 = this.renderYawOffset;
 		float f2 = 0.0F;
 		this.prevOnGroundSpeedFactor = this.onGroundSpeedFactor;
@@ -1396,12 +1397,12 @@ public abstract class EntityLivingBase extends Entity {
 
 		if (f > 0.0025000002F) {
 			f3 = 1.0F;
-			f2 = (float) Math.sqrt((double) f) * 3.0F;
+			f2 = (float) Math.sqrt(f) * 3.0F;
 			f1 = (float) MathHelper.atan2(d1, d0) * 180.0F / (float) Math.PI - 90.0F;
 		}
 
 		if (this.swingProgress > 0.0F) {
-			f1 = this.rotationYaw;
+			f1 = yaw;
 		}
 
 		if (!this.onGround) {
@@ -1410,10 +1411,11 @@ public abstract class EntityLivingBase extends Entity {
 
 		this.onGroundSpeedFactor += (f3 - this.onGroundSpeedFactor) * 0.3F;
 		this.worldObj.theProfiler.startSection("headTurn");
+
 		f2 = this.updateDistance(f1, f2);
 		this.worldObj.theProfiler.endSection();
 		this.worldObj.theProfiler.startSection("rangeChecks");
-
+		
 		while (this.rotationYaw - this.prevRotationYaw < -180.0F) {
 			this.prevRotationYaw -= 360.0F;
 		}
@@ -1452,34 +1454,32 @@ public abstract class EntityLivingBase extends Entity {
 
 	protected float updateDistance(float p_110146_1_, float p_110146_2_) {
         float yaw = this.rotationYaw;
-        try {
-        	if (this == Minecraft.getInstance().player) yaw = RotationHandler.rotations.x;
-        } catch (NullPointerException e) {}
-		
-		float f = MathHelper.wrapAngleTo180_float(p_110146_1_ - this.renderYawOffset);
-		this.renderYawOffset += f * 0.3F;
-		float f1 = MathHelper.wrapAngleTo180_float(this.rotationYaw - this.renderYawOffset);
-		boolean flag = f1 < -90.0F || f1 >= 90.0F;
+        if (this == Minecraft.getInstance().player && RotationHandler.rotations != null) yaw = RotationHandler.rotations.x;
 
-		if (f1 < -75.0F) {
-			f1 = -75.0F;
-		}
+        final float f = MathHelper.wrapAngleTo180_float(p_110146_1_ - this.renderYawOffset);
+        this.renderYawOffset += f * 0.3F;
+        float f1 = MathHelper.wrapAngleTo180_float(yaw - this.renderYawOffset);
+        final boolean flag = f1 < -90.0F || f1 >= 90.0F;
 
-		if (f1 >= 75.0F) {
-			f1 = 75.0F;
-		}
+        if (f1 < -75.0F) {
+            f1 = -75.0F;
+        }
 
-		this.renderYawOffset = this.rotationYaw - f1;
+        if (f1 >= 75.0F) {
+            f1 = 75.0F;
+        }
 
-		if (f1 * f1 > 2500.0F) {
-			this.renderYawOffset += f1 * 0.2F;
-		}
+        this.renderYawOffset = yaw - f1;
 
-		if (flag) {
-			p_110146_2_ *= -1.0F;
-		}
+        if (f1 * f1 > 2500.0F) {
+            this.renderYawOffset += f1 * 0.2F;
+        }
 
-		return p_110146_2_;
+        if (flag) {
+            p_110146_2_ *= -1.0F;
+        }
+
+        return p_110146_2_;
 	}
 
 	public void onLivingUpdate() {

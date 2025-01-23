@@ -4,7 +4,7 @@ import org.lwjgl.input.Keyboard;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.event.impl.input.MoveInputEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
@@ -15,7 +15,7 @@ import net.minecraft.util.Vec3;
 public class Parkour extends Module {
 
 	@EventLink
-	public final Listener<PreMotionEvent> onPreMotion = event -> {
+	public final Listener<MoveInputEvent> onMoveInput = event -> {
 		double posX = mc.player.posX;
 		double posZ = mc.player.posZ;
 		double blockX = Math.floor(posX);
@@ -32,10 +32,9 @@ public class Parkour extends Module {
 		boolean onEdgeZ = difZ <= lowerThreshold || difZ >= upperThreshold;
 		BlockPos blockInFront = null;
 		
-		float moveForward = mc.player.moveForward;
-		float moveStrafing = mc.player.moveStrafing;
+		float moveForward = event.getForward();
+		float moveStrafing = event.getStrafe();
 		Vec3 lookVec = mc.player.getLookVec();
-		boolean jump = mc.gameSettings.keyBindJump.pressed;
 		
 		if (moveForward > 0) {
 			blockInFront = mc.player.getPosition().add(lookVec.xCoord, -1, lookVec.zCoord);
@@ -49,10 +48,10 @@ public class Parkour extends Module {
 
 		boolean isBlockAir = blockInFront != null && mc.player.getEntityWorld().isAirBlock(blockInFront);
 		boolean shouldJump = (onEdgeX || onEdgeZ);
-		if (shouldJump && isBlockAir && mc.player.onGround && moveForward > 0 && !mc.player.isSneaking()) {
-			jump = true;
+		if (shouldJump && isBlockAir && mc.player.onGround && moveForward > 0 && !event.isSneak()) {
+			event.setJump(true);
 		} else {
-			jump = Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode());
+			//event.setJump(false);
 		}
 
 	};

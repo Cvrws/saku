@@ -108,7 +108,7 @@ public class ModelPlayer extends ModelBiped
     }
 
     public void renderCape(float p_178728_1_)
-    {
+    {	
         this.bipedCape.render(p_178728_1_);
     }
 

@@ -26,7 +26,7 @@ import net.minecraft.util.Vec3;
 @ModuleInfo(aliases = "Reach", description = "Permite golpear más lejos", category = Category.GHOST)
 public class Reach extends Module {
 
-	public final NumberValue range = new NumberValue("Range", this, 3.0, 3.0, 6.0, 0.01);
+	public final NumberValue range = new NumberValue("Range", this, 3.0, 3.0, 6.0, 0.1);
 	private final NumberValue chance = new NumberValue("Chance", this, 100, 1, 100, 1);
 	private final BooleanValue hitThroughBlocks = new BooleanValue("Hit through blocks", this, false);
 

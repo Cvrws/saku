@@ -13,6 +13,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S19PacketEntityStatus;
 
@@ -43,15 +44,17 @@ public class Flight extends Module {
     
     @EventLink
     public final Listener<PacketReceiveEvent> onReceive = event -> {
-    	Packet packet = event.getPacket();
-    	if (packet instanceof S19PacketEntityStatus) {
-    		S19PacketEntityStatus wrapper = (S19PacketEntityStatus) packet;
-    		if (wrapper.getOpCode() == 2 && wrapper.getEntity(mc.world) == mc.player) {
-                if (!event.isCancelled()) {
+        Packet packet = event.getPacket();
+        if (packet instanceof S19PacketEntityStatus) {
+            S19PacketEntityStatus wrapper = (S19PacketEntityStatus) packet;
+
+            if (wrapper.getOpCode() == 2) {
+                Entity entity = wrapper.getEntity(mc.world);
+                if (entity != null && entity.equals(mc.player)) {
                     mc.player.handleStatusUpdate((byte) 2);
                 }
-    		}
-    	}
+            }
+        }
     };
     
 	@EventLink

@@ -36,6 +36,7 @@ public final class Velocity extends Module {
 	private ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Hypixel"))
 			.add(new SubMode("Legit Prediction"))
+			.add(new SubMode("Intave Reduce"))
 			.setDefault("Hypixel");
 
 	private final NumberValue horizontal = new NumberValue("Horizontal", this, 100, 0, 100, 1, () -> !mode.is("Hypixel"));
@@ -53,8 +54,14 @@ public final class Velocity extends Module {
 	private final NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
 
 	private int ticks;
+	private int counter;
 	private double motionY, motionX, motionZ;
 	private EntityLivingBase target;
+	
+	@Override
+	public void onDisable() {
+		counter = 0;
+	}
 	
 	@EventLink
 	public final Listener<MoveInputEvent> onMoveInput = event -> {
@@ -81,6 +88,12 @@ public final class Velocity extends Module {
 	            }
 	        }
 	        target = null;
+		}
+		
+		if (mode.is("Intave Reduce")) {
+            if (mc.player.hurtTime == 9 && mc.player.onGround && counter++ % 2 == 0) {
+                event.setJump(true);
+            }
 		}
 	};
 	

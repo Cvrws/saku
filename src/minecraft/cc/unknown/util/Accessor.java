@@ -40,4 +40,11 @@ public interface Accessor {
     default Gson getGSON() {
         return getInstance().getGSON();
     }
+
+    default boolean isAnyModuleEnabled(Class<? extends Module>... modules) {
+        for (Class<? extends Module> module : modules) {
+            if (getModule(module).isEnabled()) return true;
+        }
+        return false;
+    }
 }

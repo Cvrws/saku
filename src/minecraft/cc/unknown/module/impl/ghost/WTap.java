@@ -4,7 +4,6 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
-import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
@@ -23,6 +22,7 @@ import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MathHelper;
 
 @ModuleInfo(aliases = "WTap", description = "Suelta brevemente la W después de atacar para aumentar el knockback dado", category = Category.GHOST)
 public class WTap extends Module {
@@ -36,6 +36,7 @@ public class WTap extends Module {
 	private NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1, () -> !isTwo());
 	private NumberValue hurtTime = new NumberValue("HurtTime", this, 10, 1, 10, 10, () -> !isTwo());
 	private BoundsNumberValue hits = new BoundsNumberValue("Hits", this, 1, 2, 0, 10, 1, () -> !isTwo());
+	private BooleanValue onlyCombo = new BooleanValue("Rotation Threshold", this, false, () -> !isTwo());
 	private BooleanValue onlyGround = new BooleanValue("Only Ground", this, false, () -> !isTwo());
 	private BooleanValue onlyMove = new BooleanValue("Only Move", this, false, () -> !isTwo());
 	private BooleanValue onlyMoveForward = new BooleanValue("Only Forward", this, false, () -> !onlyMove.getValue() || !isTwo());
@@ -43,72 +44,95 @@ public class WTap extends Module {
 
 	private final StopWatch stopWatch = new StopWatch();
 	private int ticks;
-	private EntityLivingBase target = null;
+	private EntityPlayer target = null;
 
 	@EventLink
 	public final Listener<AttackEvent> onAttack = event -> {
-		double chanceValue = chance.getValue().doubleValue();
-		double randomFactor = MathUtil.getRandomFactor(chanceValue);
-		if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
-		if (mc.player == null) return;
+	    if (mc.player == null || event.getTarget() == null || !(event.getTarget() instanceof EntityPlayer)) return;
 
-		if (event.getTarget().hurtTime > hurtTime.getValue().intValue() || !stopWatch.finished(delay.getValue().intValue()) || (onlyGround.getValue() && !mc.player.onGround)) {
-			return;
-		}
+	    target = (EntityPlayer) event.getTarget();
 
-		if (ignoreTeammates.getValue() && PlayerUtil.isTeam((EntityPlayer) event.getTarget(), true, true)) { 
-			return;
-		}
-		
-	    if (PlayerUtil.unusedNames((EntityPlayer) event.getTarget())) {
-	        return;
+	    if (!shouldPerformWithChance(chance.getValue().doubleValue())) return;
+
+	    if (onlyCombo.getValue() && exceedsRotationThreshold(target)) return;
+
+	    if (isInvalidTarget(event) || !stopWatch.finished(delay.getValue().intValue())) return;
+
+	    switch (mode.getValue().getName()) {
+	    case "Normal":
+	    case "Silent":
+	    	ticks = 2;
+	    	stopWatch.reset();
+	    	break;
+	    default:
+	    	break;
 	    }
-
-		if (onlyMove.getValue() && (!MoveUtil.isMoving() || (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f))) {
-			return;
-		}
-		
-		switch (mode.getValue().getName()) {
-		case "Normal":
-		case "Silent":
-			if (stopWatch.finished(delay.getValue().intValue())) {
-				if (event.getTarget() != null && event.getTarget() instanceof EntityLivingBase) {
-					target = (EntityLivingBase) event.getTarget();
-					ticks = 2;
-				}
-				stopWatch.reset();
-			}
-			break;
-		}
 	};
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
-		if (getModule(Scaffold.class).isEnabled() || getModule(LegitScaffold.class).isEnabled() || getModule(Clutch.class).isEnabled()) return;
+	    if (isAnyModuleEnabled(Scaffold.class, LegitScaffold.class, Clutch.class)) return;
 
-		 if (target != null && MoveUtil.isMoving()) {
-			 if (mode.is("Normal")) {
-				switch (ticks) {
-				case 2:
-					mc.gameSettings.keyBindForward.pressed = false;
-					ticks--;
-					break;
-				case 1:
-					mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
-					ticks--;
-					break;
-				}
-			 }
-			 
-			 if (mode.is("Silent")) {
-				 mc.player.sprintingTicksLeft = 0;
-			 }
-			 
-			 target = null;
-		 }
+	    if (target != null && MoveUtil.isMoving()) {
+	        handleModeActions();
+	        target = null;
+	    }
 	};
-
+	
 	private boolean isTwo() {
 		return mode.is("Normal") || mode.is("Silent");
+	}
+	
+	private boolean shouldPerformWithChance(double chanceValue) {
+	    double randomFactor = MathUtil.getRandomFactor(chanceValue);
+	    return MathUtil.shouldPerformAction(chanceValue, randomFactor);
+	}
+	
+	private boolean exceedsRotationThreshold(EntityPlayer target) {
+	    double deltaX = mc.player.posX - target.posX;
+	    double deltaZ = mc.player.posZ - target.posZ;
+	    float calculatedYaw = (float) (MathHelper.atan2(deltaZ, deltaX) * 180.0 / Math.PI - 90.0);
+	    float yawDifference = Math.abs(MathHelper.wrapAngleTo180_float(calculatedYaw - target.rotationYawHead));
+	    return yawDifference > 120.0f;
+	}
+	
+	private boolean isInvalidTarget(AttackEvent event) {
+	    EntityPlayer target = (EntityPlayer) event.getTarget();
+	    return event.getTarget().hurtTime > hurtTime.getValue().intValue()
+	            || (onlyGround.getValue() && !mc.player.onGround)
+	            || (ignoreTeammates.getValue() && PlayerUtil.isTeam(target, true, true))
+	            || PlayerUtil.unusedNames(target)
+	            || (onlyMove.getValue() && (!MoveUtil.isMoving() || (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f)));
+	}
+	
+	private void handleModeActions() {
+	    switch (mode.getValue().getName()) {
+	        case "Normal":
+	            handleNormalMode();
+	            break;
+	        case "Silent":
+	            handleSilentMode();
+	            break;
+	        default:
+	            break;
+	    }
+	}
+
+	private void handleNormalMode() {
+	    switch (ticks) {
+	        case 2:
+	            mc.gameSettings.keyBindForward.pressed = false;
+	            ticks--;
+	            break;
+	        case 1:
+	            mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
+	            ticks--;
+	            break;
+	    }
+	}
+
+	private void handleSilentMode() {
+	    mc.player.sprintingTicksLeft = 0;
+	    ticks--;
 	}
 }
