@@ -157,7 +157,7 @@ public class Sakura {
     
     private void setupDiscordRPC() {
         try {
-        	discordHandler.init();
+        	discordHandler.start();
             LOGGER.info("Discord Rich Presence initialized.");
         } catch (Throwable throwable) {
             LOGGER.error("Failed to set up Discord RPC.", throwable);

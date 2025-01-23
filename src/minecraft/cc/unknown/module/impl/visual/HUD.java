@@ -16,7 +16,6 @@ import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.module.impl.visual.api.ModuleComponent;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.render.font.Font;
@@ -28,6 +27,9 @@ import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
@@ -152,5 +154,20 @@ public final class HUD extends Module {
         }
 
         RenderUtil.rectangle(x - widthOffset, y - 3f, rectangleWidth, moduleSpacing, new Color(0, 0, 0, alphaBackground.getValue().intValue()));
+    }
+    
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public final class ModuleComponent {
+
+        public final Module module;
+        public Vector2d position = new Vector2d(5000, 0);
+        public Vector2d targetPosition = new Vector2d(5000, 0);
+        public float nameWidth = 0;
+        public Color color = Color.WHITE;
+        public String translatedName = "";
+        public boolean hidden = false;
+        public String displayName = "";
     }
 }

@@ -1,17 +1,14 @@
 package cc.unknown.handlers;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import cc.unknown.Sakura;
 import cc.unknown.util.Accessor;
@@ -25,14 +22,14 @@ import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.util.ResourceLocation;
 
 public class DiscordHandler implements Accessor {
-    private boolean running = true;
+    public boolean running = true;
     private long timeElapsed = 0;
     private String discordUser = "";
     public String serverName;
     public String serverAddresses;
     public Map<String, ServerData> serverDataMap = new HashMap<>();
 
-    public void init() {
+    public void start() {
         this.timeElapsed = System.currentTimeMillis();
         DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(discordUser -> {
         	this.discordUser = discordUser.username;
