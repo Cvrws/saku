@@ -30,16 +30,23 @@ public class WTap extends Module {
 	private ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Normal"))
 			.add(new SubMode("Silent"))
+			.add(new SubMode("Legit"))
 			.setDefault("Normal");
 
-	private NumberValue delay = new NumberValue("Delay", this, 500, 50, 1000, 10, () -> !isTwo());
-	private NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1, () -> !isTwo());
-	private NumberValue hurtTime = new NumberValue("HurtTime", this, 10, 1, 10, 10, () -> !isTwo());
-	private BooleanValue onlyCombo = new BooleanValue("Rotation Threshold", this, false, () -> !isTwo());
-	private BooleanValue onlyGround = new BooleanValue("Only Ground", this, false, () -> !isTwo());
-	private BooleanValue onlyMove = new BooleanValue("Only Move", this, false, () -> !isTwo());
-	private BooleanValue onlyMoveForward = new BooleanValue("Only Forward", this, false, () -> !onlyMove.getValue() || !isTwo());
-	private BooleanValue ignoreTeammates = new BooleanValue("Ignore Teams", this, false, () -> !isTwo());
+	private BoundsNumberValue hits = new BoundsNumberValue("Hits", this, 1, 2, 0, 10, 1);
+	private NumberValue delay = new NumberValue("Delay", this, 500, 50, 1000, 10);
+	private NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
+	private NumberValue sprintingTicks = new NumberValue("Sprinting Ticks", this, 50, 0, 100, 10, () -> !mode.is("Silent"));
+	private NumberValue hurtTime = new NumberValue("HurtTime", this, 10, 1, 10, 10);
+	private BooleanValue rotationThreshold = new BooleanValue("Rotation Threshold", this, false);
+	private NumberValue yawDiff = new NumberValue("Yaw Difference", this, 120, 0, 180, 1, () -> !rotationThreshold.getValue());
+
+	private BooleanValue onlyGround = new BooleanValue("Only Ground", this, false);
+	private BooleanValue onlyMove = new BooleanValue("Only Move", this, false);
+	private BooleanValue onlyMoveForward = new BooleanValue("Only Forward", this, false, () -> !onlyMove.getValue());
+	private BooleanValue ignoreTeammates = new BooleanValue("Ignore Teams", this, false);
+	private BooleanValue checkLiquids = new BooleanValue("Check Liquids", this, true);
+	private BooleanValue onlyWeapons = new BooleanValue("Only Weapons", this, false);
 
 	private final StopWatch stopWatch = new StopWatch();
 	private int ticks;
@@ -47,91 +54,75 @@ public class WTap extends Module {
 
 	@EventLink
 	public final Listener<AttackEvent> onAttack = event -> {
-	    if (mc.player == null || event.getTarget() == null || !(event.getTarget() instanceof EntityPlayer)) return;
+		double chanceValue = chance.getValue().doubleValue();
+		double randomFactor = MathUtil.getRandomFactor(chanceValue);
+		if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
+		if (mc.player == null) return;
+		
+		if (event.getTarget() instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) event.getTarget();
+		
+			if (player.hurtTime > hurtTime.getValue().intValue()) return;
+			if (!stopWatch.finished(delay.getValue().intValue())) return;
+			if (ignoreTeammates.getValue() && PlayerUtil.isTeam(player, true, true)) return;
+		    if (checkLiquids.getValue() && shouldJump()) return;
+		    if (PlayerUtil.unusedNames(player)) return;
+		    if (onlyWeapons.getValue() && !PlayerUtil.isHoldingWeapon()) return;
+			if (onlyMove.getValue() && (!MoveUtil.isMoving())) return;
+			if (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f) return;
+			if (onlyGround.getValue() && !mc.player.onGround) return;
+		    if (rotationThreshold.getValue() && exceedsRotationThreshold(player)) return;
 
-	    target = (EntityPlayer) event.getTarget();
-
-	    if (!shouldPerformWithChance(chance.getValue().doubleValue())) return;
-
-	    if (onlyCombo.getValue() && exceedsRotationThreshold(target)) return;
-
-	    if (isInvalidTarget(event) || !stopWatch.finished(delay.getValue().intValue())) return;
-
-	    switch (mode.getValue().getName()) {
-	    case "Normal":
-	    case "Silent":
-	    	ticks = 2;
-	    	stopWatch.reset();
-	    	break;
-	    default:
-	    	break;
-	    }
+			if (stopWatch.finished(delay.getValue().intValue())) {
+				stopWatch.reset();
+				ticks = 2;
+			}
+		}
 	};
-
+	
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
-	    if (isAnyModuleEnabled(Scaffold.class, LegitScaffold.class, Clutch.class)) return;
-
-	    if (target != null && MoveUtil.isMoving()) {
-	        handleModeActions();
-	        target = null;
-	    }
+        switch (ticks) {
+        case 2:
+            switch (mode.getValue().getName()) {
+                case "Normal":
+                    mc.gameSettings.keyBindForward.pressed = false;
+                    break;
+                case "Silent":
+                	mc.player.sprintingTicksLeft = 0;
+                    break;
+                case "Legit":
+                    mc.player.setSprinting(false);
+                    break;
+            }
+            ticks--;
+            break;
+        case 1:
+            switch (mode.getValue().getName()) {
+                case "Normal":
+                    mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
+                    break;
+                case "Silent":
+                	mc.player.sprintingTicksLeft = sprintingTicks.getValue().intValue();
+                    break;
+                case "Legit":
+                    mc.player.setSprinting(true);
+                    break;
+            }
+            ticks--;
+            break;
+        }
 	};
-	
-	private boolean isTwo() {
-		return mode.is("Normal") || mode.is("Silent");
-	}
-	
-	private boolean shouldPerformWithChance(double chanceValue) {
-	    double randomFactor = MathUtil.getRandomFactor(chanceValue);
-	    return MathUtil.shouldPerformAction(chanceValue, randomFactor);
-	}
-	
+
 	private boolean exceedsRotationThreshold(EntityPlayer target) {
 	    double deltaX = mc.player.posX - target.posX;
 	    double deltaZ = mc.player.posZ - target.posZ;
 	    float calculatedYaw = (float) (MathHelper.atan2(deltaZ, deltaX) * 180.0 / Math.PI - 90.0);
 	    float yawDifference = Math.abs(MathHelper.wrapAngleTo180_float(calculatedYaw - target.rotationYawHead));
-	    return yawDifference > 120.0f;
+	    return yawDifference > yawDiff.getValue().floatValue();
 	}
 	
-	private boolean isInvalidTarget(AttackEvent event) {
-	    EntityPlayer target = (EntityPlayer) event.getTarget();
-	    return event.getTarget().hurtTime > hurtTime.getValue().intValue()
-	            || (onlyGround.getValue() && !mc.player.onGround)
-	            || (ignoreTeammates.getValue() && PlayerUtil.isTeam(target, true, true))
-	            || PlayerUtil.unusedNames(target)
-	            || (onlyMove.getValue() && (!MoveUtil.isMoving() || (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f)));
-	}
-	
-	private void handleModeActions() {
-	    switch (mode.getValue().getName()) {
-	        case "Normal":
-	            handleNormalMode();
-	            break;
-	        case "Silent":
-	            handleSilentMode();
-	            break;
-	        default:
-	            break;
-	    }
-	}
-
-	private void handleNormalMode() {
-	    switch (ticks) {
-	        case 2:
-	            mc.gameSettings.keyBindForward.pressed = false;
-	            ticks--;
-	            break;
-	        case 1:
-	            mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
-	            ticks--;
-	            break;
-	    }
-	}
-
-	private void handleSilentMode() {
-	    mc.player.sprintingTicksLeft = 0;
-	    ticks--;
+	private boolean shouldJump() {
+	    return mc.player.isInWater() || mc.player.isInLava();
 	}
 }

@@ -52,10 +52,7 @@ public final class ModuleManager {
 
         initialized = true;
 
-        this.getAll().stream()
-            .filter(module -> module != null && module.getModuleInfo() != null && module.getModuleInfo().autoEnabled())
-            .forEach(module -> module.setEnabled(true));
-
+        this.getAll().stream().filter(module -> module != null && module.getModuleInfo() != null && module.getModuleInfo().autoEnabled()).forEach(module -> module.setEnabled(true));
         Sakura.instance.getEventBus().register(this);
     }
 
