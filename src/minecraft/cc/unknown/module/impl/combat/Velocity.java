@@ -40,7 +40,6 @@ public final class Velocity extends Module {
 			.add(new SubMode("Hypixel"))
 			.add(new SubMode("Legit Prediction"))
 			.add(new SubMode("Intave Reduce"))
-			.add(new SubMode("Universocraft"))
 			.setDefault("Hypixel");
 
 	private final NumberValue horizontal = new NumberValue("Horizontal", this, 100, 0, 100, 1, () -> !mode.is("Hypixel"));
@@ -86,7 +85,7 @@ public final class Velocity extends Module {
 	            vec3s.add(strafeRight);
 	            Vec3 targetVec = new Vec3(target.posX, target.posY, target.posZ);
 	            vec3s.sort(Comparator.comparingDouble(targetVec::distanceXZTo));
-	            if (!event.isSneak()) {
+	            if (!event.isSneak() || !mc.player.movementInput.sneak) {
 	                event.setStrafe(map.get(vec3s.get(0)));
 	                mc.player.moveStrafing = map.get(vec3s.get(0));
 	            }

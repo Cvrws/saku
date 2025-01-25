@@ -47,7 +47,6 @@ public class AutoSwap extends Module {
 		mc.player.inventory.currentItem = lastSlot;
 	}
 
-
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
 		if (!isInGame()) return;
