@@ -109,6 +109,7 @@ public final class ModuleManager {
         this.put(Respawn.class, new Respawn());
         this.put(Blink.class, new Blink());
         this.put(GhostHand.class, new GhostHand());
+        this.put(AutoSwap.class, new AutoSwap());
         this.put(Derp.class, new Derp());
         this.put(NoClickDelay.class, new NoClickDelay());
         this.put(FastUse.class, new FastUse());

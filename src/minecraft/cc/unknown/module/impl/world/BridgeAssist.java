@@ -33,7 +33,7 @@ public class BridgeAssist extends Module {
     private boolean waitingForAim;
     private boolean gliding;
     private long startWaitTime;
-    //75.6f
+    
     private final float[] godbridgePos = {75.6f, -315, -225, -135, -45, 0, 45, 135, 225, 315};
     private final float[] moonwalkPos = {79.6f, -340, -290, -250, -200, -160, -110, -70, -20, 0, 20, 70, 110, 160, 200, 250, 290, 340};
     private final float[] breezilyPos = {79.9f, -360, -270, -180, -90, 0, 90, 180, 270, 360};
