@@ -39,18 +39,18 @@ public class TargetUtil implements Accessor {
             killAura = Sakura.instance.getModuleManager().get(KillAura.class);
         }
 
-        return getTargets(killAura.player.getValue(), killAura.invisibles.getValue(), killAura.animals.getValue(), killAura.mobs.getValue(), killAura.teams.getValue());
+        return getTargets(killAura.player.getValue(), killAura.invisibles.getValue(), killAura.animals.getValue(), killAura.mobs.getValue(), killAura.teams.getValue(), killAura.friends.getValue());
     }
 
     public static List<EntityLivingBase> getTargets(boolean players, boolean invisibles, boolean animals, boolean mobs, boolean teams) {
         return getTargets(players, invisibles, animals, mobs, teams, false);
     }
-
+    
 	public static List<EntityLivingBase> getTargets(boolean players, boolean invisibles, boolean animals, boolean mobs,
 			boolean teams, boolean friends) {
 		return mc.world.loadedEntityList.stream()
 				.filter(entity -> entity instanceof EntityLivingBase && entity != mc.getRenderViewEntity()
-				&& (FriendUtil.isFriend(entity.getName()) && friends)
+				&& (!FriendUtil.isFriend(entity.getName()) || friends)
 				&& (!(entity instanceof EntityPlayer) || players)
 				&& (!(entity instanceof IMob || entity instanceof INpc) || mobs)
 				&& (!(entity instanceof EntityAnimal || entity instanceof EntityAmbientCreature || entity instanceof EntityWaterMob) || animals)

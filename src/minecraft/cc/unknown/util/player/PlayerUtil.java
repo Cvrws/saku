@@ -696,7 +696,7 @@ public class PlayerUtil implements Accessor {
        return new double[]{posX, posY, posZ, motionX, motionY, motionZ};
     }
     
-    public static Vec3 getPredictedPos(float forward, float strafe) {
+    public Vec3 getPredictedPos(float forward, float strafe) {
         strafe *= 0.98F;
         forward *= 0.98F;
         float f4 = 0.91F;
@@ -935,37 +935,12 @@ public class PlayerUtil implements Accessor {
                 entityLivingBase = (EntityLivingBase)entity;
             }
 
-            boolean isTeam = isTeam(mc.player, entity);
+            boolean isTeam = isTeam((EntityPlayer) entity, true, true);
             boolean isVisible = (!entity.isInvisible());
 
             return !(entity instanceof EntityArmorStand) && isVisible && (entity instanceof EntityPlayer && !isTeam && !idk || entity instanceof EntityAnimal || entity instanceof EntityMob || entity instanceof EntityLivingBase && entityLivingBase.isEntityAlive());
         } else {
             return false;
-        }
-    }
-    
-    public boolean isTeam(EntityPlayer player, Entity entity) {
-        if(entity instanceof EntityPlayer && ((EntityPlayer)entity).getTeam() != null && player.getTeam() != null) {
-            Character entity_3 = entity.getDisplayName().getFormattedText().charAt(3);
-            Character player_3 = player.getDisplayName().getFormattedText().charAt(3);
-            Character entity_2 = entity.getDisplayName().getFormattedText().charAt(2);
-            Character player_2 = player.getDisplayName().getFormattedText().charAt(2);
-            boolean isTeam = false;
-            if (entity_3.equals(player_3) && entity_2.equals(player_2)) {
-                isTeam = true;
-            } else {
-                Character entity_1 = entity.getDisplayName().getFormattedText().charAt(1);
-                Character player_1 = player.getDisplayName().getFormattedText().charAt(1);
-                Character entity_0 = entity.getDisplayName().getFormattedText().charAt(0);
-                Character player_0 = player.getDisplayName().getFormattedText().charAt(0);
-                if(entity_1.equals(player_1) && Character.isDigit(0) && entity_0.equals(player_0)) {
-                    isTeam = true;
-                }
-            }
-
-            return isTeam;
-        } else {
-            return true;
         }
     }
 }
