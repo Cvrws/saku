@@ -92,6 +92,7 @@ import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMemoryErrorScreen;
+import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSleepMP;
 import net.minecraft.client.gui.ScaledResolution;
@@ -226,7 +227,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	private CrashReport crashReporter;
 	public int displayWidth;
 	public int displayHeight;
-	private boolean connectedToRealms = false;
 	public Timer timer = new Timer(20.0F);
 	private PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("client", this, MinecraftServer.getCurrentTimeMillis());
 	public WorldClient world;
@@ -273,7 +273,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 	@Getter
 	private final long startMillisTime = System.currentTimeMillis();
 	private final boolean jvm64bit;
-	private final boolean isDemo;
 	private NetworkManager myNetworkManager;
 	private boolean integratedServerIsRunning;
 	public final Profiler mcProfiler = new Profiler();
@@ -322,7 +321,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.session = gameConfig.userInfo.session;
 		logger.info("Setting user: " + this.session.getUsername());
 		logger.info("(Session ID is " + this.session.getSessionID() + ")");
-		this.isDemo = gameConfig.gameInfo.isDemo;
 		this.displayWidth = gameConfig.displayInfo.width > 0 ? gameConfig.displayInfo.width : 1;
 		this.displayHeight = gameConfig.displayInfo.height > 0 ? gameConfig.displayInfo.height : 1;
 		this.tempDisplayWidth = gameConfig.displayInfo.width;
@@ -2083,11 +2081,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 			this.displayGuiScreen((GuiScreen) null);
 		}
 	}
-
-	public final boolean isDemo() {
-		return this.isDemo;
-	}
-
+	
 	public NetHandlerPlayClient getNetHandler() {
 		return this.player != null ? this.player.sendQueue : null;
 	}
@@ -2785,11 +2779,16 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		return map;
 	}
 
-	public boolean isConnectedToRealms() {
-		return this.connectedToRealms;
-	}
+    public void leaveServer() {
+        if (this.world == null) return;
+        final boolean flag = this.isIntegratedServerRunning();
+        this.world.sendQuittingDisconnectingPacket();
+        this.loadWorld(null);
 
-	public void setConnectedToRealms(boolean isConnected) {
-		this.connectedToRealms = isConnected;
-	}
+        if (flag) {
+            this.displayGuiScreen(new SakuMenu());
+        } else {
+            this.displayGuiScreen(new GuiMultiplayer(new SakuMenu()));
+        }
+    }
 }

@@ -36,8 +36,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Accessor
 
         this.buttonList.add(new GuiButton(0, this.width / 2 - 100, j + 72 + 12, 98, 20, I18n.format("menu.options")));
         this.buttonList.add(new GuiButton(4, this.width / 2 + 2, j + 72 + 12, 98, 20, I18n.format("menu.quit")));
-
-        this.mc.setConnectedToRealms(false);
     }
 
     private void addSingleplayerMultiplayerButtons(final int p_73969_1_, final int p_73969_2_) {

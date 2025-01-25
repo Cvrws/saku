@@ -205,11 +205,6 @@ public class GuiIngame extends Gui
             this.spectatorGui.renderSelectedItem(scaledresolution);
         }
 
-        if (this.mc.isDemo())
-        {
-            this.renderDemo(scaledresolution);
-        }
-
         if (this.mc.gameSettings.showDebugInfo)
         {
             this.overlayDebug.renderDebugInfo(scaledresolution);
@@ -468,25 +463,6 @@ public class GuiIngame extends Gui
         }
 
         this.mc.mcProfiler.endSection();
-    }
-
-    public void renderDemo(ScaledResolution scaledRes)
-    {
-        /*this.mc.mcProfiler.startSection("demo");
-        String s = "";
-
-        if (this.mc.world.getTotalWorldTime() >= 120500L)
-        {
-            s = I18n.format("demo.demoExpired", new Object[0]);
-        }
-        else
-        {
-            s = I18n.format("demo.remainingTime", new Object[] {StringUtils.ticksToElapsedTime((int)(120500L - this.mc.world.getTotalWorldTime()))});
-        }
-
-        int i = this.getFontRenderer().width(s);
-        this.getFontRenderer().drawWithShadow(s, (float)(scaledRes.getScaledWidth() - i - 10), 5.0F, 16777215);
-        this.mc.mcProfiler.endSection();*/
     }
 
     protected boolean showCrosshair()
