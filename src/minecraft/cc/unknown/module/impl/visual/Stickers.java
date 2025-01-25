@@ -29,24 +29,31 @@ import net.minecraft.util.ResourceLocation;
 
 @ModuleInfo(aliases = "Stickers", description = "Stickers/Pegatinas", category = Category.VISUALS)
 public final class Stickers extends Module {
-	
-	private final ModeValue haloType = new ModeValue("Halo Type", this)
-			.add(new SubMode("Shiroko"))
-			.add(new SubMode("Hoshino"))
-			.add(new SubMode("Aris"))
-			.add(new SubMode("Natsu"))
-			.add(new SubMode("Reisa"))
-			.add(new SubMode("None"))
-			.setDefault("None");
-
-	private final BooleanValue showInFirstPerson = new BooleanValue("First Person", this, true, () -> haloType.is("None"));
 
 	private final ModeValue stickerType = new ModeValue("Sticker Type", this)
 			.add(new SubMode("Shiroko"))
-			.add(new SubMode("53XO"))
+			.add(new SubMode("Jupo"))
 			.add(new SubMode("Mika"))
+			.add(new SubMode("Ai Hoshino"))
+			.add(new SubMode("Astolfo"))
+			.add(new SubMode("Elf"))
+			.add(new SubMode("Kiwi"))
+			.add(new SubMode("Kumi"))
+			.add(new SubMode("Kurumi"))
+			.add(new SubMode("Magic"))
+			.add(new SubMode("Mai"))
+			.add(new SubMode("Megumin Cat"))
+			.add(new SubMode("Utena"))
+			.add(new SubMode("Uzaki Chan"))
+			.add(new SubMode("Halflin"))
+			.add(new SubMode("Komi San"))
+			.add(new SubMode("Hideri"))
+			.add(new SubMode("Gwen Bunny"))
+			.add(new SubMode("Fujiwara"))
+			.add(new SubMode("Akari"))
+			.add(new SubMode("Typh"))
 			.add(new SubMode("None"))
-			.setDefault("53XO");
+			.setDefault("Jupo");
 	
 	private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));
 	private final Vector2f scale = new Vector2f(RenderUtil.GENERIC_SCALE, RenderUtil.GENERIC_SCALE);
@@ -63,39 +70,70 @@ public final class Stickers extends Module {
             case "Shiroko":
                 sticker = new StickerData("sakura/images/shiroko.png", 85, 160);
                 break;
-            case "53XO":
+            case "Jupo":
                 sticker = new StickerData("sakura/images/jupo.png", 85, 130);
                 break;
             case "Mika":
                 sticker = new StickerData("sakura/images/mika.png", 95, 160);
                 break;
+            case "Ai Hoshino":
+            	sticker = new StickerData("sakura/images/ai.png", 95, 160);
+            	break;
+            case "Astolfo":
+            	sticker = new StickerData("sakura/images/astolfo.png", 95, 160);
+            	break;
+            case "Elf":
+            	sticker = new StickerData("sakura/images/elf.png", 95, 160);
+            	break;
+            case "Kiwi":
+            	sticker = new StickerData("sakura/images/kiwi.png", 95, 160);
+            	break;
+            case "Kumi":
+            	sticker = new StickerData("sakura/images/kumi.png", 95, 160);
+            	break;
+            case "Kurumi":
+            	sticker = new StickerData("sakura/images/kurumi.png", 100, 180);
+            	break;
+            case "Magic":
+            	sticker = new StickerData("sakura/images/magic.png", 95, 160);
+            	break;
+            case "Mai":
+            	sticker = new StickerData("sakura/images/mai.png", 95, 160);
+            	break;
+            case "Megumin Cat":
+            	sticker = new StickerData("sakura/images/megumin.png", 95, 160);
+            	break;
+            case "Utena":
+            	sticker = new StickerData("sakura/images/utena.png", 95, 160);
+            	break;
+            case "Uzaki Chan":
+            	sticker = new StickerData("sakura/images/uzaki.png", 95, 160);
+            	break;
+            case "Halflin":
+            	sticker = new StickerData("sakura/images/manolo.png", 95, 160);
+            	break;
+            case "Komi San":
+            	sticker = new StickerData("sakura/images/komi.png", 95, 160);
+            	break;
+            case "Hideri":
+            	sticker = new StickerData("sakura/images/hideri.png", 95, 160);
+            	break;
+            case "Fujiwara":
+            	sticker = new StickerData("sakura/images/fujiwara.png", 95, 160);
+            	break;
+            case "Gwen Bunny":
+            	sticker = new StickerData("sakura/images/bunny.png", 95, 160);
+            	break;
+            case "Akari":
+            	sticker = new StickerData("sakura/images/akari.png", 95, 160);
+            	break;
+            case "Typh":
+            	sticker = new StickerData("sakura/images/typh.png", 95, 160);
+            	break;
         }
 
         if (sticker != null) {
             RenderUtil.image(new ResourceLocation(sticker.imagePath), (int) pos.x, (int) pos.y, sticker.width, sticker.height);
-        }
-    };
-    
-    @EventLink
-    public final Listener<Render3DEvent> onRender3D = event -> {
-        if (mc.gameSettings.thirdPersonView == 0 && !showInFirstPerson.getValue()) return;
-        
-        switch (haloType.getValue().getName()) {
-            case "Shiroko":
-                HaloRenderer.drawShirokoHalo(event);
-                break;
-            case "Hoshino":
-                HaloRenderer.drawHoshinoHalo(event);
-                break;
-            case "Aris":
-                HaloRenderer.drawArisHalo(event);
-                break;
-            case "Natsu":
-                HaloRenderer.drawNatsuHalo(event);
-                break;
-            case "Reisa":
-                HaloRenderer.drawReisaHalo(event);
-                break;
         }
     };
     

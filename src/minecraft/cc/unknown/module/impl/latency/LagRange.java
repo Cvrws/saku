@@ -1,5 +1,7 @@
 package cc.unknown.module.impl.latency;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -28,7 +30,9 @@ import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.TargetUtil;
+import cc.unknown.util.player.prediction.PredictProcess;
 import cc.unknown.util.player.rotation.RotationUtil;
+import cc.unknown.util.render.RenderUtil;
 import cc.unknown.util.structure.geometry.Doble;
 import cc.unknown.util.structure.geometry.Vector2f;
 import cc.unknown.value.impl.BooleanValue;
@@ -58,10 +62,13 @@ public class LagRange extends Module {
 	private final NumberValue lagTime = new NumberValue("Lag Time", this, 50, 0, 500, 10, () -> !mode.is("Tick"));
 	private final NumberValue delay = new NumberValue("Delay", this, 150, 50, 2000, 50, () -> !mode.is("Tick") && !mode.is("Lag"));
 	private final BooleanValue checkTeams = new BooleanValue("Check Teams", this, false, () -> !mode.is("Tick"));
+    public final BooleanValue displayPredictPos = new BooleanValue("Dislay Predict Pos", this, false, () -> !mode.is("Lag"));
+
 
 	private int durationTicks = 0, waitTicks = 0, delayTicks = 0;
 	private long lastLagTime = 0;
 	
+    public final List<PredictProcess> predictProcesses = new ArrayList<>();
 	private LinkedList<Packet> outPackets = new LinkedList();
 	private StopWatch timer = new StopWatch();
 	public EntityPlayer target;
@@ -73,11 +80,20 @@ public class LagRange extends Module {
 
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		if (!isInGame() || !MoveUtil.isMoving() || getModule(Scaffold.class).isEnabled() || getModule(LegitScaffold.class).isEnabled()) return;
+		if (!isInGame() || !MoveUtil.isMoving() || isAnyModuleEnabled(Scaffold.class, LegitScaffold.class)) return;
 		
 		if (mode.is("Tick")) {
 			tickMode();
 		}
+		
+        if(displayPredictPos.getValue()) {
+            double x = predictProcesses.get(predictProcesses.size() - 1).getPosition().xCoord - mc.getRenderManager().viewerPosX;
+            double y = predictProcesses.get(predictProcesses.size() - 1).getPosition().yCoord - mc.getRenderManager().viewerPosY;
+            double z = predictProcesses.get(predictProcesses.size() - 1).getPosition().zCoord - mc.getRenderManager().viewerPosZ;
+            AxisAlignedBB box = mc.player.getEntityBoundingBox().expand(0.1D, 0.1, 0.1);
+            AxisAlignedBB axis = new AxisAlignedBB(box.minX - mc.player.posX + x, box.minY - mc.player.posY + y, box.minZ - mc.player.posZ + z, box.maxX - mc.player.posX + x, box.maxY - mc.player.posY + y, box.maxZ - mc.player.posZ + z);
+            RenderUtil.drawSelectionBoundingBox(axis, new Color(50, 255, 255, 150).getRGB());
+        }
 	};
 	
 	@EventLink

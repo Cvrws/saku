@@ -1,15 +1,12 @@
 package cc.unknown.module.impl.latency;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.MoveEvent;
-import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.player.TimerManipulationEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
@@ -19,18 +16,14 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.player.SimulatedPlayer;
 import cc.unknown.util.player.TargetUtil;
-import cc.unknown.util.player.rotation.RotationUtil;
+import cc.unknown.util.player.prediction.PredictProcess;
+import cc.unknown.util.player.prediction.SimulatedPlayer;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
-import cc.unknown.value.impl.BoundsNumberValue;
-import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
-import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
 
 @ModuleInfo(aliases = "Timer Manipulation", description = "Utilia timer para hacer un tp", category = Category.LATENCY)
 public class TimerManipulation extends Module {
@@ -57,9 +50,9 @@ public class TimerManipulation extends Module {
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
         if(displayPredictPos.getValue()) {
-            double x = predictProcesses.get(predictProcesses.size() - 1).position.xCoord - mc.getRenderManager().viewerPosX;
-            double y = predictProcesses.get(predictProcesses.size() - 1).position.yCoord - mc.getRenderManager().viewerPosY;
-            double z = predictProcesses.get(predictProcesses.size() - 1).position.zCoord - mc.getRenderManager().viewerPosZ;
+            double x = predictProcesses.get(predictProcesses.size() - 1).getPosition().xCoord - mc.getRenderManager().viewerPosX;
+            double y = predictProcesses.get(predictProcesses.size() - 1).getPosition().yCoord - mc.getRenderManager().viewerPosY;
+            double z = predictProcesses.get(predictProcesses.size() - 1).getPosition().zCoord - mc.getRenderManager().viewerPosZ;
             AxisAlignedBB box = mc.player.getEntityBoundingBox().expand(0.1D, 0.1, 0.1);
             AxisAlignedBB axis = new AxisAlignedBB(box.minX - mc.player.posX + x, box.minY - mc.player.posY + y, box.minZ - mc.player.posZ + z, box.maxX - mc.player.posX + x, box.maxY - mc.player.posY + y, box.maxZ - mc.player.posZ + z);
             RenderUtil.drawSelectionBoundingBox(axis, new Color(50, 255, 255, 150).getRGB());
@@ -119,18 +112,18 @@ public class TimerManipulation extends Module {
 
 	    PredictProcess predictedProcess = predictProcesses.get(index);
 
-	    boolean isWithinDistance = predictedProcess.position.distanceTo(target.getPositionVector()) <
+	    boolean isWithinDistance = predictedProcess.getPosition().distanceTo(target.getPositionVector()) <
 	                               mc.player.getPositionVector().distanceTo(target.getPositionVector());
 
 	    boolean isWithinActiveRange = MathUtil.inBetween(
 	        3,
 	        4,
-	        predictedProcess.position.distanceTo(target.getPositionVector())
+	        predictedProcess.getPosition().distanceTo(target.getPositionVector())
 	    );
 
 	    boolean canSeeEachOther = mc.player.canEntityBeSeen(target) && target.canEntityBeSeen(mc.player);
 
-	    boolean isNotCollided = !predictedProcess.isCollidedHorizontally;
+	    boolean isNotCollided = !predictedProcess.isCollidedHorizontally();
 
 	    return isWithinDistance && isWithinActiveRange && canSeeEachOther && isNotCollided;
 	}
@@ -148,19 +141,5 @@ public class TimerManipulation extends Module {
             return true;
         }
         return false;
-    }
-	
-    public static class PredictProcess {
-        private final Vec3 position;
-        private final float fallDistance;
-        private final boolean onGround;
-        private final boolean isCollidedHorizontally;
-
-        public PredictProcess(Vec3 position, float fallDistance, boolean onGround, boolean isCollidedHorizontally) {
-            this.position = position;
-            this.fallDistance = fallDistance;
-            this.onGround = onGround;
-            this.isCollidedHorizontally = isCollidedHorizontally;
-        }
     }
  }

@@ -7,9 +7,6 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.module.impl.player.Clutch;
-import cc.unknown.module.impl.world.LegitScaffold;
-import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.MoveUtil;
@@ -20,7 +17,6 @@ import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 
@@ -36,11 +32,14 @@ public class WTap extends Module {
 	private BoundsNumberValue hits = new BoundsNumberValue("Hits", this, 1, 2, 0, 10, 1);
 	private NumberValue delay = new NumberValue("Delay", this, 500, 50, 1000, 10);
 	private NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
-	private NumberValue sprintingTicks = new NumberValue("Sprinting Ticks", this, 50, 0, 100, 10, () -> !mode.is("Silent"));
-	private NumberValue hurtTime = new NumberValue("HurtTime", this, 10, 1, 10, 10);
+	private NumberValue sprintingTicks = new NumberValue("Sprinting Ticks", this, 50, 0, 600, 10, () -> !mode.is("Silent"));
+	private NumberValue targetHurtime = new NumberValue("Target HurtTime", this, 10, 1, 10, 1);
+	private NumberValue ownHurtime = new NumberValue("Own HurtTime", this, 10, 1, 10, 1);
 	private BooleanValue rotationThreshold = new BooleanValue("Rotation Threshold", this, false);
 	private NumberValue yawDiff = new NumberValue("Yaw Difference", this, 120, 0, 180, 1, () -> !rotationThreshold.getValue());
-
+	private BooleanValue distance = new BooleanValue("Distance", this, false);
+	private NumberValue distanceToEntity = new NumberValue("Distance To Entity", this, 4, 3, 10, 1, () -> !distance.getValue());
+	
 	private BooleanValue onlyGround = new BooleanValue("Only Ground", this, false);
 	private BooleanValue onlyMove = new BooleanValue("Only Move", this, false);
 	private BooleanValue onlyMoveForward = new BooleanValue("Only Forward", this, false, () -> !onlyMove.getValue());
@@ -50,33 +49,31 @@ public class WTap extends Module {
 
 	private final StopWatch stopWatch = new StopWatch();
 	private int ticks;
-	private EntityPlayer target = null;
-
+	
 	@EventLink
 	public final Listener<AttackEvent> onAttack = event -> {
 		double chanceValue = chance.getValue().doubleValue();
 		double randomFactor = MathUtil.getRandomFactor(chanceValue);
 		if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
-		if (mc.player == null) return;
-		
-		if (event.getTarget() instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) event.getTarget();
-		
-			if (player.hurtTime > hurtTime.getValue().intValue()) return;
-			if (!stopWatch.finished(delay.getValue().intValue())) return;
-			if (ignoreTeammates.getValue() && PlayerUtil.isTeam(player, true, true)) return;
-		    if (checkLiquids.getValue() && shouldJump()) return;
-		    if (PlayerUtil.unusedNames(player)) return;
-		    if (onlyWeapons.getValue() && !PlayerUtil.isHoldingWeapon()) return;
-			if (onlyMove.getValue() && (!MoveUtil.isMoving())) return;
-			if (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f) return;
-			if (onlyGround.getValue() && !mc.player.onGround) return;
-		    if (rotationThreshold.getValue() && exceedsRotationThreshold(player)) return;
-
-			if (stopWatch.finished(delay.getValue().intValue())) {
-				stopWatch.reset();
-				ticks = 2;
-			}
+		EntityPlayer player = (EntityPlayer) event.getTarget();
+			
+		if (mc.player == null || player == null) return;	
+		if (player.hurtTime > targetHurtime.getValue().intValue()) return;
+		if (mc.player.hurtTime > ownHurtime.getValue().intValue()) return;
+		if (!stopWatch.finished(delay.getValue().intValue())) return;
+		if (ignoreTeammates.getValue() && PlayerUtil.isTeam(player, true, true)) return;
+		if (checkLiquids.getValue() && shouldJump()) return;
+		if (PlayerUtil.unusedNames(player)) return;
+		if (onlyWeapons.getValue() && !PlayerUtil.isHoldingWeapon()) return;
+		if (onlyMove.getValue() && !MoveUtil.isMoving()) return;
+		if (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f) return;
+		if (onlyGround.getValue() && !mc.player.onGround) return;
+		if (rotationThreshold.getValue() && exceedsRotationThreshold(player)) return;
+		if (distance.getValue() && mc.player.getDistanceToEntity(player) <= distanceToEntity.getValue().floatValue()) return;
+		    
+		if (stopWatch.finished(delay.getValue().intValue())) {
+			stopWatch.reset();
+			ticks = 2;
 		}
 	};
 	

@@ -73,14 +73,6 @@ public class MoveUtil implements Accessor {
 
         return rotationYaw;
     }
-    
-    public boolean isMoving2() {
-        return isMoving2(mc.player);
-    }
-
-    public boolean isMoving2(EntityLivingBase entity) {
-        return entity.moveForward != 0 || entity.moveStrafing != 0;
-    }
 
     public boolean enoughMovementForSprinting() {
         return Math.abs(mc.player.moveForward) >= 0.8F || Math.abs(mc.player.moveStrafing) >= 0.8F;

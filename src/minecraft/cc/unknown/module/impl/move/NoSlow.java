@@ -38,11 +38,9 @@ import net.minecraft.util.BlockPos;
 public class NoSlow extends Module {
 	
 	private final ModeValue mode = new ModeValue("Type", this)
-			.add(new SubMode("Pre Switch"))
-			.add(new SubMode("Post Switch"))
-			.add(new SubMode("Switch"))
+			.add(new SubMode("Universocraft"))
 			.add(new SubMode("Vanilla"))
-			.setDefault("Vanilla");
+			.setDefault("Universocraft");
 	
 	private final NumberValue itemDurationTime = new NumberValue("Item Use Duration", this, 1, 0, 1, 1);
 	private final NumberValue forward = new NumberValue("Forward", this, 1, 0.2, 1, 0.1);
@@ -78,22 +76,6 @@ public class NoSlow extends Module {
 			}
 		}
 	};
-	
-	@EventLink
-	public final Listener<PostMotionEvent> onPostMotion = event -> {
-	    if (!isInGame()) return;
-	    ItemStack item = PlayerUtil.getItemStack();
-	    if (item == null) return;
-	    
-        if (mc.player.getItemInUseDuration() == itemDurationTime.getValue().intValue()) {
-			if ((sword.getValue() && item.getItem() instanceof ItemSword) || (bow.getValue() && item.getItem() instanceof ItemBow) || (comestibles.getValue() && item.getItem() instanceof ItemFood || item.getItem() instanceof ItemBucketMilk || item.getItem() instanceof ItemPotion)) {
-				if (mode.is("Post Switch")) {
-					PacketUtil.send(new C09PacketHeldItemChange((mc.player.inventory.currentItem + 1) % 3));
-					PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
-				}
-			}
-        }
-	};
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
@@ -104,13 +86,8 @@ public class NoSlow extends Module {
         if (mc.player.getItemInUseDuration() == itemDurationTime.getValue().intValue()) {
 			if ((sword.getValue() && item.getItem() instanceof ItemSword) || (bow.getValue() && item.getItem() instanceof ItemBow) || (comestibles.getValue() && item.getItem() instanceof ItemFood || item.getItem() instanceof ItemBucketMilk || item.getItem() instanceof ItemPotion)) {
 				switch (mode.getValue().getName()) {
-				case "Pre Switch":
-					PacketUtil.send(new C09PacketHeldItemChange((mc.player.inventory.currentItem + 1) % 3));
-					PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
-					break;
-				case "Switch":
-			        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 8 + 1));
-			        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 7 + 2));
+				case "Universocraft":
+			        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 2 + 1));
 			        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
 					break;
 				}

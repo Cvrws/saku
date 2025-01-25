@@ -12,6 +12,7 @@ import cc.unknown.event.impl.other.WorldChangeEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.HitSlowDownEvent;
 import cc.unknown.event.impl.player.PostMotionEvent;
+import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
@@ -284,13 +285,13 @@ public final class KillAura extends Module {
 		if (target == null || mc.player.isDead) {
 			return;
 		}
-
-		if (this.canBlock()) {
-			this.preBlock();
-		}
 		
 		if (this.canBlock()) {
 			this.postAttackBlock();
+		}
+		
+		if (this.canBlock()) {
+			this.preBlock();
 		}
 
 		/*
@@ -483,11 +484,18 @@ public final class KillAura extends Module {
             	PacketUtil.send(new C08PacketPlayerBlockPlacement(mc.player.inventory.getCurrentItem()));
             }
 			break;
+			
+		}
+	}
+
+	private void preBlock() {
+		switch (autoBlock.getValue().getName()) {
 		case "Post":
 			boolean furry = false;
 			
 			if (PlayerUtil.isHoldingWeapon()) {
 				block(false);
+				mc.gameSettings.keyBindUseItem.pressed = true;
 			}
 			
 			if (mc.player.hurtTime > 0) {
@@ -500,13 +508,6 @@ public final class KillAura extends Module {
 				unblock();
 			}
 			break;
-			
-		}
-	}
-
-	private void preBlock() {
-		switch (autoBlock.getValue().getName()) {
-
 		}
 	}
 
@@ -514,7 +515,6 @@ public final class KillAura extends Module {
 		switch (autoBlock.getValue().getName()) {
         case "New NCP":
             mc.playerController.sendUseItem(mc.player, mc.world, mc.player.getHeldItem());
-
             mc.gameSettings.keyBindUseItem.pressed = true;
             blocking = true;
             break;
@@ -536,7 +536,8 @@ public final class KillAura extends Module {
 
     public void unblock() {
         if (blocking) {
-        	mc.gameSettings.keyBindUseItem.pressed = false;
+            mc.gameSettings.keyBindUseItem.pressed = false;
+
         	blocking = false;
         }
     }

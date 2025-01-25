@@ -16,7 +16,7 @@ import cc.unknown.event.impl.player.MinimumMotionEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreStrafeEvent;
 import cc.unknown.module.impl.combat.KillAura;
-import cc.unknown.module.impl.ghost.BlockHit;
+import cc.unknown.module.impl.ghost.AutoBlock;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.player.PlayerUtil;
 import de.florianmichael.vialoadingbase.ViaLoadingBase;
@@ -40,7 +40,7 @@ public class ViaHandler implements Accessor {
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
-			if (PlayerUtil.getItemStack() != null && PlayerUtil.getItemStack().getItem() instanceof ItemSword && (mc.gameSettings.keyBindUseItem.isPressed() || getModule(KillAura.class).blocking || getModule(BlockHit.class).block)) {
+			if (PlayerUtil.getItemStack() != null && PlayerUtil.getItemStack().getItem() instanceof ItemSword && (mc.gameSettings.keyBindUseItem.isPressed() || getModule(KillAura.class).blocking || getModule(AutoBlock.class).block)) {
                 PacketWrapper useItem = PacketWrapper.create(29, null, Via.getManager().getConnectionManager().getConnections().iterator().next());
                 useItem.write(Type.VAR_INT, 1);
                 PacketUtil.sendToServer(useItem, Protocol1_8To1_9.class, true, true);

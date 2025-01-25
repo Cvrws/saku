@@ -1,5 +1,7 @@
 package cc.unknown.module.impl.move;
 
+import org.lwjgl.input.Keyboard;
+
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
@@ -36,10 +38,11 @@ public class Sprint extends Module {
                     !mc.player.isSneaking() && !mc.player.isUsingItem());
     	}
     };
-
+    
     @Override
     public void onDisable() {
         mc.player.setSprinting(mc.gameSettings.keyBindSprint.isKeyDown());
         mc.player.omniSprint = false;
     }
+    
 }

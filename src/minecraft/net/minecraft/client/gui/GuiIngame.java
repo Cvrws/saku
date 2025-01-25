@@ -9,6 +9,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import cc.unknown.Sakura;
+import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.block.material.Material;
@@ -45,7 +46,6 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StringUtils;
 import net.minecraft.world.border.WorldBorder;
 import net.optifine.CustomColors;
 
@@ -58,7 +58,7 @@ public class GuiIngame extends Gui
     private final Minecraft mc;
     private final RenderItem itemRenderer;
     private final GuiNewChat persistantChatGUI;
-    private int updateCounter;
+    public int updateCounter;
     private String recordPlaying = "";
     private int recordPlayingUpFor;
     private boolean recordIsPlaying;
@@ -77,7 +77,7 @@ public class GuiIngame extends Gui
     private int playerHealth = 0;
     private int lastPlayerHealth = 0;
     private long lastSystemTime = 0L;
-    private long healthUpdateCounter = 0L;
+    public long healthUpdateCounter = 0L;
 
     public GuiIngame(Minecraft mcIn)
     {
@@ -346,7 +346,7 @@ public class GuiIngame extends Gui
             float f = this.zLevel;
             this.zLevel = -90.0F;
             this.drawTexturedModalRect(i - 91, sr.getScaledHeight() - 22, 0, 0, 182, 22);
-            this.drawTexturedModalRect(i - 91 - 1 + entityplayer.inventory.currentItem * 20, sr.getScaledHeight() - 22 - 1, 0, 22, 24, 22);
+            this.drawTexturedModalRect(i - 91 - 1 + SpoofHandler.getSpoofedSlot() * 20, sr.getScaledHeight() - 22 - 1, 0, 22, 24, 22);
             this.zLevel = f;
             GlStateManager.enableRescaleNormal();
             GlStateManager.enableBlend();

@@ -12,6 +12,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.InventoryUtil;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
 import net.minecraft.block.Block;
@@ -94,7 +95,7 @@ public class InventoryManager extends Module {
 	                }
 	            }
 
-	            if (InventoryUtil.isBadStack(is, true, true) || garbageBlocks.contains(Block.getBlockFromItem(is.getItem())) || garbageItems.contains(is.getItem()) || (is.getItem() == Items.potionitem && isNegativePotion(is)) || throwGarbage.getValue()) {
+	            if (InventoryUtil.isBadStack(is, true, true) || garbageBlocks.contains(Block.getBlockFromItem(is.getItem())) || garbageItems.contains(is.getItem()) && throwGarbage.getValue()) {
 	                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, 1, 4, mc.player);
 	                stopWatch.reset();
 	                if (speed.getValue().doubleValue() != 0) break;

@@ -59,7 +59,7 @@ public final class FakeLag extends Module {
     private final NumberValue recoilTime = new NumberValue("Time", this, 750, 0, 2000, 50);
     private final BoundsNumberValue allowedDistToEnemy = new BoundsNumberValue("Enemy Distance", this, 1.5, 3.5, 0, 6, 0.1);
     
-    private final BooleanValue blinkOnAction = new BooleanValue("Blink on Action", this, true);
+    private final BooleanValue blinkOnAction = new BooleanValue("Blink on Action", this, false);
     private final BooleanValue pauseOnNoMove = new BooleanValue("Pause on No Move", this, true);
     private final BooleanValue pauseOnChest = new BooleanValue("Pause on Chest", this, true);
 

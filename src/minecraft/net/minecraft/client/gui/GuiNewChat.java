@@ -177,7 +177,7 @@ public class GuiNewChat extends Gui
 		}
 
 		final UnlimitedChat unlimitedChat = Sakura.instance.getModuleManager().get(UnlimitedChat.class);
-		int maxSize = unlimitedChat == null || !unlimitedChat.isEnabled() ? 200 : 100000;
+		int maxSize = unlimitedChat == null || unlimitedChat.isEnabled() ? 100000 : 200;
 
 		while (this.drawnChatLines.size() > maxSize) {
 			this.drawnChatLines.remove(this.drawnChatLines.size() - 1);

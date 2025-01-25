@@ -12,6 +12,7 @@ import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.MoveInputEvent;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.event.impl.player.AttackEvent;
+import cc.unknown.event.impl.player.BlockAABBEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
@@ -23,11 +24,13 @@ import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
+import net.minecraft.block.BlockAir;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.potion.Potion;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 
 @ModuleInfo(aliases = "Velocity", description = "Modifica tu kb.", category = Category.COMBAT)
@@ -37,6 +40,7 @@ public final class Velocity extends Module {
 			.add(new SubMode("Hypixel"))
 			.add(new SubMode("Legit Prediction"))
 			.add(new SubMode("Intave Reduce"))
+			.add(new SubMode("Universocraft"))
 			.setDefault("Hypixel");
 
 	private final NumberValue horizontal = new NumberValue("Horizontal", this, 100, 0, 100, 1, () -> !mode.is("Hypixel"));
@@ -55,6 +59,7 @@ public final class Velocity extends Module {
 
 	private int ticks;
 	private int counter;
+	private boolean s12 = false;
 	private double motionY, motionX, motionZ;
 	private EntityLivingBase target;
 	
@@ -82,7 +87,6 @@ public final class Velocity extends Module {
 	            Vec3 targetVec = new Vec3(target.posX, target.posY, target.posZ);
 	            vec3s.sort(Comparator.comparingDouble(targetVec::distanceXZTo));
 	            if (!event.isSneak()) {
-	                ChatUtil.display(map.get(vec3s.get(0)));
 	                event.setStrafe(map.get(vec3s.get(0)));
 	                mc.player.moveStrafing = map.get(vec3s.get(0));
 	            }
@@ -109,12 +113,12 @@ public final class Velocity extends Module {
 	@EventLink(value = Priority.VERY_LOW)
 	public final Listener<PacketReceiveEvent> onPacketReceive = event -> {
 		if (event.isCancelled()) return;
-		
+		final Packet<?> packet = event.getPacket();
+
+	
 		if (mode.is("Hypixel")) {
 			if (mc.player.onGround && onlyAir.getValue()) return;
-	
-			final Packet<?> packet = event.getPacket();
-	
+		
 			final double horizontal = this.horizontal.getValue().doubleValue();
 			final double vertical = this.vertical.getValue().doubleValue();
 			final boolean onExplode = this.onExplode.getValue();

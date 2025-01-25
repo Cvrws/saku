@@ -76,9 +76,9 @@ public final class NameTags extends Module {
                 }
                 name = color + distance + "m§r " + name;
             }
-            
+
+            player.setAlwaysRenderNameTag(true);
             event.setCancelled();
-            player.setAlwaysRenderNameTag(false);
             
             renderNewTag(event, player, name);
         }

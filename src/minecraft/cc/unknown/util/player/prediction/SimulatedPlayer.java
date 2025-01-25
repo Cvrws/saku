@@ -1,4 +1,4 @@
-package cc.unknown.util.player;
+package cc.unknown.util.player.prediction;
 
 import java.util.List;
 

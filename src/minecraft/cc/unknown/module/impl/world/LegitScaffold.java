@@ -3,9 +3,8 @@ package cc.unknown.module.impl.world;
 import org.lwjgl.input.Keyboard;
 
 import cc.unknown.event.Listener;
-import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.input.MoveInputEvent;
+import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.handlers.SpoofHandler;
@@ -13,10 +12,11 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.SlotUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
+import cc.unknown.value.impl.ModeValue;
+import cc.unknown.value.impl.SubMode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.client.settings.KeyBinding;
@@ -29,6 +29,11 @@ import net.minecraft.world.WorldSettings;
 @ModuleInfo(aliases = "Legit Scaffold", description = "Shiftea al borde de cada bloque", category = Category.WORLD)
 public class LegitScaffold extends Module {
 	
+	private final ModeValue mode = new ModeValue("Mode", this)
+			.add(new SubMode("Tick"))
+			.add(new SubMode("Vanilla"))
+			.setDefault("Vanilla");
+			
 	private final BoundsNumberValue delay = new BoundsNumberValue("Delay", this, 100, 200, 0, 500, 1);
 	private final BooleanValue pitchCheck = new BooleanValue("Pitch Check", this, true);
 	private final BoundsNumberValue pitchRange = new BoundsNumberValue("Pitch Range", this, 70, 85, 0, 90, 1, () -> !pitchCheck.getValue());
@@ -61,11 +66,49 @@ public class LegitScaffold extends Module {
 		shouldBridge = false;
 	}
 
-	@EventLink(value = Priority.LOW)
+	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
+		if (mode.is("Vanilla")) {
+			move();
+		}
+	};
+	
+	@EventLink
+	public final Listener<PlayerTickEvent> onPlayerTick = event -> {
+		if (mode.is("Tick")) {
+			move();
+		}
+	};
+
+	@EventLink
+	public final Listener<Render3DEvent> onRender3D = event -> {
+		if (!isInGame()) return;
+		
+        if (lastSlot == -1) {
+        	lastSlot = mc.player.inventory.currentItem;
+        }
+        
+		final int slot = SlotUtil.findBlock();
+		
+        if (slot == -1) {
+            return;
+        }
+        
+        if (slotSwap.getValue() && shouldSkipBlockCheck()) {
+        	mc.player.inventory.currentItem = slot;
+        }
+        
+        if (spoof.getValue()) SpoofHandler.startSpoofing(lastSlot);
+
+		if (mc.currentScreen == null || mc.player.getHeldItem() == null) return;
+
+	};
+	
+	private void move() {
 		if (!(mc.currentScreen == null) || !isInGame()) return;
 		if (mc.playerController.getCurrentGameType() == WorldSettings.GameType.SPECTATOR) return;
 
+		
 		if (hideSneak.getValue()) {
 			mc.player.hideSneakHeight.reset();
 		}
@@ -147,31 +190,7 @@ public class LegitScaffold extends Module {
 			isShifting = false;
 			setSneak(false);
 		}
-	};
-
-	@EventLink
-	public final Listener<Render3DEvent> onRender3D = event -> {
-		if (!isInGame()) return;
-		
-        if (lastSlot == -1) {
-        	lastSlot = mc.player.inventory.currentItem;
-        }
-        
-		final int slot = SlotUtil.findBlock();
-		
-        if (slot == -1) {
-            return;
-        }
-        
-        if (slotSwap.getValue() && shouldSkipBlockCheck()) {
-        	mc.player.inventory.currentItem = slot;
-        }
-        
-        if (spoof.getValue()) SpoofHandler.startSpoofing(lastSlot);
-
-		if (mc.currentScreen == null || mc.player.getHeldItem() == null) return;
-
-	};
+	}
 
 	private void swapToBlock() {
 		for (int slot = 0; slot <= 8; slot++) {

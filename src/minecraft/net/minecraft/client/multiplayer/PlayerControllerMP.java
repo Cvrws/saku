@@ -278,7 +278,6 @@ public class PlayerControllerMP {
 
 	private boolean isHittingPosition(BlockPos pos) {
         final ItemStack itemstack = mc.player.inventory.alternativeSlot ? PlayerUtil.getItemStack() : mc.player.getHeldItem();
-		//ItemStack itemstack = this.mc.player.getHeldItem();
 		boolean flag = this.currentItemHittingBlock == null && itemstack == null;
 
 		if (this.currentItemHittingBlock != null && itemstack != null) {
@@ -358,8 +357,7 @@ public class PlayerControllerMP {
 			return false;
 		} else {
 			this.syncCurrentPlayItem();
-			this.netClientHandler
-					.addToSendQueue(new C08PacketPlayerBlockPlacement(playerIn.inventory.getCurrentItem()));
+			this.netClientHandler.addToSendQueue(new C08PacketPlayerBlockPlacement(playerIn.inventory.getCurrentItem()));
 			int i = itemStackIn.stackSize;
 			ItemStack itemstack = itemStackIn.useItemRightClick(worldIn, playerIn);
 

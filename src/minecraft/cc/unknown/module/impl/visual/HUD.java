@@ -27,10 +27,9 @@ import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
 
 @ModuleInfo(aliases = "HUD", description = "Renderiza los modulos del cliente.", category = Category.VISUALS, autoEnabled = true)
@@ -41,7 +40,6 @@ public final class HUD extends Module {
             .add(new SubMode("Fade"))
             .setDefault("Fade");
 
-    private final BooleanValue dropShadow = new BooleanValue("Drop Shadow", this, true);
     private final BooleanValue bloom = new BooleanValue("Bloom", this, true);
     private final BooleanValue renderCategories = new BooleanValue("Render Category", this, true);
     public final BooleanValue hideCombat = new BooleanValue("Hide Combat", this, false, () -> !renderCategories.getValue());
@@ -67,15 +65,15 @@ public final class HUD extends Module {
         allModuleComponents = Sakura.instance.getModuleManager().getAll().stream()
                 .sorted(Comparator.comparingDouble(module -> -font.width(module.getName())))
                 .map(ModuleComponent::new)
-                .peek(module -> module.setTranslatedName(module.getModule().getName()))
+                .peek(module -> module.translatedName = module.module.getName())
                 .collect(Collectors.toList());
     }
 
     @EventLink
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
         activeModuleComponents = allModuleComponents.stream()
-                .filter(module -> module.getModule().shouldDisplay(this))
-                .sorted(Comparator.comparingDouble(module -> -(module.getNameWidth())))
+                .filter(module -> module.module.shouldDisplay(this))
+                .sorted(Comparator.comparingDouble(module -> -module.nameWidth))
                 .collect(Collectors.toList());
     };
     
@@ -95,26 +93,26 @@ public final class HUD extends Module {
         float totalHeight = activeModuleComponents.size() * moduleSpacing;
 
         for (ModuleComponent module : activeModuleComponents) {
-            String name = getName(module);
+            String name = (lowercase.getValue() ? module.translatedName.toLowerCase() : module.translatedName).replace(" ", "");
             Color color = getTheme().getFirstColor();
 
             if (colorMode.is("Fade")) {
-                color = getTheme().getAccentColor(new Vector2d(0, module.getPosition().getY()));
+                color = getTheme().getAccentColor(new Vector2d(0, module.position.getY()));
             }
 
-            module.setColor(color);
-            module.setNameWidth(font.width(name));
-            module.setDisplayName(name);
+            module.color = color;
+            module.nameWidth = font.width(name);
+            module.displayName = name;
         }
 
         float screenWidth = event.getScaledResolution().getScaledWidth();
         Vector2f position = new Vector2f(0, 0);
 
         for (ModuleComponent module : activeModuleComponents) {
-            module.targetPosition = new Vector2d(screenWidth - module.getNameWidth(), position.getY());
+            module.targetPosition = new Vector2d(screenWidth - module.nameWidth, position.getY());
 
-            if (!module.getModule().isEnabled()) {
-                module.targetPosition = new Vector2d(screenWidth + module.getNameWidth(), position.getY());
+            if (!module.module.isEnabled()) {
+                module.targetPosition = new Vector2d(screenWidth + module.nameWidth, position.getY());
             } else {
                 position.setY(position.getY() + moduleSpacing);
             }
@@ -125,26 +123,14 @@ public final class HUD extends Module {
         }
 
         for (ModuleComponent module : activeModuleComponents) {
-            double x = module.getPosition().getX();
-            double y = module.getPosition().getY();
-            Color finalColor = module.getColor();
+            double x = module.position.getX();
+            double y = module.position.getY();
+            Color finalColor = module.color;
 
             setRenderRectangle(module, x, y, widthOffset, totalHeight);
-            drawText(module, x, y - 0.7f, finalColor.getRGB());
+            font.draw(module.displayName, x, y - 0.7f, finalColor.getRGB());
         }
     };
-
-    private void drawText(ModuleComponent component, double x, double y, int hex) {
-        if (dropShadow.getValue()) {
-            font.drawWithShadow(component.getDisplayName(), x, y, hex);
-        } else {
-            font.draw(component.getDisplayName(), x, y, hex);
-        }
-    }
-
-    private String getName(ModuleComponent module) {
-        return (lowercase.getValue() ? module.getTranslatedName().toLowerCase() : module.getTranslatedName()).replace(" ", "");
-    }
 
     private void setRenderRectangle(ModuleComponent module, double x, double y, double widthOffset, float totalHeight) {
         float rectangleWidth = (float) (module.nameWidth + 3 + widthOffset);
@@ -153,11 +139,19 @@ public final class HUD extends Module {
             RenderUtil.drawBloomShadow((float) (x - widthOffset), (float) (y - 3f), rectangleWidth, (float) moduleSpacing + 4, 6, 0, new Color(0, 0, 0, alphaBackground.getValue().intValue()));
         }
 
-        RenderUtil.rectangle(x - widthOffset, y - 3f, rectangleWidth, moduleSpacing, new Color(0, 0, 0, alphaBackground.getValue().intValue()));
+        int color = new Color(0, 0, 0, alphaBackground.getValue().intValue()).getRGB();
+
+        // Usamos Gui.drawRect
+        Gui.drawRect(
+            (int) (x - widthOffset),                       // x1
+            (int) (y - 3f),                                // y1
+            (int) (x - widthOffset + rectangleWidth),      // x2
+            (int) (y - 3f + moduleSpacing),                // y2
+            color                                          // color ARGB
+        );
+        
     }
     
-    @Getter
-    @Setter
     @RequiredArgsConstructor
     public final class ModuleComponent {
 
@@ -167,7 +161,6 @@ public final class HUD extends Module {
         public float nameWidth = 0;
         public Color color = Color.WHITE;
         public String translatedName = "";
-        public boolean hidden = false;
         public String displayName = "";
     }
 }

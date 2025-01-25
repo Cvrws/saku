@@ -50,7 +50,7 @@ public class TargetUtil implements Accessor {
 			boolean teams, boolean friends) {
 		return mc.world.loadedEntityList.stream()
 				.filter(entity -> entity instanceof EntityLivingBase && entity != mc.getRenderViewEntity()
-				&& (!FriendUtil.isFriend(entity.getName()) || friends)
+				&& (FriendUtil.isFriend(entity.getName()) && friends)
 				&& (!(entity instanceof EntityPlayer) || players)
 				&& (!(entity instanceof IMob || entity instanceof INpc) || mobs)
 				&& (!(entity instanceof EntityAnimal || entity instanceof EntityAmbientCreature || entity instanceof EntityWaterMob) || animals)

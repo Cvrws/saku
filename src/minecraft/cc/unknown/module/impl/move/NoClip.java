@@ -77,7 +77,7 @@ public class NoClip extends Module {
 
 		mc.player.noClip = true;
 
-		if (isAnyModuleEnabled(Scaffold.class, KillAura.class) || getModule(KillAura.class).target != null)
+		if (isAnyModuleEnabled(Scaffold.class) || getModule(KillAura.class).target != null)
 			return;
 
 		final int slot = SlotUtil.findBlock();

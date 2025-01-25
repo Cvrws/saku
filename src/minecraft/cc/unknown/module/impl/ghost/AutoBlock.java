@@ -24,8 +24,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.C09PacketHeldItemChange;
 
-@ModuleInfo(aliases = "Block Hit", description = "Block hitea automáticamente", category = Category.GHOST)
-public class BlockHit extends Module {
+@ModuleInfo(aliases = "Auto Block", description = ">:3c", category = Category.GHOST)
+public class AutoBlock extends Module {
 
 	private final BoundsNumberValue duration = new BoundsNumberValue("Block Duration", this, 20, 100, 1, 500, 1);
 	private final BoundsNumberValue distance = new BoundsNumberValue("Distance", this, 0, 3, 0, 6, 0.1);

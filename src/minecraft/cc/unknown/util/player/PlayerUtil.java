@@ -32,6 +32,9 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityEgg;
 import net.minecraft.init.Blocks;
@@ -780,6 +783,26 @@ public class PlayerUtil implements Accessor {
         return new Vec3(motionX, motionY, motionZ);
     }
     
+    public float getStrafeYaw(float forward, float strafe) {
+        float yaw = mc.player.rotationYaw;
+
+        if((forward == 0) && (strafe == 0))
+            return yaw;
+
+        boolean reversed = forward < 0.0f;
+        float strafingYaw = 90.0f *
+                (forward > 0.0f ? 0.5f : reversed ? -0.5f : 1.0f);
+
+        if (reversed)
+            yaw += 180.0f;
+        if (strafe > 0.0f)
+            yaw -= strafingYaw;
+        else if (strafe < 0.0f)
+            yaw += strafingYaw;
+
+        return yaw;
+    }
+    
     public Item getItem() {
         ItemStack stack = getItemStack();
         return stack == null ? null : stack.getItem();
@@ -890,6 +913,11 @@ public class PlayerUtil implements Accessor {
         }
         return true;
     }
+    
+    public void fakeDamage() {
+        mc.player.handleStatusUpdate((byte) 2);
+        mc.ingameGUI.healthUpdateCounter = mc.ingameGUI.updateCounter + 20;
+    }
 
     public boolean overVoid() {
         return overVoid(mc.player.posX, mc.player.posY, mc.player.posZ);
@@ -897,5 +925,47 @@ public class PlayerUtil implements Accessor {
     
     public boolean unusedNames(EntityPlayer player) {
     	return player.getName().contains("[NPC]") || player.getName().contains("MEJORAS") || player.getName().contains("CLICK DERECHO");
+    }
+    
+    public boolean canTarget(Entity entity, boolean idk) {
+        if(entity != null && entity != mc.player) {
+            EntityLivingBase entityLivingBase = null;
+
+            if(entity instanceof EntityLivingBase) {
+                entityLivingBase = (EntityLivingBase)entity;
+            }
+
+            boolean isTeam = isTeam(mc.player, entity);
+            boolean isVisible = (!entity.isInvisible());
+
+            return !(entity instanceof EntityArmorStand) && isVisible && (entity instanceof EntityPlayer && !isTeam && !idk || entity instanceof EntityAnimal || entity instanceof EntityMob || entity instanceof EntityLivingBase && entityLivingBase.isEntityAlive());
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean isTeam(EntityPlayer player, Entity entity) {
+        if(entity instanceof EntityPlayer && ((EntityPlayer)entity).getTeam() != null && player.getTeam() != null) {
+            Character entity_3 = entity.getDisplayName().getFormattedText().charAt(3);
+            Character player_3 = player.getDisplayName().getFormattedText().charAt(3);
+            Character entity_2 = entity.getDisplayName().getFormattedText().charAt(2);
+            Character player_2 = player.getDisplayName().getFormattedText().charAt(2);
+            boolean isTeam = false;
+            if (entity_3.equals(player_3) && entity_2.equals(player_2)) {
+                isTeam = true;
+            } else {
+                Character entity_1 = entity.getDisplayName().getFormattedText().charAt(1);
+                Character player_1 = player.getDisplayName().getFormattedText().charAt(1);
+                Character entity_0 = entity.getDisplayName().getFormattedText().charAt(0);
+                Character player_0 = player.getDisplayName().getFormattedText().charAt(0);
+                if(entity_1.equals(player_1) && Character.isDigit(0) && entity_0.equals(player_0)) {
+                    isTeam = true;
+                }
+            }
+
+            return isTeam;
+        } else {
+            return true;
+        }
     }
 }

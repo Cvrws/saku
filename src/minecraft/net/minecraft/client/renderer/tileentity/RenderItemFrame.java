@@ -34,6 +34,8 @@ import net.optifine.reflect.Reflector;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
 
+import cc.unknown.Sakura;
+import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 
 public class RenderItemFrame extends Render<EntityItemFrame>
@@ -53,6 +55,12 @@ public class RenderItemFrame extends Render<EntityItemFrame>
 
     public void doRender(EntityItemFrame entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
+    	FPSBoost fpsBoost = Sakura.instance.getModuleManager().get(FPSBoost.class);
+    	
+    	if (fpsBoost.isEnabled() && fpsBoost.noItemFrame.getValue()) {
+    		return;
+    	}
+    	
         GlStateManager.pushMatrix();
         BlockPos blockpos = entity.getHangingPosition();
         double d0 = (double)blockpos.getX() - entity.posX + x;

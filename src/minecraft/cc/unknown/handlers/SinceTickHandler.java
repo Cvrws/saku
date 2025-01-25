@@ -4,8 +4,8 @@ import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.event.impl.netty.PacketSendEvent;
-import cc.unknown.event.impl.other.TeleportEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.player.TickEndEvent;
@@ -15,6 +15,7 @@ import cc.unknown.util.Accessor;
 import cc.unknown.util.structure.geometry.Vector3d;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 
 public class SinceTickHandler implements Accessor {
 
@@ -36,10 +37,12 @@ public class SinceTickHandler implements Accessor {
 			}
         }
 	};
-	
+
 	@EventLink(value = Priority.VERY_LOW)
-	public final Listener<TeleportEvent> onTeleport = event -> {
-		mc.player.ticksSinceTeleport = 0;
+	public final Listener<PacketReceiveEvent> onReceive = event -> {
+		if (event.getPacket() instanceof S08PacketPlayerPosLook) {
+			mc.player.ticksSinceTeleport = 0;
+		}
 	};
     
     @EventLink(value = Priority.VERY_LOW)
