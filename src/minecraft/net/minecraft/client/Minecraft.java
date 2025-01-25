@@ -67,6 +67,8 @@ import cc.unknown.event.impl.other.PlayerTickEvent;
 import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.TickEndEvent;
+import cc.unknown.event.impl.render.PostRenderTickEvent;
+import cc.unknown.event.impl.render.PreRenderTickEvent;
 import cc.unknown.module.impl.latency.TimerManipulation;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.module.impl.player.NoClickDelay;
@@ -950,9 +952,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		this.mcProfiler.endSection();
 
 		if (!this.skipRenderWorld) {
+			Sakura.instance.getEventBus().handle(new PreRenderTickEvent());
 			this.mcProfiler.endStartSection("gameRenderer");
 			this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks, i);
 			this.mcProfiler.endSection();
+			Sakura.instance.getEventBus().handle(new PostRenderTickEvent());
 		}
 
 		this.mcProfiler.endSection();

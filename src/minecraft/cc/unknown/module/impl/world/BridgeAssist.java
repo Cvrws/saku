@@ -1,6 +1,7 @@
 package cc.unknown.module.impl.world;
 
-import com.ibm.icu.impl.duration.impl.Utils;
+import java.util.HashMap;
+import java.util.Map;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -18,163 +19,165 @@ import net.minecraft.util.MathHelper;
 @ModuleInfo(aliases = "Bridge Assist", description = ">:3c", category = Category.WORLD)
 public class BridgeAssist extends Module {
 
-    private final ModeValue mode = new ModeValue("Mode", this)
-            .add(new SubMode("Godbridge"))
-            .add(new SubMode("Moonwalk"))
-            .add(new SubMode("Breezily"))
-            .add(new SubMode("Normal"))
-            .setDefault("Godbridge");
+	private final ModeValue mode = new ModeValue("Mode", this)
+			.add(new SubMode("Godbridge"))
+			.add(new SubMode("Moonwalk"))
+			.add(new SubMode("Breezily"))
+			.add(new SubMode("Normal"))
+			.setDefault("Godbridge");
 
-    private final NumberValue delay = new NumberValue("Wait Time", this, 70, 0, 200, 1);
-    private final BooleanValue holdShift = new BooleanValue("Only work when holding shift", this, false);
-    private final NumberValue assistRange = new NumberValue("Assist Range", this, 10, 1, 40, 1);
-    private final NumberValue assistSpeed = new NumberValue("Assist Speed", this, 4, 1, 100, 1);
+	private final NumberValue delay = new NumberValue("Wait Time", this, 70, 0, 200, 1);
+	private final BooleanValue holdShift = new BooleanValue("Only work when holding shift", this, false);
+	private final NumberValue assistRange = new NumberValue("Assist Range", this, 10, 1, 40, 1);
+	private final NumberValue assistSpeed = new NumberValue("Assist Speed", this, 4, 1, 100, 1);
 
-    private boolean waitingForAim;
-    private boolean gliding;
-    private long startWaitTime;
-    
-    private final float[] godbridgePos = {75.6f, -315, -225, -135, -45, 0, 45, 135, 225, 315};
-    private final float[] moonwalkPos = {79.6f, -340, -290, -250, -200, -160, -110, -70, -20, 0, 20, 70, 110, 160, 200, 250, 290, 340};
-    private final float[] breezilyPos = {79.9f, -360, -270, -180, -90, 0, 90, 180, 270, 360};
-    private final float[] normalPos = {78f, -315, -225, -135, -45, 0, 45, 135, 225, 315};
-    private double speedYaw, speedPitch;
-    private float targetYaw, targetPitch;
+	private boolean waitingForAim;
+	private boolean gliding;
+	private long startWaitTime;
+	private final float[] godbridgePos = { 75.6f, -315, -225, -135, -45, 0, 45, 135, 225, 315 };
+	private final float[] moonwalkPos = { 79.6f, -340, -290, -250, -200, -160, -110, -70, -20, 0, 20, 70, 110, 160, 200, 250, 290, 340 };
+	private final float[] breezilyPos = { 79.9f, -360, -270, -180, -90, 0, 90, 180, 270, 360 };
+	private final float[] normalPos = { 78f, -315, -225, -135, -45, 0, 45, 135, 225, 315 };
+	private float speedYaw, speedPitch;
+	private float waitingForYaw, waitingForPitch;
 
-    @Override
-    public void onEnable() {
-        this.waitingForAim = false;
-        this.gliding = false;
-        super.onEnable();
-    }
+	@Override
+	public void onEnable() {
+		waitingForAim = false;
+		gliding = false;
+		super.onEnable();
+	}
 
-    @EventLink
-    public final Listener<PreMotionEvent> onPreMotion = event -> {
-        if (!isInGame() || !(PlayerUtil.isOverAir() && event.isOnGround())) {
-            return;
-        }
+	@EventLink
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
+		if (!isInGame()) {
+			return;
+		}
 
-        if (holdShift.getValue() && !event.isSneaking()) {
-            return;
-        }
+		if (!(PlayerUtil.isOverAir() && mc.player.onGround)) {
+			return;
+		}
 
-        if (gliding) {
-            handleGliding(event);
-        } else {
-            handleAiming(event);
-        }
-    };
+		if (holdShift.getValue()) {
+			if (!mc.player.isSneaking()) {
+				return;
+			}
+		}
 
-    private void handleGliding(PreMotionEvent event) {
-        float currentYaw = normalizeAngle(event.getYaw());
-        float currentPitch = normalizeAngle(event.getPitch());
+		if (gliding) {
+		    float actualYaw = mc.player.rotationYaw;
+		    float actualPitch = mc.player.rotationPitch;
 
-        double deltaYaw = Math.abs(currentYaw - speedYaw);
-        double deltaPitch = Math.abs(currentPitch - speedPitch);
+		    float modifiedYaw = actualYaw % 360;
+		    float modifiedPitch = actualPitch % 360;
 
-        if (deltaYaw <= speedYaw) {
-            event.setYaw(targetYaw);
-        }
+		    float targetYaw = waitingForYaw;
+		    float targetPitch = waitingForPitch;
 
-        if (deltaPitch <= speedPitch) {
-            event.setPitch(targetPitch);
-        }
+		    float currentYaw = modifiedYaw - speedYaw;
+		    float currentYaw2 = modifiedYaw + speedYaw;
+		    float currentPitch = modifiedPitch - speedPitch;
+		    float currentPitch2 = modifiedPitch + speedPitch;
 
-        adjustRotation(event, currentYaw, currentPitch);
-    }
+		    currentYaw = Math.abs(currentYaw);
+		    currentYaw2 = Math.abs(currentYaw2);
+		    currentPitch = Math.abs(currentPitch);
+		    currentPitch2 = Math.abs(currentPitch2);
 
-    private void handleAiming(PreMotionEvent event) {
-        if (!waitingForAim) {
-            waitingForAim = true;
-            startWaitTime = System.currentTimeMillis();
-            return;
-        }
+		    if (speedYaw > currentYaw || speedYaw > currentYaw2) {
+		        mc.player.rotationYaw = targetYaw;
+		    }
+		    if (speedPitch > currentPitch || speedPitch > currentPitch2) {
+		        mc.player.rotationPitch = targetPitch;
+		    }
 
-        if (System.currentTimeMillis() - startWaitTime < delay.getValue().intValue()) {
-            return;
-        }
+		    mc.player.rotationYaw = adjustRotation(mc.player.rotationYaw, targetYaw, speedYaw);
+		    mc.player.rotationPitch = adjustRotation(mc.player.rotationPitch, targetPitch, speedPitch);
 
-        float currentYaw = normalizeAngle(event.getYaw());
-        float currentPitch = normalizeAngle(event.getPitch());
-        float range = assistRange.getValue().floatValue();
-        int speed = assistSpeed.getValue().intValue();
+		    if (mc.player.rotationYaw == targetYaw && mc.player.rotationPitch == targetPitch) {
+		        gliding = false;
+		        waitingForAim = false;
+		    }
+		}
 
-        float[] positions = getModePositions(mode.getValue().getName());
-        if (positions != null && isInRange(positions[0], currentPitch, range)) {
-            for (int i = 1; i < positions.length; i++) {
-                if (isInRange(positions[i], currentYaw, range)) {
-                    aimAt(positions[0], positions[i], currentYaw, currentPitch, speed);
-                    waitingForAim = false;
-                    return;
-                }
-            }
-        }
-        waitingForAim = false;
-    }
+		if (!waitingForAim) {
+			waitingForAim = true;
+			startWaitTime = System.currentTimeMillis();
+			return;
+		}
 
-    private void adjustRotation(PreMotionEvent event, float yaw, float pitch) {
-        if (yaw < targetYaw) {
-            event.setYaw(yaw + (float) speedYaw);
-        } else if (yaw > targetYaw) {
-            event.setYaw(yaw - (float) speedYaw);
-        }
+		if (System.currentTimeMillis() - startWaitTime < delay.getValue().intValue())
+			return;
 
-        if (pitch > targetPitch) {
-            event.setPitch(pitch - (float) speedPitch);
-        }
+		float fuckedYaw = mc.player.rotationYaw;
+		float fuckedPitch = mc.player.rotationPitch;
 
-        if (yaw == targetYaw && pitch == targetPitch) {
-            gliding = false;
-            waitingForAim = false;
-        }
-    }
+		float yaw = fuckedYaw - ((int) fuckedYaw / 360) * 360;
+		float pitch = fuckedPitch - ((int) fuckedPitch / 360) * 360;
+		float speed = assistSpeed.getValue().floatValue();
+		float range = assistRange.getValue().floatValue();
 
-    private float normalizeAngle(float angle) {
-        return angle % 360;
-    }
+		Map<String, float[]> modePositions = new HashMap<>();
+		modePositions.put("Godbridge", godbridgePos);
+		modePositions.put("Moonwalk", moonwalkPos);
+		modePositions.put("Breezily", breezilyPos);
+		modePositions.put("Normal", normalPos);
 
-    private boolean isInRange(float target, float current, float range) {
-        return Math.abs(target - current) <= range;
-    }
+		float[] positions = modePositions.get(mode.getValue().getName());
 
-    private float[] getModePositions(String modeName) {
-        switch (modeName) {
-            case "Godbridge":
-                return godbridgePos;
-            case "Moonwalk":
-                return moonwalkPos;
-            case "Breezily":
-                return breezilyPos;
-            case "Normal":
-                return normalPos;
-            default:
-                return null;
-        }
-    }
+		if (positions != null && positions.length > 1) {
+		    if (positions[0] >= (pitch - range) && positions[0] <= (pitch + range)) {
+		        for (int k = 1; k < positions.length; k++) {
+		            if (positions[k] >= (yaw - range) && positions[k] <= (yaw + range)) {
+		                aimAt(positions[0], positions[k], fuckedYaw, fuckedPitch, speed);
+		                waitingForAim = false;
+		                return;
+		            }
+		        }
+		    }
+		}
+		waitingForAim = false;
+	};
 
-    private void aimAt(float targetPitch, float targetYaw, float currentYaw, float currentPitch, double speed) {
-        float[] adjusted = getGCDRotations(new float[]{targetYaw, targetPitch}, new float[]{currentYaw, currentPitch});
-        mc.player.rotationYaw = maxAngleChange(currentYaw, adjusted[0], (float) speed);
-        mc.player.rotationPitch = maxAngleChange(currentPitch, adjusted[1], (float) speed);
-    }
+	public void aimAt(float pitch, float yaw, float fuckedYaw, float fuckedPitch, float speed) {
+		float[] gcd = getGCDRotations(new float[] { yaw, pitch + ((int) fuckedPitch / 360) * 360 }, new float[] { mc.player.prevRotationYaw, mc.player.prevRotationPitch });
+		float cappedYaw = maxAngleChange(mc.player.prevRotationYaw, gcd[0], speed);
+		float cappedPitch = maxAngleChange(mc.player.prevRotationPitch, gcd[1], speed);
+		mc.player.rotationPitch = cappedPitch;
+		mc.player.rotationYaw = cappedYaw;
+	}
 
-    private float[] getGCDRotations(float[] rotations, float[] prevRots) {
-        float yawDiff = rotations[0] - prevRots[0];
-        float pitchDiff = rotations[1] - prevRots[1];
-        double gcd = getGCD();
-        rotations[0] -= yawDiff % gcd;
-        rotations[1] -= pitchDiff % gcd;
-        return rotations;
-    }
+	private double getGCD() {
+		final float sens = mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
+		final float pow = sens * sens * sens * 8.0F;
+		return pow * 0.15D;
+	}
 
-    private double getGCD() {
-        float sensitivity = mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
-        float multiplier = sensitivity * sensitivity * sensitivity * 8.0F;
-        return multiplier * 0.15D;
-    }
+	private float[] getGCDRotations(final float[] rotations, final float[] prevRots) {
+		final float yawDif = rotations[0] - prevRots[0];
+		final float pitchDif = rotations[1] - prevRots[1];
+		final double gcd = getGCD();
 
-    private float maxAngleChange(float prev, float target, float maxTurn) {
-        float diff = MathHelper.wrapAngleTo180_float(target - prev);
-        return prev + MathHelper.clamp_float(diff, -maxTurn, maxTurn);
-    }
+		rotations[0] -= yawDif % gcd;
+		rotations[1] -= pitchDif % gcd;
+		return rotations;
+	}
+
+	private float maxAngleChange(final float prev, final float now, final float maxTurn) {
+		float dif = MathHelper.wrapAngleTo180_float(now - prev);
+		if (dif > maxTurn)
+			dif = maxTurn;
+		if (dif < -maxTurn)
+			dif = -maxTurn;
+		return prev + dif;
+	}
+	
+	private float adjustRotation(float currentRotation, double targetRotation, float speed) {
+	    if (currentRotation < targetRotation) {
+	        return currentRotation + speed;
+	    } else if (currentRotation > targetRotation) {
+	        return currentRotation - speed;
+	    }
+	    return currentRotation;
+	}
 }
