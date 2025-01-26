@@ -54,14 +54,14 @@ public class ScriptScreen implements Screen, Accessor {
         scale.x += -PADDING * 2 - clickGUI.sidebar.sidebarWidth;
         
         String headerText = "Your Scripts";
-        Fonts.ROBOTO.get(18, Weight.LIGHT).draw(headerText, position.x, position.y, Color.WHITE.getRGB());
+        Fonts.MAISON.get(18, Weight.NONE).draw(headerText, position.x, position.y, Color.WHITE.getRGB());
 
         if (yourScripts.size() > 0) {
             String itemCountText = Integer.toString(yourScripts.size());
-            Fonts.ROBOTO.get(18, Weight.LIGHT).draw(itemCountText, position.x + Fonts.ROBOTO.get(18, Weight.LIGHT).width(headerText) + PADDING / 2f, position.y, Sakura.instance.getThemeManager().getTheme().getAccentColor().getRGB());
+            Fonts.MAISON.get(18, Weight.NONE).draw(itemCountText, position.x + Fonts.MAISON.get(18, Weight.NONE).width(headerText) + PADDING / 2f, position.y, Sakura.instance.getThemeManager().getTheme().getAccentColor().getRGB());
         }
         
-        position.y += PADDING + Fonts.ROBOTO.get(18, Weight.LIGHT).height();
+        position.y += PADDING + Fonts.MAISON.get(18, Weight.NONE).height();
 
         for (final ModuleComponent module : this.yourScripts) {
             module.draw(new Vector2d(clickGUI.position.x + clickGUI.sidebar.sidebarWidth + 8, position.y), mouseX, mouseY, partialTicks);

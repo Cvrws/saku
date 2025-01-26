@@ -1,11 +1,12 @@
 package net.minecraft.client.renderer.entity;
 
-import com.google.common.collect.Maps;
-
-import cc.unknown.util.render.font.impl.mc.FontRenderer;
-
 import java.util.Collections;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
+
+import cc.unknown.util.render.FreeLookUtil;
+import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
@@ -265,11 +266,14 @@ public class RenderManager
                 this.playerViewY = (float)(j * 90 + 180);
                 this.playerViewX = 0.0F;
             }
-        }
-        else
-        {
-            this.playerViewY = livingPlayerIn.prevRotationYaw + (livingPlayerIn.rotationYaw - livingPlayerIn.prevRotationYaw) * partialTicks;
-            this.playerViewX = livingPlayerIn.prevRotationPitch + (livingPlayerIn.rotationPitch - livingPlayerIn.prevRotationPitch) * partialTicks;
+        } else {
+            if (FreeLookUtil.freelooking) {
+                this.playerViewY = FreeLookUtil.cameraYaw + 180;
+                this.playerViewX = FreeLookUtil.cameraPitch;
+            } else {
+                this.playerViewY = livingPlayerIn.prevRotationYaw + (livingPlayerIn.rotationYaw - livingPlayerIn.prevRotationYaw) * partialTicks;
+                this.playerViewX = livingPlayerIn.prevRotationPitch + (livingPlayerIn.rotationPitch - livingPlayerIn.prevRotationPitch) * partialTicks;
+            }
         }
 
         if (optionsIn.thirdPersonView == 2)

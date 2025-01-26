@@ -26,9 +26,9 @@ import cc.unknown.event.impl.other.RotationEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
-import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.ui.menu.saku.SakuMenu;
 import cc.unknown.util.Accessor;
+import cc.unknown.util.render.FreeLookUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -711,20 +711,24 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 				GlStateManager.rotate(f6, 0.0F, 1.0F, 0.0F);
 			}
 		} else if (!this.mc.gameSettings.debugCamEnable) {
-			GlStateManager.rotate(
-					entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 1.0F,
-					0.0F, 0.0F);
+            if (FreeLookUtil.freelooking) {
+                GlStateManager.rotate(FreeLookUtil.cameraPitch, 1f, 0f, 0f);
+            } else {
+                GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 1.0F, 0.0F, 0.0F);
+            }
 
 			if (entity instanceof EntityAnimal) {
 				EntityAnimal entityanimal = (EntityAnimal) entity;
 				GlStateManager.rotate(entityanimal.prevRotationYawHead
 						+ (entityanimal.rotationYawHead - entityanimal.prevRotationYawHead) * partialTicks + 180.0F,
 						0.0F, 1.0F, 0.0F);
-			} else {
-				GlStateManager.rotate(
-						entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F,
-						0.0F, 1.0F, 0.0F);
-			}
+			} else if (FreeLookUtil.freelooking) {
+                GlStateManager.rotate(FreeLookUtil.cameraYaw, 0f, 1f, 0f);
+            }
+            else
+            {
+                GlStateManager.rotate(entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F, 0.0F, 1.0F, 0.0F);
+            }
 		}
 
 		GlStateManager.translate(0.0F, -f, 0.0F);
@@ -1090,9 +1094,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 
 		this.mc.mcProfiler.startSection("mouse");
 
-		FreeLook freeLook = getModule(FreeLook.class);
-
-		if (this.mc.inGameHasFocus && flag && (freeLook != null && !freeLook.isEnabled())) {
+		if (this.mc.inGameHasFocus && flag) {
 			this.mc.mouseHelper.mouseXYChange();
 			final float f = this.mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
 			final float f1 = f * f * f * 8.0F;
@@ -1102,7 +1104,6 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 
 			EntityRenderer.mouseAddedX = EntityRenderer.mouseAddedY = 0;
 
-			
 			if (this.mc.gameSettings.invertMouse) {
 				i = -1;
 			}
@@ -1114,12 +1115,20 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 				this.smoothCamPartialTicks = partialTicks;
 				f2 = this.smoothCamFilterX * f4;
 				f3 = this.smoothCamFilterY * f4;
+                if (FreeLookUtil.freelooking) {
+                    FreeLookUtil.overrideMouse(f2, f3 * (float)i);
+                } else {
+                    this.mc.player.setAngles(f2, f3 * (float)i);
+                }
 			} else {
+				if (FreeLookUtil.freelooking) {
+					FreeLookUtil.overrideMouse(f2, f3 * (float)i);
+				} else {
+					this.mc.player.setAngles(f2, f3 * (float)i);
+				}
 				this.smoothCamYaw = 0.0F;
 				this.smoothCamPitch = 0.0F;
 			}
-
-			this.mc.player.setAngles(f2, f3 * (float) i);
 
 			RotationEvent event = new RotationEvent();
 			Sakura.instance.getEventBus().handle(event);

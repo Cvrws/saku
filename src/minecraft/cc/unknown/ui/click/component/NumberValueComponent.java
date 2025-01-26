@@ -26,7 +26,7 @@ public class NumberValueComponent extends ValueComponent implements Accessor {
     private double renderPercentage;
     private boolean mouseOver;
     private float hoverTime;
-    public final TextBox valueDisplay = new TextBox(new Vector2d(0, 0), Fonts.ROBOTO.get(16, Weight.LIGHT), Colors.SECONDARY_TEXT.get(), TextAlign.LEFT, ((NumberValue) value).getDefaultValue().toString().replace(".0", ""), 45, "1234567890.");
+    public final TextBox valueDisplay = new TextBox(new Vector2d(0, 0), Fonts.MAISON.get(16, Weight.NONE), Colors.SECONDARY_TEXT.get(), TextAlign.LEFT, ((NumberValue) value).getDefaultValue().toString().replace(".0", ""), 45, "1234567890.");
 
     public NumberValueComponent(final Value<?> value) {
         super(value);
@@ -47,7 +47,7 @@ public class NumberValueComponent extends ValueComponent implements Accessor {
         final NumberValue numberValue = (NumberValue) this.value;
 
         String value = String.valueOf(numberValue.getValue().doubleValue());
-        final float valueWidth = Fonts.ROBOTO.get(16, Weight.LIGHT).width(this.value.getName()) + 7;
+        final float valueWidth = Fonts.MAISON.get(16, Weight.NONE).width(this.value.getName()) + 7;
 
         if (value.endsWith(".0")) {
             value = value.replace(".0", "");
@@ -62,7 +62,7 @@ public class NumberValueComponent extends ValueComponent implements Accessor {
         }
 
         // Draws name
-        Fonts.ROBOTO.get(16, Weight.LIGHT).draw(this.value.getName(), this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
+        Fonts.MAISON.get(16, Weight.NONE).draw(this.value.getName(), this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
 
         // Draws value
         this.valueDisplay.setPosition(new Vector2d(this.position.x + valueWidth + 105, this.position.y));
@@ -70,7 +70,6 @@ public class NumberValueComponent extends ValueComponent implements Accessor {
         this.valueDisplay.setWidth(20);
         this.valueDisplay.setColor(ColorUtil.withAlpha(this.valueDisplay.getColor(), opacity));
         this.valueDisplay.draw();
-//        Fonts.SF_ROUNDED.get(16, Weight.LIGHT).drawString(value, this.position.x + valueWidth + 105, this.position.y, this.getClickGUI().fontDarkColor.hashCode());
 
         // Draws background
         RenderUtil.roundedRectangle(this.position.x + valueWidth, this.position.y + 1.5F, SLIDER_WIDTH, 2, 1, Colors.BACKGROUND.getWithAlpha(opacity));

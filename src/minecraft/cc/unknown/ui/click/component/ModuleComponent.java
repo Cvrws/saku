@@ -62,7 +62,7 @@ public class ModuleComponent implements Accessor {
 
             final RiceGui clickGUI = this.getClickGUI();
 
-            // ROBOTO module background
+            // MAISON module background
             RenderUtil.roundedRectangle(position.x - 28, position.y, scale.x, scale.y, 6, Colors.OVERLAY.get());
             final Color fontColor = Colors.TEXT.getWithAlpha(module.isEnabled() ? 255 : 200);
 
@@ -73,14 +73,14 @@ public class ModuleComponent implements Accessor {
 
             // Draw the module's category if the user is searching
             /*if (clickGUI.getRenderedScreen() instanceof HomeScreen) {
-                Fonts.ROBOTO.get(15, Weight.LIGHT).draw("(" + module.getModuleInfo().category().getName() + ")", (float) (position.getX() + Fonts.ROBOTO.get(20, Weight.LIGHT).width(this.module.getName()) + 10F), (float) position.getY() + 10, ColorUtil.withAlpha(fontColor, 64).hashCode());
+                Fonts.MAISON.get(15, Weight.NONE).draw("(" + module.getModuleInfo().category().getName() + ")", (float) (position.getX() + Fonts.MAISON.get(20, Weight.NONE).width(this.module.getName()) + 10F), (float) position.getY() + 10, ColorUtil.withAlpha(fontColor, 64).hashCode());
             }*/
 
             // Draw module name
-            Fonts.ROBOTO.get(20, Weight.LIGHT).draw(this.module.getName(), (float) position.x - 20f, (float) position.y + 8, module.isEnabled() ? getTheme().getAccentColor(new Vector2d(0, position.y / 5)).getRGB() : fontColor.getRGB());
+            Fonts.MAISON.get(20, Weight.NONE).draw(this.module.getName(), (float) position.x - 20f, (float) position.y + 8, module.isEnabled() ? getTheme().getAccentColor(new Vector2d(0, position.y / 5)).getRGB() : fontColor.getRGB());
 
             // Draw description
-            Fonts.ROBOTO.get(15, Weight.LIGHT).draw(module.getModuleInfo().description(), (float) position.x - 20f,  (float) position.y + 25, ColorUtil.withAlpha(fontColor, 70).hashCode());
+            Fonts.MAISON.get(15, Weight.NONE).draw(module.getModuleInfo().description(), (float) position.x - 20f,  (float) position.y + 25, ColorUtil.withAlpha(fontColor, 70).hashCode());
 
             scale = new Vector2f(getClickGUI().moduleDefaultScale.x, height);
         }

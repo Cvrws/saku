@@ -138,65 +138,63 @@ public final class RotationHandler implements Accessor {
 		mc.player.rotationPitch = fixedRotations.y;
 	}
 
-	public static void smooth() {
-		if (!smoothed) {
-			float targetYaw = targetRotations.x;
-			float targetPitch = targetRotations.y;
+    public static void smooth() {
+        if (!smoothed) {
+            float targetYaw = targetRotations.x;
+            float targetPitch = targetRotations.y;
 
-			// Randomisation
-			if (raycast != null && (Math.abs(targetYaw - rotations.x) > 5 || Math.abs(targetPitch - rotations.y) > 5)) {
-				final Vector2f trueTargetRotations = new Vector2f(targetRotations.getX(), targetRotations.getY());
+            // Randomisation
+            if (raycast != null && (Math.abs(targetYaw - rotations.x) > 5 || Math.abs(targetPitch - rotations.y) > 5)) {
+                final Vector2f trueTargetRotations = new Vector2f(targetRotations.getX(), targetRotations.getY());
 
-				double speed = (Math.random() * Math.random() * Math.random()) * 20;
-				randomAngle += (float) ((20
-						+ (float) (Math.random() - 0.5) * (Math.random() * Math.random() * Math.random() * 360))
-						* (mc.player.ticksExisted / 10 % 2 == 0 ? -1 : 1));
+                double speed = (Math.random() * Math.random() * Math.random()) * 20;
+                randomAngle += (float) ((20 + (float) (Math.random() - 0.5) * (Math.random() * Math.random() * Math.random() * 360)) * (mc.player.ticksExisted / 10 % 2 == 0 ? -1 : 1));
 
-				offset.setX((float) (offset.getX() + -MathHelper.sin((float) Math.toRadians(randomAngle)) * speed));
-				offset.setY((float) (offset.getY() + MathHelper.cos((float) Math.toRadians(randomAngle)) * speed));
+                offset.setX((float) (offset.getX() + -MathHelper.sin((float) Math.toRadians(randomAngle)) * speed));
+                offset.setY((float) (offset.getY() + MathHelper.cos((float) Math.toRadians(randomAngle)) * speed));
 
-				targetYaw += offset.getX();
-				targetPitch += offset.getY();
+                targetYaw += offset.getX();
+                targetPitch += offset.getY();
 
-				if (!raycast.apply(new Vector2f(targetYaw, targetPitch))) {
-					randomAngle = (float) Math.toDegrees(Math.atan2(trueTargetRotations.getX() - targetYaw,
-							targetPitch - trueTargetRotations.getY())) - 180;
+                if (!raycast.apply(new Vector2f(targetYaw, targetPitch))) {
+                    randomAngle = (float) Math.toDegrees(Math.atan2(trueTargetRotations.getX() - targetYaw, targetPitch - trueTargetRotations.getY())) - 180;
 
-					targetYaw -= offset.getX();
-					targetPitch -= offset.getY();
+                    targetYaw -= offset.getX();
+                    targetPitch -= offset.getY();
 
-					offset.setX((float) (offset.getX() + -MathHelper.sin((float) Math.toRadians(randomAngle)) * speed));
-					offset.setY((float) (offset.getY() + MathHelper.cos((float) Math.toRadians(randomAngle)) * speed));
+                    offset.setX((float) (offset.getX() + -MathHelper.sin((float) Math.toRadians(randomAngle)) * speed));
+                    offset.setY((float) (offset.getY() + MathHelper.cos((float) Math.toRadians(randomAngle)) * speed));
 
-					targetYaw = targetYaw + offset.getX();
-					targetPitch = targetPitch + offset.getY();
-				}
+                    targetYaw = targetYaw + offset.getX();
+                    targetPitch = targetPitch + offset.getY();
+                }
 
-				if (!raycast.apply(new Vector2f(targetYaw, targetPitch))) {
-					offset.setX(0);
-					offset.setY(0);
+                if (!raycast.apply(new Vector2f(targetYaw, targetPitch))) {
+                    offset.setX(0);
+                    offset.setY(0);
 
-					targetYaw = (float) (targetRotations.x + Math.random() * 2);
-					targetPitch = (float) (targetRotations.y + Math.random() * 2);
-				}
-			}
+                    targetYaw = (float) (targetRotations.x + Math.random() * 2);
+                    targetPitch = (float) (targetRotations.y + Math.random() * 2);
+                }
+            }
 
-			rotations = RotationUtil.smooth(new Vector2f(targetYaw, targetPitch), rotationSpeed + Math.random());
+            rotations = RotationUtil.smooth(new Vector2f(targetYaw, targetPitch),
+                    rotationSpeed + Math.random());
 
-			if (correctMovement == MoveFix.SILENT || correctMovement == MoveFix.STRICT) {
-				mc.player.movementYaw = rotations.x;
-			}
+            if (correctMovement == MoveFix.SILENT || correctMovement == MoveFix.STRICT) {
+                mc.player.movementYaw = rotations.x;
+            }
 
-			mc.player.velocityYaw = rotations.x;
-		}
+            mc.player.velocityYaw = rotations.x;
+        }
 
-		smoothed = true;
+        smoothed = true;
 
-		/*
-		 * Updating MouseOver
-		 */
-		mc.entityRenderer.getMouseOver(1);
-	}
+        /*
+         * Updating MouseOver
+         */
+        mc.entityRenderer.getMouseOver(1);
+    }
 
 	public static boolean isActive() {
 		return active;

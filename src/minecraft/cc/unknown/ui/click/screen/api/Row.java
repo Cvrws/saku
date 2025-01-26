@@ -43,10 +43,10 @@ public class Row extends ArrayList<Element> implements Accessor {
         try {
             RiceGui clickGUI = getClickGUI();
             this.position = new Vector2f(position.x, position.y);
-            Fonts.ROBOTO.get(18, Weight.LIGHT).draw(name, this.position.x, this.position.y, Color.WHITE.getRGB());
+            Fonts.MAISON.get(18, Weight.NONE).draw(name, this.position.x, this.position.y, Color.WHITE.getRGB());
 
             String size = this.size() + "";
-            Fonts.ROBOTO.get(18, Weight.LIGHT).draw(size, this.position.x + Fonts.ROBOTO.get(18, Weight.LIGHT).width(name) + PADDING / 2f, this.position.y, getTheme().getFirstColor().getRGB());
+            Fonts.MAISON.get(18, Weight.NONE).draw(size, this.position.x + Fonts.MAISON.get(18, Weight.NONE).width(name) + PADDING / 2f, this.position.y, getTheme().getFirstColor().getRGB());
 
             if (!this.isEmpty()) {
                 scrollUtil.onRender(over());
@@ -56,7 +56,7 @@ public class Row extends ArrayList<Element> implements Accessor {
                     scrollUtil.target = Math.round(scrollUtil.target / (PADDING + get(0).getScale().x)) * (PADDING + get(0).getScale().x);
                 }
 
-                this.position.y += PADDING + Fonts.ROBOTO.get(18, Weight.LIGHT).height();
+                this.position.y += PADDING + Fonts.MAISON.get(18, Weight.NONE).height();
                 this.position.x += scrollUtil.getScroll();
 
                 for (Element element : this) {
@@ -76,7 +76,7 @@ public class Row extends ArrayList<Element> implements Accessor {
     }
 
     public int getHeight() {
-        return (int) ((isEmpty() ? 0 : get(0).getScale().getY()) + PADDING + Fonts.ROBOTO.get(18, Weight.LIGHT).height());
+        return (int) ((isEmpty() ? 0 : get(0).getScale().getY()) + PADDING + Fonts.MAISON.get(18, Weight.NONE).height());
     }
 
     public void onClick(int mouseX, int mouseY, int mouseButton) {

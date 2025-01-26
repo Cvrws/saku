@@ -26,7 +26,7 @@ public class Element implements Accessor {
     private Animation hover = new cc.unknown.util.render.animation.Animation(Easing.EASE_OUT_EXPO, 500);
     private Vector2f position;
     private StopWatch update;
-    private Font titleFont = Fonts.ROBOTO.get(20, Weight.LIGHT);
+    private Font titleFont = Fonts.MAISON.get(20, Weight.NONE);
 
     public Element(String action, String title) {
         this.title = StringUtils.getToFit(titleFont, title, 65 * 1.33f - PADDING * 2);
@@ -78,6 +78,6 @@ public class Element implements Accessor {
     }
 
     public void renderAction(Vector2f position) {
-        Fonts.ROBOTO.get(16, Weight.LIGHT).drawCentered(action, position.x + scale.x / 2f, position.y, Colors.TRINARY_TEXT.getRGB());
+        Fonts.MAISON.get(16, Weight.NONE).drawCentered(action, position.x + scale.x / 2f, position.y, Colors.TRINARY_TEXT.getRGB());
     }
 }

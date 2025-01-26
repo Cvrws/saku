@@ -41,10 +41,10 @@ public final class PingDisplay extends Module {
         
         final String titleString = ping + "";
         final String pingString = " ms";
-        final float titleWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(titleString);
+        final float titleWidth = Fonts.MAISON.get(20, Weight.NONE).width(titleString);
 
         if (ping != lastPing) {
-            scale.x = titleWidth + Fonts.ROBOTO.get(20, Weight.LIGHT).width(pingString);
+            scale.x = titleWidth + Fonts.MAISON.get(20, Weight.NONE).width(pingString);
         }
 
         lastPing = ping;
@@ -52,11 +52,11 @@ public final class PingDisplay extends Module {
         this.position.setScale(new Vector2d(scale.x + 6, scale.y - 1));
 
         final double textX = position.x + 3.0F;
-        final double textY = position.y + scale.y / 2.0F - Fonts.ROBOTO.get(20, Weight.LIGHT).height() / 4.0F;
+        final double textY = position.y + scale.y / 2.0F - Fonts.MAISON.get(20, Weight.NONE).height() / 4.0F;
 
         RenderUtil.roundedRect(textX + titleWidth + 24, textY + 10, textX - 5, textY - 4, 0, getTheme().getBackgroundShade().getRGB());
         
-        Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(titleString, textX, textY, color.getRGB());
-        Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(pingString, textX + titleWidth, textY, Color.WHITE.getRGB());
+        Fonts.MAISON.get(20, Weight.NONE).drawWithShadow(titleString, textX, textY, color.getRGB());
+        Fonts.MAISON.get(20, Weight.NONE).drawWithShadow(pingString, textX + titleWidth, textY, Color.WHITE.getRGB());
     };
 }

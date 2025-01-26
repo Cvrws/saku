@@ -28,7 +28,7 @@ public class AltManager extends GuiScreen implements Accessor {
     private static TextField usernameBox;
     private static GuiScreen reference;
     public static String status = yellow + "Idle...";
-    private static final Font FONT_RENDERER = Fonts.ROBOTO.get(20, Weight.LIGHT);
+    private static final Font FONT_RENDERER = Fonts.MAISON.get(20, Weight.NONE);
 
     public AltManager() {
         reference = this;

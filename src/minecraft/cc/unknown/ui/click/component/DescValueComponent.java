@@ -26,7 +26,7 @@ public class DescValueComponent extends ValueComponent {
         this.position = position;
         this.height = 14;
 
-        Fonts.ROBOTO.get(14, Weight.BLACK).draw(this.value.getName(), this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
+        Fonts.MAISON.get(14, Weight.NONE).draw(this.value.getName(), this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
     }
 
     @Override

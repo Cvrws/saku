@@ -52,10 +52,11 @@ public final class HUD extends Module {
     public final BooleanValue hideWorld = new BooleanValue("Hide World", this, false, () -> !renderCategories.getValue());
     private final BooleanValue lowercase = new BooleanValue("Lowercase", this, false);
     private final NumberValue alphaBackground = new NumberValue("Alpha BackGround", this, 180, 0, 255, 1);
+    private final NumberValue pelusita = new NumberValue("Font Size", this, 16, 12, 30, 1);
 
     private List<ModuleComponent> activeModuleComponents = new ArrayList<>();
     private List<ModuleComponent> allModuleComponents = new ArrayList<>();
-    private Font font = Fonts.MONSERAT.get(16, Weight.BOLD);
+    private Font font = Fonts.MAISON.get(pelusita.getValue().intValue(), Weight.NONE);
     private final StopWatch stopwatch = new StopWatch();
     private float moduleSpacing = 12, edgeOffset;
 
@@ -68,6 +69,11 @@ public final class HUD extends Module {
                 .peek(module -> module.translatedName = module.module.getName())
                 .collect(Collectors.toList());
     }
+    
+    @Override
+    public void guiUpdate() {
+    	font = Fonts.MAISON.get(pelusita.getValue().intValue(), Weight.NONE);
+    }
 
     @EventLink
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
@@ -75,11 +81,6 @@ public final class HUD extends Module {
                 .filter(module -> module.module.shouldDisplay(this))
                 .sorted(Comparator.comparingDouble(module -> -module.nameWidth))
                 .collect(Collectors.toList());
-    };
-    
-    @EventLink
-    public final Listener<ModuleToggleEvent> onToggle = event -> {
-		mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
     };
 
     @EventLink(value = Priority.LOW)
@@ -141,15 +142,7 @@ public final class HUD extends Module {
 
         int color = new Color(0, 0, 0, alphaBackground.getValue().intValue()).getRGB();
 
-        // Usamos Gui.drawRect
-        Gui.drawRect(
-            (int) (x - widthOffset),                       // x1
-            (int) (y - 3f),                                // y1
-            (int) (x - widthOffset + rectangleWidth),      // x2
-            (int) (y - 3f + moduleSpacing),                // y2
-            color                                          // color ARGB
-        );
-        
+        Gui.drawRect((int) (x - widthOffset), (int) (y - 3f), (int) (x - widthOffset + rectangleWidth), (int) (y - 3f + moduleSpacing), color);
     }
     
     @RequiredArgsConstructor

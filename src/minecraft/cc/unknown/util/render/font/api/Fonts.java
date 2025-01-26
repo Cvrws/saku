@@ -15,8 +15,7 @@ import net.minecraft.client.Minecraft;
 
 @Getter
 public enum Fonts {
-    MONSERAT("Montserrat-%s", "ttf"),
-    ROBOTO("Roboto-%s", "ttf"),
+    MAISON("Maison", "ttf"),
     ICONS_1("Icon-1", "ttf"),
     ICONS_2("Icon-2", "ttf"),
     MINECRAFT("Minecraft", () -> Minecraft.getInstance().fontRendererObj);

@@ -27,7 +27,7 @@ public class Button extends GuiButton {
 		this.width = width;
 		this.height = height;
 		this.text = text;
-		this.font = Fonts.ROBOTO.get(18, Weight.LIGHT);
+		this.font = Fonts.MAISON.get(18, Weight.NONE);
 	}
 
 	public Button(final int i, final int j, final int k, final String stringParams) {

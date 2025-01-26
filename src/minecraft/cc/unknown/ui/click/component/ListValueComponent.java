@@ -23,8 +23,8 @@ public class ListValueComponent extends ValueComponent {
 
         final String prefix = this.value.getName() + ":";
 
-        Fonts.ROBOTO.get(16, Weight.LIGHT).draw(prefix, this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
-        Fonts.ROBOTO.get(16, Weight.LIGHT).draw(listValue instanceof ModeValue ? ((ModeValue) listValue).getValue().getName() : listValue.getValue().toString(), this.position.x + Fonts.ROBOTO.get(16, Weight.LIGHT).width(prefix) + 2, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
+        Fonts.MAISON.get(16, Weight.NONE).draw(prefix, this.position.x, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
+        Fonts.MAISON.get(16, Weight.NONE).draw(listValue instanceof ModeValue ? ((ModeValue) listValue).getValue().getName() : listValue.getValue().toString(), this.position.x + Fonts.MAISON.get(16, Weight.NONE).width(prefix) + 2, this.position.y, Colors.SECONDARY_TEXT.getRGBWithAlpha(opacity));
     }
 
     public ListValueComponent(final Value<?> value) {

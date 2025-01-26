@@ -29,7 +29,7 @@ public class SakuMenu extends GuiMainMenu {
     private final Map<Integer, Consumer<GuiButton>> buttonActions = new HashMap<>();
 
     public SakuMenu() {
-        fontRenderer = Fonts.ROBOTO.get(18, Weight.LIGHT);
+        fontRenderer = Fonts.MAISON.get(18, Weight.NONE);
         buttonActions.put(0, button -> mc.displayGuiScreen(new GuiSelectWorld(this)));
         buttonActions.put(1, button -> mc.displayGuiScreen(new GuiMultiplayer(this)));
         buttonActions.put(2, button -> mc.displayGuiScreen(new AltManager()));

@@ -535,8 +535,9 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
 	}
 
 	public void handlePlayerPosLook(S08PacketPlayerPosLook packetIn) {
-		PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
+		PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);		
 		EntityPlayer entityplayer = this.gameController.player;
+		entityplayer.ticksSinceTeleport = 0;
         double d0 = packetIn.getX();
         double d1 = packetIn.getY();
         double d2 = packetIn.getZ();

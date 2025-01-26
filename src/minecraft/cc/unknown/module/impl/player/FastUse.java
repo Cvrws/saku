@@ -23,6 +23,7 @@ public class FastUse extends Module {
 			.add(new SubMode("Universocraft"))
 			.setDefault("Universocraft");
 	
+	private final NumberValue ticks = new NumberValue("Ticks", this, 28, 1, 33, 1, () -> !mode.is("Universocraft"));
 	private final NumberValue speed = new NumberValue("Packets", this, 10, 10, 100, 10, () -> !mode.is("Vanilla"));
 	
 	@EventLink
@@ -37,7 +38,7 @@ public class FastUse extends Module {
 				
 			case "Universocraft":
                 int foodUseDuration = mc.player.getItemInUseDuration();
-                int halfDuration = 29;
+                int halfDuration = ticks.getValue().intValue();
                 if (foodUseDuration >= halfDuration) {
                 	mc.player.stopUsingItem();
                 }

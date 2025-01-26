@@ -41,7 +41,7 @@ public class ThemeComponent implements Accessor {
 
         RenderUtil.drawRoundedGradientRectTest(x - 28, y, width, 30, 9, ColorUtil.withAlpha(activeTheme.getFirstColor(), alpha), ColorUtil.withAlpha(activeTheme.getSecondColor(), alpha), ColorUtil.withAlpha(activeTheme.getThirdColor(), alpha));
 
-        Fonts.ROBOTO.get(16, Weight.LIGHT).drawCentered(activeTheme.getThemeName(), x - 28 + width / 2D, y + 37, active ? ColorUtil.withAlpha(this.getTheme().getFirstColor(), alpha).getRGB() : new Color(255, 255, 255, alpha).getRGB());
+        Fonts.MAISON.get(16, Weight.NONE).drawCentered(activeTheme.getThemeName(), x - 28 + width / 2D, y + 37, active ? ColorUtil.withAlpha(this.getTheme().getFirstColor(), alpha).getRGB() : new Color(255, 255, 255, alpha).getRGB());
 
         selectorAnimation.animate(this.activeTheme.equals(getTheme()) ? 255 : 0);
         this.lastDraw = new Vector3d(x - 28, y, width);

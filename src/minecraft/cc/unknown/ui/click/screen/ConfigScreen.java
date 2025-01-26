@@ -56,14 +56,14 @@ public final class ConfigScreen implements Screen, Accessor {
         scale.x += -PADDING * 2 - clickGUI.sidebar.sidebarWidth;
         
         String headerText = yourConfigs.getName();
-        Fonts.ROBOTO.get(18, Weight.LIGHT).draw(headerText, position.x, position.y, Color.WHITE.getRGB());
+        Fonts.MAISON.get(18, Weight.NONE).draw(headerText, position.x, position.y, Color.WHITE.getRGB());
 
         if (yourConfigs.size() > 0) {
             String itemCountText = Integer.toString(yourConfigs.size());
-            Fonts.ROBOTO.get(18, Weight.LIGHT).draw(itemCountText, position.x + Fonts.ROBOTO.get(18, Weight.LIGHT).width(headerText) + PADDING / 2f, position.y, Sakura.instance.getThemeManager().getTheme().getAccentColor().getRGB());
+            Fonts.MAISON.get(18, Weight.NONE).draw(itemCountText, position.x + Fonts.MAISON.get(18, Weight.NONE).width(headerText) + PADDING / 2f, position.y, Sakura.instance.getThemeManager().getTheme().getAccentColor().getRGB());
         }
 
-        position.y += Fonts.ROBOTO.get(18, Weight.LIGHT).height() + PADDING;
+        position.y += Fonts.MAISON.get(18, Weight.NONE).height() + PADDING;
 
         double currentX = position.x;
         double currentY = position.y;

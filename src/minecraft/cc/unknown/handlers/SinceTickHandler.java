@@ -38,13 +38,6 @@ public class SinceTickHandler implements Accessor {
         }
 	};
 
-	@EventLink(value = Priority.VERY_LOW)
-	public final Listener<PacketReceiveEvent> onReceive = event -> {
-		if (event.getPacket() instanceof S08PacketPlayerPosLook) {
-			mc.player.ticksSinceTeleport = 0;
-		}
-	};
-    
     @EventLink(value = Priority.VERY_LOW)
     public final Listener<PacketSendEvent> onPacketSend = event -> {
     	if (mc == null || mc.world == null || event.isCancelled()) return;

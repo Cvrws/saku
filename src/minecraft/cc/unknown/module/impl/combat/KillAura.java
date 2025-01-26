@@ -498,7 +498,7 @@ public final class KillAura extends Module {
 				mc.gameSettings.keyBindUseItem.pressed = true;
 			}
 			
-			if (mc.player.hurtTime > 0) {
+			if (target == null) {
 				furry = true;
 			}
 			

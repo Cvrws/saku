@@ -31,8 +31,8 @@ public final class FPSDisplay extends Module {
 
         final String fpsString = Minecraft.getDebugFPS() + "";
         final String titleString = " FPS";
-        final float fpsWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(fpsString);
-        final float titleWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(titleString);
+        final float fpsWidth = Fonts.MAISON.get(20, Weight.NONE).width(fpsString);
+        final float titleWidth = Fonts.MAISON.get(20, Weight.NONE).width(titleString);
 
         if (Minecraft.getDebugFPS() != lastFPS) {
             scale.x = fpsWidth + titleWidth;
@@ -42,11 +42,11 @@ public final class FPSDisplay extends Module {
         this.position.setScale(new Vector2d(scale.x + 6, scale.y - 1));
 
         final double textX = position.x + 3.0F;
-        final double textY = position.y + scale.y / 2.0F - Fonts.ROBOTO.get(20, Weight.LIGHT).height() / 4.0F;
+        final double textY = position.y + scale.y / 2.0F - Fonts.MAISON.get(20, Weight.NONE).height() / 4.0F;
 
         RenderUtil.roundedRect(textX + scale.x + 2, textY + 11, textX - 2, textY - 4, 0, getTheme().getBackgroundShade().getRGB());
 
-        Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(fpsString, textX, textY, Color.WHITE.getRGB());
-        Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(titleString, textX + fpsWidth, textY, Color.WHITE.getRGB());
+        Fonts.MAISON.get(20, Weight.NONE).drawWithShadow(fpsString, textX, textY, Color.WHITE.getRGB());
+        Fonts.MAISON.get(20, Weight.NONE).drawWithShadow(titleString, textX + fpsWidth, textY, Color.WHITE.getRGB());
     };
 }

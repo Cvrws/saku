@@ -32,23 +32,23 @@ public final class CPSDisplay extends Module {
 	    final String title = " CPS";
 	    final String separator = " | ";
 
-	    final float leftCPSWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(leftCPS);
-	    final float separatorWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(separator);
-	    final float rightCPSWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(rightCPS);
-	    final float titleWidth = Fonts.ROBOTO.get(20, Weight.LIGHT).width(title);
+	    final float leftCPSWidth = Fonts.MAISON.get(20, Weight.NONE).width(leftCPS);
+	    final float separatorWidth = Fonts.MAISON.get(20, Weight.NONE).width(separator);
+	    final float rightCPSWidth = Fonts.MAISON.get(20, Weight.NONE).width(rightCPS);
+	    final float titleWidth = Fonts.MAISON.get(20, Weight.NONE).width(title);
 
 	    scale.x = leftCPSWidth + separatorWidth + rightCPSWidth + titleWidth;
 
 	    this.position.setScale(new Vector2d(scale.x + 6, scale.y - 1));
 
 	    final double textX = position.x + 3.0F;
-	    final double textY = position.y + scale.y / 2.0F - Fonts.ROBOTO.get(20, Weight.LIGHT).height() / 4.0F;
+	    final double textY = position.y + scale.y / 2.0F - Fonts.MAISON.get(20, Weight.NONE).height() / 4.0F;
 
 	    RenderUtil.roundedRect(textX + scale.x + 3, textY + 11, textX - 2, textY - 4, 0, getTheme().getBackgroundShade().getRGB());
 
-	    Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(leftCPS, textX, textY, Color.WHITE.getRGB());
-	    Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(separator, textX + leftCPSWidth, textY, Color.WHITE.getRGB());
-	    Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(rightCPS, textX + leftCPSWidth + separatorWidth, textY, Color.WHITE.getRGB());
-	    Fonts.ROBOTO.get(20, Weight.LIGHT).drawWithShadow(title, textX + leftCPSWidth + separatorWidth + rightCPSWidth, textY, Color.WHITE.getRGB());
+	    Fonts.MAISON.get(20, Weight.NONE).drawWithShadow(leftCPS, textX, textY, Color.WHITE.getRGB());
+	    Fonts.MAISON.get(20, Weight.NONE).drawWithShadow(separator, textX + leftCPSWidth, textY, Color.WHITE.getRGB());
+	    Fonts.MAISON.get(20, Weight.NONE).drawWithShadow(rightCPS, textX + leftCPSWidth + separatorWidth, textY, Color.WHITE.getRGB());
+	    Fonts.MAISON.get(20, Weight.NONE).drawWithShadow(title, textX + leftCPSWidth + separatorWidth + rightCPSWidth, textY, Color.WHITE.getRGB());
 	};
 }

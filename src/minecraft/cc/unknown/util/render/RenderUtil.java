@@ -60,23 +60,6 @@ public final class RenderUtil implements Accessor {
 		GlStateManager.resetColor();
 	}
 
-	public void rectangle(final double x, final double y, final double width, final double height, final Color color) {
-		start();
-
-		if (color != null) {
-			ColorUtil.glColor(color);
-		}
-
-		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glVertex2d(x, y);
-		GL11.glVertex2d(x + width, y);
-		GL11.glVertex2d(x + width, y + height);
-		GL11.glVertex2d(x, y + height);
-		GL11.glEnd();
-
-		stop();
-	}
-
 	public void renderAttack(EntityLivingBase target) {
 		Sakura.instance.getEventBus().handle(new AttackEvent(target));
 
