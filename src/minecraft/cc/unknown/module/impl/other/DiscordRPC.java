@@ -14,16 +14,12 @@ import cc.unknown.value.impl.TextValue;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S02PacketChat;
 
-@ModuleInfo(aliases = "Discord RPC", description = "Discord status", category = Category.OTHER)
+@ModuleInfo(aliases = "Discord RPC", description = "Discord status", category = Category.OTHER, autoEnabled = true)
 public final class DiscordRPC extends Module {
 	
 	@Override
 	public void onEnable() {
-		if (Sakura.instance.getDiscordHandler().running) {
-			Sakura.instance.getDiscordHandler().stop();
-		} else {
-			Sakura.instance.getDiscordHandler().start();
-		}
+		Sakura.instance.getDiscordHandler().start();
 	}
 	
 	@Override

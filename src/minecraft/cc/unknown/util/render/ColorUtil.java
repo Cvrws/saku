@@ -1,6 +1,8 @@
 package cc.unknown.util.render;
 
 import java.awt.Color;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.lwjgl.opengl.GL11;
 
@@ -35,6 +37,7 @@ public final class ColorUtil {
 
 	public ChatFormatting pink = ChatFormatting.LIGHT_PURPLE;
 	
+    private final Pattern COLOR_CODE_PATTERN = Pattern.compile("(?i)§([0-9A-FK-OR])");
    	public String usu = " ?§r§{0,3}§8§8\\[§r§f§fUsu§r§8§8\\]| ?§8\\[§fUsu§8\\]";
    	public String jup = " ?§r§{0,3}§8§8\\[§r§b§bJup§r§8§8\\]| ?§8\\[§bJup§8\\]";
 
@@ -196,5 +199,40 @@ public final class ColorUtil {
     public Color colorFromInt(int color) {
         Color c = new Color(color);
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), 255);
+    }
+    
+    public int getColorFromTags(String displayName) {
+        displayName = removeFormatCodes(displayName);
+        if (displayName.isEmpty() || !displayName.startsWith("§") || displayName.charAt(1) == 'f') {
+            return new Color(255, 255, 255).getRGB();
+        }
+        return getColorFromCode(displayName).getRGB();
+    }
+    
+    private Color getColorFromCode(String input) {
+        Matcher matcher = COLOR_CODE_PATTERN.matcher(input);
+        if (matcher.find()) {
+            char code = matcher.group(1).charAt(0);
+            switch (code) {
+                case '0': return new Color(0, 0, 0);
+                case '1': return new Color(0, 0, 170);
+                case '2': return new Color(0, 170, 0);
+                case '3': return new Color(0, 170, 170);
+                case '4': return new Color(170, 0, 0);
+                case '5': return new Color(170, 0, 170);
+                case '6': return new Color(255, 170, 0);
+                case '7': return new Color(170, 170, 170);
+                case '8': return new Color(85, 85, 85);
+                case '9': return new Color(85, 85, 255);
+                case 'a': return new Color(85, 255, 85);
+                case 'b': return new Color(85, 255, 255);
+                case 'c': return new Color(255, 85, 85);
+                case 'd': return new Color(255, 85, 255);
+                case 'e': return new Color(255, 255, 85);
+                case 'f': return new Color(255, 255, 255);
+                default: return new Color(255, 255, 255);
+            }
+        }
+        return new Color(255, 255, 255);
     }
 }

@@ -39,23 +39,7 @@ public class AutoBlock extends Module {
 		if (!isInGame())
 			return;
 
-		if (mc.currentScreen != null)
-			return;
-
-		if (ViaLoadingBase.getInstance().getTargetVersion().isEqualTo(ProtocolVersion.v1_9)) {
-			autoBlock(true);
-		} else {
-			autoBlock(false);
-		}
-	};
-
-	@EventLink
-	public final Listener<Render3DEvent> onRender3D = event -> {
-		if (!isInGame())
-			return;
-
-		if (mc.currentScreen != null)
-			return;
+		if (mc.currentScreen != null) return;
 
 		if (ViaLoadingBase.getInstance().getTargetVersion().isEqualTo(ProtocolVersion.v1_9)) {
 			autoBlock(true);

@@ -185,7 +185,7 @@ public class Scaffold extends Module {
 	public void onDisable() {
 		resetBinds();
 		mc.player.inventory.currentItem = lastSlot;
-		SpoofHandler.stopSpoofing();
+		if (spoof.getValue()) SpoofHandler.stopSpoofing();
 	}
 
 	@EventLink

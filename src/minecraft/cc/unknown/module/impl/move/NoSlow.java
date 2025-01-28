@@ -1,19 +1,8 @@
 package cc.unknown.module.impl.move;
 
-import com.viaversion.viaversion.api.Via;
-import com.viaversion.viaversion.api.connection.ConnectionManager;
-import com.viaversion.viaversion.api.connection.UserConnection;
-import com.viaversion.viaversion.api.minecraft.Position;
-import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
-import com.viaversion.viaversion.api.type.Type;
-import com.viaversion.viaversion.protocols.protocol1_9to1_8.ServerboundPackets1_9;
-
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.player.PostMotionEvent;
-import cc.unknown.event.impl.player.PostUpdateEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
-import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.player.SlowDownEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
@@ -30,9 +19,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.client.C09PacketHeldItemChange;
-import net.minecraft.util.BlockPos;
 
 @ModuleInfo(aliases = "No Slow", description = "Remueve la lentitud al utilizar algunos objetos.", category = Category.MOVEMENT)
 public class NoSlow extends Module {
@@ -50,16 +37,6 @@ public class NoSlow extends Module {
 	private final BooleanValue bow = new BooleanValue("Bow", this, true);
 	private final BooleanValue comestibles = new BooleanValue("Comestibles", this, true);
 	private final BooleanValue sprint = new BooleanValue("Sprint", this, true);
-
-	@Override
-	public void onDisable() {
-		mc.timer.timerSpeed = 1.0F;
-	}
-
-	@Override
-	public void onEnable() {
-		mc.timer.timerSpeed = 1.0F;
-	}
 	
 	@EventLink
 	public final Listener<SlowDownEvent> onSlowDown = event -> {

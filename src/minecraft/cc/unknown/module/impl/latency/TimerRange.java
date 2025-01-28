@@ -28,14 +28,14 @@ import net.minecraft.util.MathHelper;
 public class TimerRange extends Module {
 	
 	private NumberValue range = new NumberValue("Range", this, 3.5f, 1f, 5f, 0.05);
-	private NumberValue positiveTimer = new NumberValue("Positive Timer", this, 1.5f, 0.01f, 35f, 0.01);
+	private NumberValue positiveTimer = new NumberValue("Positive Timer", this, 1.5, 0.1, 35, 0.1);
 	private NumberValue positiveTicks = new NumberValue("Positive Ticks", this, 10, 1, 20, 1);
 
-	private NumberValue negativeTimer = new NumberValue("Negative Timer",this,  0.45f, 0.05f, 5f, 0.05);
+	private NumberValue negativeTimer = new NumberValue("Negative Timer",this,  0.45, 0.5, 5, 0.5);
 	private NumberValue negativeTick = new NumberValue("Negative Ticks", this, 10, 1, 50, 1);
 
-	private BoundsNumberValue timerBoost = new BoundsNumberValue("Timer Boost", this, 0.5, 0.56, 0.1, 1, 0.01);
-	private BoundsNumberValue timerCharged = new BoundsNumberValue("Timer Charged", this, 0.75, 0.91, 0.1, 1, 0.01);
+	private BoundsNumberValue timerBoost = new BoundsNumberValue("Timer Boost", this, 0.5, 0.56, 0.1, 1, 0.1);
+	private BoundsNumberValue timerCharged = new BoundsNumberValue("Timer Charged", this, 0.75, 0.91, 0.1, 1, 0.1);
 
 	private BooleanValue ignoreTeams = new BooleanValue("Ignore Teams", this, false);
 	private BooleanValue onlyGround = new BooleanValue("Only on Ground", this, false);

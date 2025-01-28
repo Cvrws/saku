@@ -20,11 +20,11 @@ public final class Timer extends Module {
 			.add(new SubMode("Ground"))
 			.setDefault("Constant");
 
-	private final NumberValue timerSpeed = new NumberValue("Timer Speed", this, 1.5, 0.5, 25, 0.5, () -> !mode.is("Constant") && !mode.is("Random"));
+	private final NumberValue timerSpeed = new NumberValue("Timer Speed", this, 1.5, 0.1, 25, 0.1, () -> !mode.is("Constant") && !mode.is("Random"));
 	private final NumberValue variation = new NumberValue("Variation", this,  15, 5, 50, 5, () -> !mode.is("Random"));
 	
-	private final NumberValue onGroundSpeed = new NumberValue("On Ground Speed", this, 1.5, 0.5, 20, 0.5, () -> !mode.is("Ground"));
-	private final NumberValue offGroundSpeed = new NumberValue("Off Ground Speed", this, 1.5, 0.5, 20, 0.5, () -> !mode.is("Ground"));
+	private final NumberValue onGroundSpeed = new NumberValue("On Ground Speed", this, 1.5, 0.1, 20, 0.1, () -> !mode.is("Ground"));
+	private final NumberValue offGroundSpeed = new NumberValue("Off Ground Speed", this, 1.5, 0.1, 20, 0.1, () -> !mode.is("Ground"));
 	
 	@Override
 	public void onEnable() {

@@ -6,7 +6,8 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.client.StopWatch;
+import cc.unknown.module.impl.move.NoSlow;
+import cc.unknown.util.client.ChatUtil;
 import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.ModeValue;
@@ -23,8 +24,13 @@ public class FastUse extends Module {
 			.add(new SubMode("Universocraft"))
 			.setDefault("Universocraft");
 	
-	private final NumberValue ticks = new NumberValue("Ticks", this, 28, 1, 33, 1, () -> !mode.is("Universocraft"));
+	private final NumberValue ticks = new NumberValue("Ticks", this, 28, 1, 32, 1, () -> !mode.is("Universocraft"));
 	private final NumberValue speed = new NumberValue("Packets", this, 10, 10, 100, 10, () -> !mode.is("Vanilla"));
+	
+	@Override
+	public void onEnable() {
+		if (mode.is("Universocraft")) ChatUtil.display("No works with noslow");
+	}
 	
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
@@ -37,6 +43,8 @@ public class FastUse extends Module {
 				break;
 				
 			case "Universocraft":
+				if (isEnabled(NoSlow.class)) return;
+				
                 int foodUseDuration = mc.player.getItemInUseDuration();
                 int halfDuration = ticks.getValue().intValue();
                 if (foodUseDuration >= halfDuration) {

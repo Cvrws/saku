@@ -80,7 +80,7 @@ public class LagRange extends Module {
 
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
-		if (!isInGame() || !MoveUtil.isMoving() || isAnyModuleEnabled(Scaffold.class, LegitScaffold.class)) return;
+		if (!isInGame() || !MoveUtil.isMoving() || isEnabled(Scaffold.class, LegitScaffold.class)) return;
 		
 		if (mode.is("Tick")) {
 			tickMode();

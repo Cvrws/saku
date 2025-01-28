@@ -39,7 +39,8 @@ public class FastPlace extends Module {
 			ItemStack stack = mc.player.getCurrentEquippedItem();
 			if (stack != null) {
 				Item item = mc.player.getCurrentEquippedItem().getItem();
-				if (mc.objectMouseOver.typeOfHit == null || mc.objectMouseOver == null || item == null) return;
+				if (item == null) return;
+				if (mc.objectMouseOver.typeOfHit == null || mc.objectMouseOver == null) return;
 				
 				long delay;
 				long random = MathUtil.nextRandom(-30L, 30L).longValue();

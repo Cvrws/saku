@@ -121,7 +121,7 @@ public class MusicPlayer extends Module {
             	connectToMusic("ncsradio");
             	break;
             case "NightCore":
-            	connectToMusic("music4gamers");
+            	connectToMusic("nightcoremusic");
             	break;
             case "Party":
             	connectToMusic("djzubi");

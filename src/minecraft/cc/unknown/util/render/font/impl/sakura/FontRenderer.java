@@ -301,8 +301,6 @@ public class FontRenderer extends cc.unknown.util.render.font.Font {
             
             if (character < characterSet.length) {
                 width += characterSet[character].getWidth() - MARGIN_WIDTH * 2;
-            } else {
-                System.err.println("Carácter fuera de rango: " + (int)character);
             }
 
             previousCharacter = character;

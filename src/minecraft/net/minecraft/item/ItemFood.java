@@ -84,6 +84,10 @@ public class ItemFood extends Item
     {
         return this.isWolfsFavoriteMeat;
     }
+    
+    public int getPotionId() {
+        return potionId;
+    }
 
     public ItemFood setPotionEffect(int id, int duration, int amplifier, float probability)
     {

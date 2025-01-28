@@ -85,8 +85,11 @@ public class TimerManipulation extends Module {
 	
 	@EventLink
 	public final Listener<TimerManipulationEvent> onTimerManipulation = event -> {
-
 		if (target == null || predictProcesses.isEmpty() || shouldStop()) {
+			return;
+		}
+		
+		if (mc.player.hurtTime > 0) {
 			return;
 		}
 

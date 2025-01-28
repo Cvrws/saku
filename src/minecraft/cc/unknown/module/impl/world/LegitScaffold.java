@@ -62,7 +62,7 @@ public class LegitScaffold extends Module {
 		}
 
 		mc.player.inventory.currentItem = lastSlot;
-		SpoofHandler.stopSpoofing();
+		if (spoof.getValue()) SpoofHandler.stopSpoofing();
 		shouldBridge = false;
 	}
 

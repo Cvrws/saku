@@ -24,7 +24,7 @@ public class LegitSpeed extends Mode<Speed> {
 
 	@EventLink
 	public final Listener<MoveInputEvent> onMoveInput = event -> {
-		if (isAnyModuleEnabled(Scaffold.class, LegitScaffold.class, Clutch.class)) return;
+		if (isEnabled(Scaffold.class, LegitScaffold.class, Clutch.class)) return;
 		
 	    if (event.getForward() > 0.8) {
 	        mc.player.setSprinting(true);

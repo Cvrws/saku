@@ -45,7 +45,6 @@ public final class ModuleManager {
         // Latency
         this.put(PingSpoof.class, new PingSpoof());
         this.put(BackTrack.class, new BackTrack());
-        this.put(FakeLag.class, new FakeLag());
         this.put(TimerRange.class, new TimerRange());
         this.put(LagRange.class, new LagRange());
         this.put(TimerManipulation.class, new TimerManipulation());
@@ -143,7 +142,6 @@ public final class ModuleManager {
         this.put(Chams.class, new Chams());
         this.put(NameTags.class, new NameTags());
         this.put(NoCameraClip.class, new NoCameraClip());
-        this.put(NameTags2.class, new NameTags2());
         this.put(Stickers.class, new Stickers());
         this.put(ExtraSensoryPerception.class, new ExtraSensoryPerception());
         this.put(Streamer.class, new Streamer());
@@ -152,6 +150,7 @@ public final class ModuleManager {
         this.put(ChinaHat.class, new ChinaHat());
         this.put(PointerESP.class, new PointerESP());
         this.put(Cosmetics.class, new Cosmetics());
+        this.put(AppleSkin.class, new AppleSkin());
     	
         this.getAll().stream().filter(module -> module != null && module.getModuleInfo() != null && module.getModuleInfo().autoEnabled()).forEach(module -> module.setEnabled(true));
         Sakura.instance.getEventBus().register(this);

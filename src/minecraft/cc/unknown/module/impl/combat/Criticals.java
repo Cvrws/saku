@@ -44,12 +44,6 @@ public final class Criticals extends Module {
     
     private boolean attacked;
     private int ticks;
-    public static boolean stuckEnabled;
-    
-    @Override
-    public void onEnable() {
-        stuckEnabled = false;
-    }
     
     @Override
     public void onDisable() {

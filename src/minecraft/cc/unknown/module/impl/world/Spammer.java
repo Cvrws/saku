@@ -28,7 +28,7 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.scoreboard.Scoreboard;
 
-@ModuleInfo(aliases = "Spammer", description = "Spam on chat", category = Category.WORLD)
+@ModuleInfo(aliases = "Spammer", description = "Spamea diferentes mensajes en el chat (Only Universocraft)", category = Category.WORLD)
 public final class Spammer extends Module {
 	
     private final ModeValue mode = new ModeValue("Mode", this)

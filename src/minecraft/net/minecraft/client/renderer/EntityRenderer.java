@@ -26,6 +26,7 @@ import cc.unknown.event.impl.other.RotationEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
+import cc.unknown.module.impl.visual.NoCameraClip;
 import cc.unknown.ui.menu.saku.SakuMenu;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.FreeLookUtil;
@@ -644,31 +645,31 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 					f2 += 180.0F;
 				}
 
-				double d4 = (double) (-MathHelper.sin(f1 / 180.0F * (float) Math.PI)
-						* MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
-				double d5 = (double) (MathHelper.cos(f1 / 180.0F * (float) Math.PI)
-						* MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
-				double d6 = (double) (-MathHelper.sin(f2 / 180.0F * (float) Math.PI)) * d3;
+				NoCameraClip noCameraClip = Sakura.instance.getModuleManager().get(NoCameraClip.class);
 
-				for (int i = 0; i < 8; ++i) {
-					float f3 = (float) ((i & 1) * 2 - 1);
-					float f4 = (float) ((i >> 1 & 1) * 2 - 1);
-					float f5 = (float) ((i >> 2 & 1) * 2 - 1);
-					f3 = f3 * 0.1F;
-					f4 = f4 * 0.1F;
-					f5 = f5 * 0.1F;
-					MovingObjectPosition movingobjectposition = this.mc.world
-							.rayTraceBlocks(new Vec3(d0 + (double) f3, d1 + (double) f4, d2 + (double) f5), new Vec3(
-									d0 - d4 + (double) f3 + (double) f5, d1 - d6 + (double) f4, d2 - d5 + (double) f5));
+                if (noCameraClip == null || !noCameraClip.isEnabled()) {
+                    final double d4 = (double) (-MathHelper.sin(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
+                    final double d5 = (double) (MathHelper.cos(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
+                    final double d6 = (double) (-MathHelper.sin(f2 / 180.0F * (float) Math.PI)) * d3;
 
-					if (movingobjectposition != null) {
-						double d7 = movingobjectposition.hitVec.distanceTo(new Vec3(d0, d1, d2));
+                    for (int i = 0; i < 8; ++i) {
+                        float f3 = (float) ((i & 1) * 2 - 1);
+                        float f4 = (float) ((i >> 1 & 1) * 2 - 1);
+                        float f5 = (float) ((i >> 2 & 1) * 2 - 1);
+                        f3 = f3 * 0.1F;
+                        f4 = f4 * 0.1F;
+                        f5 = f5 * 0.1F;
+                        final MovingObjectPosition movingobjectposition = this.mc.world.rayTraceBlocks(new Vec3(d0 + (double) f3, d1 + (double) f4, d2 + (double) f5), new Vec3(d0 - d4 + (double) f3 + (double) f5, d1 - d6 + (double) f4, d2 - d5 + (double) f5));
 
-						if (d7 < d3) {
-							d3 = d7;
-						}
-					}
-				}
+                        if (movingobjectposition != null) {
+                            final double d7 = movingobjectposition.hitVec.distanceTo(new Vec3(d0, d1, d2));
+
+                            if (d7 < d3) {
+                                d3 = d7;
+                            }
+                        }
+                    }
+                }
 
 				if (this.mc.gameSettings.thirdPersonView == 2) {
 					GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);

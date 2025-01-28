@@ -1,21 +1,22 @@
 package cc.unknown.module.impl.visual;
 
-import java.awt.Color;
-
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.render.RenderLabelEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.player.EnemyUtil;
-import cc.unknown.util.player.FriendUtil;
-import cc.unknown.util.render.RenderUtil;
+import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.render.font.Font;
+import cc.unknown.util.render.font.api.Fonts;
+import cc.unknown.util.render.font.api.Weight;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.DescValue;
 import cc.unknown.value.impl.NumberValue;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemBow;
@@ -32,6 +33,8 @@ public final class NameTags extends Module {
 	private final BooleanValue selfTag = new BooleanValue("Self Tag", this, true);
 	private final BooleanValue dropShadow = new BooleanValue("Drop shadow", this, true);
 	private final BooleanValue showDistance = new BooleanValue("Show Distance", this, false);
+	private final BooleanValue showHealth = new BooleanValue("Show Health", this, false);
+	private final BooleanValue showHitsToKill = new BooleanValue("Show Hits to Kill", this, false);
 	private final BooleanValue onlyRenderName = new BooleanValue("Only Render Name", this, false);
 	private final BooleanValue checkInvis = new BooleanValue("Show Invisibles", this, false);
 	private final DescValue armorSettings = new DescValue("Armor Settings", this);
@@ -39,11 +42,14 @@ public final class NameTags extends Module {
 	private final BooleanValue showEnchants = new BooleanValue("Show enchant", this, true, () -> !showArmor.getValue());
 	private final BooleanValue showDurability = new BooleanValue("Show Durability", this, true, () -> !showArmor.getValue());
 	private final BooleanValue showStackSize = new BooleanValue("Show StackSize", this, true, () -> !showArmor.getValue());
+    private Font font = Fonts.MAISON.get(16, Weight.NONE);
 
 	@EventLink
 	public final Listener<RenderLabelEvent> onRenderLabel = event -> {
         if (event.getTarget() instanceof EntityPlayer && ((EntityPlayer)event.getTarget()).deathTime == 0) {
         	EntityPlayer player = (EntityPlayer) event.getTarget();
+        	
+        	event.setCancelled();
             String name;
             
             if (!checkInvis.getValue() && player.isInvisible()) {
@@ -54,6 +60,14 @@ public final class NameTags extends Module {
             	name = player.getName();
             } else {
             	name = player.getDisplayName().getFormattedText();
+            }
+            
+            if (showHealth.getValue()) {
+                name = name + " " + PlayerUtil.getHealthStr(player) + " HP";
+            }
+            
+            if (showHitsToKill.getValue()) {
+                name = name + " " + PlayerUtil.getHitsToKill(player, mc.player.getCurrentEquippedItem());
             }
             
             if (showDistance.getValue()) {
@@ -77,7 +91,6 @@ public final class NameTags extends Module {
                 name = color + distance + "m§r " + name;
             }
 
-            player.setAlwaysRenderNameTag(true);
             event.setCancelled();
             
             renderNewTag(event, player, name);
@@ -89,9 +102,9 @@ public final class NameTags extends Module {
         	return;
         }
         
-		float nameWidth = mc.fontRendererObj.width(name);
+		float nameWidth = font.width(name);
         float compactWidth = nameWidth + 12;
-        float compactHeight = mc.fontRendererObj.FONT_HEIGHT + 2;
+        float compactHeight = font.height() + 2;
 	    double scaleRatio;
 	    float scale = 0.02666667F;        
 	    
@@ -120,7 +133,7 @@ public final class NameTags extends Module {
 	    GlStateManager.disableDepth();
 	    GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        
+
         mc.fontRendererObj.draw(name, -nameWidth / 2, 0, -1, dropShadow.getValue());
         
         GlStateManager.disableBlend();

@@ -371,6 +371,7 @@ public final class RenderUtil implements Accessor {
 			}
 			GL11.glEnd();
 		}
+		
 	}
 
 	public void drawOutline(float x, float y, float x2, float y2, float lineWidth, int color) {

@@ -50,7 +50,10 @@ import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
+import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.Vec3;
@@ -135,7 +138,7 @@ public final class KillAura extends Module {
 	public EntityLivingBase target;
 
 	private int attack;
-	private int expandRange;
+	//private int expandRange;
 	private int blockTicks;
 	private int switchTicks;
 	private boolean resetting;
@@ -167,7 +170,7 @@ public final class KillAura extends Module {
 	@Override
 	public void onDisable() {
 		target = null;
-		this.unblock();
+		this.unblock(true);
 	}
 
 	@EventLink
@@ -194,7 +197,7 @@ public final class KillAura extends Module {
 
 		if (targets.isEmpty()) {
 			pastTargets.clear();
-			targets = TargetUtil.getTargets(range + expandRange);
+			targets = TargetUtil.getTargets(range/* + expandRange*/);
 		}
 
 		switch (sorting.getValue().getName()) {
@@ -257,12 +260,12 @@ public final class KillAura extends Module {
 		/*
 		 * Heuristic fix
 		 */
-		if (mc.player.ticksExisted % 20 == 0) {
+		/*if (mc.player.ticksExisted % 20 == 0) {
 			expandRange = (int) (3 + Math.random() * 0.5);
-		}
+		}*/
 
 		if (mc.currentScreen instanceof GuiContainer) {
-			this.unblock();
+			this.unblock(true);
 			allowAttack = false;
 			target = null;
 			return;
@@ -495,7 +498,7 @@ public final class KillAura extends Module {
 			
 			if (PlayerUtil.isHoldingWeapon()) {
 				block(false);
-				mc.gameSettings.keyBindUseItem.pressed = true;
+				
 			}
 			
 			if (target == null) {
@@ -505,7 +508,7 @@ public final class KillAura extends Module {
 			furry = true;
 			
 			if (furry) {
-				unblock();
+				unblock(true);
 			}
 			break;
 		}
@@ -534,9 +537,15 @@ public final class KillAura extends Module {
 				&& PlayerUtil.getItemStack().getItem() instanceof ItemSword;
 	}
 
-    public void unblock() {
+    public void unblock(boolean keyBind) {
         if (blocking) {
-            mc.gameSettings.keyBindUseItem.pressed = false;
+        	
+        	if (keyBind) {
+        		mc.gameSettings.keyBindUseItem.pressed = false;
+        	} else {
+        		PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM,
+        				BlockPos.ORIGIN, EnumFacing.DOWN));
+        	}
 
         	blocking = false;
         }

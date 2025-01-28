@@ -14,9 +14,6 @@ import net.minecraft.client.Minecraft;
 public interface Accessor {
     Minecraft mc = Minecraft.getInstance();
     
-    List<Runnable> MODERN_BLUR_RUNNABLES = new ArrayList<>();
-    List<Runnable> MODERN_BLOOM_RUNNABLES = new ArrayList<>();
-
     default Sakura getInstance() {
         return Sakura.instance;
     }
@@ -41,7 +38,7 @@ public interface Accessor {
         return getInstance().getGSON();
     }
 
-    default boolean isAnyModuleEnabled(Class<? extends Module>... modules) {
+    default boolean isEnabled(Class<? extends Module>... modules) {
         for (Class<? extends Module> module : modules) {
             if (getModule(module).isEnabled()) return true;
         }

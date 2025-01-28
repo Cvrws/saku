@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.lwjgl.input.Keyboard;
@@ -32,6 +33,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityAnimal;
@@ -39,6 +41,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityEgg;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
@@ -80,20 +83,10 @@ public class PlayerUtil implements Accessor {
 			Blocks.wooden_pressure_plate, Blocks.noteblock, Blocks.dropper, Blocks.tnt, Blocks.standing_banner,
 			Blocks.wall_banner, Blocks.redstone_torch);
 
-	/**
-	 * Gets the block at a position
-	 *
-	 * @return block
-	 */
 	public Block block(final double x, final double y, final double z) {
 		return mc.world.getBlockState(new BlockPos(x, y, z)).getBlock();
 	}
 
-	/**
-	 * Gets the block at a position
-	 *
-	 * @return block
-	 */
 	public Block block(final BlockPos blockPos) {
 		return mc.world.getBlockState(blockPos).getBlock();
 	}
@@ -168,11 +161,6 @@ public class PlayerUtil implements Accessor {
 		return new float[] { yaw, pitch };
 	}
 
-	/**
-	 * Gets the distance between 2 positions
-	 *
-	 * @return distance
-	 */
 	public double distance(final BlockPos pos1, final BlockPos pos2) {
 		final double x = pos1.getX() - pos2.getX();
 		final double y = pos1.getY() - pos2.getY();
@@ -220,11 +208,6 @@ public class PlayerUtil implements Accessor {
 		return (float) (Math.atan2(n - mc.player.posX, n2 - mc.player.posZ) * 57.295780181884766 * -1.0);
 	}
 
-	/**
-	 * Gets the block relative to the player from the offset
-	 *
-	 * @return block relative to the player
-	 */
 	public Block blockRelativeToPlayer(final double offsetX, final double offsetY, final double offsetZ) {
 		return block(mc.player.posX + offsetX, mc.player.posY + offsetY, mc.player.posZ + offsetZ);
 	}
@@ -234,11 +217,6 @@ public class PlayerUtil implements Accessor {
 				Math.cos(MoveUtil.direction()) * offsetXZ);
 	}
 
-	/**
-	 * Gets another players' username without any formatting
-	 *
-	 * @return players username
-	 */
 	public String name(final EntityPlayer player) {
 		return player.getName();
 	}
@@ -254,11 +232,6 @@ public class PlayerUtil implements Accessor {
 		return true;
 	}
 
-	/**
-	 * Checks if there is a block under the player
-	 *
-	 * @return block under
-	 */
 	public boolean isBlockUnder(final double height) {
 		return isBlockUnder(height, true);
 	}
@@ -942,5 +915,71 @@ public class PlayerUtil implements Accessor {
         } else {
             return false;
         }
+    }
+
+    public float getCompleteHealth(EntityLivingBase entity) {
+        if (entity == null) return 0;
+        return entity.getHealth() + entity.getAbsorptionAmount();
+    }
+
+    public String getHealthStr(EntityLivingBase entity) {
+        float completeHealth = getCompleteHealth(entity);
+        return getColorForHealth(entity.getHealth() / entity.getMaxHealth(), completeHealth);
+    }
+    
+    private String getColorForHealth(double n, double n2) {
+        double health = rnd(n2, 1);
+        return ((n < 0.3) ? "§c" : ((n < 0.5) ? "§6" : ((n < 0.7) ? "§e" : "§a"))) + (isWholeNumber(health) ? (int) health + "" : health);
+    }
+    
+    private boolean isWholeNumber(double num) {
+        return num == Math.floor(num);
+    }
+    
+    private double rnd(double n, int d) {
+        if (d == 0) {
+            return (double) Math.round(n);
+        } else {
+            double p = Math.pow(10.0D, (double) d);
+            return (double) Math.round(n * p) / p;
+        }
+    }
+    
+    public String getHitsToKill(final EntityPlayer entityPlayer, final ItemStack itemStack) {
+        final int n = (int) Math.ceil(ap(entityPlayer, itemStack));
+        return "§" + ((n <= 1) ? "c" : ((n <= 3) ? "6" : ((n <= 5) ? "e" : "a"))) + n;
+    }
+
+    private double ap(final EntityPlayer entityPlayer, final ItemStack itemStack) {
+        double n = 1.0;
+        if (itemStack != null && (itemStack.getItem() instanceof ItemSword || itemStack.getItem() instanceof ItemAxe)) {
+            n += getDamage(itemStack);
+        }
+        double n2 = 0.0;
+        double n3 = 0.0;
+        for (int i = 0; i < 4; ++i) {
+            final ItemStack armorItemInSlot = entityPlayer.inventory.armorItemInSlot(i);
+            if (armorItemInSlot != null) {
+                if (armorItemInSlot.getItem() instanceof ItemArmor) {
+                    n2 += ((ItemArmor) armorItemInSlot.getItem()).damageReduceAmount * 0.04;
+                    final int getEnchantmentLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.protection.effectId, armorItemInSlot);
+                    if (getEnchantmentLevel != 0) {
+                        n3 += Math.floor(0.75 * (6 + getEnchantmentLevel * getEnchantmentLevel) / 3.0);
+                    }
+                }
+            }
+        }
+        return rnd((double) getCompleteHealth(entityPlayer) / (n * (1.0 - (n2 + 0.04 * Math.min(Math.ceil(Math.min(n3, 25.0) * 0.75), 20.0) * (1.0 - n2)))), 1);
+    }
+    
+    public double getDamage(final ItemStack itemStack) {
+        double getAmount = 0;
+        for (final Map.Entry<String, AttributeModifier> entry : itemStack.getAttributeModifiers().entries()) {
+            if (entry.getKey().equals("generic.attackDamage")) {
+                getAmount = entry.getValue().getAmount();
+                break;
+            }
+        }
+        return getAmount + EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, itemStack) * 1.25;
     }
 }

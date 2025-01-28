@@ -9,6 +9,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import cc.unknown.Sakura;
+import cc.unknown.event.impl.render.RenderHungerEvent;
 import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.impl.other.FPSBoost;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
@@ -777,6 +778,8 @@ public class GuiIngame extends Gui
                         this.drawTexturedModalRect(j9, j7, l7 + 45, 27, 9, 9);
                     }
                 }
+                
+                Sakura.instance.getEventBus().handle(new RenderHungerEvent(scaledRes));
             }
             else if (entity instanceof EntityLivingBase)
             {
