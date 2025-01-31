@@ -70,10 +70,10 @@ public final class KillAura extends Module {
 
 	public final ModeValue autoBlock = new ModeValue("Auto Block", this)
 			.add(new SubMode("Fake"))
-			.add(new SubMode("Vanilla ReBlock"))
+			.add(new SubMode("Experimental"))
 			.add(new SubMode("Post"))
-			.add(new SubMode("New NCP"))
-			.setDefault("Vanilla ReBlock");
+			.add(new SubMode("Legit"))
+			.setDefault("Experimental");
 	
 	private final BooleanValue rightClickOnly = new BooleanValue("Right Click Only", this, false, () -> autoBlock.is("Fake"));
 	private final BooleanValue preventServerSideBlocking = new BooleanValue("Prevent Serverside Blocking", this, false, () -> !autoBlock.is("Fake"));
@@ -138,8 +138,8 @@ public final class KillAura extends Module {
 	public EntityLivingBase target;
 
 	private int attack;
-	//private int expandRange;
 	private int blockTicks;
+	private int hitTicks;
 	private int switchTicks;
 	private boolean resetting;
 
@@ -154,17 +154,15 @@ public final class KillAura extends Module {
 	}
 
 	@EventLink
-	public final Listener<PostMotionEvent> onPostMotion = event -> {
-		if (target != null && this.canBlock()) {
-			this.postBlock();
-		}
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
+		hitTicks++;
 	};
 
 	@Override
 	public void onEnable() {
-		this.attack = 0;
-		this.blockTicks = 0;
-		this.nextSwing = 0;
+		attack = 0;
+		blockTicks = 0;
+		nextSwing = 0;
 	}
 
 	@Override
@@ -257,13 +255,6 @@ public final class KillAura extends Module {
 		
 		this.attack = Math.max(Math.min(this.attack, this.attack - 2), 0);
 
-		/*
-		 * Heuristic fix
-		 */
-		/*if (mc.player.ticksExisted % 20 == 0) {
-			expandRange = (int) (3 + Math.random() * 0.5);
-		}*/
-
 		if (mc.currentScreen instanceof GuiContainer) {
 			this.unblock(true);
 			allowAttack = false;
@@ -290,16 +281,9 @@ public final class KillAura extends Module {
 		}
 		
 		if (this.canBlock()) {
-			this.postAttackBlock();
-		}
-		
-		if (this.canBlock()) {
 			this.preBlock();
 		}
 
-		/*
-		 * Calculating rotations to target
-		 */
 		final float rotationSpeed = this.rotationSpeed.getRandomBetween().floatValue();
         Vector2f targetRotations = RotationUtil.calculate(target, true, range.getValue().doubleValue());
 
@@ -312,21 +296,8 @@ public final class KillAura extends Module {
                 });
 	};
 
-	@EventLink()
-	public final Listener<Render3DEvent> onMediumPriorityPreUpdate = event -> {
-		if (target == null || mc.player.isDead) {
-			return;
-		}
-
-		if (this.canBlock()) {
-			this.postAttackBlock();
-		}
-	};
-
 	@EventLink
-	public final Listener<MouseOverEvent> onMouseOver = event -> event
-			.setRange(event.getRange() + range.getValue().doubleValue() - 3);
-
+	public final Listener<MouseOverEvent> onMouseOver = event -> event.setRange(event.getRange() + range.getValue().doubleValue() - 3);
 
     public Tuple<Boolean, Double> getDelay() {
         double delay = -1;
@@ -341,8 +312,8 @@ public final class KillAura extends Module {
 
                 double speed = 4;
 
-                if (mc.player.getHeldItem() != null) {
-                    final Item item = mc.player.getHeldItem().getItem();
+                if (PlayerUtil.getItemStack() != null) {
+                    final Item item = PlayerUtil.getItemStack().getItem();
 
                     if (item instanceof ItemSword) {
                         speed = 1.6;
@@ -480,17 +451,6 @@ public final class KillAura extends Module {
 		}
 	};
 
-	private void postAttackBlock() {
-		switch (autoBlock.getValue().getName()) {
-		case "Vanilla ReBlock":
-            if (this.blocking) {
-            	PacketUtil.send(new C08PacketPlayerBlockPlacement(mc.player.inventory.getCurrentItem()));
-            }
-			break;
-			
-		}
-	}
-
 	private void preBlock() {
 		switch (autoBlock.getValue().getName()) {
 		case "Post":
@@ -511,16 +471,23 @@ public final class KillAura extends Module {
 				unblock(true);
 			}
 			break;
-		}
-	}
-
-	private void postBlock() {
-		switch (autoBlock.getValue().getName()) {
-        case "New NCP":
-            mc.playerController.sendUseItem(mc.player, mc.world, mc.player.getHeldItem());
-            mc.gameSettings.keyBindUseItem.pressed = true;
-            blocking = true;
-            break;
+		case "Experimental":
+			switch (hitTicks) {
+			case 1:
+				block(false);
+				unblock(true);
+				break;
+			case 2:
+				block(false);
+				unblock(true);
+				break;
+			}
+			break;
+		case "Legit":
+			if (hitTicks == 1) {
+				block(false);
+			}
+			break;
 		}
 	}
 
@@ -528,7 +495,8 @@ public final class KillAura extends Module {
 		final AttackEvent event = new AttackEvent(target);
 		Sakura.instance.getEventBus().handle(event);
 		AttackOrder.sendFixedAttack(mc.player, target, noSwing.getValue());
-		this.clickStopWatch.reset();
+		clickStopWatch.reset();
+		hitTicks = 0;
 	}
 
 	public boolean canBlock() {
@@ -550,19 +518,15 @@ public final class KillAura extends Module {
         	blocking = false;
         }
     }
-    
-    private void interact(MovingObjectPosition mouse) {
-        if (!mc.playerController.isPlayerRightClickingOnEntity(mc.player, mouse.entityHit, mouse)) {
-            mc.playerController.interactWithEntitySendPacket(mc.player, mouse.entityHit);
-        }
-    }
-    
+
     public void block(boolean interact) {
         if (!blocking) {
-            MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationHandler.lastRotations, 3);
+            MovingObjectPosition mouse = RayCastUtil.rayCast(RotationHandler.lastRotations, 3);
 
-            if (interact && movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
-                this.interact(movingObjectPosition);
+            if (interact && mouse.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
+                if (!mc.playerController.isPlayerRightClickingOnEntity(mc.player, mouse.entityHit, mouse)) {
+                    mc.playerController.interactWithEntitySendPacket(mc.player, mouse.entityHit);
+                }
             }
 
             mc.playerController.sendUseItem(mc.player, mc.world, PlayerUtil.getItemStack());

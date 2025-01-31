@@ -50,9 +50,8 @@ public class InventoryManager extends Module {
 
 	private final StopWatch startTimer = new StopWatch();
 	private final StopWatch stopWatch = new StopWatch();
-	private List<Item> garbageItems = Arrays.asList(Items.fishing_rod, Items.bucket, Items.egg, Items.book, Items.flint_and_steel, Items.cake);
-	private List<Block> garbageBlocks = Arrays.asList(Blocks.sand, Blocks.chest, Blocks.cactus, Blocks.trapdoor);
-	private List<Integer> negativePotionIds = Arrays.asList(19, 20, 21, 22);
+	private List<Item> garbageItems = Arrays.asList(Items.fishing_rod, Items.bucket, Items.apple, Items.bread, Items.cooked_beef, Items.egg, Items.wheat_seeds, Items.cooked_rabbit, Items.pumpkin_pie, Items.snowball, Items.lava_bucket, Items.cooked_chicken, Items.book, Items.flint_and_steel, Items.cake);
+	private List<Block> garbageBlocks = Arrays.asList(Blocks.sand, Blocks.enchanting_table, Blocks.chest, Blocks.cactus, Blocks.tnt, Blocks.trapdoor);
 	
 	@EventLink
 	public final Listener<MoveInputEvent> onMoveInput = event -> {
@@ -126,13 +125,5 @@ public class InventoryManager extends Module {
 
     private boolean checkAndMoveItem(int slot, ItemStack stack, ItemStack bestItem, NumberValue targetSlot, Class<?> itemClass, BooleanValue toggle) {
         return checkAndMoveItem(slot, stack, bestItem, targetSlot, itemClass, toggle, false);
-    }
-    
-    public boolean isNegativePotion(ItemStack itemStack) {
-        if (itemStack.getItem() == Items.potionitem) {
-            int potionId = itemStack.getMetadata();
-            return negativePotionIds.contains(potionId);
-        }
-        return false;
     }
 }

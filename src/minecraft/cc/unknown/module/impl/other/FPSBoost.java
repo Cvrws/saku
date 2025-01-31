@@ -32,23 +32,19 @@ public final class FPSBoost extends Module {
 	private int before = 0;
 
 	@EventLink
-	public final Listener<Render2DEvent> eventRender = event -> {
-		if (idle.getValue() && this.isEnabled()) {
+	public final Listener<Render2DEvent> onRender2D = event -> {
+		if (idle.getValue()) {
 			if (Display.isActive() && before != -1) {
 				mc.gameSettings.limitFramerate = before;
 				before = -1;
 			} else if (!Display.isActive()) {
-				if (before == -1)
-					before = Minecraft.getInstance().gameSettings.limitFramerate;
+				if (before == -1) before = mc.gameSettings.limitFramerate;
 				mc.gameSettings.limitFramerate = 15;
 			}
 		}
-		try {
-			glTasks.forEach(GLTask::run);
-			glTasks.clear();
-		} catch (Exception ex) {
-			glTasks.clear();
-		}
+		
+		glTasks.forEach(GLTask::run);
+		glTasks.clear();
 	};
 	
 	public interface GLTask {

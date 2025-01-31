@@ -91,6 +91,7 @@ public class AutoClicker extends Module {
 				} else {
 					this.nextSwing = (long) (base + fluctuation);
 				}
+				break;
 			}
 
 			switch (button.getValue().getName()) {
@@ -128,9 +129,11 @@ public class AutoClicker extends Module {
 	};
 
 	private void handleLeftClick() {
-		if (ticksDown > 1 && !mc.gameSettings.keyBindUseItem.isKeyDown() && (!breakBlocks.getValue() || mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)) {
+		if (ticksDown > 1 && !mc.gameSettings.keyBindUseItem.isKeyDown()) {
 			mc.clickMouse();
-		} else if (!breakBlocks.getValue()) {
+		}
+		
+		if (!breakBlocks.getValue()) {
 			mc.playerController.curBlockDamageMP = 0;
 		}
 	}

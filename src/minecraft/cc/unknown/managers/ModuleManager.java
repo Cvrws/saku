@@ -81,6 +81,7 @@ public final class ModuleManager {
         this.put(AntiAFK.class, new AntiAFK());
         this.put(AutoPlay.class, new AutoPlay());
         this.put(AutoRefill.class, new AutoRefill());
+        this.put(AntiStaff.class, new AntiStaff());
         this.put(AutoText.class, new AutoText());
         this.put(FPSBoost.class, new FPSBoost());
         this.put(ClientSpoofer.class, new ClientSpoofer());
@@ -96,6 +97,7 @@ public final class ModuleManager {
         this.put(ChatLogger.class, new ChatLogger());
         
         // Player
+        this.put(AntiBoat.class, new AntiBoat());
         this.put(AntiFireBall.class, new AntiFireBall());
         this.put(AutoPot.class, new AutoPot());
         this.put(FastBow.class, new FastBow());

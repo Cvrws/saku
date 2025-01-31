@@ -2,6 +2,7 @@ package cc.unknown.module.impl.visual;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
@@ -32,7 +33,7 @@ import net.minecraft.util.Vec3;
 @ModuleInfo(aliases = "Trajectories", description = "Renderiza la trayección de los proyectiles", category = Category.VISUALS)
 public final class Trajectories extends Module {
 	
-	private final ArrayList<Vec3> positions = new ArrayList<Vec3>();
+	private final LinkedList<Vec3> positions = new LinkedList<Vec3>();
 
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
@@ -41,6 +42,9 @@ public final class Trajectories extends Module {
 		MovingObjectPosition m = null;
 		if (itemStack != null && (itemStack.getItem() instanceof ItemSnowball || itemStack.getItem() instanceof ItemEgg || itemStack.getItem() instanceof ItemBow || itemStack.getItem() instanceof ItemEnderPearl)) {
 			final EntityLivingBase player = mc.player;
+			final double renderX = mc.getRenderManager().renderPosX;
+			final double renderY = mc.getRenderManager().renderPosY;
+			final double renderZ = mc.getRenderManager().renderPosZ;
 			float rotationYaw = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * event.getPartialTicks();
 			float rotationPitch = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * event.getPartialTicks();
 			double posX = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
@@ -149,135 +153,124 @@ public final class Trajectories extends Module {
 				motionY -= f5;
 				positions.add(new Vec3(posX, posY, posZ));
 			}
+			
 			if (positions.size() > 1) {
-				Color color = getTheme().getFirstColor();
-				GL11.glEnable(3042);
-				GL11.glBlendFunc(770, 771);
-				GL11.glEnable(2848);
-				GL11.glDisable(3553);
-				GlStateManager.disableCull();
-				GL11.glDepthMask(false);
-				GL11.glColor4f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, 0.7f);
-				GL11.glLineWidth((float) 6.0D / 2.0f);
-				final Tessellator tessellator = Tessellator.getInstance();
-				final WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-				GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-				worldrenderer.begin(3, DefaultVertexFormats.POSITION);
-				for (final Vec3 vec5 : positions) {
-					worldrenderer.pos((float) vec5.xCoord - mc.getRenderManager().renderPosX, (float) vec5.yCoord - mc.getRenderManager().renderPosY, (float) vec5.zCoord - mc.getRenderManager().renderPosZ).endVertex();
-				}
-				tessellator.draw();
+			    Color color = getTheme().getFirstColor();
+
+			    GL11.glEnable(GL11.GL_BLEND);
+			    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			    GL11.glEnable(GL11.GL_LINE_SMOOTH);
+			    GL11.glDisable(GL11.GL_TEXTURE_2D);
+			    GlStateManager.disableCull();
+			    GL11.glDepthMask(false);
+
+			    float red = color.getRed() / 255.0f;
+			    float green = color.getGreen() / 255.0f;
+			    float blue = color.getBlue() / 255.0f;
+			    float alpha = 0.7f;
+
+			    GL11.glColor4f(red, green, blue, alpha);
+
+			    GL11.glLineWidth(3.0f);
+
+			    final Tessellator tessellator = Tessellator.getInstance();
+			    final WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+
+			    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+			    worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+			    for (final Vec3 vec : positions) {
+			        worldRenderer.pos((float) vec.xCoord - renderX, (float) vec.yCoord - renderY, (float) vec.zCoord - renderZ).endVertex();
+			    }
+			    tessellator.draw();
 				if (m != null) {
-					GL11.glColor4f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, 0.3f);
-					final Vec3 hitVec = m.hitVec;
-					final EnumFacing enumFacing1 = m.sideHit;
-					float minX = (float) (hitVec.xCoord - mc.getRenderManager().renderPosX);
-					float maxX = (float) (hitVec.xCoord - mc.getRenderManager().renderPosX);
-					float minY = (float) (hitVec.yCoord - mc.getRenderManager().renderPosY);
-					float maxY = (float) (hitVec.yCoord - mc.getRenderManager().renderPosY);
-					float minZ = (float) (hitVec.zCoord - mc.getRenderManager().renderPosZ);
-					float maxZ = (float) (hitVec.zCoord - mc.getRenderManager().renderPosZ);
-					if (enumFacing1 == EnumFacing.SOUTH) {
-						minX -= (float) 0.4;
-						maxX += (float) 0.4;
-						minY -= (float) 0.4;
-						maxY += (float) 0.4;
-						maxZ += (float) 0.02;
-						minZ += (float) 0.05;
-					} else if (enumFacing1 == EnumFacing.NORTH) {
-						minX -= (float) 0.4;
-						maxX += (float) 0.4;
-						minY -= (float) 0.4;
-						maxY += (float) 0.4;
-						maxZ -= (float) 0.02;
-						minZ -= (float) 0.05;
-					} else if (enumFacing1 == EnumFacing.EAST) {
-						maxX += (float) 0.02;
-						minX += (float) 0.05;
-						minY -= (float) 0.4;
-						maxY += (float) 0.4;
-						minZ -= (float) 0.4;
-						maxZ += (float) 0.4;
-					} else if (enumFacing1 == EnumFacing.WEST) {
-						maxX -= (float) 0.02;
-						minX -= (float) 0.05;
-						minY -= (float) 0.4;
-						maxY += (float) 0.4;
-						minZ -= (float) 0.4;
-						maxZ += (float) 0.4;
-					} else if (enumFacing1 == EnumFacing.UP) {
-						minX -= (float) 0.4;
-						maxX += (float) 0.4;
-						maxY += (float) 0.02;
-						minY += (float) 0.05;
-						minZ -= (float) 0.4;
-						maxZ += (float) 0.4;
-					} else if (enumFacing1 == EnumFacing.DOWN) {
-						minX -= (float) 0.4;
-						maxX += (float) 0.4;
-						maxY -= (float) 0.02;
-						minY -= (float) 0.05;
-						minZ -= (float) 0.4;
-						maxZ += (float) 0.4;
-					}
-					worldrenderer.begin(7, DefaultVertexFormats.POSITION);
-					worldrenderer.pos(minX, minY, minZ).endVertex();
-					worldrenderer.pos(minX, minY, maxZ).endVertex();
-					worldrenderer.pos(minX, maxY, maxZ).endVertex();
-					worldrenderer.pos(minX, maxY, minZ).endVertex();
-					worldrenderer.pos(minX, minY, maxZ).endVertex();
-					worldrenderer.pos(maxX, minY, maxZ).endVertex();
-					worldrenderer.pos(maxX, maxY, maxZ).endVertex();
-					worldrenderer.pos(minX, maxY, maxZ).endVertex();
-					worldrenderer.pos(maxX, minY, maxZ).endVertex();
-					worldrenderer.pos(maxX, minY, minZ).endVertex();
-					worldrenderer.pos(maxX, maxY, minZ).endVertex();
-					worldrenderer.pos(maxX, maxY, maxZ).endVertex();
-					worldrenderer.pos(maxX, minY, minZ).endVertex();
-					worldrenderer.pos(minX, minY, minZ).endVertex();
-					worldrenderer.pos(minX, maxY, minZ).endVertex();
-					worldrenderer.pos(maxX, maxY, minZ).endVertex();
-					worldrenderer.pos(minX, minY, minZ).endVertex();
-					worldrenderer.pos(minX, minY, maxZ).endVertex();
-					worldrenderer.pos(maxX, minY, maxZ).endVertex();
-					worldrenderer.pos(maxX, minY, minZ).endVertex();
-					worldrenderer.pos(minX, maxY, minZ).endVertex();
-					worldrenderer.pos(minX, maxY, maxZ).endVertex();
-					worldrenderer.pos(maxX, maxY, maxZ).endVertex();
-					worldrenderer.pos(maxX, maxY, minZ).endVertex();
-					worldrenderer.endVertex();
-					tessellator.draw();
-					GL11.glLineWidth(2.0f);
-					worldrenderer.begin(3, DefaultVertexFormats.POSITION);
-					worldrenderer.pos(minX, minY, minZ).endVertex();
-					worldrenderer.pos(minX, minY, maxZ).endVertex();
-					worldrenderer.pos(minX, maxY, maxZ).endVertex();
-					worldrenderer.pos(minX, maxY, minZ).endVertex();
-					worldrenderer.pos(minX, minY, minZ).endVertex();
-					worldrenderer.pos(maxX, minY, minZ).endVertex();
-					worldrenderer.pos(maxX, maxY, minZ).endVertex();
-					worldrenderer.pos(maxX, maxY, maxZ).endVertex();
-					worldrenderer.pos(maxX, minY, maxZ).endVertex();
-					worldrenderer.pos(maxX, minY, minZ).endVertex();
-					worldrenderer.pos(maxX, minY, maxZ).endVertex();
-					worldrenderer.pos(minX, minY, maxZ).endVertex();
-					worldrenderer.pos(minX, maxY, maxZ).endVertex();
-					worldrenderer.pos(maxX, maxY, maxZ).endVertex();
-					worldrenderer.pos(maxX, maxY, minZ).endVertex();
-					worldrenderer.pos(minX, maxY, minZ).endVertex();
-					worldrenderer.endVertex();
-					tessellator.draw();
+				    GL11.glColor4f(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, 0.3f);
+
+				    final Vec3 hitVec = m.hitVec;
+				    final EnumFacing face = m.sideHit;
+				    final float hitX = (float) (hitVec.xCoord - renderX);
+				    final float hitY = (float) (hitVec.yCoord - renderY);
+				    final float hitZ = (float) (hitVec.zCoord - renderZ);
+
+				    float minX = hitX, maxX = hitX;
+				    float minY = hitY, maxY = hitY;
+				    float minZ = hitZ, maxZ = hitZ;
+
+				    float offset = 0.4f, faceOffset = 0.02f, sideOffset = 0.05f;
+				    
+				    switch (face) {
+				        case SOUTH:
+				            minX -= offset; maxX += offset;
+				            minY -= offset; maxY += offset;
+				            minZ += sideOffset; maxZ += faceOffset;
+				            break;
+				        case NORTH:
+				            minX -= offset; maxX += offset;
+				            minY -= offset; maxY += offset;
+				            minZ -= sideOffset; maxZ -= faceOffset;
+				            break;
+				        case EAST:
+				            minX += sideOffset; maxX += faceOffset;
+				            minY -= offset; maxY += offset;
+				            minZ -= offset; maxZ += offset;
+				            break;
+				        case WEST:
+				            minX -= sideOffset; maxX -= faceOffset;
+				            minY -= offset; maxY += offset;
+				            minZ -= offset; maxZ += offset;
+				            break;
+				        case UP:
+				            minX -= offset; maxX += offset;
+				            minY += sideOffset; maxY += faceOffset;
+				            minZ -= offset; maxZ += offset;
+				            break;
+				        case DOWN:
+				            minX -= offset; maxX += offset;
+				            minY -= faceOffset; maxY -= sideOffset;
+				            minZ -= offset; maxZ += offset;
+				            break;
+				    }
+
+				    renderCube(worldRenderer, tessellator, minX, maxX, minY, maxY, minZ, maxZ);
+				    renderEdges(worldRenderer, tessellator, minX, maxX, minY, maxY, minZ, maxZ);
 				}
 				GL11.glLineWidth(1.0f);
 				GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 				GL11.glDepthMask(true);
 				GlStateManager.enableCull();
-				GL11.glEnable(3553);
-				GL11.glEnable(2929);
-				GL11.glDisable(3042);
-				GL11.glBlendFunc(770, 771);
-				GL11.glDisable(2848);
+				GL11.glEnable(GL11.GL_TEXTURE_2D);
+				GL11.glEnable(GL11.GL_DEPTH_TEST);
+				GL11.glDisable(GL11.GL_BLEND);
+				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+				GL11.glDisable(GL11.GL_LINE_SMOOTH);
 			}
 		}
 	};
+	
+	private void renderCube(WorldRenderer worldrenderer, Tessellator tessellator, float minX, float maxX, float minY, float maxY, float minZ, float maxZ) {
+	    worldrenderer.begin(7, DefaultVertexFormats.POSITION);
+	    
+	    float[][] vertices = {
+	        {minX, minY, minZ}, {minX, minY, maxZ}, {minX, maxY, maxZ}, {minX, maxY, minZ},
+	        {minX, minY, maxZ}, {maxX, minY, maxZ}, {maxX, maxY, maxZ}, {minX, maxY, maxZ},
+	        {maxX, minY, maxZ}, {maxX, minY, minZ}, {maxX, maxY, minZ}, {maxX, maxY, maxZ},
+	        {maxX, minY, minZ}, {minX, minY, minZ}, {minX, maxY, minZ}, {maxX, maxY, minZ},
+	        {minX, minY, minZ}, {minX, minY, maxZ}, {maxX, minY, maxZ}, {maxX, minY, minZ},
+	        {minX, maxY, minZ}, {minX, maxY, maxZ}, {maxX, maxY, maxZ}, {maxX, maxY, minZ}
+	    };
+	    for (float[] v : vertices) worldrenderer.pos(v[0], v[1], v[2]).endVertex();
+	    tessellator.draw();
+	}
+
+	private void renderEdges(WorldRenderer worldrenderer, Tessellator tessellator, float minX, float maxX, float minY, float maxY, float minZ, float maxZ) {
+	    GL11.glLineWidth(2.0f);
+	    worldrenderer.begin(3, DefaultVertexFormats.POSITION);
+	    float[][] edges = {
+	        {minX, minY, minZ}, {minX, minY, maxZ}, {minX, maxY, maxZ}, {minX, maxY, minZ}, {minX, minY, minZ},
+	        {maxX, minY, minZ}, {maxX, maxY, minZ}, {maxX, maxY, maxZ}, {maxX, minY, maxZ}, {maxX, minY, minZ},
+	        {maxX, minY, maxZ}, {minX, minY, maxZ}, {minX, maxY, maxZ}, {maxX, maxY, maxZ}, {maxX, maxY, minZ}, {minX, maxY, minZ}
+	    };
+	    for (float[] v : edges) worldrenderer.pos(v[0], v[1], v[2]).endVertex();
+	    tessellator.draw();
+	}
 }

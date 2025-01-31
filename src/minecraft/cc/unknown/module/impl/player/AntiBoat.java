@@ -20,11 +20,11 @@ import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.util.MathHelper;
 
-@ModuleInfo(aliases = "Anti Fire Ball", description = "Golpea automaticámente las fireballs", category = Category.PLAYER)
-public class AntiFireBall extends Module {
+@ModuleInfo(aliases = "Anti Boat", description = "Previene que el gordo de Trident1964_ se suba al barco", category = Category.PLAYER)
+public class AntiBoat extends Module {
 
     private final NumberValue cps = new NumberValue("CPS", this, 9, 1, 20, 1);
-    public final NumberValue range = new NumberValue("Range", this, 6.0F, 2.0F, 6F, .1f);
+    public final NumberValue range = new NumberValue("Range", this, 3.0, 2.0, 6, .1);
     private final NumberValue yawSpeed = new NumberValue("Yaw Speed", this, 10, 0, 10, 1);
     private final NumberValue pitchSpeed = new NumberValue("Pitch Speed", this, 10, 0, 10, 1);
     private final BooleanValue moveFix = new BooleanValue("Move Fix", this, false);
@@ -32,9 +32,8 @@ public class AntiFireBall extends Module {
 
     @EventLink(value = Priority.VERY_HIGH)
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-        
         for (Entity entity : mc.world.loadedEntityList) {
-            if ((entity instanceof EntityFireball) && entity.getDistanceToEntity(mc.player) < range.getValue().floatValue()) {
+            if (entity instanceof EntityBoat && entity.getDistanceToEntity(mc.player) < range.getValue().floatValue()) {
                 if (attackTimer.finished((long) (1000L / (cps.getValue().intValue() + 4)))) {
                 	int yaw = yawSpeed.getValue().intValue();
                 	int pitch = pitchSpeed.getValue().intValue();

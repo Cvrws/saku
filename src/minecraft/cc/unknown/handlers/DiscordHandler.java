@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.sun.jna.Platform;
 
 import cc.unknown.Sakura;
 import cc.unknown.util.Accessor;
@@ -30,45 +31,47 @@ public class DiscordHandler implements Accessor {
     public Map<String, ServerData> serverDataMap = new HashMap<>();
 
     public void start() {
-        this.timeElapsed = System.currentTimeMillis();
-        DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(discordUser -> {
-        	this.discordUser = discordUser.username;
-        }).build();
-
-        DiscordRPC.discordInitialize("1305938480802828350", handlers, true);
-        new Thread("Discord RPC Callback") {
-            @Override
-            public void run() {
-                while (running) {
-                    if (mc.player != null) {
-                        if (mc.isSingleplayer()) {
-                            update("", "in SinglePlayer");
-                        } else if (fetchAndFindServerData(mc.getCurrentServerData().serverIP)) {
-                        	update("", "Cheating on " + serverName);
-                        } else if (mc.currentScreen instanceof GuiDownloadTerrain) {
-                            update("Loading World...", "");
-                        }
-                    } else {
-                        if (mc.currentScreen instanceof GuiSelectWorld) {
-                            update("Selecting World...", "");
-                        } else if (mc.currentScreen instanceof GuiMultiplayer) {
-                            update("In Multiplayer...", "");
-                        } else if (mc.currentScreen instanceof GuiDownloadTerrain) {
-                            update("Loading World...", "");
-                        } else {
-                            update("In MainMenu...", "");
-                        }
-                    }
-
-                    try {
-                        sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    DiscordRPC.discordRunCallbacks();
-                }
-            }
-        }.start();
+    	if (Platform.isWindows()) {
+	        this.timeElapsed = System.currentTimeMillis();
+	        DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(discordUser -> {
+	        	this.discordUser = discordUser.username;
+	        }).build();
+	
+	        DiscordRPC.discordInitialize("1305938480802828350", handlers, true);
+	        new Thread("Discord RPC Callback") {
+	            @Override
+	            public void run() {
+	                while (running) {
+	                    if (mc.player != null) {
+	                        if (mc.isSingleplayer()) {
+	                            update("", "in SinglePlayer");
+	                        } else if (fetchAndFindServerData(mc.getCurrentServerData().serverIP)) {
+	                        	update("", "Cheating on " + serverName);
+	                        } else if (mc.currentScreen instanceof GuiDownloadTerrain) {
+	                            update("Loading World...", "");
+	                        }
+	                    } else {
+	                        if (mc.currentScreen instanceof GuiSelectWorld) {
+	                            update("Selecting World...", "");
+	                        } else if (mc.currentScreen instanceof GuiMultiplayer) {
+	                            update("In Multiplayer...", "");
+	                        } else if (mc.currentScreen instanceof GuiDownloadTerrain) {
+	                            update("Loading World...", "");
+	                        } else {
+	                            update("In MainMenu...", "");
+	                        }
+	                    }
+	
+	                    try {
+	                        sleep(1000);
+	                    } catch (InterruptedException e) {
+	                        e.printStackTrace();
+	                    }
+	                    DiscordRPC.discordRunCallbacks();
+	                }
+	            }
+	        }.start();
+    	}
     }
 
     public void stop() {

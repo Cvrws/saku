@@ -84,8 +84,8 @@ public class WTap extends Module {
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
         switch (ticks) {
-        case 2:
-            switch (mode.getValue().getName()) {
+        case 2: {
+        	switch (mode.getValue().getName()) {
                 case "Normal":
                     mc.gameSettings.keyBindForward.pressed = false;
                     break;
@@ -97,8 +97,9 @@ public class WTap extends Module {
                     break;
             }
             ticks--;
+        }
             break;
-        case 1:
+        case 1: {
             switch (mode.getValue().getName()) {
                 case "Normal":
                     mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
@@ -111,6 +112,7 @@ public class WTap extends Module {
                     break;
             }
             ticks--;
+        }
             break;
         }
 	};

@@ -29,7 +29,7 @@ public class FastUse extends Module {
 	
 	@Override
 	public void onEnable() {
-		if (mode.is("Universocraft")) ChatUtil.display("No works with noslow");
+		if (mode.is("Universocraft")) ChatUtil.display("[Fast Use] No works with noslow");
 	}
 	
 	@EventLink

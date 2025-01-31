@@ -14,6 +14,7 @@ import org.lwjgl.opengl.Display;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.sun.jna.Platform;
 
 import cc.unknown.event.Event;
 import cc.unknown.event.bus.impl.EventBus;
@@ -152,13 +153,11 @@ public class Sakura {
     }
     
     private void initAutoOptimization() {
-        boolean isAndroid = System.getProperty("os.name", "").toLowerCase().contains("android");
-
-    	mc.gameSettings.ofFastRender = Config.isShaders() ? false : true;
-		mc.gameSettings.ofChunkUpdatesDynamic = true;
-		mc.gameSettings.ofSmartAnimations = true;
-        mc.gameSettings.ofShowGlErrors = false;        
-        mc.gameSettings.ofRenderRegions = isAndroid ? false : true;
+    	mc.gameSettings.ofFastRender = Config.isShaders() ? false : (Platform.isLinux() ? false : true);
+		mc.gameSettings.ofChunkUpdatesDynamic = Platform.isLinux() ? false : true;
+		mc.gameSettings.ofSmartAnimations = Platform.isLinux() ? false : true;
+        mc.gameSettings.ofShowGlErrors = false;
+        mc.gameSettings.ofRenderRegions = Platform.isLinux() ? false : true;
         mc.gameSettings.ofSmoothFps = false;
         mc.gameSettings.ofFastMath = true;
         mc.gameSettings.useVbo = true;

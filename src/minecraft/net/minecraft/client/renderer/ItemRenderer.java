@@ -1,8 +1,10 @@
 package net.minecraft.client.renderer;
 
+import org.lwjgl.opengl.GL11;
+
+import cc.unknown.Sakura;
+import cc.unknown.module.impl.combat.KillAura;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -30,7 +32,6 @@ import net.minecraft.world.storage.MapData;
 import net.optifine.DynamicLights;
 import net.optifine.reflect.Reflector;
 import net.optifine.shaders.Shaders;
-import org.lwjgl.opengl.GL11;
 
 public class ItemRenderer
 {
@@ -320,6 +321,8 @@ public class ItemRenderer
             this.rotateWithPlayerRotations((EntityPlayerSP)abstractclientplayer, partialTicks);
             GlStateManager.enableRescaleNormal();
             GlStateManager.pushMatrix();
+            
+            KillAura aura = Sakura.instance.getModuleManager().get(KillAura.class);
 
             if (this.itemToRender != null)
             {
@@ -327,7 +330,7 @@ public class ItemRenderer
                 {
                     this.renderItemMap(abstractclientplayer, f2, f, f1);
                 }
-                else if (abstractclientplayer.getItemInUseCount() > 0)
+                else if (abstractclientplayer.getItemInUseCount() > 0 || (aura.canBlock() && aura.blocking && aura.target != null))
                 {
                     EnumAction enumaction = this.itemToRender.getItemUseAction();
 

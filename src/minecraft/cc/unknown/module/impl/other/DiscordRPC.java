@@ -2,6 +2,8 @@ package cc.unknown.module.impl.other;
 
 import java.util.Arrays;
 
+import com.sun.jna.Platform;
+
 import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
@@ -19,11 +21,15 @@ public final class DiscordRPC extends Module {
 	
 	@Override
 	public void onEnable() {
-		Sakura.instance.getDiscordHandler().start();
+		if (Platform.isWindows()) {
+			Sakura.instance.getDiscordHandler().start();
+		}
 	}
 	
 	@Override
 	public void onDisable() {
-		Sakura.instance.getDiscordHandler().stop();
+		if (Platform.isWindows()) {
+			Sakura.instance.getDiscordHandler().stop();
+		}
 	}
 }
