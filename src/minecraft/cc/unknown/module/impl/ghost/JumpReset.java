@@ -44,7 +44,7 @@ public class JumpReset extends Module {
             return;
         }
 	    
-		if (MoveUtil.isMoving() && mc.player.hurtTime > 0 && mc.player.motionY > 0 && (mc.player.ticksSinceVelocity <= 14 || mc.player.onGroundTicks <= 1)) {
+		if (MoveUtil.isMoving() && mc.player.hurtTime == 9 && mc.player.motionY > 0 && (mc.player.ticksSinceVelocity <= 14 || mc.player.onGroundTicks <= 1)) {
 			event.setJump(true);
 		}
 	};

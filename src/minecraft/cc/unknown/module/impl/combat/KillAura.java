@@ -155,6 +155,10 @@ public final class KillAura extends Module {
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
+		if (target == null || mc.player.isDead || target == mc.player) {
+			return;
+		}
+		
 		hitTicks++;
 	};
 
@@ -262,9 +266,6 @@ public final class KillAura extends Module {
 			return;
 		}
 
-		/*
-		 * Getting targets and selecting the nearest one
-		 */
 		this.getTargets();
 
 		if (targets.isEmpty()) {
@@ -276,7 +277,7 @@ public final class KillAura extends Module {
 		
 		this.doAttack(targets);
 
-		if (target == null || mc.player.isDead) {
+		if (target == null || mc.player.isDead || target == mc.player) {
 			return;
 		}
 		

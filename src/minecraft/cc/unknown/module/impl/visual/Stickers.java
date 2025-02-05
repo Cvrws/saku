@@ -27,7 +27,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
-@ModuleInfo(aliases = "Stickers", description = "Stickers/Pegatinas", category = Category.VISUALS, autoEnabled = true)
+@ModuleInfo(aliases = "Stickers", description = "Stickers/Pegatinas", category = Category.VISUALS)
 public final class Stickers extends Module {
 
 	private final ModeValue stickerType = new ModeValue("Sticker Type", this)

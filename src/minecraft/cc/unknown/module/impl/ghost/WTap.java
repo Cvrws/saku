@@ -17,6 +17,7 @@ import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -57,9 +58,9 @@ public class WTap extends Module {
 		double chanceValue = chance.getValue().doubleValue();
 		double randomFactor = MathUtil.getRandomFactor(chanceValue);
 		if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
+		if (event.getTarget() instanceof IMob || event.getTarget() instanceof INpc) return;
 		EntityPlayer player = (EntityPlayer) event.getTarget();
 		
-		if (event.getTarget() instanceof IMob || event.getTarget() instanceof INpc) return;
 		if (mc.player == null || player == null) return;
 		
 		if (player.hurtTime > targetHurtime.getValue().intValue()) return;

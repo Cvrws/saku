@@ -1,20 +1,14 @@
 package net.optifine.player;
 
+import java.awt.image.BufferedImage;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import javax.imageio.ImageIO;
-import net.minecraft.client.Minecraft;
+
 import net.minecraft.src.Config;
 import net.minecraft.util.ResourceLocation;
-import net.optifine.http.HttpPipeline;
-import net.optifine.http.HttpUtils;
 import net.optifine.util.Json;
 
 public class PlayerConfigurationParser
@@ -103,38 +97,11 @@ public class PlayerConfigurationParser
 
     private BufferedImage downloadTextureImage(String texturePath)
     {
-        String s = HttpUtils.getPlayerItemsUrl() + "/" + texturePath;
-
-        try
-        {
-            byte[] abyte = HttpPipeline.get(s, Minecraft.getInstance().getProxy());
-            BufferedImage bufferedimage = ImageIO.read((InputStream)(new ByteArrayInputStream(abyte)));
-            return bufferedimage;
-        }
-        catch (IOException ioexception)
-        {
-            Config.warn("Error loading item texture " + texturePath + ": " + ioexception.getClass().getName() + ": " + ioexception.getMessage());
-            return null;
-        }
+    	return null;
     }
 
     private PlayerItemModel downloadModel(String modelPath)
     {
-        String s = HttpUtils.getPlayerItemsUrl() + "/" + modelPath;
-
-        try
-        {
-            byte[] abyte = HttpPipeline.get(s, Minecraft.getInstance().getProxy());
-            String s1 = new String(abyte, "ASCII");
-            JsonParser jsonparser = new JsonParser();
-            JsonObject jsonobject = (JsonObject)jsonparser.parse(s1);
-            PlayerItemModel playeritemmodel = PlayerItemParser.parseItemModel(jsonobject);
-            return playeritemmodel;
-        }
-        catch (Exception exception)
-        {
-            Config.warn("Error loading item model " + modelPath + ": " + exception.getClass().getName() + ": " + exception.getMessage());
-            return null;
-        }
+    	return null;
     }
 }

@@ -2,11 +2,10 @@ package net.optifine.player;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
-import net.optifine.http.FileDownloadThread;
-import net.optifine.http.HttpUtils;
 
 public class PlayerConfigurations
 {
@@ -51,10 +50,7 @@ public class PlayerConfigurations
             {
                 playerconfiguration = new PlayerConfiguration();
                 getMapConfigurations().put(s1, playerconfiguration);
-                PlayerConfigurationReceiver playerconfigurationreceiver = new PlayerConfigurationReceiver(s1);
-                String s = HttpUtils.getPlayerItemsUrl() + "/users/" + s1 + ".cfg";
-                FileDownloadThread filedownloadthread = new FileDownloadThread(s, playerconfigurationreceiver);
-                filedownloadthread.start();
+
             }
 
             return playerconfiguration;

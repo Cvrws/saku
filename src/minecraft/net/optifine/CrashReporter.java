@@ -2,12 +2,11 @@ package net.optifine;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.src.Config;
-import net.optifine.http.FileUploadThread;
-import net.optifine.http.IFileUploadListener;
 import net.optifine.shaders.Shaders;
 
 public class CrashReporter
@@ -46,21 +45,11 @@ public class CrashReporter
                 return;
             }
 
-            String s = "http://optifine.net/crashReport";
             String s1 = makeReport(crashReport);
             byte[] abyte = s1.getBytes("ASCII");
-            IFileUploadListener ifileuploadlistener = new IFileUploadListener()
-            {
-                public void fileUploadFinished(String url, byte[] content, Throwable exception)
-                {
-                }
-            };
             Map map = new HashMap();
             map.put("OF-Version", Config.getVersion());
             map.put("OF-Summary", makeSummary(crashReport));
-            FileUploadThread fileuploadthread = new FileUploadThread(s, map, abyte, ifileuploadlistener);
-            fileuploadthread.setPriority(10);
-            fileuploadthread.start();
             Thread.sleep(1000L);
         }
         catch (Exception exception)

@@ -52,11 +52,9 @@ public final class HUD extends Module {
     public final BooleanValue hideWorld = new BooleanValue("Hide World", this, false, () -> !renderCategories.getValue());
     private final BooleanValue lowercase = new BooleanValue("Lowercase", this, false);
     private final NumberValue alphaBackground = new NumberValue("Alpha BackGround", this, 180, 0, 255, 1);
-    private final NumberValue pelusita = new NumberValue("Font Size", this, 16, 12, 30, 1);
 
     private List<ModuleComponent> activeModuleComponents = new ArrayList<>();
     private List<ModuleComponent> allModuleComponents = new ArrayList<>();
-    private Font font = Fonts.MAISON.get(pelusita.getValue().intValue(), Weight.NONE);
     private final StopWatch stopwatch = new StopWatch();
     private float moduleSpacing = 12, edgeOffset;
 
@@ -64,15 +62,10 @@ public final class HUD extends Module {
     public void onEnable() {
         allModuleComponents.clear();
         allModuleComponents = Sakura.instance.getModuleManager().getAll().stream()
-                .sorted(Comparator.comparingDouble(module -> -font.width(module.getName())))
+                .sorted(Comparator.comparingDouble(module -> -mc.fontRendererObj.width(module.getName())))
                 .map(ModuleComponent::new)
                 .peek(module -> module.translatedName = module.module.getName())
                 .collect(Collectors.toList());
-    }
-    
-    @Override
-    public void guiUpdate() {
-    	font = Fonts.MAISON.get(pelusita.getValue().intValue(), Weight.NONE);
     }
 
     @EventLink
@@ -85,12 +78,12 @@ public final class HUD extends Module {
 
     @EventLink(value = Priority.LOW)
     public final Listener<Render2DEvent> onRender2D = event -> {
-        moduleSpacing = font.height();
-        edgeOffset = 5;
+        moduleSpacing = mc.fontRendererObj.height();
+        edgeOffset = 4;
 
         float sx = event.getScaledResolution().getScaledWidth();
-        float sy = event.getScaledResolution().getScaledHeight() - font.height() - 1;
-        double widthOffset = 3;
+        float sy = event.getScaledResolution().getScaledHeight() - mc.fontRendererObj.height() - 4;
+        double widthOffset = 2;
         float totalHeight = activeModuleComponents.size() * moduleSpacing;
 
         for (ModuleComponent module : activeModuleComponents) {
@@ -102,7 +95,7 @@ public final class HUD extends Module {
             }
 
             module.color = color;
-            module.nameWidth = font.width(name);
+            module.nameWidth = mc.fontRendererObj.width(name);
             module.displayName = name;
         }
 
@@ -129,7 +122,7 @@ public final class HUD extends Module {
             Color finalColor = module.color;
 
             setRenderRectangle(module, x, y, widthOffset, totalHeight);
-            font.draw(module.displayName, x, y - 0.7f, finalColor.getRGB());
+            mc.fontRendererObj.drawWithShadow(module.displayName, x, y - 0.7f, finalColor.getRGB());
         }
     };
 

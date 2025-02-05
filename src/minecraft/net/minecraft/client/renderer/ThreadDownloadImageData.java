@@ -1,29 +1,28 @@
 package net.minecraft.client.renderer;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
-import java.net.URL;
 import java.net.Proxy.Type;
+import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.imageio.ImageIO;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.src.Config;
 import net.minecraft.util.ResourceLocation;
-import net.optifine.http.HttpPipeline;
-import net.optifine.http.HttpRequest;
-import net.optifine.http.HttpResponse;
 import net.optifine.player.CapeImageBuffer;
 import net.optifine.shaders.ShadersTex;
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class ThreadDownloadImageData extends SimpleTexture
 {
@@ -210,46 +209,7 @@ public class ThreadDownloadImageData extends SimpleTexture
 
     private void loadPipelined()
     {
-        try
-        {
-            HttpRequest httprequest = HttpPipeline.makeRequest(this.imageUrl, Minecraft.getInstance().getProxy());
-            HttpResponse httpresponse = HttpPipeline.executeRequest(httprequest);
-
-            if (httpresponse.getStatus() / 100 != 2)
-            {
-                return;
-            }
-
-            byte[] abyte = httpresponse.getBody();
-            ByteArrayInputStream bytearrayinputstream = new ByteArrayInputStream(abyte);
-            BufferedImage bufferedimage;
-
-            if (this.cacheFile != null)
-            {
-                FileUtils.copyInputStreamToFile(bytearrayinputstream, this.cacheFile);
-                bufferedimage = ImageIO.read(this.cacheFile);
-            }
-            else
-            {
-                bufferedimage = TextureUtil.readBufferedImage(bytearrayinputstream);
-            }
-
-            if (this.imageBuffer != null)
-            {
-                bufferedimage = this.imageBuffer.parseUserSkin(bufferedimage);
-            }
-
-            this.setBufferedImage(bufferedimage);
-        }
-        catch (Exception exception)
-        {
-            logger.error("Couldn\'t download http texture: " + exception.getClass().getName() + ": " + exception.getMessage());
-            return;
-        }
-        finally
-        {
-            this.loadingFinished();
-        }
+    	this.loadingFinished();
     }
 
     private void loadingFinished()
