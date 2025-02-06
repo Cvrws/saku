@@ -37,6 +37,7 @@ public final class HUD extends Module {
 
     private final ModeValue colorMode = new ModeValue("Style Color", this)
             .add(new SubMode("Static"))
+            .add(new SubMode("Custom"))
             .add(new SubMode("Fade"))
             .setDefault("Fade");
 
@@ -78,12 +79,12 @@ public final class HUD extends Module {
 
     @EventLink(value = Priority.LOW)
     public final Listener<Render2DEvent> onRender2D = event -> {
-        moduleSpacing = mc.fontRendererObj.height();
+        moduleSpacing = mc.fontRendererObj.height() + 2;
         edgeOffset = 4;
 
         float sx = event.getScaledResolution().getScaledWidth();
         float sy = event.getScaledResolution().getScaledHeight() - mc.fontRendererObj.height() - 4;
-        double widthOffset = 2;
+        double widthOffset = 4;
         float totalHeight = activeModuleComponents.size() * moduleSpacing;
 
         for (ModuleComponent module : activeModuleComponents) {

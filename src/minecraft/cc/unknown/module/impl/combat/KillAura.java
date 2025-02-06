@@ -408,10 +408,13 @@ public final class KillAura extends Module {
 						break;
 
 					case "Multiple": {
-						targets.removeIf(target -> mc.player.getDistanceToEntity(target) > range);
+						if ((rayCast.getValue() && movingObjectPosition != null
+										&& movingObjectPosition.entityHit == target)) {
+							targets.removeIf(target -> mc.player.getDistanceToEntity(target) > range);
 
-						if (!targets.isEmpty()) {
-							targets.forEach(this::attack);
+							if (!targets.isEmpty()) {
+								targets.forEach(this::attack);
+							}
 						}
 						break;
 					}

@@ -3,6 +3,8 @@ package cc.unknown.module.impl.combat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -17,20 +19,20 @@ import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.client.ChatUtil;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
-import net.minecraft.block.BlockAir;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
 @ModuleInfo(aliases = "Velocity", description = "Modifica tu kb.", category = Category.COMBAT)
@@ -39,9 +41,12 @@ public final class Velocity extends Module {
 	private ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Hypixel"))
 			.add(new SubMode("Legit Prediction"))
-			.add(new SubMode("Intave Reduce"))
+			.add(new SubMode("Karhu"))
 			.setDefault("Hypixel");
-
+	
+    private final NumberValue startHurtTime = new NumberValue("Start hurt time", this, 10, 1, 10, 1, () -> !mode.is("Karhu"));
+    private final NumberValue stopHurtTime = new NumberValue("Stop hurt time", this, 0, 0, 9, 1, () -> !mode.is("Karhu"));
+    
 	private final NumberValue horizontal = new NumberValue("Horizontal", this, 100, 0, 100, 1, () -> !mode.is("Hypixel"));
 	private final NumberValue vertical = new NumberValue("Vertical", this, 90, 0, 100, 1, () -> !mode.is("Hypixel"));
 
@@ -62,6 +67,14 @@ public final class Velocity extends Module {
 	private double motionY, motionX, motionZ;
 	private EntityLivingBase target;
 	
+	private final AxisAlignedBB BOUNDING_BOX = AxisAlignedBB.fromBounds(0, 0, 0, 1, 0, 1);
+    private final Set<BlockPos> needToBoundingPos = new HashSet<>(2);
+	
+    @Override
+    public void onEnable() {
+        needToBoundingPos.clear();
+    }
+    
 	@Override
 	public void onDisable() {
 		counter = 0;
@@ -93,10 +106,20 @@ public final class Velocity extends Module {
 	        target = null;
 		}
 		
-		if (mode.is("Intave Reduce")) {
-            if (mc.player.hurtTime == 9 && mc.player.onGround && counter++ % 2 == 0) {
-                event.setJump(true);
-            }
+		if (mode.is("Karhu")) {
+	        BlockPos pos = new BlockPos(mc.player);
+
+	        if (mc.player.motionX > 0) {
+	            needToBoundingPos.add(pos.offset(EnumFacing.EAST));
+	        } else if (mc.player.motionX < 0) {
+	            needToBoundingPos.add(pos.offset(EnumFacing.WEST));
+	        }
+
+	        if (mc.player.motionZ > 0) {
+	            needToBoundingPos.add(pos.offset(EnumFacing.SOUTH));
+	        } else if (mc.player.motionZ < 0) {
+	            needToBoundingPos.add(pos.offset(EnumFacing.NORTH));
+	        }
 		}
 	};
 	
@@ -107,6 +130,18 @@ public final class Velocity extends Module {
 				target = (EntityLivingBase) event.getTarget();
 			}
 		}
+	};
+	
+	@EventLink
+	public final Listener<BlockAABBEvent> onBlockAABB = event -> {
+        if (mc.player.hurtTime <= startHurtTime.getValue().intValue() && mc.player.hurtTime > stopHurtTime.getValue().intValue()) {
+            BlockPos pos = event.getBlockPos();
+            if (needToBoundingPos.contains(pos)) {
+                event.setBoundingBox(BOUNDING_BOX.offset(pos.getX(), pos.getY(), pos.getZ()));
+            }
+        } else {
+            needToBoundingPos.clear();
+        }
 	};
 
 	@EventLink(value = Priority.VERY_LOW)

@@ -24,7 +24,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.FoodStats;
 
-@ModuleInfo(aliases = "Apple Skin", description = ">:3c", category = Category.VISUALS, keyBind = Keyboard.KEY_LMENU)
+@ModuleInfo(aliases = "Apple Skin", description = ">:3c", category = Category.VISUALS)
 public final class AppleSkin extends Module {
 	private final NumberValue maxFlashAlpha = new NumberValue("Max Flash Alpha", this, 0.65, 0, 1, 0.05);
 

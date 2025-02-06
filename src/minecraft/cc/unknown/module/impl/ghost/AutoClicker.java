@@ -1,10 +1,12 @@
 package cc.unknown.module.impl.ghost;
 
+import org.lwjgl.input.Mouse;
+
 import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.ClickEvent;
-import cc.unknown.event.impl.other.TickEvent;
+import cc.unknown.event.impl.input.NaturalPressEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
@@ -12,6 +14,8 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.FriendUtil;
+import cc.unknown.util.player.MoveUtil;
+import cc.unknown.util.player.TargetUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.DescValue;
@@ -37,32 +41,30 @@ public class AutoClicker extends Module {
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 8, 14, 1, 20, 1, () -> randomization.is("Smart"));
 
 	private final BoundsNumberValue cpsAir = new BoundsNumberValue("CPS In Air", this, 5, 10, 1, 20, 1, () -> !randomization.is("Smart"));
-	private final BoundsNumberValue recalculateTickDelayAir = new BoundsNumberValue("RTD in Air", this, 10, 20, 1, 50, 1, () -> !randomization.is("Smart"));
+	private final BoundsNumberValue recalculateTickDelayAir = new BoundsNumberValue("Recalculate tick delay in Air", this, 10, 20, 1, 50, 1, () -> !randomization.is("Smart"));
 	private final BoundsNumberValue dcpsAir = new BoundsNumberValue("DCPS in Air", this, 0, 0, 0, 10, 1, () -> !randomization.is("Smart"));
-	private final BoundsNumberValue recalculateDCPSDelayAir = new BoundsNumberValue("DCPS RTD in Air", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+	private final BoundsNumberValue recalculateDCPSDelayAir = new BoundsNumberValue("DCPS Recalculate tick delay in Air", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
 	
 	private final DescValue separator = new DescValue(" ", this, () -> !randomization.is("Smart"));
 	
-    private final BoundsNumberValue cpsWall = new BoundsNumberValue("CPS On Wall", this, 9, 11, 1, 20, 1, () -> !randomization.is("Smart"));
-    private final BoundsNumberValue recalculateTickDelayWall = new BoundsNumberValue("RTD On Wall", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
-    private final BoundsNumberValue dcpsWall = new BoundsNumberValue("DCPS On Wall", this, 4, 5, 0, 10, 1, () -> !randomization.is("Smart"));
-    private final BoundsNumberValue recalculateDCPSDelayWall = new BoundsNumberValue("DCPS RTD On Wall", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue cpsWall = new BoundsNumberValue("CPS On Ground", this, 9, 11, 1, 20, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue recalculateTickDelayWall = new BoundsNumberValue("Recalculate tick delay On Ground", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue dcpsWall = new BoundsNumberValue("DCPS On Ground", this, 4, 5, 0, 10, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue recalculateDCPSDelayWall = new BoundsNumberValue("DCPS Recalculate tick delay On Ground", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
 	
     private final DescValue separator3 = new DescValue(" ", this, () -> !randomization.is("Smart"));
     
-    private final BoundsNumberValue cpsTarget = new BoundsNumberValue("CPS On Target", this, 18, 18, 1, 20, 1, () -> !randomization.is("Smart"));
-    private final BoundsNumberValue recalculateTickDelayTarget = new BoundsNumberValue("RTD Target", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue cpsTarget = new BoundsNumberValue("CPS On Target", this, 16, 18, 1, 20, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue recalculateTickDelayTarget = new BoundsNumberValue("Recalculate tick delay Target", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
     private final BoundsNumberValue dcpsTarget = new BoundsNumberValue("DCPS On Target", this, 4, 5, 0, 10, 1, () -> !randomization.is("Smart"));
-    private final BoundsNumberValue recalculateDCPSDelayTarget = new BoundsNumberValue("DCPS RTD On Target", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue recalculateDCPSDelayTarget = new BoundsNumberValue("DCPS Recalculate tick delay On Target", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
     
     private final DescValue separator4 = new DescValue(" ", this, () -> !randomization.is("Smart"));
     
 	private final BooleanValue breakBlocks = new BooleanValue("Break Blocks", this, true);
 	private final BooleanValue rightClick = new BooleanValue("Right Click", this, false);
-    private final BooleanValue perfectHit = new BooleanValue("Perfect Hit", this, false);
     private final BooleanValue parkinson = new BooleanValue("Parkinson", this, false);
     private final BooleanValue attackFriends = new BooleanValue("Attack Friends", this, false);
-    private final BooleanValue critFix = new BooleanValue("Crit Fix", this, false);
 
 	private final StopWatch stopWatch = new StopWatch();
 	
@@ -86,11 +88,11 @@ public class AutoClicker extends Module {
     };
 
 	@EventLink
-	public final Listener<TickEvent> onTick = event -> {
+	public final Listener<NaturalPressEvent> onTick = event -> {
 	    attackTicks++;
-
+	    
 	    HitSelect hitSelect = Sakura.instance.getModuleManager().get(HitSelect.class);
-
+	    
 	    if (!stopWatch.finished(nextSwing) || (hitSelect != null && hitSelect.isEnabled() && attackTicks < 10 && mc.player != null && mc.player.hurtTime == 0)) {
 	        return;
 	    }
@@ -99,21 +101,13 @@ public class AutoClicker extends Module {
 	        return;
 	    }
 
-	    if (mc.gameSettings.keyBindAttack.isKeyDown()) {
+	    if (Mouse.isButtonDown(0)) {
 	        ticksDown++;
 	    } else {
 	        ticksDown = 0;
 	    }
 
-	    if (perfectHit.getValue() && attackTicks % 5 != 0) {
-	        return;
-	    }
-
 	    if (!attackFriends.getValue() && target instanceof EntityPlayer && FriendUtil.isFriend((EntityPlayer) target)) {
-	        return;
-	    }
-
-	    if (critFix.getValue() && !mc.player.onGround) {
 	        return;
 	    }
 
@@ -152,7 +146,7 @@ public class AutoClicker extends Module {
 	                for (int i = 0; i < recalculateDCPSDelay; i++) {
 	                    nextSwing = 1000 / (clicks + dcpsAir.getValue().intValue() + i);
 	                }
-	            } else if (ground && mc.player.movementInput.moveForward > 0.8) {
+	            } else if (ground && mc.player.moveForward > 0.8) {
 	                clicks = (long) (cpsWall.getRandomBetween().longValue() * 1.5);
 
 	                nextSwing = 1000 / clicks;
@@ -167,7 +161,7 @@ public class AutoClicker extends Module {
 	                for (int i = 0; i < recalculateDCPSDelay; i++) {
 	                    nextSwing = 1000 / (clicks + dcpsWall.getValue().intValue() + i);
 	                }
-	            } else if (mc.objectMouseOver != null || mc.objectMouseOver.entityHit != null) {
+	            } else if (target == null) {
 	                clicks = (long) (cpsTarget.getRandomBetween().longValue() * 1.5);
 
 	                nextSwing = 1000 / clicks;
@@ -185,10 +179,34 @@ public class AutoClicker extends Module {
 	            }
 	            break;
 	    }
+	    
+		if (Mouse.isButtonDown(0) && ticksDown > 1) {
+			mc.clickMouse();
+			stopWatch.reset();
+			event.setCancelled();
+		}
+		
+		if (Mouse.isButtonDown(0) && !breakBlocks.getValue()) {
+			mc.playerController.curBlockDamageMP = 0;
+		}
+		
+		if (rightClick.getValue() && Mouse.isButtonDown(1)) {
+			mc.rightClickMouse();
+			stopWatch.reset();
+			event.setCancelled();
 
-	    handleClick();
-
-	    stopWatch.reset();
+			if (Math.random() > 0.9) {
+				mc.rightClickMouse();
+				stopWatch.reset();
+				event.setCancelled();
+			}
+		}
+	    
+		if (mc.player.isBlocking() && Mouse.isButtonDown(0) && !Mouse.isButtonDown(1)) {
+			mc.playerController.onStoppedUsingItem(mc.player);
+		} else if (!mc.player.isBlocking() && Mouse.isButtonDown(0) && Mouse.isButtonDown(1)) {
+			mc.playerController.sendUseItem(mc.player, mc.world, mc.player.getHeldItem());
+		}
 	};
 
 	@EventLink
@@ -206,22 +224,4 @@ public class AutoClicker extends Module {
             EntityRenderer.mouseAddedY = (float) (((Math.random() - 0.5) * 400 / mc.getDebugFPS()) * directionY);
         }
     };
-
-	private void handleClick() {
-		if (ticksDown > 1 && !mc.gameSettings.keyBindUseItem.isKeyDown()) {
-			mc.clickMouse();
-		}
-		
-		if (!breakBlocks.getValue()) {
-			mc.playerController.curBlockDamageMP = 0;
-		}
-		
-		if (rightClick.getValue() && mc.gameSettings.keyBindUseItem.isKeyDown() && !mc.gameSettings.keyBindAttack.isKeyDown()) {
-			mc.rightClickMouse();
-
-			if (Math.random() > 0.9) {
-				mc.rightClickMouse();
-			}
-		}
-	}
 }

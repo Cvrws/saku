@@ -61,4 +61,8 @@ public class NumberValue extends Value<Number> {
     public NumberValueComponent createUIComponent() {
         return new NumberValueComponent(this);
     }
+    
+    public int getValueToInt() {
+    	return getValue().intValue();
+    }
 }

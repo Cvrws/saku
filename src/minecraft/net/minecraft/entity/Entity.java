@@ -137,6 +137,8 @@ public abstract class Entity implements ICommandSender {
 
 	@Getter
 	public int trueX, trueY, trueZ;
+    public int ticksSincePlayerVelocity;
+    public double lastVelocityDeltaX, lastVelocityDeltaY, lastVelocityDeltaZ;
 	public int ticksSinceVelocity, ticksSinceAttack, ticksSinceTeleport, ticksSincePlace;
 	public int offGroundTicks, onGroundTicks;
 	public float movementYaw, velocityYaw, lastMovementYaw;

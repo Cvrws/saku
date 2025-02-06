@@ -101,11 +101,6 @@ public class MoveUtil implements Accessor {
         return Math.toRadians(rotationYaw);
     }
 
-    /**
-     * Returns the distance the player moved in the last tick
-     *
-     * @return last tick distance
-     */
     public double movementDelta() {
         return Math.hypot(mc.player.posX - mc.player.prevPosX, mc.player.posZ - mc.player.prevPosZ);
     }
@@ -114,21 +109,10 @@ public class MoveUtil implements Accessor {
         return mc.player.isPotionActive(Potion.moveSpeed) ? ((mc.player.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1) * amp) : 0;
     }
 
-    /**
-     * Calculates the default player jump motion
-     *
-     * @return player jump motion
-     */
     public double jumpMotion() {
         return jumpBoostMotion(JUMP_HEIGHT);
     }
 
-    /**
-     * Modifies a selected motion with jump boost
-     *
-     * @param motionY input motion
-     * @return modified motion
-     */
     public double jumpBoostMotion(final double motionY) {
         if (mc.player.isPotionActive(Potion.jump)) {
             return motionY + (mc.player.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F;
@@ -137,13 +121,6 @@ public class MoveUtil implements Accessor {
         return motionY;
     }
 
-
-
-    /**
-     * Gets the players' depth strider modifier
-     *
-     * @return depth strider modifier
-     */
     public int depthStriderLevel() {
         return EnchantmentHelper.getDepthStriderModifier(mc.player);
     }
@@ -159,20 +136,10 @@ public class MoveUtil implements Accessor {
         return fallDistanceReq;
     }
 
-    /**
-     * Rounds the players' position to a valid ground position
-     *
-     * @return valid ground position
-     */
     public double roundToGround(final double posY) {
         return Math.round(posY / 0.015625) * 0.015625;
     }
 
-    /**
-     * Gets the players predicted jump motion 1 tick ahead
-     *
-     * @return predicted jump motion
-     */
     public double predictedMotion(final double motion) {
         return (motion - 0.08) * 0.98F;
     }
@@ -184,11 +151,6 @@ public class MoveUtil implements Accessor {
         mc.player.motionZ = Math.cos(yaw) * speed;
     }
 
-    /**
-     * Gets the players predicted jump motion the specified amount of ticks ahead
-     *
-     * @return predicted jump motion
-     */
     public double predictedMotion(final double motion, final int ticks) {
         if (ticks == 0) return motion;
         double predicted = motion;
@@ -208,11 +170,6 @@ public class MoveUtil implements Accessor {
         return baseSpeed;
     }
 
-    /**
-     * Basically calculates allowed horizontal distance just like NCP does
-     *
-     * @return allowed horizontal distance in one tick
-     */
     public double getAllowedHorizontalDistance() {
         double horizontalDistance;
         boolean useBaseModifiers = false;
@@ -254,16 +211,10 @@ public class MoveUtil implements Accessor {
         return horizontalDistance;
     }
 
-    /**
-     * Sets the players' jump motion to the specified value with random to bypass value patches
-     */
     public void jumpRandom(final double motion) {
         mc.player.motionY = motion + (Math.random() / 500);
     }
 
-    /**
-     * Makes the player strafe
-     */
     public void strafe() {
         strafe(speed(), mc.player);
     }
@@ -272,16 +223,10 @@ public class MoveUtil implements Accessor {
         strafe(speed(), entity);
     }
 
-    /**
-     * Makes the player strafe at the specified speed
-     */
     public void strafe(final double speed) {
         strafe(speed, mc.player);
     }
 
-    /**
-     * Makes the player strafe at the specified speed
-     */
     public void strafe(final double speed, Entity entity) {
         if (!isMoving()) {
             return;
@@ -302,9 +247,6 @@ public class MoveUtil implements Accessor {
         mc.player.motionZ = MathHelper.cos(yaw) * speed;
     }
 
-    /**
-     * Stops the player from moving
-     */
     public void stop() {
         mc.player.motionX = 0;
         mc.player.motionZ = 0;
@@ -317,9 +259,6 @@ public class MoveUtil implements Accessor {
     	mc.gameSettings.keyBindRight.pressed = false;
     }
 
-    /**
-     * Gets the players' movement yaw
-     */
     public double direction() {
         float rotationYaw = mc.player.movementYaw;
 
@@ -398,9 +337,6 @@ public class MoveUtil implements Accessor {
         return Math.toRadians(rotationYaw);
     }
 
-    /**
-     * Gets the players' movement yaw wrapped to 90
-     */
     public double wrappedDirection() {
         float rotationYaw = mc.player.movementYaw;
 
@@ -419,9 +355,6 @@ public class MoveUtil implements Accessor {
         return Math.toRadians(rotationYaw);
     }
 
-    /**
-     * Gets the players' movement yaw
-     */
     public double direction(float rotationYaw, final double moveForward, final double moveStrafing) {
         if (moveForward < 0F) rotationYaw += 180F;
 
@@ -436,9 +369,6 @@ public class MoveUtil implements Accessor {
         return Math.toRadians(rotationYaw);
     }
 
-    /**
-     * Used to get the players speed
-     */
     public double speed() {
         return Math.hypot(mc.player.motionX, mc.player.motionZ);
     }
@@ -474,9 +404,6 @@ public class MoveUtil implements Accessor {
         moveEvent.setPosZ(forward * moveSpeed * mz - strafe * moveSpeed * mx);
     }
 
-    /**
-     * Fixes the players movement
-     */
     public void fixMovement(final MoveInputEvent event, final float yaw) {
         final float forward = event.getForward();
         final float strafe = event.getStrafe();

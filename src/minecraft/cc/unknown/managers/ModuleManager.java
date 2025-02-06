@@ -39,7 +39,6 @@ public final class ModuleManager {
         this.put(Reach.class, new Reach());
         this.put(AutoBlock.class, new AutoBlock());
         this.put(KeepSprint.class, new KeepSprint());
-        this.put(STap.class, new STap());
         this.put(WTap.class, new WTap());
         
         // Latency

@@ -1204,10 +1204,11 @@ public abstract class World implements IBlockAccess, Accessor {
 			Entity entity = (Entity) this.weatherEffects.get(i);
 
 			try {
-				++entity.ticksExisted;
-				++entity.ticksSinceVelocity;
-				++entity.ticksSinceAttack;
-				++entity.ticksSinceTeleport;
+                ++entity.ticksExisted;
+                ++entity.ticksSinceVelocity;
+                ++entity.ticksSinceAttack;
+                ++entity.ticksSincePlayerVelocity;
+                ++entity.ticksSinceTeleport;
 				entity.onUpdate();
 			} catch (Throwable throwable2) {
 				CrashReport crashreport = CrashReport.makeCrashReport(throwable2, "Ticking entity");
@@ -1253,49 +1254,6 @@ public abstract class World implements IBlockAccess, Accessor {
 
 			update(entity2);
 		}
-
-		/*for (int i1 = 0; i1 < this.loadedEntityList.size(); ++i1) {
-			Entity entity2 = (Entity) this.loadedEntityList.get(i1);
-
-			if (entity2.ridingEntity != null) {
-				if (!entity2.ridingEntity.isDead && entity2.ridingEntity.riddenByEntity == entity2) {
-					continue;
-				}
-
-				entity2.ridingEntity.riddenByEntity = null;
-				entity2.ridingEntity = null;
-			}
-
-			this.theProfiler.startSection("tick");
-
-			if (!entity2.isDead) {
-				try {
-					this.updateEntity(entity2);
-				} catch (Throwable throwable1) {
-					CrashReport crashreport1 = CrashReport.makeCrashReport(throwable1, "Ticking entity");
-					CrashReportCategory crashreportcategory2 = crashreport1.makeCategory("Entity being ticked");
-					entity2.addEntityCrashInfo(crashreportcategory2);
-					throw new ReportedException(crashreport1);
-				}
-			}
-
-			this.theProfiler.endSection();
-			this.theProfiler.startSection("remove");
-
-			if (entity2.isDead) {
-				int k1 = entity2.chunkCoordX;
-				int i2 = entity2.chunkCoordZ;
-
-				if (entity2.addedToChunk && this.isChunkLoaded(k1, i2, true)) {
-					this.getChunkFromChunkCoords(k1, i2).removeEntity(entity2);
-				}
-
-				this.loadedEntityList.remove(i1--);
-				this.onEntityRemoved(entity2);
-			}
-
-			this.theProfiler.endSection();
-		}*/
 
 		this.theProfiler.endStartSection("blockEntities");
 		this.processingLoadedTiles = true;
@@ -1431,12 +1389,13 @@ public abstract class World implements IBlockAccess, Accessor {
 			entityIn.prevRotationPitch = entityIn.rotationPitch;
 
 			if (forceUpdate && entityIn.addedToChunk) {
-				++entityIn.ticksSinceVelocity;
-				++entityIn.ticksExisted;
-				++entityIn.ticksVisible;
-				++entityIn.ticksSinceTeleport;
-				++entityIn.ticksSinceAttack;
-				++entityIn.ticksSincePlace;
+                ++entityIn.ticksSinceVelocity;
+                ++entityIn.ticksExisted;
+                ++entityIn.ticksVisible;
+                ++entityIn.ticksSincePlayerVelocity;
+                ++entityIn.ticksSinceTeleport;
+                ++entityIn.ticksSinceAttack;
+                ++entityIn.ticksSincePlace;
 
 				if (entityIn.ridingEntity != null) {
 					entityIn.updateRidden();
