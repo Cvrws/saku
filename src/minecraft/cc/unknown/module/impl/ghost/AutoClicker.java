@@ -1,29 +1,29 @@
 package cc.unknown.module.impl.ghost;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.lwjgl.input.Mouse;
 
 import cc.unknown.Sakura;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.input.ClickEvent;
 import cc.unknown.event.impl.input.NaturalPressEvent;
 import cc.unknown.event.impl.player.AttackEvent;
-import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.FriendUtil;
-import cc.unknown.util.player.MoveUtil;
-import cc.unknown.util.player.TargetUtil;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.DescValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.SubMode;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MovingObjectPosition;
 
 @ModuleInfo(aliases = "Auto Clicker", description = "Clickea automáticamente", category = Category.GHOST)
 public class AutoClicker extends Module {
@@ -40,34 +40,45 @@ public class AutoClicker extends Module {
 
 	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 8, 14, 1, 20, 1, () -> randomization.is("Smart"));
 
-	private final BoundsNumberValue cpsAir = new BoundsNumberValue("CPS In Air", this, 5, 10, 1, 20, 1, () -> !randomization.is("Smart"));
-	private final BoundsNumberValue recalculateTickDelayAir = new BoundsNumberValue("Recalculate tick delay in Air", this, 10, 20, 1, 50, 1, () -> !randomization.is("Smart"));
-	private final BoundsNumberValue dcpsAir = new BoundsNumberValue("DCPS in Air", this, 0, 0, 0, 10, 1, () -> !randomization.is("Smart"));
-	private final BoundsNumberValue recalculateDCPSDelayAir = new BoundsNumberValue("DCPS Recalculate tick delay in Air", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+	private final BoundsNumberValue cpsAir = new BoundsNumberValue("CPS [Air]", this, 5, 10, 1, 20, 1, () -> !randomization.is("Smart"));
+	private final BoundsNumberValue recalculateTickDelayAir = new BoundsNumberValue("Recalculate tick delay [Air]", this, 10, 20, 1, 50, 1, () -> !randomization.is("Smart"));
+	private final BooleanValue notInArrow = new BooleanValue("Not in a row [Air]", this, true, () -> !randomization.is("Smart"));
+	private final BoundsNumberValue dcpsAir = new BoundsNumberValue("DCPS [Air]", this, 0, 0, 0, 10, 1, () -> !randomization.is("Smart"));
+	private final BoundsNumberValue recalculateDCPSDelayAir = new BoundsNumberValue("DCPS Recalculate tick delay [Air]", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
 	
 	private final DescValue separator = new DescValue(" ", this, () -> !randomization.is("Smart"));
 	
-    private final BoundsNumberValue cpsWall = new BoundsNumberValue("CPS On Ground", this, 9, 11, 1, 20, 1, () -> !randomization.is("Smart"));
-    private final BoundsNumberValue recalculateTickDelayWall = new BoundsNumberValue("Recalculate tick delay On Ground", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
-    private final BoundsNumberValue dcpsWall = new BoundsNumberValue("DCPS On Ground", this, 4, 5, 0, 10, 1, () -> !randomization.is("Smart"));
-    private final BoundsNumberValue recalculateDCPSDelayWall = new BoundsNumberValue("DCPS Recalculate tick delay On Ground", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue cpsWall = new BoundsNumberValue("CPS [Wall]", this, 9, 11, 1, 20, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue recalculateTickDelayWall = new BoundsNumberValue("Recalculate tick delay [Wall]", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+	private final BooleanValue notInArrow2 = new BooleanValue("Not in a row [Wall]", this, true, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue dcpsWall = new BoundsNumberValue("DCPS [Wall]", this, 4, 5, 0, 10, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue recalculateDCPSDelayWall = new BoundsNumberValue("DCPS Recalculate tick delay [Wall]", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
 	
     private final DescValue separator3 = new DescValue(" ", this, () -> !randomization.is("Smart"));
     
-    private final BoundsNumberValue cpsTarget = new BoundsNumberValue("CPS On Target", this, 16, 18, 1, 20, 1, () -> !randomization.is("Smart"));
-    private final BoundsNumberValue recalculateTickDelayTarget = new BoundsNumberValue("Recalculate tick delay Target", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
-    private final BoundsNumberValue dcpsTarget = new BoundsNumberValue("DCPS On Target", this, 4, 5, 0, 10, 1, () -> !randomization.is("Smart"));
-    private final BoundsNumberValue recalculateDCPSDelayTarget = new BoundsNumberValue("DCPS Recalculate tick delay On Target", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue cpsTarget = new BoundsNumberValue("CPS [Target]", this, 16, 18, 1, 20, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue recalculateTickDelayTarget = new BoundsNumberValue("Recalculate tick delay [Target]", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+	private final BooleanValue notInArrow3 = new BooleanValue("Not in a row [Target]", this, true, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue dcpsTarget = new BoundsNumberValue("DCPS [Target]", this, 4, 5, 0, 10, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue recalculateDCPSDelayTarget = new BoundsNumberValue("DCPS Recalculate tick delay [Target]", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
     
     private final DescValue separator4 = new DescValue(" ", this, () -> !randomization.is("Smart"));
     
+    private final BoundsNumberValue cpsFirst = new BoundsNumberValue("CPS [First Hit]", this, 18, 18, 1, 20, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue recalculateTickDelayFirst = new BoundsNumberValue("Recalculate tick delay [First Hit]", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+    private final BooleanValue notInArrow4 = new BooleanValue("Not in a row [First Hit]", this, true, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue dcpsFirst = new BoundsNumberValue("DCPS [First Hit]", this, 4, 5, 0, 10, 1, () -> !randomization.is("Smart"));
+    private final BoundsNumberValue recalculateDCPSDelayFirst = new BoundsNumberValue("DCPS Recalculate tick delay [First Hit]", this, 3, 8, 1, 50, 1, () -> !randomization.is("Smart"));
+    
+    private final DescValue separator5 = new DescValue(" ", this, () -> !randomization.is("Smart"));
+    
 	private final BooleanValue breakBlocks = new BooleanValue("Break Blocks", this, true);
 	private final BooleanValue rightClick = new BooleanValue("Right Click", this, false);
-    private final BooleanValue parkinson = new BooleanValue("Parkinson", this, false);
     private final BooleanValue attackFriends = new BooleanValue("Attack Friends", this, false);
 
 	private final StopWatch stopWatch = new StopWatch();
-	
+	private final Set<Integer> hitEntities = new HashSet<>();
+
 	private int ticksDown;
 	private int attackTicks;
 	private long nextSwing;
@@ -75,17 +86,12 @@ public class AutoClicker extends Module {
     private int recalculateDelay;
     private int recalculateDCPSDelay;
     
-    private double directionX, directionY;
-    
+    private long lastCpsAir = -1;
+    private long lastCpsWall = -1;
+    private long lastCpsTarget = -1;
+    private long lastCpsFirstHit = -1;
+        
 	private Entity target;
-	
-    @EventLink
-    public final Listener<ClickEvent> onClick = event -> {
-        stopWatch.reset();
-
-        directionX = (Math.random() - 0.5) * 4;
-        directionY = (Math.random() - 0.5) * 4;
-    };
 
 	@EventLink
 	public final Listener<NaturalPressEvent> onTick = event -> {
@@ -130,53 +136,59 @@ public class AutoClicker extends Module {
 
 	        case "Smart":
 	            boolean ground = mc.player.onGround;
+	            boolean hittingTarget = mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY;
+	            boolean firstHit = isFirstHit(mc.objectMouseOver);
+	            boolean hittingWall = isHittingWall();
 
-	            if (!ground) {
-	                clicks = (long) (cpsAir.getRandomBetween().longValue() * 1.5);
-
-	                nextSwing = 1000 / clicks;
-
-	                recalculateDelay = recalculateTickDelayAir.getValue().intValue();
-
-	                for (int i = 0; i < (recalculateDelay + dcpsAir.getValue().intValue()); i++) {
-	                    nextSwing = 1000 / (clicks + i + recalculateDelay);
-	                }
-
-	                recalculateDCPSDelay = recalculateDCPSDelayAir.getValue().intValue();
-	                for (int i = 0; i < recalculateDCPSDelay; i++) {
-	                    nextSwing = 1000 / (clicks + dcpsAir.getValue().intValue() + i);
-	                }
-	            } else if (ground && mc.player.moveForward > 0.8) {
-	                clicks = (long) (cpsWall.getRandomBetween().longValue() * 1.5);
-
-	                nextSwing = 1000 / clicks;
-
-	                recalculateDelay = recalculateTickDelayWall.getValue().intValue();
-
-	                for (int i = 0; i < (recalculateDelay + dcpsWall.getValue().intValue()); i++) {
-	                    nextSwing = 1000 / (clicks + i + recalculateDelay);
-	                }
-
-	                recalculateDCPSDelay = recalculateDCPSDelayWall.getValue().intValue();
-	                for (int i = 0; i < recalculateDCPSDelay; i++) {
-	                    nextSwing = 1000 / (clicks + dcpsWall.getValue().intValue() + i);
-	                }
-	            } else if (target == null) {
-	                clicks = (long) (cpsTarget.getRandomBetween().longValue() * 1.5);
-
-	                nextSwing = 1000 / clicks;
-
-	                recalculateDelay = recalculateTickDelayTarget.getValue().intValue();
-
-	                for (int i = 0; i < (recalculateDelay + dcpsTarget.getValue().intValue()); i++) {
-	                    nextSwing = 1000 / (clicks + i + recalculateDelay);
-	                }
-
-	                recalculateDCPSDelay = recalculateDCPSDelayTarget.getValue().intValue();
-	                for (int i = 0; i < recalculateDCPSDelay; i++) {
-	                    nextSwing = 1000 / (clicks + dcpsTarget.getValue().intValue() + i);
-	                }
+	            if (firstHit) {
+	                clicks = getNewCps(cpsFirst, lastCpsFirstHit, notInArrow4);
+	                lastCpsFirstHit = clicks;
+	            } else if (hittingTarget) {
+	                clicks = getNewCps(cpsTarget, lastCpsTarget, notInArrow3);
+	                lastCpsTarget = clicks;
+	            } else if (hittingWall || ground) {
+	                clicks = getNewCps(cpsWall, lastCpsWall, notInArrow2);
+	                lastCpsWall = clicks;
+	            } else {
+	                clicks = getNewCps(cpsAir, lastCpsAir, notInArrow);
+	                lastCpsAir = clicks;
 	            }
+
+	            nextSwing = 1000 / clicks;
+
+	            if (firstHit) {
+	                recalculateDelay = recalculateTickDelayFirst.getValue().intValue();
+	                recalculateDCPSDelay = recalculateDCPSDelayFirst.getValue().intValue();
+	            } else if (hittingTarget) {
+	                recalculateDelay = recalculateTickDelayTarget.getValue().intValue();
+	                recalculateDCPSDelay = recalculateDCPSDelayTarget.getValue().intValue();
+	            } else if (hittingWall) {
+	                recalculateDelay = recalculateTickDelayWall.getValue().intValue();
+	                recalculateDCPSDelay = recalculateDCPSDelayWall.getValue().intValue();
+	            } else {
+	                recalculateDelay = recalculateTickDelayAir.getValue().intValue();
+	                recalculateDCPSDelay = recalculateDCPSDelayAir.getValue().intValue();
+	            }
+
+	            for (int i = 0; i < recalculateDelay; i++) {
+	                nextSwing = 1000 / (clicks + i);
+	            }
+
+	            int dcpsValue;
+	            if (firstHit) {
+	                dcpsValue = dcpsFirst.getValue().intValue();
+	            } else if (hittingTarget) {
+	                dcpsValue = dcpsTarget.getValue().intValue();
+	            } else if (hittingWall) {
+	                dcpsValue = dcpsWall.getValue().intValue();
+	            } else {
+	                dcpsValue = dcpsAir.getValue().intValue();
+	            }
+
+	            for (int i = 0; i < recalculateDCPSDelay; i++) {
+	                nextSwing = 1000 / (clicks + dcpsValue + i);
+	            }
+
 	            break;
 	    }
 	    
@@ -202,26 +214,51 @@ public class AutoClicker extends Module {
 			}
 		}
 	    
-		if (mc.player.isBlocking() && Mouse.isButtonDown(0) && !Mouse.isButtonDown(1)) {
+		if (isBlocking() && Mouse.isButtonDown(0) && !Mouse.isButtonDown(1)) {
 			mc.playerController.onStoppedUsingItem(mc.player);
-		} else if (!mc.player.isBlocking() && Mouse.isButtonDown(0) && Mouse.isButtonDown(1)) {
+		} else if (!isBlocking() && Mouse.isButtonDown(0) && Mouse.isButtonDown(1)) {
 			mc.playerController.sendUseItem(mc.player, mc.world, mc.player.getHeldItem());
 		}
 	};
+	
+	private boolean isBlocking() {
+		return mc.player.isBlocking() && PlayerUtil.isHoldingWeapon();
+	}
+	
+	private boolean isFirstHit(MovingObjectPosition objectMouseOver) {
+	    return objectMouseOver != null && objectMouseOver.entityHit != null && !hasHitBefore(objectMouseOver.entityHit);
+	}
+
+	private boolean isHittingWall() {
+	    return mc.playerController.getIsHittingBlock();
+	}
+	
+	private boolean hasHitBefore(Entity target) {
+	    if (target == null) return false;
+	    
+	    int entityId = target.getEntityId();
+	    
+	    if (hitEntities.contains(entityId)) {
+	        return true;
+	    }
+
+	    hitEntities.add(entityId);
+	    return false;
+	}
+
+    private long getNewCps(BoundsNumberValue cpsValue, long lastCps, BooleanValue notInRow) {
+        long newCps = cpsValue.getRandomBetween().longValue();
+        if (notInRow.getValue()) {
+            while (newCps == lastCps) {
+                newCps = cpsValue.getRandomBetween().longValue();
+            }
+        }
+        return newCps;
+    }
 
 	@EventLink
 	public final Listener<AttackEvent> onAttack = event -> {
 		attackTicks = 0;
 		target = (Entity) event.getTarget();
 	};
-
-    @EventLink
-    public final Listener<Render3DEvent> onRender3D = event -> {
-        mc.leftClickCounter = -1;
-
-        if (!stopWatch.finished(100) && this.parkinson.getValue() && mc.gameSettings.keyBindUseItem.isKeyDown()) {
-            EntityRenderer.mouseAddedX = (float) (((Math.random() - 0.5) * 400 / mc.getDebugFPS()) * directionX);
-            EntityRenderer.mouseAddedY = (float) (((Math.random() - 0.5) * 400 / mc.getDebugFPS()) * directionY);
-        }
-    };
 }

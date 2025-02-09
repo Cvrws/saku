@@ -1,11 +1,9 @@
 package cc.unknown.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.Gson;
 
 import cc.unknown.Sakura;
+import cc.unknown.managers.ModuleManager;
 import cc.unknown.module.Module;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.theme.Themes;
@@ -24,6 +22,10 @@ public interface Accessor {
     
     default RiceGui getClickGUI() {
         return getInstance().getClickGui();
+    }
+    
+    default ModuleManager getModuleManager() {
+    	return getInstance().getModuleManager();
     }
 
     default Themes getTheme() {
