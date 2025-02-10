@@ -41,12 +41,8 @@ public final class Velocity extends Module {
 	private ModeValue mode = new ModeValue("Mode", this)
 			.add(new SubMode("Hypixel"))
 			.add(new SubMode("Legit Prediction"))
-			.add(new SubMode("Karhu"))
 			.setDefault("Hypixel");
 	
-    private final NumberValue startHurtTime = new NumberValue("Start hurt time", this, 10, 1, 10, 1, () -> !mode.is("Karhu"));
-    private final NumberValue stopHurtTime = new NumberValue("Stop hurt time", this, 0, 0, 9, 1, () -> !mode.is("Karhu"));
-    
 	private final NumberValue horizontal = new NumberValue("Horizontal", this, 100, 0, 100, 1, () -> !mode.is("Hypixel"));
 	private final NumberValue vertical = new NumberValue("Vertical", this, 90, 0, 100, 1, () -> !mode.is("Hypixel"));
 
@@ -65,7 +61,6 @@ public final class Velocity extends Module {
 	private int counter;
 	private boolean s12 = false;
 	private double motionY, motionX, motionZ;
-	private EntityLivingBase target;
 	
 	private final AxisAlignedBB BOUNDING_BOX = AxisAlignedBB.fromBounds(0, 0, 0, 1, 0, 1);
     private final Set<BlockPos> needToBoundingPos = new HashSet<>(2);
@@ -83,7 +78,7 @@ public final class Velocity extends Module {
 	@EventLink
 	public final Listener<MoveInputEvent> onMoveInput = event -> {
 		if (mode.is("Legit Prediction")) {
-	        if (target != null && mc.player.hurtTime > 0) {
+	        if (mc.player.hurtTime == 9) {
 	        	ArrayList<Vec3> vec3s = new ArrayList<>();
 	            HashMap<Vec3, Integer> map = new HashMap<>();
 	            Vec3 playerPos = new Vec3(mc.player.posX, mc.player.posY, mc.player.posZ);
@@ -96,14 +91,12 @@ public final class Velocity extends Module {
 	            vec3s.add(onlyForward);
 	            vec3s.add(strafeLeft);
 	            vec3s.add(strafeRight);
-	            Vec3 targetVec = new Vec3(target.posX, target.posY, target.posZ);
+	            Vec3 targetVec = new Vec3(mc.player.posX, mc.player.posY, mc.player.posZ);
 	            vec3s.sort(Comparator.comparingDouble(targetVec::distanceXZTo));
-	            if (!event.isSneak() || !mc.player.movementInput.sneak) {
+	            if (!event.isSneak()) {
 	                event.setStrafe(map.get(vec3s.get(0)));
-	                mc.player.moveStrafing = map.get(vec3s.get(0));
 	            }
 	        }
-	        target = null;
 		}
 		
 		if (mode.is("Karhu")) {
@@ -123,27 +116,6 @@ public final class Velocity extends Module {
 		}
 	};
 	
-	@EventLink
-	public final Listener<AttackEvent> onAttack = event -> {
-		if (mode.is("Legit Prediction")) {
-			if (event.getTarget() != null && event.getTarget() instanceof EntityLivingBase) {
-				target = (EntityLivingBase) event.getTarget();
-			}
-		}
-	};
-	
-	@EventLink
-	public final Listener<BlockAABBEvent> onBlockAABB = event -> {
-        if (mc.player.hurtTime <= startHurtTime.getValue().intValue() && mc.player.hurtTime > stopHurtTime.getValue().intValue()) {
-            BlockPos pos = event.getBlockPos();
-            if (needToBoundingPos.contains(pos)) {
-                event.setBoundingBox(BOUNDING_BOX.offset(pos.getX(), pos.getY(), pos.getZ()));
-            }
-        } else {
-            needToBoundingPos.clear();
-        }
-	};
-
 	@EventLink(value = Priority.VERY_LOW)
 	public final Listener<PacketReceiveEvent> onPacketReceive = event -> {
 		if (event.isCancelled()) return;

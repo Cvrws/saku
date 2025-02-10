@@ -163,7 +163,16 @@ public final class TargetESP extends Module {
 	                    double offsetZ = Math.cos(angle * Math.PI / 180.0D) * entity.width;
 	                    double pointY = y + animation + entity.height / 2.0F;
 
-	                    RenderUtil.color(ColorUtil.withAlpha(getTheme().getFirstColor(), (int) (255 * 0.25)));
+	                    if (entity.hurtTime > 0) {
+	                        GL11.glColor4f(
+	                            hitRed.getValue().intValue() / 255f,
+	                            hitGreen.getValue().intValue() / 255f,
+	                            hitBlue.getValue().intValue() / 255f,
+	                            hitAlpha.getValue().intValue() / 255f
+	                        );
+	                    } else {
+	                    	RenderUtil.color(ColorUtil.withAlpha(getTheme().getFirstColor(), (int) (255 * 0.25)));
+	                    }
 	                    GL11.glVertex3d(x + offsetX, pointY, z + offsetZ);
 	                }
 	                GL11.glEnd();
@@ -181,7 +190,16 @@ public final class TargetESP extends Module {
 	                    double topY = y + animation + entity.height / 2.0F;
 	                    double bottomY = topY - animation / entity.height;
 
-	                    RenderUtil.color(ColorUtil.withAlpha(getTheme().getFirstColor(), (int) (255 * 0.25)));
+	                    if (entity.hurtTime > 0) {
+	                        GL11.glColor4f(
+	                            hitRed.getValue().intValue() / 255f,
+	                            hitGreen.getValue().intValue() / 255f,
+	                            hitBlue.getValue().intValue() / 255f,
+	                            hitAlpha.getValue().intValue() / 255f
+	                        );
+	                    } else {
+	                    	RenderUtil.color(ColorUtil.withAlpha(getTheme().getFirstColor(), (int) (255 * 0.25)));
+	                    }
 	                    GL11.glVertex3d(offsetX, topY, offsetZ);
 	                    GL11.glVertex3d(offsetX, bottomY, offsetZ);
 	                }
@@ -190,7 +208,16 @@ public final class TargetESP extends Module {
 	                break;
 	            case "Rect":
 	                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-	                RenderUtil.color(ColorUtil.withAlpha(getTheme().getFirstColor(), (int) (255 * 0.25)));
+                    if (entity.hurtTime > 0) {
+                        GL11.glColor4f(
+                            hitRed.getValue().intValue() / 255f,
+                            hitGreen.getValue().intValue() / 255f,
+                            hitBlue.getValue().intValue() / 255f,
+                            hitAlpha.getValue().intValue() / 255f
+                        );
+                    } else {
+                    	RenderUtil.color(ColorUtil.withAlpha(getTheme().getFirstColor(), (int) (255 * 0.25)));
+                    }
 	                RenderUtil.renderHitbox(new AxisAlignedBB(x - size, y + (double) entity.height + 0.3D, z - size, x + size, y + (double) entity.height + 0.1D, z + size), 7);
 	                GL11.glPopAttrib();
 	                break;

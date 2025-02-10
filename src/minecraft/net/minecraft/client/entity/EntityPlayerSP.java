@@ -5,6 +5,7 @@ import cc.unknown.event.impl.input.ChatInputEvent;
 import cc.unknown.event.impl.player.MoveEvent;
 import cc.unknown.event.impl.player.PostMotionEvent;
 import cc.unknown.event.impl.player.PostUpdateEvent;
+import cc.unknown.event.impl.player.PreLivingUpdateEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.player.PushOutOfBlockEvent;
@@ -591,6 +592,8 @@ public class EntityPlayerSP extends AbstractClientPlayer
     }
 
     public void onLivingUpdate() {    	
+    	Sakura.instance.getEventBus().handle(new PreLivingUpdateEvent());
+    	
         if (this.sprintingTicksLeft > 0) {
             --this.sprintingTicksLeft;
 

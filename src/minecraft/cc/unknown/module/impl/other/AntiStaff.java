@@ -104,26 +104,5 @@ public final class AntiStaff extends Module {
             }
         }
 
-        if (packet instanceof S38PacketPlayerListItem) {
-            S38PacketPlayerListItem tabPacket = (S38PacketPlayerListItem) packet;
-
-            for (S38PacketPlayerListItem.AddPlayerData data : tabPacket.getEntries()) {
-                String playerName = data.getProfile().getName().toLowerCase();
-
-                if (tabPacket.getAction() == S38PacketPlayerListItem.Action.ADD_PLAYER) {
-                    tabList.add(playerName);
-                    if (isStaff(playerName)) {
-                    	ChatUtil.display("Staff Detectado: " + playerName);
-                    }
-                } else if (tabPacket.getAction() == S38PacketPlayerListItem.Action.REMOVE_PLAYER) {
-                    if (tabList.contains(playerName)) {
-                        tabList.remove(playerName);
-                        if (isStaff(playerName)) {
-                        	ChatUtil.display("Staff posiblemente en Vanish: " + playerName);
-                        }
-                    }
-                }
-            }
-        }
     };
 }

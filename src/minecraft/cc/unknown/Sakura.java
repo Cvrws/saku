@@ -1,10 +1,7 @@
 package cc.unknown;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -18,24 +15,8 @@ import com.sun.jna.Platform;
 
 import cc.unknown.event.Event;
 import cc.unknown.event.bus.impl.EventBus;
-import cc.unknown.handlers.AutoJoinHandler;
-import cc.unknown.handlers.ConnectionHandler;
-import cc.unknown.handlers.DiscordHandler;
-import cc.unknown.handlers.DragHandler;
-import cc.unknown.handlers.FixHandler;
-import cc.unknown.handlers.NetworkingHandler;
-import cc.unknown.handlers.RotationHandler;
-import cc.unknown.handlers.SinceTickHandler;
-import cc.unknown.handlers.SpoofHandler;
-import cc.unknown.handlers.TransactionHandler;
-import cc.unknown.handlers.ViaHandler;
-import cc.unknown.managers.BindableManager;
-import cc.unknown.managers.CommandManager;
-import cc.unknown.managers.ConfigManager;
-import cc.unknown.managers.FileManager;
-import cc.unknown.managers.ModuleManager;
-import cc.unknown.managers.ScriptManager;
-import cc.unknown.managers.ThemeManager;
+import cc.unknown.handlers.*;
+import cc.unknown.managers.*;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.menu.saku.SakuMenu;
 import cc.unknown.util.client.CustomLogger;
@@ -48,18 +29,16 @@ import net.minecraft.src.Config;
 public class Sakura {
 
     public static final String NAME = "Sakura";
-    public static final String VERSION = "5.8";
+    public static final String VERSION = "5.9";
 
     public static final Sakura instance = new Sakura();
     public static final CustomLogger LOGGER = new CustomLogger(Sakura.class);
     
-    private EventBus<Event> eventBus;
+    private final EventBus<Event> eventBus = new EventBus<>();
     private ModuleManager moduleManager;
     private CommandManager commandManager;
     private ThemeManager themeManager;
-
     private FileManager fileManager;
-
     private BindableManager bindableManager;
     private ConfigManager configManager;
     private ScriptManager scriptManager;
@@ -67,14 +46,21 @@ public class Sakura {
     private RiceGui clickGui;
     public boolean firstStart;
     
-    private DiscordHandler discordHandler = new DiscordHandler();
-    public static final List<Object> registered = new ArrayList<Object>();
+    private final DiscordHandler discordHandler = new DiscordHandler();
+    public static final List<Object> registered = new ArrayList<>();
     private final ScheduledExecutorService ex = Executors.newScheduledThreadPool(4);
-    private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private File dir;
-    private File firstInitFile;
+    private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    protected Minecraft mc = Minecraft.getInstance();
+    private final File dir;
+    private final File firstInitFile;
+    private static final String EXPECTED_CONTENT = "[Sakura] Init Sound | DONT DELETE THIS";
+    
+    private final Minecraft mc = Minecraft.getInstance();
+
+    public Sakura() {
+        this.dir = new File(mc.mcDataDir, "Sakura" + File.separator + "sound");
+        this.firstInitFile = new File(dir, "sound.txt");
+    }
 
     public void init() {
         Display.setTitle(NAME + " " + VERSION);
@@ -87,18 +73,14 @@ public class Sakura {
 
         checkFirstStart();
 
-        if (firstStart) {
-            initTempFile();
-        }
-
         mc.displayGuiScreen(new SakuMenu());
 
         LOGGER.info("Initialized successfully.");
     }
 
     public void terminate() {    	
-    	if (getConfigManager().get("latest") != null) {
-        	getConfigManager().get("latest").write();
+    	if (configManager.get("latest") != null) {
+        	configManager.get("latest").write();
         }
     	
     	discordHandler.stop();
@@ -109,7 +91,6 @@ public class Sakura {
     
     private void initHandler() {
     	LOGGER.info("Handlers initialized.");
-
     	register(
     			new ViaHandler(),
     			new SpoofHandler(),
@@ -121,7 +102,6 @@ public class Sakura {
     			new RotationHandler(),
     			new FixHandler(),
     			new TransactionHandler());
-    	
     	LOGGER.info("Handlers registered.");
     }
     
@@ -137,7 +117,6 @@ public class Sakura {
         commandManager = new CommandManager();
         configManager = new ConfigManager();
         themeManager = new ThemeManager();
-        eventBus = new EventBus<>();
         scriptManager = new ScriptManager();
         bindableManager = new BindableManager();
         
@@ -153,11 +132,11 @@ public class Sakura {
     }
     
     private void initAutoOptimization() {
-    	mc.gameSettings.ofFastRender = Config.isShaders() ? false : (Platform.isLinux() ? false : true);
-		mc.gameSettings.ofChunkUpdatesDynamic = Platform.isLinux() ? false : true;
-		mc.gameSettings.ofSmartAnimations = Platform.isLinux() ? false : true;
+    	mc.gameSettings.ofFastRender = Config.isShaders() ? false : !Platform.isLinux();
+		mc.gameSettings.ofChunkUpdatesDynamic = !Platform.isLinux();
+		mc.gameSettings.ofSmartAnimations = !Platform.isLinux();
         mc.gameSettings.ofShowGlErrors = false;
-        mc.gameSettings.ofRenderRegions = Platform.isLinux() ? false : true;
+        mc.gameSettings.ofRenderRegions = !Platform.isLinux();
         mc.gameSettings.ofSmoothFps = false;
         mc.gameSettings.ofFastMath = true;
         mc.gameSettings.useVbo = true;
@@ -175,42 +154,62 @@ public class Sakura {
 	        }
 	    }
 	}
-
+	
 	private void initTempFile() {
-		dir = new File(mc.mcDataDir, "Sakura" + File.separator + "sound");
-	    firstInitFile = new File(dir, "sound.txt");
+        if (firstInitFile.exists()) {
+            try {
+                String content = new String(Files.readAllBytes(firstInitFile.toPath())).trim();
+                if (!EXPECTED_CONTENT.equals(content)) {
+                    if (firstInitFile.delete()) {
+                        LOGGER.info("Archivo sound.txt eliminado por contenido incorrecto.");
+                        firstStart = true;
+                    } else {
+                        LOGGER.error("No se pudo eliminar el archivo sound.txt.");
+                        return;
+                    }
+                } else {
+                    return;
+                }
+            } catch (IOException e) {
+                LOGGER.error("Error leyendo el archivo sound.txt", e);
+                return;
+            }
+        } else {
+            firstStart = true;
+        }
 
-	    if (!firstInitFile.exists()) {
-	    	dir.mkdir();
-	        try {
-	            if (firstInitFile.createNewFile()) {
-	                try (FileWriter writer = new FileWriter(firstInitFile)) {
-	                    writer.write("[Sakura] First Init Sound | DONT DELETE THIS");
-	                }
-	            }
-	        } catch (IOException e) {
-	            LOGGER.error("Error creating First Init Sound file", e);
-	        }
-	    }
+        if (!dir.exists() && !dir.mkdirs()) {
+            LOGGER.error("No se pudo crear el directorio de sonido.");
+            return;
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(firstInitFile))) {
+            writer.write(EXPECTED_CONTENT);
+            LOGGER.info("Archivo sound.txt creado correctamente.");
+        } catch (IOException e) {
+            LOGGER.error("Error creando el archivo sound.txt", e);
+        }
 	}
 
 	private void checkFirstStart() {
-		dir = new File(mc.mcDataDir, "Sakura" + File.separator + "sound");
-	    firstInitFile = new File(dir, "sound.txt");
-
-	    if (firstInitFile.exists()) {
-	        try (BufferedReader reader = new BufferedReader(new FileReader(firstInitFile))) {
-	            String content = reader.readLine();
-	            if ("[Sakura] First Init Sound | DONT DELETE THIS".equals(content)) {
-	                this.firstStart = false;
-	                LOGGER.info("First Start detected, canceling sound...");
-	            }
-	        } catch (IOException e) {
-	            LOGGER.error("Error reading sound file", e);
-	        }
-	    } else {
-	        this.firstStart = true;
-	        LOGGER.info("No sound.txt found, initializing sound...");
-	    }
+        if (firstInitFile.exists()) {
+            try {
+                String content = new String(Files.readAllBytes(firstInitFile.toPath())).trim();
+                if (EXPECTED_CONTENT.equals(content)) {
+                    firstStart = false;
+                    LOGGER.info("Start detected, canceling sound...");
+                } else {
+                    firstStart = true;
+                    LOGGER.info("Contenido incorrecto, activando sonido...");
+                    initTempFile();
+                }
+            } catch (IOException e) {
+                LOGGER.error("Error leyendo el archivo sound.txt", e);
+            }
+        } else {
+            firstStart = true;
+            LOGGER.info("No sound.txt found, initializing sound...");
+            initTempFile();
+        }
 	}
 }

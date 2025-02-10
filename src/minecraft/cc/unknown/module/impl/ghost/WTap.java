@@ -4,7 +4,7 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.MoveInputEvent;
 import cc.unknown.event.impl.player.AttackEvent;
-import cc.unknown.event.impl.player.PreMotionEvent;
+import cc.unknown.event.impl.player.PreLivingUpdateEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
@@ -15,12 +15,10 @@ import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.TargetUtil;
 import cc.unknown.util.player.rotation.RotationUtil;
 import cc.unknown.value.impl.BooleanValue;
-import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.monster.IMob;
@@ -44,7 +42,6 @@ public class WTap extends Module {
     private final NumberValue range = new NumberValue("Range", this, 3, 0, 6, 0.1, () -> !mode.is("S-Tap") && !mode.is("No Stop"));
     private final NumberValue combo = new NumberValue("Combo To Start", this, 2, 0, 6, 1, () -> !mode.is("S-Tap") && !mode.is("No Stop"));
 
-	private BoundsNumberValue hits = new BoundsNumberValue("Hits", this, 1, 2, 0, 10, 1, () -> mode.is("S-Tap") || mode.is("No Stop"));
 	private NumberValue delay = new NumberValue("Delay", this, 500, 50, 1000, 10, () -> mode.is("S-Tap") || mode.is("No Stop"));
 	private NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1, () -> mode.is("S-Tap") || mode.is("No Stop"));
 	private NumberValue sprintingTicks = new NumberValue("Sprinting Ticks", this, 50, 0, 600, 10, () -> !mode.is("Silent") || mode.is("S-Tap") || mode.is("No Stop"));
@@ -95,9 +92,9 @@ public class WTap extends Module {
 	};
 	
 	@EventLink
-	public final Listener<PreMotionEvent> onPreMotion = event -> {
+	public final Listener<PreLivingUpdateEvent> onPreMotion = event -> {
         switch (ticks) {
-        case 2: {
+        case 2:
         	switch (mode.getValue().getName()) {
                 case "Normal":
                     mc.gameSettings.keyBindForward.pressed = false;
@@ -110,7 +107,7 @@ public class WTap extends Module {
                     break;
             }
             ticks--;
-        }
+        
             break;
         case 1: {
             switch (mode.getValue().getName()) {

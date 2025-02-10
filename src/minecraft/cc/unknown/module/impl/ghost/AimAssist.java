@@ -30,14 +30,13 @@ import net.minecraft.util.Vec3;
 @ModuleInfo(aliases = "Aim Assist", description = "Te ayuda a apuntar", category = Category.GHOST)
 public final class AimAssist extends Module {
 
-	private final NumberValue horizontalSpeed = new NumberValue("Horizontal Speed", this, 5, 1, 20, 0.1);
+	private final NumberValue horizontalSpeed = new NumberValue("Horizontal Speed", this, 5, 0.1, 20, 0.1);
 	private final BooleanValue vertical = new BooleanValue("Vertical", this, false);
-	private final NumberValue verticalSpeed = new NumberValue("Vertical Speed", this, 5, 1, 20, 0.1, () -> !vertical.getValue());
+	private final NumberValue verticalSpeed = new NumberValue("Vertical Speed", this, 5, 0.1, 20, 0.1, () -> !vertical.getValue());
 	private final NumberValue fov = new NumberValue("Fov", this, 180, 1, 360, 5);
 	private final NumberValue range = new NumberValue("Range", this, 4.5, 1, 8, 0.1);
 	private final BooleanValue requiredClick = new BooleanValue("Require Clicking", this, true);
 	private final BooleanValue lockTarget = new BooleanValue("Lock Target", this, true);
-	private final BooleanValue strafeIncrease = new BooleanValue("Strafe Increase", this, false);
 	private final BooleanValue ignoreTeams = new BooleanValue("Ignore Teams", this, false);
 	private final BooleanValue visibilityCheck = new BooleanValue("Visibility Check", this, true);
 	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !visibilityCheck.getValue());
@@ -84,21 +83,6 @@ public final class AimAssist extends Module {
             }
         }
 
-        if (strafeIncrease.getValue()) {
-            int mouseX = Math.abs(mc.mouseHelper.deltaX);
-            int mouseY = Math.abs(mc.mouseHelper.deltaY);
-
-            if (mouseX > 100)
-                hSpeed = 0;
-            else
-                hSpeed = Math.min(hSpeed, (100 - mouseX) / 35.0);
-
-            if (mouseY > 100)
-                vSpeed = 0;
-            else
-                vSpeed = Math.min(hSpeed, (100 - mouseY) / 35.0);
-        }
-
         final Doble<Doble<Float, Float>, Doble<Float, Float>> rotation = getRotation(target.getEntityBoundingBox());
         final Doble<Float, Float> yaw = rotation.getFirst();
         final Doble<Float, Float> pitch = rotation.getSecond();
@@ -133,6 +117,7 @@ public final class AimAssist extends Module {
             deltaYaw += (Math.random() - 0.5) * Math.min(0.8, deltaPitch / 10.0);
             deltaPitch += (Math.random() - 0.5) * Math.min(0.8, deltaYaw / 10.0);
         }
+ 
 
         mc.player.rotationYaw += (float) deltaYaw;
         mc.player.rotationPitch += (float) deltaPitch;

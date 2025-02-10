@@ -7,22 +7,19 @@ import org.lwjgl.input.Mouse;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.input.NaturalPressEvent;
+import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.player.FriendUtil;
-import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.DescValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MovingObjectPosition;
 
 @ModuleInfo(aliases = "Auto Clicker", description = "Clickea automáticamente", category = Category.GHOST)
@@ -83,12 +80,13 @@ public class AutoClicker extends Module {
 	private long baseCPS;
 
 	@EventLink
-	public final Listener<NaturalPressEvent> onTick = event -> {
+	public final Listener<TickEvent> onTick = event -> {
 	    attackTicks++;
 	    
 	    double randomization = 1.5;
+	    AutoBlock autoBlock = getModule(AutoBlock.class);
 	    String mode = this.mode.getValue().getName();
-
+        
 	    if (stopWatch.finished(nextSwing) && mc.currentScreen == null) {
 		    if (Mouse.isButtonDown(0)) {
 		        ticksDown++;
@@ -177,32 +175,18 @@ public class AutoClicker extends Module {
 		    
 			if (Mouse.isButtonDown(0) && ticksDown > 1) {
 				mc.clickMouse();
-				event.setCancelled();
+				stopWatch.reset();
+			}
+			
+			if (Mouse.isButtonDown(1) && rightClick.getValue()) {
+				mc.rightClickMouse();
 				stopWatch.reset();
 			}
 			
 			if (Mouse.isButtonDown(0) && !breakBlocks.getValue()) {
 				mc.playerController.curBlockDamageMP = 0;
 			}
-			
-			if (rightClick.getValue() && Mouse.isButtonDown(1)) {
-				mc.rightClickMouse();
-				event.setCancelled();
-				stopWatch.reset();
-	
-				if (Math.random() > 0.9) {
-					mc.rightClickMouse();
-					event.setCancelled();
-					stopWatch.reset();
-				}
-			}
-		    
-			if (mc.player.isBlocking() && PlayerUtil.isHoldingWeapon() && Mouse.isButtonDown(0) && !Mouse.isButtonDown(1)) {
-				mc.playerController.onStoppedUsingItem(mc.player);
-			} else if (!mc.player.isBlocking() && PlayerUtil.isHoldingWeapon() && Mouse.isButtonDown(0) && Mouse.isButtonDown(1)) {
-				mc.playerController.sendUseItem(mc.player, mc.world, PlayerUtil.getItemStack());
-			}
-	    }
+	    }	    
 	};
 	
 	@EventLink
@@ -226,5 +210,14 @@ public class AutoClicker extends Module {
 
 	    hitEntities.add(entityId);
 	    return false;
+	}
+	
+	private void recalibrateCPS(BoundsNumberValue rc, BoundsNumberValue cps, BoundsNumberValue delta) {
+	    if (ticksSinceLastRecalculation >= rc.getRandomBetween().longValue()) {
+	        baseCPS = cps.getRandomBetween().longValue();
+	        ticksSinceLastRecalculation = 0;
+	    }
+	    clicks = Math.max(1, baseCPS + delta.getRandomBetween().longValue());
+	    ticksSinceLastRecalculation++;
 	}
 }
