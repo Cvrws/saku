@@ -193,7 +193,7 @@ public class PlayerUtil implements Accessor {
         return (float) (90 - pitch);
     }
 
-	public boolean fov(Entity entity, float fov) {
+	public boolean fov(float fov, Entity entity) {
 		fov = (float) ((double) fov * 0.5D);
 		double v = ((double) (mc.player.rotationYaw - fovToTarget(entity)) % 360.0D + 540.0D) % 360.0D - 180.0D;
 		return v > 0.0D && v < (double) fov || (double) (-fov) < v && v < 0.0D;
