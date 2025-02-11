@@ -33,12 +33,20 @@ public class RotationUtil implements Accessor {
 				0));
 	}
 	
-    public float i(final double n, final double n2) {
+	public Vec3 getNearestPointOnBox(AxisAlignedBB hitbox, Vec3 playerPos) {
+	    double nearestX = MathHelper.clamp_double(playerPos.xCoord, hitbox.minX, hitbox.maxX);
+	    double nearestY = MathHelper.clamp_double(playerPos.yCoord, hitbox.minY, hitbox.maxY);
+	    double nearestZ = MathHelper.clamp_double(playerPos.zCoord, hitbox.minZ, hitbox.maxZ);
+	    
+	    return new Vec3(nearestX, nearestY, nearestZ);
+	}
+	
+    public float calculate(final double n, final double n2) {
         return (float) (Math.atan2(n - mc.player.posX, n2 - mc.player.posZ) * 57.295780181884766 * -1.0);
     }
 	
     public double distanceFromYaw(final Entity entity) {
-        return Math.abs(MathHelper.wrapAngleTo180_double(i(entity.posX, entity.posZ) - mc.player.rotationYaw));
+        return Math.abs(MathHelper.wrapAngleTo180_double(calculate(entity.posX, entity.posZ) - mc.player.rotationYaw));
     }
 
 	public float[] getFixedRotation(final float[] rotations, final float[] lastRotations) {

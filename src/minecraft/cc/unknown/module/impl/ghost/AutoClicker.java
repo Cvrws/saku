@@ -53,14 +53,14 @@ public class AutoClicker extends Module {
 	
 	private final BooleanValue firstHit = new BooleanValue("On First Hit", this, true, () -> !mode.is("Smart"));
     private final BoundsNumberValue cpsFirst = new BoundsNumberValue("CPS [First Hit]", this, 16, 18, 1, 20, 1, () -> !mode.is("Smart") || !firstHit.getValue());
-	private final BoundsNumberValue rcFirst = new BoundsNumberValue("Recalculate Tick [Wall]", this, 6, 9, 1, 20, 1, () -> !mode.is("Smart") || !firstHit.getValue());
-	private final BoundsNumberValue deltaFirst = new BoundsNumberValue("Delta [Wall]", this, 2, 3, 1, 20, 1, () -> !mode.is("Smart") || !firstHit.getValue());
+	private final BoundsNumberValue rcFirst = new BoundsNumberValue("Recalculate Tick [First Hit]", this, 6, 9, 1, 20, 1, () -> !mode.is("Smart") || !firstHit.getValue());
+	private final BoundsNumberValue deltaFirst = new BoundsNumberValue("Delta [First Hit]", this, 4, 5, 1, 20, 1, () -> !mode.is("Smart") || !firstHit.getValue());
 	
 	private final DescValue separator2 = new DescValue(" ", this, () -> !mode.is("Smart"));
 
 	private final BooleanValue onTarget = new BooleanValue("On Target", this, true, () -> !mode.is("Smart"));
 	private final BoundsNumberValue cpsTarget = new BoundsNumberValue("CPS [Target]", this, 18, 18, 1, 20, 1, () -> !mode.is("Smart") || !onTarget.getValue());        
-	private final BoundsNumberValue rcTarget = new BoundsNumberValue("Recalculate Tick [Target]", this, 10, 20, 1, 20, 1, () -> !mode.is("Smart") || !onTarget.getValue());
+	private final BoundsNumberValue rcTarget = new BoundsNumberValue("Recalculate Tick [Target]", this, 3, 8, 1, 20, 1, () -> !mode.is("Smart") || !onTarget.getValue());
 	private final BoundsNumberValue deltaTarget = new BoundsNumberValue("Delta [Target]", this, 3, 8, 1, 20, 1, () -> !mode.is("Smart") || !onTarget.getValue());
 	private final BoundsNumberValue dCpsTarget = new BoundsNumberValue("DCPS [Target]", this, 4, 5, 1, 20, 1, () -> !mode.is("Smart") || !onTarget.getValue());        
 
@@ -73,16 +73,13 @@ public class AutoClicker extends Module {
 	private final Set<Integer> hitEntities = new HashSet<>();
 
 	private int ticksDown;
-	private int attackTicks;
 	private long nextSwing;
 	private long clicks;
 	private long ticksSinceLastRecalculation;
 	private long baseCPS;
 
 	@EventLink
-	public final Listener<TickEvent> onTick = event -> {
-	    attackTicks++;
-	    
+	public final Listener<TickEvent> onTick = event -> {	    
 	    double randomization = 1.5;
 	    AutoBlock autoBlock = getModule(AutoBlock.class);
 	    String mode = this.mode.getValue().getName();
@@ -186,15 +183,12 @@ public class AutoClicker extends Module {
 			if (Mouse.isButtonDown(0) && !breakBlocks.getValue()) {
 				mc.playerController.curBlockDamageMP = 0;
 			}
-	    }	    
+	    }
 	};
 	
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> mc.leftClickCounter = -1;
-	
-	@EventLink
-	public final Listener<AttackEvent> onAttack = event -> attackTicks = 0;
-	
+
 	private boolean isFirstHit(MovingObjectPosition objectMouseOver) {
 	    return objectMouseOver != null && objectMouseOver.entityHit != null && !hasHitBefore(objectMouseOver.entityHit);
 	}
@@ -213,11 +207,10 @@ public class AutoClicker extends Module {
 	}
 	
 	private void recalibrateCPS(BoundsNumberValue rc, BoundsNumberValue cps, BoundsNumberValue delta) {
-	    if (ticksSinceLastRecalculation >= rc.getRandomBetween().longValue()) {
-	        baseCPS = cps.getRandomBetween().longValue();
-	        ticksSinceLastRecalculation = 0;
-	    }
-	    clicks = Math.max(1, baseCPS + delta.getRandomBetween().longValue());
-	    ticksSinceLastRecalculation++;
+        if (ticksSinceLastRecalculation >= 20 + Math.random() * 10) { 
+            baseCPS = (long) (cps.getRandomBetween().longValue() + (Math.random() * delta.getRandomBetween().longValue() - delta.getRandomBetween().longValue() / 2));
+            ticksSinceLastRecalculation = 0;
+        }
+        ticksSinceLastRecalculation++;
 	}
 }

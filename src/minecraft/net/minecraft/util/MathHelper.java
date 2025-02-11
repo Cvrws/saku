@@ -43,7 +43,7 @@ public class MathHelper
     {
         return (float)Math.sqrt(value);
     }
-
+    
     public static int floor_float(float value)
     {
         int i = (int)value;
