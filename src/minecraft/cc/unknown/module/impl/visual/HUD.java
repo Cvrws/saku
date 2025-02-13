@@ -41,7 +41,8 @@ public final class HUD extends Module {
             .add(new SubMode("Fade"))
             .setDefault("Fade");
 
-    private final BooleanValue bloom = new BooleanValue("Bloom", this, true);
+    private final BooleanValue lgbt = new BooleanValue("LBGT+", this, false);
+    private final BooleanValue bloom = new BooleanValue("Bloom", this, false);
     private final BooleanValue renderCategories = new BooleanValue("Render Category", this, true);
     public final BooleanValue hideCombat = new BooleanValue("Hide Combat", this, false, () -> !renderCategories.getValue());
     public final BooleanValue hideVisuals = new BooleanValue("Hide Visuals", this, true, () -> !renderCategories.getValue());
@@ -81,6 +82,14 @@ public final class HUD extends Module {
     public final Listener<Render2DEvent> onRender2D = event -> {
         moduleSpacing = mc.fontRendererObj.height() + 2;
         edgeOffset = 4;
+        
+        if (lgbt.getValue()) {
+    		final String name = "CRIS";
+    		mc.fontRendererObj.drawCentered(name, event.getScaledResolution().getScaledWidth() / 2F,
+    				event.getScaledResolution().getScaledHeight() - 89.5F, new Color(0, 0, 0, 200).hashCode());
+    		mc.fontRendererObj.drawCentered(name, event.getScaledResolution().getScaledWidth() / 2F,
+    				event.getScaledResolution().getScaledHeight() - 90, getTheme().getAccentColor().getRGB());
+        }
 
         float sx = event.getScaledResolution().getScaledWidth();
         float sy = event.getScaledResolution().getScaledHeight() - mc.fontRendererObj.height() - 4;

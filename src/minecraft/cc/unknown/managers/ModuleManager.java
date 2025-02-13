@@ -109,8 +109,8 @@ public final class ModuleManager {
         this.put(Respawn.class, new Respawn());
         this.put(Blink.class, new Blink());
         this.put(GhostHand.class, new GhostHand());
-        this.put(AutoSwap.class, new AutoSwap());
         this.put(Derp.class, new Derp());
+        this.put(AntiCheat.class, new AntiCheat());
         this.put(NoClickDelay.class, new NoClickDelay());
         this.put(FastUse.class, new FastUse());
         this.put(BlockIn.class, new BlockIn());
@@ -136,6 +136,7 @@ public final class ModuleManager {
         this.put(HUD.class, new HUD());
         this.put(PacketDisplay.class, new PacketDisplay());
         this.put(KeepTabList.class, new KeepTabList());
+        this.put(MotionBlur.class, new MotionBlur());
         this.put(Invisibles.class, new Invisibles());
         this.put(Trajectories.class, new Trajectories());
         this.put(ItemESP.class, new ItemESP());

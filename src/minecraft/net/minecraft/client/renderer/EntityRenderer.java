@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Calendar;
@@ -26,6 +27,7 @@ import cc.unknown.event.impl.other.RotationEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
+import cc.unknown.module.impl.visual.Ambience;
 import cc.unknown.module.impl.visual.NoCameraClip;
 import cc.unknown.ui.menu.saku.SakuMenu;
 import cc.unknown.util.Accessor;
@@ -271,7 +273,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 		}
 	}
 
-	private void loadShader(ResourceLocation resourceLocationIn) {
+	public void loadShader(ResourceLocation resourceLocationIn) {
 		if (OpenGlHelper.isFramebufferEnabled()) {
 			try {
 				this.theShaderGroup = new ShaderGroup(this.mc.getTextureManager(), this.resourceManager,
@@ -647,29 +649,34 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 
 				NoCameraClip noCameraClip = Sakura.instance.getModuleManager().get(NoCameraClip.class);
 
-                if (noCameraClip == null || !noCameraClip.isEnabled()) {
-                    final double d4 = (double) (-MathHelper.sin(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
-                    final double d5 = (double) (MathHelper.cos(f1 / 180.0F * (float) Math.PI) * MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
-                    final double d6 = (double) (-MathHelper.sin(f2 / 180.0F * (float) Math.PI)) * d3;
+				if (noCameraClip == null || !noCameraClip.isEnabled()) {
+					final double d4 = (double) (-MathHelper.sin(f1 / 180.0F * (float) Math.PI)
+							* MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
+					final double d5 = (double) (MathHelper.cos(f1 / 180.0F * (float) Math.PI)
+							* MathHelper.cos(f2 / 180.0F * (float) Math.PI)) * d3;
+					final double d6 = (double) (-MathHelper.sin(f2 / 180.0F * (float) Math.PI)) * d3;
 
-                    for (int i = 0; i < 8; ++i) {
-                        float f3 = (float) ((i & 1) * 2 - 1);
-                        float f4 = (float) ((i >> 1 & 1) * 2 - 1);
-                        float f5 = (float) ((i >> 2 & 1) * 2 - 1);
-                        f3 = f3 * 0.1F;
-                        f4 = f4 * 0.1F;
-                        f5 = f5 * 0.1F;
-                        final MovingObjectPosition movingobjectposition = this.mc.world.rayTraceBlocks(new Vec3(d0 + (double) f3, d1 + (double) f4, d2 + (double) f5), new Vec3(d0 - d4 + (double) f3 + (double) f5, d1 - d6 + (double) f4, d2 - d5 + (double) f5));
+					for (int i = 0; i < 8; ++i) {
+						float f3 = (float) ((i & 1) * 2 - 1);
+						float f4 = (float) ((i >> 1 & 1) * 2 - 1);
+						float f5 = (float) ((i >> 2 & 1) * 2 - 1);
+						f3 = f3 * 0.1F;
+						f4 = f4 * 0.1F;
+						f5 = f5 * 0.1F;
+						final MovingObjectPosition movingobjectposition = this.mc.world.rayTraceBlocks(
+								new Vec3(d0 + (double) f3, d1 + (double) f4, d2 + (double) f5),
+								new Vec3(d0 - d4 + (double) f3 + (double) f5, d1 - d6 + (double) f4,
+										d2 - d5 + (double) f5));
 
-                        if (movingobjectposition != null) {
-                            final double d7 = movingobjectposition.hitVec.distanceTo(new Vec3(d0, d1, d2));
+						if (movingobjectposition != null) {
+							final double d7 = movingobjectposition.hitVec.distanceTo(new Vec3(d0, d1, d2));
 
-                            if (d7 < d3) {
-                                d3 = d7;
-                            }
-                        }
-                    }
-                }
+							if (d7 < d3) {
+								d3 = d7;
+							}
+						}
+					}
+				}
 
 				if (this.mc.gameSettings.thirdPersonView == 2) {
 					GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
@@ -712,11 +719,13 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 				GlStateManager.rotate(f6, 0.0F, 1.0F, 0.0F);
 			}
 		} else if (!this.mc.gameSettings.debugCamEnable) {
-            if (FreeLookUtil.freelooking) {
-                GlStateManager.rotate(FreeLookUtil.cameraPitch, 1f, 0f, 0f);
-            } else {
-                GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 1.0F, 0.0F, 0.0F);
-            }
+			if (FreeLookUtil.freelooking) {
+				GlStateManager.rotate(FreeLookUtil.cameraPitch, 1f, 0f, 0f);
+			} else {
+				GlStateManager.rotate(
+						entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks,
+						1.0F, 0.0F, 0.0F);
+			}
 
 			if (entity instanceof EntityAnimal) {
 				EntityAnimal entityanimal = (EntityAnimal) entity;
@@ -724,12 +733,12 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 						+ (entityanimal.rotationYawHead - entityanimal.prevRotationYawHead) * partialTicks + 180.0F,
 						0.0F, 1.0F, 0.0F);
 			} else if (FreeLookUtil.freelooking) {
-                GlStateManager.rotate(FreeLookUtil.cameraYaw, 0f, 1f, 0f);
-            }
-            else
-            {
-                GlStateManager.rotate(entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F, 0.0F, 1.0F, 0.0F);
-            }
+				GlStateManager.rotate(FreeLookUtil.cameraYaw, 0f, 1f, 0f);
+			} else {
+				GlStateManager.rotate(
+						entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F,
+						0.0F, 1.0F, 0.0F);
+			}
 		}
 
 		GlStateManager.translate(0.0F, -f, 0.0F);
@@ -1064,7 +1073,18 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 					int k = (int) (f8 * 255.0F);
 					int l = (int) (f9 * 255.0F);
 					int i1 = (int) (f10 * 255.0F);
-					this.lightmapColors[i] = j << 24 | k << 16 | l << 8 | i1;
+					
+                    Ambience ambience = Sakura.instance.getModuleManager().get(Ambience.class);
+                    
+                    int red = ambience.worldColorRed.getValue().intValue();
+                    int green = ambience.worldColorGreen.getValue().intValue();
+                    int blue = ambience.worldColorBlue.getValue().intValue();
+                    
+                    int rgb = new Color(red, green, blue).getRGB();
+                    
+                    this.lightmapColors[i] = ambience.isEnabled() && ambience.worldColor.getValue() ? rgb : j << 24 | k << 16 | l << 8 | i1;
+					
+					//this.lightmapColors[i] = j << 24 | k << 16 | l << 8 | i1;
 				}
 
 				this.lightmapTexture.updateDynamicTexture();
@@ -1116,16 +1136,16 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 				this.smoothCamPartialTicks = partialTicks;
 				f2 = this.smoothCamFilterX * f4;
 				f3 = this.smoothCamFilterY * f4;
-                if (FreeLookUtil.freelooking) {
-                    FreeLookUtil.overrideMouse(f2, f3 * (float)i);
-                } else {
-                    this.mc.player.setAngles(f2, f3 * (float)i);
-                }
+				if (FreeLookUtil.freelooking) {
+					FreeLookUtil.overrideMouse(f2, f3 * (float) i);
+				} else {
+					this.mc.player.setAngles(f2, f3 * (float) i);
+				}
 			} else {
 				if (FreeLookUtil.freelooking) {
-					FreeLookUtil.overrideMouse(f2, f3 * (float)i);
+					FreeLookUtil.overrideMouse(f2, f3 * (float) i);
 				} else {
-					this.mc.player.setAngles(f2, f3 * (float)i);
+					this.mc.player.setAngles(f2, f3 * (float) i);
 				}
 				this.smoothCamYaw = 0.0F;
 				this.smoothCamPitch = 0.0F;
@@ -1181,7 +1201,6 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 
 					Sakura.instance.getEventBus().handle(new Render2DEvent(new ScaledResolution(mc), partialTicks));
 
-					
 					if (this.mc.gameSettings.ofShowFps && !this.mc.gameSettings.showDebugInfo) {
 						Config.drawFps();
 					}
@@ -1684,7 +1703,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 		if (flag) {
 			Shaders.endRender();
 		}
-		
+
 		setupCameraTransform(partialTicks, 0);
 		Sakura.instance.getEventBus().handle(new Render3DEvent(partialTicks));
 	}
@@ -2150,105 +2169,141 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 		Shaders.setClearColor(this.fogColorRed, this.fogColorGreen, this.fogColorBlue, 0.0F);
 	}
 
-	private void setupFog(int startCoords, float partialTicks) {
-		this.fogStandard = false;
-		Entity entity = this.mc.getRenderViewEntity();
-		boolean flag = false;
+    private void setupFog(int startCoords, float partialTicks)
+    {
+        this.fogStandard = false;
+        Entity entity = this.mc.getRenderViewEntity();
+        boolean flag = false;
 
-		if (entity instanceof EntityPlayer) {
-			flag = ((EntityPlayer) entity).capabilities.isCreativeMode;
-		}
+        if (entity instanceof EntityPlayer)
+        {
+            flag = ((EntityPlayer)entity).capabilities.isCreativeMode;
+        }
 
-		GL11.glFog(GL11.GL_FOG_COLOR,
-				(FloatBuffer) this.setFogColorBuffer(this.fogColorRed, this.fogColorGreen, this.fogColorBlue, 1.0F));
-		GL11.glNormal3f(0.0F, -1.0F, 0.0F);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(this.mc.world, entity, partialTicks);
-		float f = -1.0F;
+        GL11.glFog(GL11.GL_FOG_COLOR, this.setFogColorBuffer(this.fogColorRed, this.fogColorGreen, this.fogColorBlue, 1.0F));
+        GL11.glNormal3f(0.0F, -1.0F, 0.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(this.mc.world, entity, partialTicks);
+        float f = -1.0F;
 
-		if (Reflector.ForgeHooksClient_getFogDensity.exists()) {
-			f = Reflector.callFloat(Reflector.ForgeHooksClient_getFogDensity,
-					new Object[] { this, entity, block, Float.valueOf(partialTicks), Float.valueOf(0.1F) });
-		}
+        if (Reflector.ForgeHooksClient_getFogDensity.exists())
+        {
+            f = Reflector.callFloat(Reflector.ForgeHooksClient_getFogDensity, this, entity, block, partialTicks, 0.1F);
+        }
 
-		if (f >= 0.0F) {
-			GlStateManager.setFogDensity(f);
-		} else if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(Potion.blindness)) {
-			float f4 = 5.0F;
-			int i = ((EntityLivingBase) entity).getActivePotionEffect(Potion.blindness).getDuration();
+        if (f >= 0.0F)
+        {
+            GlStateManager.setFogDensity(f);
+        }
+        else if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).isPotionActive(Potion.blindness))
+        {
+            float f4 = 5.0F;
+            int i = ((EntityLivingBase)entity).getActivePotionEffect(Potion.blindness).getDuration();
 
-			if (i < 20) {
-				f4 = 5.0F + (this.farPlaneDistance - 5.0F) * (1.0F - (float) i / 20.0F);
-			}
+            if (i < 20)
+            {
+                f4 = 5.0F + (this.farPlaneDistance - 5.0F) * (1.0F - (float)i / 20.0F);
+            }
 
-			GlStateManager.setFog(9729);
+            GlStateManager.setFog(9729);
 
-			if (startCoords == -1) {
-				GlStateManager.setFogStart(0.0F);
-				GlStateManager.setFogEnd(f4 * 0.8F);
-			} else {
-				GlStateManager.setFogStart(f4 * 0.25F);
-				GlStateManager.setFogEnd(f4);
-			}
+            if (startCoords == -1)
+            {
+                GlStateManager.setFogStart(0.0F);
+                GlStateManager.setFogEnd(f4 * 0.8F);
+            }
+            else
+            {
+                GlStateManager.setFogStart(f4 * 0.25F);
+                GlStateManager.setFogEnd(f4);
+            }
 
-			if (GLContext.getCapabilities().GL_NV_fog_distance && Config.isFogFancy()) {
-				GL11.glFogi(34138, 34139);
-			}
-		} else if (this.cloudFog) {
-			GlStateManager.setFog(2048);
-			GlStateManager.setFogDensity(0.1F);
-		} else if (block.getMaterial() == Material.water) {
-			GlStateManager.setFog(2048);
-			float f1 = Config.isClearWater() ? 0.02F : 0.1F;
+            if (GLContext.getCapabilities().GL_NV_fog_distance && Config.isFogFancy())
+            {
+                GL11.glFogi(34138, 34139);
+            }
+        }
+        else if (this.cloudFog)
+        {
+            GlStateManager.setFog(2048);
+            GlStateManager.setFogDensity(0.1F);
+        }
+        else if (block.getMaterial() == Material.water)
+        {
+            GlStateManager.setFog(2048);
+            float f1 = Config.isClearWater() ? 0.02F : 0.1F;
 
-			if (entity instanceof EntityLivingBase
-					&& ((EntityLivingBase) entity).isPotionActive(Potion.waterBreathing)) {
-				GlStateManager.setFogDensity(0.01F);
-			} else {
-				float f2 = 0.1F - (float) EnchantmentHelper.getRespiration(entity) * 0.03F;
-				GlStateManager.setFogDensity(Config.limit(f2, 0.0F, f1));
-			}
-		} else if (block.getMaterial() == Material.lava) {
-			GlStateManager.setFog(2048);
-			GlStateManager.setFogDensity(2.0F);
-		} else {
-			float f3 = this.farPlaneDistance;
-			this.fogStandard = true;
-			GlStateManager.setFog(9729);
+            if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).isPotionActive(Potion.waterBreathing))
+            {
+                GlStateManager.setFogDensity(0.01F);
+            }
+            else
+            {
+                float f2 = 0.1F - (float)EnchantmentHelper.getRespiration(entity) * 0.03F;
+                GlStateManager.setFogDensity(Config.limit(f2, 0.0F, f1));
+            }
+        }
+        else if (block.getMaterial() == Material.lava)
+        {
+            GlStateManager.setFog(2048);
+            GlStateManager.setFogDensity(2.0F);
+        }
+        else
+        {
+            float f3 = this.farPlaneDistance;
+            this.fogStandard = true;
+            GlStateManager.setFog(9729);
 
-			if (startCoords == -1) {
-				GlStateManager.setFogStart(0.0F);
-				GlStateManager.setFogEnd(f3);
-			} else {
-				GlStateManager.setFogStart(f3 * Config.getFogStart());
-				GlStateManager.setFogEnd(f3);
-			}
+            if (startCoords == -1)
+            {
+                GlStateManager.setFogStart(0.0F);
+                GlStateManager.setFogEnd(f3);
+            }
+            else
+            {
+            	Ambience ambience = Sakura.instance.getModuleManager().get(Ambience.class);
+                boolean isWorldFogEnabled = ambience.isEnabled() && ambience.worldFog.getValue();
+                float fogStartDistance = isWorldFogEnabled ? ambience.worldFogDistance.getValue().floatValue() : Config.getFogStart();
+                GlStateManager.setFogStart(f3 * fogStartDistance);
+                GlStateManager.setFogEnd(f3);
+            }
 
-			if (GLContext.getCapabilities().GL_NV_fog_distance) {
-				if (Config.isFogFancy()) {
-					GL11.glFogi(34138, 34139);
-				}
+            if (GLContext.getCapabilities().GL_NV_fog_distance)
+            {
+                if (Config.isFogFancy())
+                {
+                    GL11.glFogi(34138, 34139);
+                }
 
-				if (Config.isFogFast()) {
-					GL11.glFogi(34138, 34140);
-				}
-			}
+                if (Config.isFogFast())
+                {
+                    GL11.glFogi(34138, 34140);
+                }
+            }
 
-			if (this.mc.world.provider.doesXZShowFog((int) entity.posX, (int) entity.posZ)) {
-				GlStateManager.setFogStart(f3 * 0.05F);
-				GlStateManager.setFogEnd(f3);
-			}
+            if (this.mc.world.provider.doesXZShowFog((int)entity.posX, (int)entity.posZ))
+            {
+                GlStateManager.setFogStart(f3 * 0.05F);
+                GlStateManager.setFogEnd(f3);
+            }
 
-			if (Reflector.ForgeHooksClient_onFogRender.exists()) {
-				Reflector.callVoid(Reflector.ForgeHooksClient_onFogRender, new Object[] { this, entity, block,
-						Float.valueOf(partialTicks), Integer.valueOf(startCoords), Float.valueOf(f3) });
-			}
-		}
+            if (Reflector.ForgeHooksClient_onFogRender.exists())
+            {
+                Reflector.callVoid(Reflector.ForgeHooksClient_onFogRender, this, entity, block, partialTicks, startCoords, f3);
+            }
+        }
 
-		GlStateManager.enableColorMaterial();
-		GlStateManager.enableFog();
-		GlStateManager.colorMaterial(1028, 4608);
-	}
+        Ambience ambience = Sakura.instance.getModuleManager().get(Ambience.class);
+        if(ambience.isEnabled() && ambience.worldFog.getValue()) {
+            fogColorRed = ambience.worldFogRed.getValue().intValue() / 255;
+            fogColorGreen = ambience.worldFogGreen.getValue().intValue() / 255;
+            fogColorBlue = ambience.worldFogBlue.getValue().intValue() / 255;
+        }
+
+        GlStateManager.enableColorMaterial();
+        GlStateManager.enableFog();
+        GlStateManager.colorMaterial(1028, 4608);
+    }
 
 	private FloatBuffer setFogColorBuffer(float red, float green, float blue, float alpha) {
 		if (Config.isShaders()) {

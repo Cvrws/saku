@@ -1,0 +1,28 @@
+package cc.unknown.module.impl.player.anticheat;
+
+import cc.unknown.event.impl.netty.PacketReceiveEvent;
+import cc.unknown.module.impl.player.AntiCheat;
+import cc.unknown.util.Accessor;
+import cc.unknown.util.client.ChatUtil;
+import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.render.ColorUtil;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatFormatting;
+
+public abstract class Check implements Accessor {
+	public final StopWatch timer = new StopWatch();
+	
+    public abstract String getName();
+
+    public abstract void onReceive(PacketReceiveEvent event, EntityPlayer player);
+
+    public abstract void onPreLiving(EntityPlayer player);
+
+    public void onMotion(EntityPlayer player, double x, double y, double z) {
+    }
+
+    public void flag(EntityPlayer player, String verbose) {
+        ChatUtil.display(player.getName() + ColorUtil.white + " detected for " + ColorUtil.gray + getName() + ColorUtil.white + ", " + ColorUtil.white + verbose);
+        getModuleManager().get(AntiCheat.class).mark(player);
+    }
+}

@@ -108,12 +108,11 @@ public class NoClip extends Module {
 
 	@EventLink
 	public final Listener<Render2DEvent> onRender2D = event -> {
-		final ScaledResolution scaledResolution = new ScaledResolution(mc);
 
 		final String name = "Una ves activado presiona shift";
-		mc.fontRendererObj.drawCentered(name, scaledResolution.getScaledWidth() / 2F,
-				scaledResolution.getScaledHeight() - 89.5F, new Color(0, 0, 0, 200).hashCode());
-		mc.fontRendererObj.drawCentered(name, scaledResolution.getScaledWidth() / 2F,
-				scaledResolution.getScaledHeight() - 90, getTheme().getAccentColor().getRGB());
+		mc.fontRendererObj.drawCentered(name, event.getScaledResolution().getScaledWidth() / 2F,
+				event.getScaledResolution().getScaledHeight() - 89.5F, new Color(0, 0, 0, 200).hashCode());
+		mc.fontRendererObj.drawCentered(name, event.getScaledResolution().getScaledWidth() / 2F,
+				event.getScaledResolution().getScaledHeight() - 90, getTheme().getAccentColor().getRGB());
 	};
 }

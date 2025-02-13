@@ -14,6 +14,7 @@ import cc.unknown.util.Accessor;
 import cc.unknown.util.structure.geometry.Vector3d;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 
@@ -62,10 +63,10 @@ public class SinceTickHandler implements Accessor {
     	if (packet instanceof C08PacketPlayerBlockPlacement && !((C08PacketPlayerBlockPlacement) packet).getPosition().equalsVector(new Vector3d(-1, -1, -1))) {
     		mc.player.ticksSincePlace = 0;
     	}
-    };
-
-    @EventLink(value = Priority.VERY_LOW)
-    public final Listener<AttackEvent> onAttack = event -> {
-        mc.player.ticksSinceAttack = 0;
+    	
+        if (packet instanceof C02PacketUseEntity && ((C02PacketUseEntity) packet).getAction() == C02PacketUseEntity.Action.ATTACK) {
+        	mc.player.ticksSinceAttack = 0;
+        }
+        mc.player.ticksSinceAttack++;
     };
 }

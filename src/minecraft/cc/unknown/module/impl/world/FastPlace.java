@@ -5,12 +5,14 @@ import org.lwjgl.input.Mouse;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.other.TickEvent;
+import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.RayCastUtil;
+import cc.unknown.util.player.SlotUtil;
 import cc.unknown.util.structure.geometry.Vector2f;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
@@ -42,10 +44,25 @@ public class FastPlace extends Module {
 	private final BooleanValue xpBottle = new BooleanValue("Bottle XP", this, true);
 	private final BoundsNumberValue cpsBottle = new BoundsNumberValue("CPS [BottleXP]", this, 18, 25, 1, 40, 1, () -> !xpBottle.getValue());
 	private final BoundsNumberValue dCpsBottle = new BoundsNumberValue("DCPS [BottleXP]", this, 2, 4, 1, 40, 1, () -> !xpBottle.getValue());
-		
+	
+	private final BooleanValue autoSwap = new BooleanValue("Auto Swap", this, true);
+	private final BoundsNumberValue pitchRange = new BoundsNumberValue("Pitch Range", this, 70, 85, 0, 90, 1, () -> !autoSwap.getValue());
+
+	private int lastSlot;
+	
 	private StopWatch stopWatch = new StopWatch();
 	
 	private boolean place;
+	
+	@Override
+	public void onEnable() {
+		lastSlot = -1;		
+	}
+	
+	@Override
+	public void onDisable() {
+		mc.player.inventory.currentItem = lastSlot;
+	}
 
     @EventLink
     public final Listener<TickEvent> onTick = event -> {
@@ -77,8 +94,38 @@ public class FastPlace extends Module {
                     stopWatch.reset();
                 }
             }
-        }       
+        }
     };
+    
+	@EventLink
+	public final Listener<Render3DEvent> onRender3D = event -> {
+		if (!isInGame()) return;
+		
+        if (lastSlot == -1) {
+        	lastSlot = mc.player.inventory.currentItem;
+        }
+        
+		final int slot = SlotUtil.findBlock();
+		
+        if (slot == -1) {
+            return;
+        }
+        
+		if (mc.player.rotationPitch < pitchRange.getValue().floatValue() || mc.player.rotationPitch > pitchRange.getSecondValue().floatValue()) {
+			return;
+		}
+        
+        if (shouldSkipBlockCheck()) {
+        	mc.player.inventory.currentItem = slot;
+        }
+        
+		if (mc.currentScreen == null || mc.player.getHeldItem() == null) return;
+	};
+	
+	private boolean shouldSkipBlockCheck() {
+		ItemStack heldItem = mc.player.getHeldItem();
+		return heldItem == null || !(heldItem.getItem() instanceof ItemBlock);
+	}
     
     private long getDeltaClick(BoundsNumberValue cps, BoundsNumberValue dCps) {
         double baseCPS = cps.getRandomBetween().longValue();

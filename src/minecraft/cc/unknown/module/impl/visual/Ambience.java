@@ -4,24 +4,40 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
-import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
-import lombok.Getter;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S2BPacketChangeGameState;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.biome.BiomeGenBase;
 
 @ModuleInfo(aliases = "Ambience", description = "Permite cambiar la hora y el tiempo del juego", category = Category.VISUALS)
 public final class Ambience extends Module {
 
-	private final NumberValue time = new NumberValue("Time", this, 0, 0, 22999, 1);
-	private final NumberValue speed = new NumberValue("Time Speed", this, 0, 0, 20, 1);
+    private final BooleanValue time = new BooleanValue("Time Editor", this, true);
+    private final NumberValue timeValue = new NumberValue("Time", this, 18000, 0, 24000, 1000, () -> !time.getValue());
+    private final BooleanValue weather = new BooleanValue("Weather Editor", this, true);
+    
+    private final ModeValue weatherValue = new ModeValue("Weather", this, () -> !weather.getValue())
+    		.add(new SubMode("Clean"))
+    		.add(new SubMode("Rain"))
+    		.add(new SubMode("Thunder"))
+    		.setDefault("Clean");
+    
+    public final BooleanValue worldColor = new BooleanValue("World Color", this, true);
+    public final NumberValue worldColorRed = new NumberValue("World Color [Red]", this, 255, 0, 255, 1, () -> !worldColor.getValue());
+    public final NumberValue worldColorGreen = new NumberValue("World Color [Green]", this, 255, 0, 255, 1, () -> !worldColor.getValue());
+    public final NumberValue worldColorBlue = new NumberValue("World Color [Blue]", this, 255, 0, 255, 1, () -> !worldColor.getValue());
+    
+    public final BooleanValue worldFog = new BooleanValue("World Fog", this, false);
+    public final NumberValue worldFogRed = new NumberValue("World Fog [Red]", this, 255, 0, 255, 1, () -> !worldFog.getValue());
+    public final NumberValue worldFogGreen = new NumberValue("World Fog [Green]", this, 255, 0, 255, 1, () -> !worldFog.getValue());
+    public final NumberValue worldFogBlue = new NumberValue("World Fog [Blue]", this, 255, 0, 255, 1, () -> !worldFog.getValue());
+    
+    public final NumberValue worldFogDistance = new NumberValue("World Fog Distance", this, 0.10F, -1F, 0.9F, 0.1F, () -> !worldFog.getValue());
 
 	@Override
 	public void onDisable() {
@@ -34,21 +50,24 @@ public final class Ambience extends Module {
 	}
 
 	@EventLink
-	public final Listener<Render3DEvent> onRender3D = event -> {
-		mc.world.setWorldTime(
-				(long) (time.getValue().intValue() + (System.currentTimeMillis() * speed.getValue().intValue())));
-	};
-
-	@EventLink
-	public final Listener<PreMotionEvent> onPreMotionEvent = event -> {
-		if (mc.player.ticksExisted % 20 == 0) {
-			mc.world.setRainStrength(0);
-			mc.world.getWorldInfo().setCleanWeatherTime(Integer.MAX_VALUE);
-			mc.world.getWorldInfo().setRainTime(0);
-			mc.world.getWorldInfo().setThunderTime(0);
-			mc.world.getWorldInfo().setRaining(false);
-			mc.world.getWorldInfo().setThundering(false);
-		}
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
+        if(time.getValue())
+            mc.world.setWorldTime(timeValue.getValue().longValue());
+        if (weather.getValue()) {
+            switch (weatherValue.getValue().getName()) {
+                case "Rain":
+                    mc.world.setRainStrength(1);
+                    mc.world.setThunderStrength(0);
+                    break;
+                case "Thunder":
+                    mc.world.setRainStrength(1);
+                    mc.world.setThunderStrength(1);
+                    break;
+                default:
+                    mc.world.setRainStrength(0);
+                    mc.world.setThunderStrength(0);
+            }
+        }
 	};
 
 	@EventLink

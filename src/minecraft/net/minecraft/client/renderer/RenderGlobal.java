@@ -403,11 +403,35 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 
-        this.starVBO = new VertexBuffer(this.vertexBufferFormat);
-        this.renderStars(worldrenderer);
-        worldrenderer.finishDrawing();
-        worldrenderer.reset();
-        this.starVBO.bufferData(worldrenderer.getByteBuffer());
+        if (this.starVBO != null)
+        {
+            this.starVBO.deleteGlBuffers();
+        }
+
+        if (this.starGLCallList >= 0)
+        {
+            GLAllocation.deleteDisplayLists(this.starGLCallList);
+            this.starGLCallList = -1;
+        }
+
+        if (this.vboEnabled)
+        {
+            this.starVBO = new VertexBuffer(this.vertexBufferFormat);
+            this.renderStars(worldrenderer);
+            worldrenderer.finishDrawing();
+            worldrenderer.reset();
+            this.starVBO.bufferData(worldrenderer.getByteBuffer());
+        }
+        else
+        {
+            this.starGLCallList = GLAllocation.generateDisplayLists(1);
+            GlStateManager.pushMatrix();
+            GL11.glNewList(this.starGLCallList, GL11.GL_COMPILE);
+            this.renderStars(worldrenderer);
+            tessellator.draw();
+            GL11.glEndList();
+            GlStateManager.popMatrix();
+        }
     }
 
     private void renderStars(WorldRenderer worldRendererIn)
@@ -635,7 +659,6 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             this.renderManager.setRenderPosition(d3, d4, d5);
             this.mc.entityRenderer.enableLightmap();
             this.theWorld.theProfiler.endStartSection("global");
-            //List<Entity> list = this.theWorld.getLoadedEntityList();
 			ConcurrentLinkedQueue<Entity> list = this.theWorld.getLoadedEntityList();
 
             if (i == 0)
@@ -957,7 +980,6 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             this.mc.mcProfiler.endSection();
         }
     }
-
     public String getDebugInfoRenders()
     {
         int i = this.viewFrustum.renderChunks.length;
@@ -1788,14 +1810,33 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
 
             if (Config.isSunTexture())
             {
-
+                this.renderEngine.bindTexture(locationSunPng);
+                worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+                worldrenderer.pos((double)(-f16), 100.0D, (double)(-f16)).tex(0.0D, 0.0D).endVertex();
+                worldrenderer.pos((double)f16, 100.0D, (double)(-f16)).tex(1.0D, 0.0D).endVertex();
+                worldrenderer.pos((double)f16, 100.0D, (double)f16).tex(1.0D, 1.0D).endVertex();
+                worldrenderer.pos((double)(-f16), 100.0D, (double)f16).tex(0.0D, 1.0D).endVertex();
+                tessellator.draw();
             }
 
             f16 = 20.0F;
 
             if (Config.isMoonTexture())
             {
-
+                this.renderEngine.bindTexture(locationMoonPhasesPng);
+                int i = this.theWorld.getMoonPhase();
+                int k = i % 4;
+                int i1 = i / 4 % 2;
+                float f19 = (float)(k + 0) / 4.0F;
+                float f21 = (float)(i1 + 0) / 2.0F;
+                float f23 = (float)(k + 1) / 4.0F;
+                float f14 = (float)(i1 + 1) / 2.0F;
+                worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+                worldrenderer.pos((double)(-f16), -100.0D, (double)f16).tex((double)f23, (double)f14).endVertex();
+                worldrenderer.pos((double)f16, -100.0D, (double)f16).tex((double)f19, (double)f14).endVertex();
+                worldrenderer.pos((double)f16, -100.0D, (double)(-f16)).tex((double)f19, (double)f21).endVertex();
+                worldrenderer.pos((double)(-f16), -100.0D, (double)(-f16)).tex((double)f23, (double)f21).endVertex();
+                tessellator.draw();
             }
 
             GlStateManager.disableTexture2D();

@@ -1,19 +1,21 @@
 package cc.unknown.module.impl.ghost;
 
+import java.util.Random;
+
 import org.lwjgl.input.Keyboard;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.input.MoveInputEvent;
 import cc.unknown.event.impl.player.PreStrafeEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
-import cc.unknown.util.player.MoveUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.potion.Potion;
+import net.minecraft.util.MathHelper;
 
 @ModuleInfo(aliases = "Jump Reset", description = "Salta automáticamente al recibir daño para resetear el KB.", category = Category.GHOST)
 public class JumpReset extends Module {
@@ -30,16 +32,33 @@ public class JumpReset extends Module {
     @EventLink
     public final Listener<PreStrafeEvent> onPreMotion = event -> {
 	    double chanceValue = chance.getValue().doubleValue();
-
         if (noAction()) return;
-	    if (!MathUtil.shouldPerformAction(chanceValue, MathUtil.getRandomFactor(chanceValue))) return;
 	    
-    	if (mc.player.hurtTime == 9 && mc.player.ticksSinceVelocity <= 14) {
-    		if (mc.player.onGround && !mc.gameSettings.keyBindJump.isKeyDown() && !checks()) {
-    			mc.player.jump();
-    		}
-    	}
+        if (mc.currentScreen != null) return;
+        if (mc.player.hurtTime == 10) {
+        	shouldJump = MathUtil.shouldPerformAction(chanceValue, MathUtil.getRandomFactor(chanceValue));
+        }
+        
+        if (!shouldJump) return;
+        if (mc.player.hurtTime >= 8) {
+            mc.gameSettings.keyBindJump.pressed = true;
+        }
+        if (mc.player.hurtTime >= 7) {
+            mc.gameSettings.keyBindForward.pressed = true;
+        } else if (mc.player.hurtTime >= 4) {
+            mc.gameSettings.keyBindJump.pressed = false;
+            mc.gameSettings.keyBindForward.pressed = false;
+        } else if (mc.player.hurtTime > 1){
+            mc.gameSettings.keyBindForward.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindForward);
+            mc.gameSettings.keyBindJump.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindJump);
+        }
     };
+    
+    @Override
+    public void onDisable() {
+        mc.gameSettings.keyBindJump.pressed = false;
+        mc.gameSettings.keyBindForward.pressed = false;
+    }
 
     private boolean noAction() {
         return mc.player.getActivePotionEffects().stream().anyMatch(effect ->

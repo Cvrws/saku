@@ -3,9 +3,13 @@ package cc.unknown.util.render;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
@@ -22,11 +26,11 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -112,6 +116,32 @@ public final class RenderUtil implements Accessor {
 		Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
 		GlStateManager.resetColor();
 		GlStateManager.disableBlend();
+	}
+	
+	public void image(final File imageFile, final int x, final int y, final int width, final int height) {
+	    if (!imageFile.exists()) return;
+
+	    try {
+	        BufferedImage bufferedImage = ImageIO.read(imageFile);
+	        DynamicTexture dynamicTexture = new DynamicTexture(bufferedImage);
+	        int textureId = dynamicTexture.getGlTextureId();
+
+	        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
+	        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+	        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+	        
+	        GlStateManager.enableBlend();
+	        GlStateManager.enableAlpha();
+	        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.0F);
+	        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+	        Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
+
+	        GlStateManager.resetColor();
+	        GlStateManager.disableBlend();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	public void color(Color color) {

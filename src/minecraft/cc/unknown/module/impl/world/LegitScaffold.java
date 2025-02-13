@@ -4,7 +4,7 @@ import org.lwjgl.input.Keyboard;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.other.PlayerTickEvent;
+import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.handlers.SpoofHandler;
@@ -74,7 +74,7 @@ public class LegitScaffold extends Module {
 	};
 	
 	@EventLink
-	public final Listener<PlayerTickEvent> onPlayerTick = event -> {
+	public final Listener<TickEvent> onTick = event -> {
 		if (mode.is("Tick")) {
 			move();
 		}

@@ -2,6 +2,7 @@ package cc.unknown.module.impl.move;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.player.PostMotionEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.SlowDownEvent;
 import cc.unknown.module.Module;
@@ -19,6 +20,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.client.C09PacketHeldItemChange;
 
 @ModuleInfo(aliases = "No Slow", description = "Remueve la lentitud al utilizar algunos objetos.", category = Category.MOVEMENT)
@@ -29,7 +31,7 @@ public class NoSlow extends Module {
 			.add(new SubMode("Vanilla"))
 			.setDefault("Universocraft");
 	
-	private final NumberValue itemDurationTime = new NumberValue("Item Use Duration", this, 1, 0, 1, 1);
+	private final NumberValue itemDurationTime = new NumberValue("Item Use Duration", this, 1, 0, 30, 1);
 	private final NumberValue forward = new NumberValue("Forward", this, 1, 0.2, 1, 0.1);
 	private final NumberValue strafe = new NumberValue("Strafe", this, 1, 0.2, 1, 0.1);
 	
@@ -64,11 +66,28 @@ public class NoSlow extends Module {
 			if ((sword.getValue() && item.getItem() instanceof ItemSword) || (bow.getValue() && item.getItem() instanceof ItemBow) || (comestibles.getValue() && item.getItem() instanceof ItemFood || item.getItem() instanceof ItemBucketMilk || item.getItem() instanceof ItemPotion)) {
 				switch (mode.getValue().getName()) {
 				case "Universocraft":
-			        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 2 + 1));
-			        PacketUtil.send(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
+			        PacketUtil.sendNoEvent(new C09PacketHeldItemChange(mc.player.inventory.currentItem % 9));
+			        PacketUtil.sendNoEvent(new C09PacketHeldItemChange(mc.player.inventory.currentItem));
 					break;
 				}
 			}
         }
+	};
+	
+	@EventLink
+	public final Listener<PostMotionEvent> onPostMotion = event -> {
+		if (!isInGame()) return;
+		ItemStack item = PlayerUtil.getItemStack();
+		if (item == null) return;
+		
+		if (mc.player.getItemInUseDuration() == itemDurationTime.getValue().intValue()) {
+			if ((sword.getValue() && item.getItem() instanceof ItemSword) || (bow.getValue() && item.getItem() instanceof ItemBow) || (comestibles.getValue() && item.getItem() instanceof ItemFood || item.getItem() instanceof ItemBucketMilk || item.getItem() instanceof ItemPotion)) {
+				switch (mode.getValue().getName()) {
+				case "Universocraft":
+					//PacketUtil.sendNoEvent(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
+					break;
+				}
+			}
+		}
 	};
 }

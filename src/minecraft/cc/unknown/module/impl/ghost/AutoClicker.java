@@ -7,8 +7,8 @@ import org.lwjgl.input.Mouse;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
+import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
@@ -72,19 +72,20 @@ public class AutoClicker extends Module {
 	private final StopWatch stopWatch = new StopWatch();
 	private final Set<Integer> hitEntities = new HashSet<>();
 
-	private int ticksDown;
+	private int ticksDown, attackTicks;
 	private long nextSwing;
 	private long clicks;
 	private long ticksSinceLastRecalculation;
 	private long baseCPS;
 
 	@EventLink
-	public final Listener<TickEvent> onTick = event -> {	    
+	public final Listener<Render2DEvent> onTick = event -> {	    
 	    double randomization = 1.5;
-	    AutoBlock autoBlock = getModule(AutoBlock.class);
+	    attackTicks++;
+	    HitSelect hitSelect = getModule(HitSelect.class);
 	    String mode = this.mode.getValue().getName();
         
-	    if (stopWatch.finished(nextSwing) && mc.currentScreen == null) {
+        if (stopWatch.finished(nextSwing) && (!hitSelect.isEnabled() || attackTicks >= 10 || mc.player.hurtTime > 0 && stopWatch.finished(this.nextSwing)) && mc.currentScreen == null) {
 		    if (Mouse.isButtonDown(0)) {
 		        ticksDown++;
 		    } else {
@@ -169,22 +170,29 @@ public class AutoClicker extends Module {
 		            break;
 
 		    }
-		    
-			if (Mouse.isButtonDown(0) && ticksDown > 1) {
-				mc.clickMouse();
-				stopWatch.reset();
-			}
 			
-			if (Mouse.isButtonDown(1) && rightClick.getValue()) {
-				mc.rightClickMouse();
-				stopWatch.reset();
-			}
+            if (ticksDown > 1 && !Mouse.isButtonDown(1) && (!breakBlocks.getValue() || mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)) {
+            	mc.clickMouse();
+            } else if (!breakBlocks.getValue()) {
+                mc.playerController.curBlockDamageMP = 0;
+            }
 			
-			if (Mouse.isButtonDown(0) && !breakBlocks.getValue()) {
-				mc.playerController.curBlockDamageMP = 0;
-			}
+
+            if (rightClick.getValue() && Mouse.isButtonDown(1) && !Mouse.isButtonDown(0)) {
+            	mc.rightClickMouse();
+
+                if (Math.random() > 0.9) {
+                	mc.rightClickMouse();
+                }
+            }
+			
+			stopWatch.reset();
 	    }
+	    
 	};
+	
+    @EventLink
+    public final Listener<AttackEvent> onAttack = event -> attackTicks = 0; 
 	
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> mc.leftClickCounter = -1;

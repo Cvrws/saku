@@ -14,6 +14,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -43,10 +44,23 @@ public class MoveUtil implements Accessor {
         return mc.player != null && mc.player.moveForward != 0 || mc.player.moveStrafing != 0;
     }
     
+    public boolean isMoving(EntityLivingBase player) {
+        return player != null && (player.moveForward != 0F || player.moveStrafing != 0F);
+    }
+    
     public boolean isMovingStraight() {
         float direction = getRawDirection() + 180;
         float movingYaw = Math.round(direction / 45) * 45;
         return movingYaw % 90 == 0f;
+    }
+    
+    public double getBaseMoveSpeed(EntityPlayer player) {
+        double baseSpeed = 0.2873;
+        if (player.isPotionActive(Potion.moveSpeed)) {
+            int amplifier = player.getActivePotionEffect(Potion.moveSpeed).getAmplifier();
+            baseSpeed *= 1.0 + 0.2 * (amplifier + 1);
+        }
+        return baseSpeed;
     }
     
     public float getRawDirection() {
@@ -217,6 +231,10 @@ public class MoveUtil implements Accessor {
 
     public void strafe() {
         strafe(speed(), mc.player);
+    }
+    
+    public double strafe(EntityPlayer player) {
+        return Math.sqrt(player.motionX * player.motionX + player.motionZ * player.motionZ);
     }
 
     public void strafe(Entity entity) {

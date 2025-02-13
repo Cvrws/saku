@@ -3,6 +3,7 @@ package net.minecraft.client.renderer;
 import org.lwjgl.opengl.GL11;
 
 import cc.unknown.Sakura;
+import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.impl.combat.KillAura;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -459,7 +460,7 @@ public class ItemRenderer
     {
         this.prevEquippedProgress = this.equippedProgress;
         EntityPlayer entityplayer = this.mc.player;
-        ItemStack itemstack = entityplayer.inventory.getCurrentItem();
+        ItemStack itemstack = SpoofHandler.getSpoofedStack();
         boolean flag = false;
 
         if (this.itemToRender != null && itemstack != null)
@@ -468,12 +469,12 @@ public class ItemRenderer
             {
                 if (Reflector.ForgeItem_shouldCauseReequipAnimation.exists())
                 {
-                    boolean flag1 = Reflector.callBoolean(this.itemToRender.getItem(), Reflector.ForgeItem_shouldCauseReequipAnimation, new Object[] {this.itemToRender, itemstack, Boolean.valueOf(this.equippedItemSlot != entityplayer.inventory.currentItem)});
+                    boolean flag1 = Reflector.callBoolean(this.itemToRender.getItem(), Reflector.ForgeItem_shouldCauseReequipAnimation, this.itemToRender, itemstack, this.equippedItemSlot != SpoofHandler.getSpoofedSlot());
 
                     if (!flag1)
                     {
                         this.itemToRender = itemstack;
-                        this.equippedItemSlot = entityplayer.inventory.currentItem;
+                        this.equippedItemSlot = SpoofHandler.getSpoofedSlot();
                         return;
                     }
                 }
@@ -481,14 +482,7 @@ public class ItemRenderer
                 flag = true;
             }
         }
-        else if (this.itemToRender == null && itemstack == null)
-        {
-            flag = false;
-        }
-        else
-        {
-            flag = true;
-        }
+        else flag = this.itemToRender != null || itemstack != null;
 
         float f2 = 0.4F;
         float f = flag ? 0.0F : 1.0F;
@@ -498,7 +492,7 @@ public class ItemRenderer
         if (this.equippedProgress < 0.1F)
         {
             this.itemToRender = itemstack;
-            this.equippedItemSlot = entityplayer.inventory.currentItem;
+            this.equippedItemSlot = SpoofHandler.getSpoofedSlot();
 
             if (Config.isShaders())
             {
