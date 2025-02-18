@@ -64,7 +64,7 @@ public final class KillAura extends Module {
 			.add(new SubMode("Multiple"))
 			.setDefault("Single");
 
-	private final BoundsNumberValue switchDelay = new BoundsNumberValue("Switch Delay", this, 0, 0, 0, 10, 1, () -> !attackMode.is("Switch"));
+	private final NumberValue switchDelay = new NumberValue("Switch Delay", this, 0, 0, 10, 1, () -> !attackMode.is("Switch"));
 
 	public final ModeValue autoBlock = new ModeValue("Auto Block", this)
 			.add(new SubMode("Fake"))
@@ -92,10 +92,10 @@ public final class KillAura extends Module {
 	
     public final NumberValue preRange = new NumberValue("Pre Range", this, 4.5, 3, 6, 0.1);
 	public final NumberValue range = new NumberValue("Range", this, 3, 3, 6, 0.1);
-	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 10, 15, 1, 20, 1);
+	private final NumberValue cps = new NumberValue("CPS", this, 10, 1, 20, 1);
 	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 0, 2, 0.1);
 
-	private final BoundsNumberValue rotationSpeed = new BoundsNumberValue("Rotation speed", this, 5, 10, 0, 10, 1);
+	private final NumberValue rotationSpeed = new NumberValue("Rotation speed", this, 5, 0, 10, 1);
 	private final ListValue<MoveFix> movementCorrection = new ListValue<>("Move Fix", this);
 
 	private final BooleanValue keepSprint = new BooleanValue("Keep sprint", this, false);
@@ -107,7 +107,7 @@ public final class KillAura extends Module {
 	private final BooleanValue rayCast = new BooleanValue("Ray cast", this, false);
 	private final BooleanValue throughWalls = new BooleanValue("Through Walls", this, false, () -> !rayCast.getValue());
 
-	private final DescValue advanced = new DescValue("Advanced Settings:", this);
+	private final DescValue advanced = new DescValue(" ", this);
 	private final BooleanValue attackWhilstScaffolding = new BooleanValue("Attack whilst Scaffolding", this, false);
 	private final BooleanValue noSwing = new BooleanValue("No swing", this, false);
 	private final BooleanValue autoDisable = new BooleanValue("Auto disable", this, false);
@@ -116,7 +116,7 @@ public final class KillAura extends Module {
 	public final BooleanValue scoreboardCheckTeam = new BooleanValue("Scoreboard Check Team", this, false, () -> !teams.getValue());
 	public final BooleanValue checkArmorColor = new BooleanValue("Check Armor Color", this, false, () -> !teams.getValue());
 
-	private final DescValue showTargets = new DescValue("Targets Settings:", this);
+	private final DescValue showTargets = new DescValue(" ", this);
 	public final BooleanValue player = new BooleanValue("Players", this, true);
 	public final BooleanValue friends = new BooleanValue("Friends", this, false);
 	public final BooleanValue invisibles = new BooleanValue("Invisibles", this, true);
@@ -148,7 +148,7 @@ public final class KillAura extends Module {
 			movementCorrection.add(movementFix);
 		}
 
-		movementCorrection.setDefault(MoveFix.OFF);
+		movementCorrection.setDefault(MoveFix.SILENT);
 	}
 
 	@EventLink
@@ -181,7 +181,7 @@ public final class KillAura extends Module {
 	};
 
 	public void getTargets() {
-		double range = this.preRange.getValue().doubleValue();
+		double range = this.preRange.getValueToDouble();
 
 		targets = TargetUtil.getTargets(range);
 
@@ -189,7 +189,7 @@ public final class KillAura extends Module {
 			targets.removeAll(pastTargets);
 
 			switchTicks++;
-			if (switchTicks >= switchDelay.getRandomBetween().intValue()) {
+			if (switchTicks >= switchDelay.getValueToInt()) {
 				pastTargets.add(target);
 				switchTicks = 0;
 			}
@@ -197,7 +197,7 @@ public final class KillAura extends Module {
 
 		if (targets.isEmpty()) {
 			pastTargets.clear();
-			targets = TargetUtil.getTargets(range/* + expandRange*/);
+			targets = TargetUtil.getTargets(range);
 		}
 
 		switch (sorting.getValue().getName()) {
@@ -283,21 +283,18 @@ public final class KillAura extends Module {
 			this.preBlock();
 		}
 
-		final float rotationSpeed = this.rotationSpeed.getRandomBetween().floatValue();
-        Vector2f targetRotations = RotationUtil.calculate(target, true, range.getValue().doubleValue());
+		final float rotationSpeed = this.rotationSpeed.getValueToFloat();
+        Vector2f targetRotations = RotationUtil.calculate(target, true, range.getValueToDouble());
 
         if (rotationSpeed != 0) RotationHandler.setRotations(targetRotations, rotationSpeed,
                 movementCorrection.getValue() == MoveFix.OFF ? MoveFix.OFF : movementCorrection.getValue(),
                 rotations -> {
-                    MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(rotations, range.getValue().floatValue(), -0.1f);
+                    MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(rotations, range.getValueToFloat(), -0.1f);
 
                     return movingObjectPosition != null && movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY;
                 });
 	};
-
-	@EventLink
-	public final Listener<MouseOverEvent> onMouseOver = event -> event.setRange(event.getRange() + range.getValue().doubleValue() - 3);
-
+	
     public Tuple<Boolean, Double> getDelay() {
         double delay = -1;
         boolean flag = false;
@@ -369,12 +366,12 @@ public final class KillAura extends Module {
         final boolean flag = tuple.getFirst();
 
         if (attackStopWatch.finished(this.nextSwing) && target != null && (clickStopWatch.finished((long) (delay * 50)) || flag)) {
-            final long clicks = (long) (this.cps.getRandomBetween().longValue() * 1.5);
+            final long clicks = (long) (cps.getValueToLong() * 1.5);
             this.nextSwing = 1000 / clicks;
 
             if (Math.sin(nextSwing) + 1 > Math.random() || attackStopWatch.finished(this.nextSwing + 500) || Math.random() > 0.5) {
 				if (this.allowAttack) {
-					final double range = this.range.getValue().doubleValue();
+					final double range = this.range.getValueToDouble();
 					final Vec3 rotationVector = mc.player.getVectorForRotation(RotationHandler.rotations.getY(), RotationHandler.rotations.getX());
 					MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(RotationHandler.rotations, range);
 
@@ -444,10 +441,10 @@ public final class KillAura extends Module {
 	public final Listener<HitSlowDownEvent> onHitSlowDown = event -> {
 		if (keepSprint.getValue()) {
 			if (mc.player.hurtTime > 0) {
-				event.setSlowDown(this.defMotion.getValue().doubleValue());
+				event.setSlowDown(this.defMotion.getValueToDouble());
 				event.setSprint(this.defCheck.getValue());
 			} else {
-				event.setSlowDown(this.offeMotion.getValue().doubleValue());
+				event.setSlowDown(this.offeMotion.getValueToDouble());
 				event.setSprint(this.offeCheck.getValue());
 			}
 		}

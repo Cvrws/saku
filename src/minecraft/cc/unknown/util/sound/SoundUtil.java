@@ -17,7 +17,7 @@ public class SoundUtil {
     @SneakyThrows
     public void playSound() {
     	if (Platform.isWindows()) {
-	    	InputStream inputStream = SoundUtil.class.getResourceAsStream("/assets/minecraft/sakura/sound/knockknock.mp3");
+	    	InputStream inputStream = SoundUtil.class.getResourceAsStream("/assets/minecraft/sakura/sound/welcome.mp3");
 	    	BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
 	
 	    	player = new Player(bufferedInputStream);

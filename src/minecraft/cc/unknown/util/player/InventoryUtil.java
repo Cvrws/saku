@@ -31,6 +31,7 @@ import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.BlockGravel;
 import net.minecraft.block.BlockHopper;
 import net.minecraft.block.BlockLadder;
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockPane;
@@ -46,13 +47,16 @@ import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.BlockTorch;
 import net.minecraft.block.BlockTripWire;
 import net.minecraft.block.BlockTripWireHook;
+import net.minecraft.block.BlockVine;
 import net.minecraft.block.BlockWeb;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
@@ -72,7 +76,9 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.C0DPacketCloseWindow;
 import net.minecraft.network.play.client.C16PacketClientStatus;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 
 @UtilityClass
 public class InventoryUtil implements Accessor {
@@ -757,4 +763,177 @@ public class InventoryUtil implements Accessor {
 				|| block == Blocks.crafting_table;
 	}
 
+	public float getToolDigEfficiency(final Block blockIn, final int slot) {
+		float f = getStrVsBlock(blockIn, slot);
+
+		if (f > 1.0F) {
+			final int i = EnchantmentHelper.getEfficiencyModifier(mc.player);
+			final ItemStack itemstack = getCurrentItemInSlot(slot);
+
+			if (i > 0 && itemstack != null) {
+				f += (float) (i * i + 1);
+			}
+		}
+
+		if (mc.player.isPotionActive(Potion.digSpeed)) {
+			f *= 1.0F + (float) (mc.player.getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1) * 0.2F;
+		}
+
+		if (mc.player.isPotionActive(Potion.digSlowdown)) {
+			final float f1;
+
+			switch (mc.player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) {
+			case 0:
+				f1 = 0.3F;
+				break;
+
+			case 1:
+				f1 = 0.09F;
+				break;
+
+			case 2:
+				f1 = 0.0027F;
+				break;
+
+			case 3:
+			default:
+				f1 = 8.1E-4F;
+			}
+
+			f *= f1;
+		}
+
+		if (mc.player.isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(mc.player)) {
+			f /= 5.0F;
+		}
+
+		if (!mc.player.onGround) {
+			f /= 5.0F;
+		}
+
+		return f;
+	}
+	
+	private ItemStack getCurrentItemInSlot(final int slot) {
+		return slot < 9 && slot >= 0 ? mc.player.inventory.mainInventory[slot] : null;
+	}
+	
+	public float getPlayerRelativeBlockHardness(final EntityPlayer playerIn, final World worldIn, final BlockPos pos,
+			final int slot) {
+		final Block block = mc.world.getBlockState(pos).getBlock();
+		final float f = block.getBlockHardness(worldIn, pos);
+		return f < 0.0F ? 0.0F
+				: (!canHeldItemHarvest(block, slot) ? getToolDigEfficiency(block, slot) / f / 100.0F
+						: getToolDigEfficiency(block, slot) / f / 30.0F);
+	}
+	
+	private boolean canHeldItemHarvest(final Block blockIn, final int slot) {
+		if (blockIn.getMaterial().isToolNotRequired()) {
+			return true;
+		} else {
+			final ItemStack itemstack = mc.player.inventory.getStackInSlot(slot);
+			return itemstack != null && itemstack.canHarvestBlock(blockIn);
+		}
+	}
+	
+	public float getBlockBreakTime(World worldIn, Block block, BlockPos blockIn, int slot, Item item,
+			boolean onGround) {
+		int speedMultiplier = 1;
+		boolean stop = false;
+		if (item == null) {
+			speedMultiplier = 1;
+			stop = true;
+		}
+		int id;
+		if (!stop) {
+			id = Item.getIdFromItem(item);
+			if (id == 269 || id == 270 || id == 271) {
+				speedMultiplier = 2;
+			}
+			if (id == 273 || id == 274 || id == 275) {
+				speedMultiplier = 4;
+			}
+			if (id == 256 || id == 257 || id == 258) {
+				speedMultiplier = 6;
+			}
+			if (id == 277 || id == 278 || id == 279) {
+				speedMultiplier = 8;
+			}
+			if (id == 284 || id == 285 || id == 286) {
+				speedMultiplier = 12;
+			}
+			if ((id == 267 || id == 268 || id == 272 || id == 276 || id == 283) && block instanceof BlockWeb) {
+				speedMultiplier = (int) 1.5;
+			}
+			if (id == 359 && block instanceof BlockVine) {
+				speedMultiplier = 1;
+			} else if (id == 359 && (block instanceof BlockWeb || block instanceof BlockLeaves)) {
+				speedMultiplier = 15;
+			} else if (id == 359 && block.getBlockHardness(mc.world, blockIn) == 0.8) {
+				speedMultiplier = 5;
+			}
+			if (!canHeldItemHarvest(block, slot)) {
+				speedMultiplier = 1;
+			} else if (EnchantmentHelper.getEfficiencyModifier(mc.player) != 0) {
+				speedMultiplier += EnchantmentHelper.getEfficiencyModifier(mc.player) ^ 2 + 1;
+			}
+		}
+		if (mc.player.isPotionActive(Potion.digSpeed))
+			speedMultiplier *= 0.2 * mc.player.getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1;
+
+		if (mc.player.isPotionActive(Potion.digSlowdown)) {
+			final float f1;
+
+			switch (mc.player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) {
+			case 0:
+				f1 = 0.3F;
+				break;
+
+			case 1:
+				f1 = 0.09F;
+				break;
+
+			case 2:
+				f1 = 0.0027F;
+				break;
+
+			case 3:
+			default:
+				f1 = 8.1E-4F;
+			}
+			speedMultiplier *= f1;
+		}
+		if (mc.player.isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(mc.player)) {
+			speedMultiplier /= 5.0F;
+		}
+
+		if (!onGround) {
+			speedMultiplier /= 5.0F;
+		}
+
+		float damage = speedMultiplier / block.getBlockHardness(worldIn, blockIn);
+
+		if (canHeldItemHarvest(block, slot)) {
+			damage /= 30;
+		} else {
+			damage /= 100;
+		}
+
+		if (damage > 1) {
+			return 0;
+		}
+
+		int ticks = (int) Math.ceil(1 / damage);
+
+		return ticks;
+	}
+	
+	public float getStrVsBlock(final Block blockIn, final int slot) {
+		float f = 1.0F;
+
+		if (mc.player.inventory.mainInventory[slot] != null) {
+			f *= mc.player.inventory.mainInventory[slot].getStrVsBlock(blockIn);
+		}
+		return f;
+	}
 }

@@ -28,20 +28,20 @@ public class AntiFireBall extends Module {
     private final NumberValue yawSpeed = new NumberValue("Yaw Speed", this, 10, 0, 10, 1);
     private final NumberValue pitchSpeed = new NumberValue("Pitch Speed", this, 10, 0, 10, 1);
     private final BooleanValue moveFix = new BooleanValue("Move Fix", this, false);
-    private final StopWatch attackTimer = new StopWatch();
+    private final StopWatch stopWatch = new StopWatch();
 
     @EventLink(value = Priority.VERY_HIGH)
     public final Listener<PreUpdateEvent> onPreUpdate = event -> {
         
         for (Entity entity : mc.world.loadedEntityList) {
             if ((entity instanceof EntityFireball) && entity.getDistanceToEntity(mc.player) < range.getValue().floatValue()) {
-                if (attackTimer.finished((long) (1000L / (cps.getValue().intValue() + 4)))) {
+                if (stopWatch.finished((long) (1000L / (cps.getValue().intValue() + 4)))) {
                 	int yaw = yawSpeed.getValue().intValue();
                 	int pitch = pitchSpeed.getValue().intValue();
                     Vector2f finalRotation = RotationUtil.calculate(entity);
                 	RotationHandler.setRotations(finalRotation, MathHelper.randomInt(yaw, pitch), moveFix.getValue() ?  MoveFix.SILENT : MoveFix.OFF);
                     AttackOrder.sendFixedAttack(mc.player, entity, false);
-                    attackTimer.reset();
+                    stopWatch.reset();
                 }
             }
         }

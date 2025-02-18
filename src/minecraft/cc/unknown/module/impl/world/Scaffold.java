@@ -116,7 +116,7 @@ public class Scaffold extends Module {
 	private final NumberValue expand = new NumberValue("Expand", this, 0, 0, 5, 1);
 	
 	private final DescValue vipas = new DescValue("Advanced Settings:", this);
-	private final BoundsNumberValue rotationSpeed = new BoundsNumberValue("Rotation Speed", this, 5, 10, 0, 10, 1);
+	private final NumberValue rotationSpeed = new NumberValue("Rotation Speed", this, 5, 0, 10, 1);
 	private final NumberValue range = new NumberValue("Block Range", this, 5, 4, 20, 1);
     private final BooleanValue randomiseRotationSpeed = new BooleanValue("Randomise Rotation Speed", this, false);
     private final BooleanValue legitStrafe = new BooleanValue("Legit Strafe", this, false);
@@ -174,10 +174,7 @@ public class Scaffold extends Module {
 		
 		if (randomiseRotationSpeed.getValue()) {
 			int first = 1 + (int)(Math.random() * 10);
-			int second = first + (int)(Math.random() * (10 - first + 1));
-
 			rotationSpeed.setValue(first);
-			rotationSpeed.setSecondValue(second);
 		}
 	}
 
@@ -475,9 +472,7 @@ public class Scaffold extends Module {
 		int yawOffset = Integer.parseInt(String.valueOf(this.yawOffset.getValue().getName()));
 
 		/* Smoothing rotations */
-		final double minRotationSpeed = this.rotationSpeed.getValue().doubleValue();
-		final double maxRotationSpeed = this.rotationSpeed.getSecondValue().doubleValue();
-		float rotationSpeed = MathUtil.nextRandom(minRotationSpeed, maxRotationSpeed).floatValue();
+		double rotationSpeed = this.rotationSpeed.getValueToDouble();
 
 		MoveFix movementFix = this.movementCorrection.getValue() ? MoveFix.SILENT : MoveFix.OFF;
 

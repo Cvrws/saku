@@ -202,8 +202,8 @@ public class Breaker extends Module {
 
                 int slot = InventoryUtil.findTool(blockToBreak);
                 if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(slot));
-                if (slot != -1) hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, slot);
-                else hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, mc.player.inventory.currentItem);
+                if (slot != -1) hardness = InventoryUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, slot);
+                else hardness = InventoryUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, mc.player.inventory.currentItem);
                 if (!mc.player.onGround) hardness *= airMultipalyer.getValue().floatValue();
 
                 Block currentBlock = PlayerUtil.blockRelativeToPlayer(blockToBreak.getX(), blockToBreak.getY(), blockToBreak.getZ());

@@ -30,7 +30,7 @@ import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.network.play.server.S48PacketResourcePackSend;
 import net.minecraft.util.IChatComponent;
 
-@ModuleInfo(aliases = "Anti Exploit", description = "Evita cualquier ataque dirigido al cliente.", category = Category.OTHER)
+@ModuleInfo(aliases = "Exploit Fixer", description = "Evita cualquier ataque dirigido al cliente.", category = Category.OTHER)
 public class AntiCrash extends Module {
 
 	private final BooleanValue 
