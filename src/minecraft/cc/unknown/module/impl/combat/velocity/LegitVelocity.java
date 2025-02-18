@@ -22,16 +22,6 @@ public class LegitVelocity extends Mode<Velocity> {
 
 	@EventLink
 	public final Listener<MoveInputEvent> onMoveInput = event -> {
-		if (getParent().noAction() || getParent().checks() || !getParent().isChance()) {
-			return;
-		}
-		
-		if (getModule(NoClip.class).isEnabled()) return;
- 
-
-		if (mc.player.hurtTime > 0) {
-			event.setJump(true);
-		}
 
 	};
 }
