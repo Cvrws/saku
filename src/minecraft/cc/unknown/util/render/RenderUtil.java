@@ -1,13 +1,9 @@
 package cc.unknown.util.render;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -17,7 +13,6 @@ import cc.unknown.Sakura;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.interfaces.Shaders;
-import cc.unknown.util.render.shader.bloom.GaussianFilter;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -28,8 +23,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.ITextureObject;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -42,9 +35,6 @@ import net.minecraft.util.ResourceLocation;
 
 @UtilityClass
 public final class RenderUtil implements Accessor {
-
-	private final Map<Integer, Integer> shadowCache = new HashMap<>();
-	public final int GENERIC_SCALE = 22;
     
 	public void start() {
 		GlStateManager.enableBlend();
@@ -466,70 +456,6 @@ public final class RenderUtil implements Accessor {
 		tessellator.draw();
 		GlStateManager.enableTexture2D();
 		GlStateManager.disableBlend();
-	}
-
-	public void drawBloomShadow(float x, float y, float width, float height, int blurRadius, Color color) {
-		drawBloomShadow(x, y, width, height, blurRadius, 0, color);
-	}
-
-	public void drawBloomShadow(float x, float y, float width, float height, int blurRadius, int roundRadius,
-			Color color) {
-		width = width + blurRadius * 2;
-		height = height + blurRadius * 2;
-		x -= blurRadius + 0.75f;
-		y -= blurRadius + 0.75f;
-
-		int identifier = Arrays.deepHashCode(new Object[] { width, height, blurRadius, roundRadius });
-		if (!shadowCache.containsKey(identifier)) {
-			if (width <= 0)
-				width = 1;
-			if (height <= 0)
-				height = 1;
-			BufferedImage original = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_ARGB_PRE);
-			Graphics g = original.getGraphics();
-			g.setColor(new Color(-1));
-			g.fillRoundRect(blurRadius, blurRadius, (int) (width - blurRadius * 2), (int) (height - blurRadius * 2),
-					roundRadius, roundRadius);
-			g.dispose();
-			GaussianFilter op = new GaussianFilter(blurRadius);
-			BufferedImage blurred = op.filter(original, null);
-			shadowCache.put(identifier,
-					TextureUtil.uploadTextureImageAllocate(TextureUtil.glGenTextures(), blurred, true, false));
-		}
-		drawImage(shadowCache.get(identifier), x, y, width, height, color.getRGB());
-	}
-
-	public void drawImage(int image, float x, float y, float width, float height, int color) {
-		GL11.glPushMatrix();
-		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.01f);
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glDisable(GL11.GL_CULL_FACE);
-		GL11.glEnable(GL11.GL_ALPHA_TEST);
-		GlStateManager.enableBlend();
-		GlStateManager.bindTexture(image);
-
-		ColorUtil.glColor(color);
-
-		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glTexCoord2f(0, 0);
-		GL11.glVertex2f(x, y);
-
-		GL11.glTexCoord2f(0, 1);
-		GL11.glVertex2f(x, y + height);
-
-		GL11.glTexCoord2f(1, 1);
-		GL11.glVertex2f(x + width, y + height);
-
-		GL11.glTexCoord2f(1, 0);
-		GL11.glVertex2f(x + width, y);
-		GL11.glEnd();
-
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableBlend();
-		GlStateManager.resetColor();
-
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glPopMatrix();
 	}
 
 	public void drawSelectionBoundingBox(final AxisAlignedBB bb, int color) {
@@ -988,5 +914,86 @@ public final class RenderUtil implements Accessor {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
+    }
+    
+    public void drawBoundingBlock(final AxisAlignedBB aa) {
+    	GL11.glBegin(GL11.GL_QUADS);
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.minZ));
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.maxZ));
+        end();
+
+        GL11.glBegin(GL11.GL_QUADS);
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.minZ));
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.minZ));
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.minZ));
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.maxZ));
+        end();
+
+        GL11.glBegin(GL11.GL_QUADS);
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.minZ));
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.minZ));
+        end();
+
+        GL11.glBegin(GL11.GL_QUADS);
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.minZ));
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.minZ));
+        end();
+
+        GL11.glBegin(GL11.GL_QUADS);
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.minZ));
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.minZ));
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.minZ));
+        end();
+
+        GL11.glBegin(GL11.GL_QUADS);
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.minX, aa.maxY, aa.minZ));
+        glVertex3D(getRenderPos(aa.minX, aa.minY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.minZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.maxY, aa.maxZ));
+        glVertex3D(getRenderPos(aa.maxX, aa.minY, aa.maxZ));
+        end();
+    }
+    
+    private void glVertex3D(net.minecraft.util.Vec3 vector3d) {
+        GL11.glVertex3d(vector3d.xCoord, vector3d.yCoord, vector3d.zCoord);
+    }
+    
+    private net.minecraft.util.Vec3 getRenderPos(double x, double y, double z) {
+
+        x -= mc.getRenderManager().renderPosX;
+        y -= mc.getRenderManager().renderPosY;
+        z -= mc.getRenderManager().renderPosZ;
+
+        return new net.minecraft.util.Vec3(x, y, z);
     }
 }

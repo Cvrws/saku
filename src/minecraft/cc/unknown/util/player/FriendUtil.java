@@ -1,48 +1,45 @@
 package cc.unknown.util.player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import lombok.experimental.UtilityClass;
 import net.minecraft.entity.player.EntityPlayer;
 
 @UtilityClass
 public class FriendUtil {
-    private final ArrayList<String> friends = new ArrayList<>();
+    private final Set<String> friends = new HashSet<>();
 
     public void addFriend(String friend) {
-        if (!friends.contains(friend)) {
-            friends.add(friend);
-        }
+        friends.add(friend.toLowerCase());
     }
 
     public void removeFriend(String friend) {
-        friends.remove(friend);
+        friends.remove(friend.toLowerCase());
     }
-    
+
     public void addFriend(EntityPlayer entityPlayer) {
-        if (!friends.contains(entityPlayer.getName().toLowerCase())) {
-            friends.add(entityPlayer.getName().toLowerCase());
-        }
+        friends.add(entityPlayer.getName().toLowerCase());
     }
-    
+
     public boolean removeFriend(EntityPlayer entityPlayer) {
-        return !friends.isEmpty() && friends.remove(entityPlayer.getName().toLowerCase());
+        return friends.remove(entityPlayer.getName().toLowerCase());
     }
 
     public boolean isFriend(String friend) {
-        return friends.contains(friend);
+        return friends.contains(friend.toLowerCase());
     }
-    
+
     public boolean isFriend(EntityPlayer entityPlayer) {
-        return !friends.isEmpty() && friends.contains(entityPlayer.getName().toLowerCase());
+        return friends.contains(entityPlayer.getName().toLowerCase());
     }
-    
-    public List<String> getFriends() {
-        return new ArrayList<>(friends);
+
+    public Set<String> getFriends() {
+        return Collections.unmodifiableSet(friends);
     }
-    
+
     public void removeFriends() {
-    	friends.clear();
+        friends.clear();
     }
 }

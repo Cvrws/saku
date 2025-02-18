@@ -29,11 +29,6 @@ import net.minecraft.world.WorldSettings;
 @ModuleInfo(aliases = "Legit Scaffold", description = "Shiftea al borde de cada bloque", category = Category.WORLD)
 public class LegitScaffold extends Module {
 	
-	private final ModeValue mode = new ModeValue("Mode", this)
-			.add(new SubMode("Tick"))
-			.add(new SubMode("Vanilla"))
-			.setDefault("Vanilla");
-			
 	private final BoundsNumberValue delay = new BoundsNumberValue("Delay", this, 100, 200, 0, 500, 1);
 	private final BooleanValue pitchCheck = new BooleanValue("Pitch Check", this, true);
 	private final BoundsNumberValue pitchRange = new BoundsNumberValue("Pitch Range", this, 70, 85, 0, 90, 1, () -> !pitchCheck.getValue());
@@ -67,19 +62,8 @@ public class LegitScaffold extends Module {
 	}
 
 	@EventLink
-	public final Listener<PreMotionEvent> onPreMotion = event -> {
-		if (mode.is("Vanilla")) {
-			move();
-		}
-	};
+	public final Listener<PreMotionEvent> onPreMotion = event -> move(event.getPitch(), event.isOnGround());
 	
-	@EventLink
-	public final Listener<TickEvent> onTick = event -> {
-		if (mode.is("Tick")) {
-			move();
-		}
-	};
-
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
 		if (!isInGame()) return;
@@ -104,7 +88,7 @@ public class LegitScaffold extends Module {
 
 	};
 	
-	private void move() {
+	private void move(float pitch, boolean ground) {
 		if (!(mc.currentScreen == null) || !isInGame()) return;
 		if (mc.playerController.getCurrentGameType() == WorldSettings.GameType.SPECTATOR) return;
 
@@ -115,7 +99,7 @@ public class LegitScaffold extends Module {
 		
 		boolean shift = delay.getSecondValue().intValue() > 0;
 
-		if (mc.player.rotationPitch < pitchRange.getValue().floatValue() || mc.player.rotationPitch > pitchRange.getSecondValue().floatValue()) {
+		if (pitch < pitchRange.getValue().floatValue() || pitch > pitchRange.getSecondValue().floatValue()) {
 			shouldBridge = false;
 			if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
 				setSneak(true);
@@ -149,7 +133,7 @@ public class LegitScaffold extends Module {
 			}
 		}
 
-		if (mc.player.onGround) {
+		if (ground) {
 			if (overAir()) {
 				if (shift) {
 					stopWatch.setMillis(MathHelper.randomInt(delay.getValue().intValue(),

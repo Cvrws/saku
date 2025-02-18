@@ -42,7 +42,6 @@ public final class HUD extends Module {
             .setDefault("Fade");
 
     private final BooleanValue lgbt = new BooleanValue("LBGT+", this, false);
-    private final BooleanValue bloom = new BooleanValue("Bloom", this, false);
     private final BooleanValue renderCategories = new BooleanValue("Render Category", this, true);
     public final BooleanValue hideCombat = new BooleanValue("Hide Combat", this, false, () -> !renderCategories.getValue());
     public final BooleanValue hideVisuals = new BooleanValue("Hide Visuals", this, true, () -> !renderCategories.getValue());
@@ -138,11 +137,6 @@ public final class HUD extends Module {
 
     private void setRenderRectangle(ModuleComponent module, double x, double y, double widthOffset, float totalHeight) {
         float rectangleWidth = (float) (module.nameWidth + 3 + widthOffset);
-
-        if (bloom.getValue()) {
-            RenderUtil.drawBloomShadow((float) (x - widthOffset), (float) (y - 3f), rectangleWidth, (float) moduleSpacing + 4, 6, 0, new Color(0, 0, 0, alphaBackground.getValue().intValue()));
-        }
-
         int color = new Color(0, 0, 0, alphaBackground.getValue().intValue()).getRGB();
 
         Gui.drawRect((int) (x - widthOffset), (int) (y - 3f), (int) (x - widthOffset + rectangleWidth), (int) (y - 3f + moduleSpacing), color);
@@ -150,7 +144,6 @@ public final class HUD extends Module {
     
     @RequiredArgsConstructor
     public final class ModuleComponent {
-
         public final Module module;
         public Vector2d position = new Vector2d(5000, 0);
         public Vector2d targetPosition = new Vector2d(5000, 0);

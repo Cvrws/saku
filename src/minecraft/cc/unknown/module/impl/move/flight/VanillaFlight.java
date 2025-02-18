@@ -17,22 +17,20 @@ public class VanillaFlight extends Mode<Flight> {
 
     @EventLink
     public final Listener<PreStrafeEvent> onStrafe = event -> {
-        final float speed = getParent().speed.getValue().floatValue();
+        final float speed = getParent().speed.getValueToFloat();
 
         event.setSpeed(speed);
     };
 
     @EventLink
     public final Listener<PreMotionEvent> onPreMotionEvent = event -> {
-        final float speed = getParent().speed.getValue().floatValue();
+        final float speed = getParent().speed.getValueToFloat();
 
         mc.player.motionY = 0.0D + (mc.gameSettings.keyBindJump.isKeyDown() ? speed : 0.0D) - (mc.gameSettings.keyBindSneak.isKeyDown() ? speed : 0.0D);
     };
 
     @EventLink
-    public final Listener<MoveInputEvent> onMove = event -> {
-        event.setSneak(false);
-    };
+    public final Listener<MoveInputEvent> onMove = event -> event.setSneak(false);
 
     @Override
     public void onDisable() {

@@ -38,6 +38,7 @@ public final class ModuleManager {
         this.put(JumpReset.class, new JumpReset());
         this.put(Reach.class, new Reach());
         this.put(AutoBlock.class, new AutoBlock());
+        this.put(GuiClicker.class, new GuiClicker());
         this.put(KeepSprint.class, new KeepSprint());
         this.put(WTap.class, new WTap());
         
@@ -45,6 +46,7 @@ public final class ModuleManager {
         this.put(PingSpoof.class, new PingSpoof());
         this.put(BackTrack.class, new BackTrack());
         this.put(TimerRange.class, new TimerRange());
+        this.put(Ping.class, new Ping());
         this.put(LagRange.class, new LagRange());
         this.put(TimerManipulation.class, new TimerManipulation());
         this.put(PerfectCriticals.class, new PerfectCriticals());
@@ -129,7 +131,7 @@ public final class ModuleManager {
         this.put(AntiBlind.class, new AntiBlind());
         this.put(FreeLook.class, new FreeLook());
         this.put(FullBright.class, new FullBright());
-        this.put(HurtCamera.class, new HurtCamera());
+        this.put(NoHurtCamera.class, new NoHurtCamera());
         this.put(TargetESP.class, new TargetESP());
         this.put(PingDisplay.class, new PingDisplay());
         this.put(ArmorDisplay.class, new ArmorDisplay());
@@ -145,7 +147,7 @@ public final class ModuleManager {
         this.put(NameTags.class, new NameTags());
         this.put(NoCameraClip.class, new NoCameraClip());
         this.put(Stickers.class, new Stickers());
-        this.put(ExtraSensoryPerception.class, new ExtraSensoryPerception());
+        this.put(ESP.class, new ESP());
         this.put(Streamer.class, new Streamer());
         this.put(Tracers.class, new Tracers());
         this.put(UnlimitedChat.class, new UnlimitedChat());

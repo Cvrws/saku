@@ -21,10 +21,9 @@ public final class PointerESP extends Module {
 
 	@EventLink
 	public final Listener<Render2DEvent> onRender2D = event -> {
-        ScaledResolution scaledResolution = new ScaledResolution(mc);
         int size = 100;
-        double xOffset = scaledResolution.getScaledWidth() / 2F - 50.2;
-        double yOffset = scaledResolution.getScaledHeight() / 2F - 49.5;
+        double xOffset = event.getScaledResolution().getScaledWidth() / 2F - 50.2;
+        double yOffset = event.getScaledResolution().getScaledHeight() / 2F - 49.5;
         double playerOffsetX = mc.player.posX;
         double playerOffSetZ = mc.player.posZ;
 

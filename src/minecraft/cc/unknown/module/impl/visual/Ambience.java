@@ -27,18 +27,6 @@ public final class Ambience extends Module {
     		.add(new SubMode("Thunder"))
     		.setDefault("Clean");
     
-    public final BooleanValue worldColor = new BooleanValue("World Color", this, true);
-    public final NumberValue worldColorRed = new NumberValue("World Color [Red]", this, 255, 0, 255, 1, () -> !worldColor.getValue());
-    public final NumberValue worldColorGreen = new NumberValue("World Color [Green]", this, 255, 0, 255, 1, () -> !worldColor.getValue());
-    public final NumberValue worldColorBlue = new NumberValue("World Color [Blue]", this, 255, 0, 255, 1, () -> !worldColor.getValue());
-    
-    public final BooleanValue worldFog = new BooleanValue("World Fog", this, false);
-    public final NumberValue worldFogRed = new NumberValue("World Fog [Red]", this, 255, 0, 255, 1, () -> !worldFog.getValue());
-    public final NumberValue worldFogGreen = new NumberValue("World Fog [Green]", this, 255, 0, 255, 1, () -> !worldFog.getValue());
-    public final NumberValue worldFogBlue = new NumberValue("World Fog [Blue]", this, 255, 0, 255, 1, () -> !worldFog.getValue());
-    
-    public final NumberValue worldFogDistance = new NumberValue("World Fog Distance", this, 0.10F, -1F, 0.9F, 0.1F, () -> !worldFog.getValue());
-
 	@Override
 	public void onDisable() {
 		mc.world.setRainStrength(0);
@@ -52,7 +40,7 @@ public final class Ambience extends Module {
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
         if(time.getValue())
-            mc.world.setWorldTime(timeValue.getValue().longValue());
+            mc.world.setWorldTime(timeValue.getValueToLong());
         if (weather.getValue()) {
             switch (weatherValue.getValue().getName()) {
                 case "Rain":

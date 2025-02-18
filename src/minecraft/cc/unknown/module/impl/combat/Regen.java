@@ -33,9 +33,9 @@ public class Regen extends Module {
         
         if (onGround.getValue() && !mc.player.onGround) return;
 
-        for (int i = 0; i < packets.getValue().intValue(); i++) {
-            if (stopWatch.finished(delay.getValue().longValue())) {
-                PacketUtil.send(new C03PacketPlayer(true));
+        for (int i = 0; i < packets.getValueToInt(); i++) {
+            if (stopWatch.finished(delay.getValueToLong())) {
+				PacketUtil.send(new C03PacketPlayer.C06PacketPlayerPosLook(event.getPosX(), event.getPosY(), event.getPosZ(), event.getYaw(), event.getPitch(), event.isOnGround()));
                 stopWatch.reset();
             }       
         }

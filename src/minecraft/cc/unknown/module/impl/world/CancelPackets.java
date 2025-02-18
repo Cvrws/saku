@@ -10,6 +10,7 @@ import cc.unknown.event.impl.netty.PacketSendEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.module.impl.world.cancelpackets.*;
 import cc.unknown.util.netty.api.IncomingPackets;
 import cc.unknown.util.netty.api.OutgoingPackets;
 import cc.unknown.value.impl.BooleanValue;
@@ -23,8 +24,8 @@ import net.minecraft.network.play.INetHandlerPlayServer;
 public class CancelPackets extends Module {
     
     private final ModeValue mode = new ModeValue("Mode", this)
-            .add(new SubMode("Outgoing"))
-            .add(new SubMode("Incoming"))
+            .add(new OutgoingCancel("Outgoing", this))
+            .add(new IncomingCancel("Incoming", this))
             .setDefault("Outgoing");
     
     private final Map<Class<? extends Packet<?>>, BooleanValue> packetSettings = new HashMap<>();
@@ -38,23 +39,9 @@ public class CancelPackets extends Module {
             packetSettings.put(packet, new BooleanValue(packet.getSimpleName(), this, false, () -> !mode.is("Incoming")));
         }
     }
-
-    @EventLink
-    public final Listener<PacketSendEvent> onSend = event -> {
-        if (shouldCancelPacket(event.getPacket(), mode.is("Outgoing"))) {
-            event.setCancelled(true);
-        }
-    };
-
-    @EventLink
-    public final Listener<PacketReceiveEvent> onReceive = event -> {
-        if (shouldCancelPacket(event.getPacket(), mode.is("Incoming"))) {
-            event.setCancelled(true);
-        }
-    };
     
-    private boolean shouldCancelPacket(Packet<?> packet, boolean isOutgoing) {
+    public boolean shouldCancelPacket(Packet<?> packet) {
     	BooleanValue setting = packetSettings.get(packet.getClass());
-    	return setting != null && setting.getValue() && isOutgoing;
+    	return setting != null && setting.getValue();
     }
 }

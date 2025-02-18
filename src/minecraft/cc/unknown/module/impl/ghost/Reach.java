@@ -34,8 +34,6 @@ public class Reach extends Module {
 	private final NumberValue chance = new NumberValue("Chance", this, 100, 1, 100, 1);
 	private final BooleanValue throughWalls = new BooleanValue("Through Walls", this, false);
 	
-	private Entity target;
-
 	@EventLink
 	public final Listener<MouseEvent> onMouseInput = event -> {
 		AutoClicker clicker = getModule(AutoClicker.class);
@@ -43,21 +41,10 @@ public class Reach extends Module {
 			callReach();
 		}
 	};
-	
-    @EventLink
-    public final Listener<MouseOverEvent> onMouseOver = event -> {
-		if (target == null) return;
-        event.setRange(range.getValue().doubleValue());
-    };
 
     @EventLink
     public final Listener<RightClickEvent> onRightClick = event -> mc.objectMouseOver = RayCastUtil.rayCast(RotationHandler.rotations, 4.5);
-	
-	@EventLink
-	public final Listener<AttackEvent> onAttack = event -> {
-		target = (EntityLivingBase) event.getTarget();
-	};
-	
+
 	private boolean callReach() {
 		if (!isInGame()) {
 			return false;

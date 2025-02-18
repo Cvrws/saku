@@ -21,6 +21,7 @@ public class Speed extends Module {
             .add(new LegitSpeed("Legit", this))
             .add(new LowSpeed("Low Hop", this))
             .add(new VulcanSpeed("Vulcan", this))
+            .add(new PolarSpeed("Experimental", this))
             .add(new NCPSpeed("NCP", this))
             .setDefault("Vanilla");
 

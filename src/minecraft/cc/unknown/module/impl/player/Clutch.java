@@ -64,7 +64,7 @@ public class Clutch extends Module {
 		/* Smoothing rotations */
 		final double minRotationSpeed = this.rotationSpeed.getValue().doubleValue();
 		final double maxRotationSpeed = this.rotationSpeed.getSecondValue().doubleValue();
-		float rotationSpeed = (float) MathUtil.getRandom(minRotationSpeed, maxRotationSpeed);
+		float rotationSpeed = MathUtil.nextRandom(minRotationSpeed, maxRotationSpeed).floatValue();
 
 		if (rotationSpeed != 0) {
 			RotationHandler.setRotations(new Vector2f(targetYaw, targetPitch), rotationSpeed, MoveFix.SILENT);
@@ -124,7 +124,7 @@ public class Clutch extends Module {
 			return;
 		}
 
-		if (ticksOnAir > MathUtil.getRandom(placeDelay.getValue().intValue(), placeDelay.getSecondValue().intValue())
+		if (ticksOnAir > MathUtil.nextRandom(placeDelay.getValue().intValue(), placeDelay.getSecondValue().intValue()).doubleValue()
 				&& (RayCastUtil.overBlock(enumFacing.getEnumFacing(), blockFace, true))) {
 
 			Vec3 hitVec = RayCastUtil.rayCast(RotationHandler.rotations,

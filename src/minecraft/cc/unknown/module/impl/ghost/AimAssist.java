@@ -1,299 +1,257 @@
 package cc.unknown.module.impl.ghost;
 
-import java.util.List;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
-import cc.unknown.event.impl.render.PreRenderTickEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.MathUtil;
+import cc.unknown.util.player.EnemyUtil;
 import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.player.RayCastUtil;
-import cc.unknown.util.structure.geometry.Doble;
-import cc.unknown.util.structure.geometry.Vector2f;
 import cc.unknown.value.impl.BooleanValue;
+import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
-import net.minecraft.client.entity.AbstractClientPlayer;
+import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 
 @ModuleInfo(aliases = "Aim Assist", description = "Te ayuda a apuntar", category = Category.GHOST)
 public final class AimAssist extends Module {
 
-	private final NumberValue horizontalSpeed = new NumberValue("Horizontal Speed", this, 5, 1, 20, 0.1);
-	private final BooleanValue vertical = new BooleanValue("Vertical", this, false);
-	private final NumberValue verticalSpeed = new NumberValue("Vertical Speed", this, 5, 1, 20, 0.1, () -> !vertical.getValue());
-	private final NumberValue fov = new NumberValue("Fov", this, 180, 1, 360, 5);
-	private final NumberValue range = new NumberValue("Range", this, 4.5, 1, 8, 0.1);
-	private final BooleanValue requiredClick = new BooleanValue("Require Clicking", this, true);
-	private final BooleanValue randomization = new BooleanValue("Randomization", this, false);
-	private final BooleanValue lockTarget = new BooleanValue("Lock Target", this, true);
+	private final NumberValue horizontalSpeed = new NumberValue("Horizontal Speed", this, 45.0, 5.0, 100.0, 1.0);
+	private final NumberValue horizontalCompl = new NumberValue("Horizontal Complement", this, 35.0, 2.0, 97.0, 1.0);
+	
+	private BooleanValue vertical = new BooleanValue("Vertical", this, false);
+	private NumberValue verticalSpeed = new NumberValue("Vertical Aim Speed", this, 10, 1, 15, 1, () -> !vertical.getValue());
+	private NumberValue verticalCompl = new NumberValue("Vertical Complement", this, 5, 1, 10, 1, () -> !vertical.getValue());
+	private BooleanValue verticalRandom = new BooleanValue("Vertical Random", this, false, () -> !vertical.getValue());
+	private NumberValue verticalRandomization = new NumberValue("Vertical Randomization", this, 1.2, 0.1, 5, 0.1, () -> !verticalRandom.getValue());
+
+	private final ModeValue randomMode = new ModeValue("Speed Type", this)
+			.add(new SubMode("Thread Local Random"))
+			.add(new SubMode("Random Secure"))
+			.add(new SubMode("Gaussian"))
+			.setDefault("Thread Local Random");
+	
+	private final NumberValue maxAngle = new NumberValue("Max Angle", this, 180, 1, 180, 1);
+	private final NumberValue distance = new NumberValue("Distance", this, 4, 1, 8, 0.1);
+	private final BooleanValue clickAim = new BooleanValue("Require Clicking", this, true);
+	private final BooleanValue lockTarget = new BooleanValue("Lock Target", this, false);
+	private final BooleanValue ignoreFriend = new BooleanValue("Ignore Friends", this, false);
+	private final BooleanValue ignoreInvisibles = new BooleanValue("Ignore invisibles", this, false);
 	private final BooleanValue ignoreTeams = new BooleanValue("Ignore Teams", this, false);
-	private final BooleanValue visibilityCheck = new BooleanValue("Visibility Check", this, true);
-	private final BooleanValue checkBlock = new BooleanValue("Check Block", this, false);
-	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !visibilityCheck.getValue());
-	private final BooleanValue requiredWeapon = new BooleanValue("Require Weapon", this, false);
 	private final BooleanValue scoreboardCheckTeam = new BooleanValue("Scoreboard Check Team", this, false, () -> !ignoreTeams.getValue());
 	private final BooleanValue checkArmorColor = new BooleanValue("Check Armor Color", this, false, () -> !ignoreTeams.getValue());
+	private final BooleanValue visibilityCheck = new BooleanValue("Visibility Check", this, true);
+	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !visibilityCheck.getValue());
+	private final BooleanValue checkBlockBreak = new BooleanValue("Check Block Break", this, false);
+	private final BooleanValue weaponOnly = new BooleanValue("Weapons Only", this, false);
+	private final Set<EntityPlayer> lockedTargets = new HashSet<>();
+	public EntityPlayer target;
+	private Random random = new Random();
 	
-    private double yawNoise = 0;
-    private double pitchNoise = 0;
-    private long nextNoiseRefreshTime = -1;
-    private long nextNoiseEmptyTime = 200;
-    public EntityPlayer target;
-	
-    @Override
-    public void onDisable() {
-        yawNoise = pitchNoise = 0;
-        nextNoiseRefreshTime = -1;
-    }
+    @EventLink
+    public final Listener<AttackEvent> onAttack = event -> {
+        if (lockTarget.getValue() && event.getTarget() instanceof EntityPlayer) {
+            EntityPlayer attackedTarget = (EntityPlayer) event.getTarget();
+            lockedTargets.add(attackedTarget);
+            if (target == null) {
+            	target = attackedTarget;
+            }
+        }
+    };
 	
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
-        if (noAim()) return;
-
-        target = getEnemy();
-        if (target == null) return;
-        final boolean onTarget = mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectType.ENTITY && mc.objectMouseOver.entityHit == target;
-
-        double deltaYaw = randomization.getValue() ? yawNoise : 0;
-        double deltaPitch = randomization.getValue() ? pitchNoise : 0;
-        
-        double hSpeed = horizontalSpeed.getValue().doubleValue();
-        double vSpeed = verticalSpeed.getValue().doubleValue();
-
-        if (onTarget) {
-            if (lockTarget.getValue()) {
-                hSpeed *= 0.85;
-                vSpeed *= 0.85;
-            } else {
-                hSpeed = 0;
-                vSpeed = 0;
-            }
-        }
-
-        final Doble<Doble<Float, Float>, Doble<Float, Float>> rotation = getRotation(target.getEntityBoundingBox());
-        final Doble<Float, Float> yaw = rotation.getFirst();
-        final Doble<Float, Float> pitch = rotation.getSecond();
-
-        boolean move = false;
-
-        final float curYaw = event.getYaw();
-        final float curPitch = event.getPitch();
-        if (yaw.getFirst() > curYaw) {
-            move = true;
-            final float after = rotMove(yaw.getFirst(), curYaw, (float) hSpeed);
-            deltaYaw += after - curYaw;
-        } else if (yaw.getSecond() < curYaw) {
-            move = true;
-            final float after = rotMove(yaw.getSecond(), curYaw, (float) hSpeed);
-            deltaYaw += after - curYaw;
+	    if (noAim()) {
+	        return;
+	    }
+	    
+        if (!lockTarget.getValue() || target == null || !onTarget()) {
+            target = getEnemy();
         }
         
-        if (vertical.getValue()) {
-            if (pitch.getFirst() > curPitch) {
-                move = true;
-                final float after = rotMove(pitch.getFirst(), curPitch, (float) vSpeed);
-                deltaPitch += after - curPitch;
-            } else if (pitch.getSecond() < curPitch) {
-                move = true;
-                final float after = rotMove(pitch.getSecond(), curPitch, (float) vSpeed);
-                deltaPitch += after - curPitch;
-            }
-        }
+	    if (target == null) {
+	        return;
+	    }
+	    
+	    double yawSpeed = horizontalSpeed.getValue().doubleValue();
+	    double yawCompl = horizontalCompl.getValue().doubleValue();
+	    double yawOffset = MathUtil.nextSecure(yawSpeed, yawCompl).doubleValue() / 180;
+	    double yawFov = PlayerUtil.fovFromTarget(target, event.getYaw());
+	    double pitchEntity = PlayerUtil.pitchFromTarget(target, 0, event.getPitch());
+	    float yawAdjustment = getSpeedRandomize(randomMode.getValue().getName(), yawFov, yawOffset, yawSpeed, yawCompl);
 
-        if (move) {
-            deltaYaw += (Math.random() - 0.5) * Math.min(0.8, deltaPitch / 10.0);
-            deltaPitch += (Math.random() - 0.5) * Math.min(0.8, deltaYaw / 10.0);
-        }
+	    double verticalRandomOffset = MathUtil.nextRandom(verticalCompl.getValue().doubleValue() - 1.47328, verticalCompl.getValue().doubleValue() + 2.48293).doubleValue() / 100;
+	    float resultVertical = (float) (-(pitchEntity * verticalRandomOffset + pitchEntity / (101.0D - MathUtil.nextRandom(verticalSpeed.getValue().doubleValue() - 4.723847, verticalSpeed.getValue().doubleValue()).doubleValue())));
 
-        mc.player.rotationYaw += (float) deltaYaw;
-        mc.player.rotationPitch += (float) deltaPitch;
-	};
-	
-	@EventLink
-	public final Listener<PreRenderTickEvent> onPreRenderTick = event -> {
-        long time = System.currentTimeMillis();
-        if (nextNoiseRefreshTime == -1 || time >= nextNoiseRefreshTime + nextNoiseEmptyTime) {
-            nextNoiseRefreshTime = (long) (time + Math.random() * 60 + 80);
-            nextNoiseEmptyTime = (long) (Math.random() * 100 + 180);
-            yawNoise = (Math.random() - 0.5) * 2 * ((Math.random() - 0.5) * 0.3 + 0.8);
-            pitchNoise = (Math.random() - 0.5) * 2 * ((Math.random() - 0.5) * 0.35 + 0.6);
-        } else if (time >= nextNoiseRefreshTime) {
-            yawNoise = 0d;
-            pitchNoise = 0d;
-        }
+	    if (onTarget(target)) {
+	        applyYaw(yawFov, yawAdjustment);
+	        applyPitch(resultVertical);
+	    } else {
+	        applyYaw(yawFov, yawAdjustment);
+	        applyPitch(resultVertical);
+	    }
 	};
 
-    private @Nullable EntityPlayer getEnemy() {
-        final int fov = this.fov.getValue().intValue();
-        final List<EntityPlayer> players = mc.world.playerEntities;
-        final Vec3 playerPos = new Vec3(mc.player);
+	@Override
+	public void onDisable() {
+		target = null;
+	}
 
-        EntityPlayer target = null;
-        double targetFov = Double.MAX_VALUE;
-        for (final EntityPlayer entityPlayer : players) {
-            if (entityPlayer != mc.player && entityPlayer.deathTime == 0) {
-                double dist = playerPos.distanceTo(entityPlayer);
-                if (FriendUtil.isFriend(entityPlayer)) continue;
-                if (ignoreTeams.getValue() && PlayerUtil.isTeam(entityPlayer, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) continue;
-                if (dist > range.getValue().doubleValue()) continue;
-                if (fov != 360 && !PlayerUtil.fov(fov, entityPlayer)) continue;
-                if (!visibilityCheck.getValue() && RayCastUtil.rayCast(new Vector2f(mc.player.rotationYaw, mc.player.rotationPitch), dist) != null) continue;
-                double curFov = Math.abs(PlayerUtil.getFov(entityPlayer.posX, entityPlayer.posZ));
-                if (curFov < targetFov) {
-                    target = entityPlayer;
-                    targetFov = curFov;
+	private EntityPlayer getEnemy() {
+	    int fov = maxAngle.getValue().intValue();
+	    Vec3 playerPos = new Vec3(mc.player);
+        EntityPlayer bestTarget = null;
+        double closestDistance = distance.getValue().doubleValue();
+
+	    for (EntityPlayer player : mc.world.playerEntities) {
+	        if (lockedTargets.contains(player) && !isValidTarget(player, playerPos, fov)) {
+	            continue;
+	        }
+
+            if (isValidTarget(player, playerPos, fov)) {
+                double dist = playerPos.distanceTo(player.getPositionVector());
+                if (dist < closestDistance) {
+                    bestTarget = player;
+                    closestDistance = dist;
                 }
             }
         }
-        return target;
-    }
-    
+	    
+        return bestTarget;
+	}
+	
+	private boolean isValidTarget(EntityPlayer player, Vec3 playerPos, int fov) {
+	    if (player == mc.player || !player.isEntityAlive() || player.deathTime > 0) {
+	        return false;
+	    }
+	    
+	    if (EnemyUtil.isEnemy(player)) return false;
+	    if (PlayerUtil.unusedNames(player)) return false;
+
+	    if (!ignoreInvisibles.getValue() && player.isInvisible()) {
+	        return false;
+	    }
+
+	    if (FriendUtil.isFriend(player) && ignoreFriend.getValue()) {
+	        return false;
+	    }
+
+	    if (ignoreTeams.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) {
+	        return false;
+	    }
+
+	    if (playerPos.distanceTo(player) > distance.getValue().doubleValue()) {
+	        return false;
+	    }
+
+	    if (visibilityCheck.getValue() && !mc.player.canEntityBeSeen(player)) {
+	        return false;
+	    }
+
+	    return fov == 180 || PlayerUtil.fov(fov, player);
+	}
+
 	private boolean noAim() {
 	    if (mc.currentScreen != null || !mc.inGameHasFocus) {
 	        return true;
 	    }
 
-	    if (requiredWeapon.getValue() && !PlayerUtil.isHoldingWeapon()) {
+	    if (weaponOnly.getValue() && !PlayerUtil.isHoldingWeapon()) {
 	        return true;
 	    }
 
-	    if (requiredClick.getValue() && !PlayerUtil.isClicking()) {
+	    if (clickAim.getValue() && !PlayerUtil.isClicking()) {
 	        return true;
 	    }
 
 	    if (mouseOverEntity.getValue() 
-	        && (mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectType.ENTITY)) {
+	        && (mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY)) {
 	        return true;
 	    }
 	    
-	    if (checkBlock.getValue() && mc.playerController.isHittingBlock) {
+	    if (checkBlockBreak.getValue() && mc.playerController.isHittingBlock) {
 	    	return true;
 	    }
 
 	    return false;
 	}
-    
-    private @NotNull Doble<Doble<Float, Float>, Doble<Float, Float>> getRotation(@NotNull AxisAlignedBB boundingBox) {
-        AxisAlignedBB box = boundingBox.expand(-0.05, -0.9, -0.1).offset(0, 0.405, 0);
 
-        float yaw1 = getYaw(mc.player, new Vec3(box.minX, 0, box.minZ));
-        float yaw2 = getYaw(mc.player, new Vec3(box.maxX, 0, box.maxZ));
-
-        float pitch1 = getPitch(mc.player, new Vec3(0, box.minY, 0));
-        float pitch2 = getPitch(mc.player, new Vec3(0, box.maxY, 0));
-
-        return new Doble<>(
-                sortYaw(yaw1, yaw2),
-                new Doble<>(Math.min(pitch1, pitch2), Math.max(pitch1, pitch2))
-        );
+	private boolean onTarget(EntityPlayer target) {
+		return mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectType.ENTITY
+				&& mc.objectMouseOver.typeOfHit != MovingObjectType.BLOCK
+				&& mc.objectMouseOver.entityHit == target;
+	}
+	
+    private boolean onTarget() {
+        return mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY
+                && mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK
+                && mc.objectMouseOver.entityHit == target;
     }
+	
+	private void applyYaw(double yawFov, float yawAdjustment) {
+	    if (isYawFov(yawFov)) {
+	        mc.player.rotationYaw += yawAdjustment;
+	    }
+	}
 
-    private float getYaw(@NotNull AbstractClientPlayer from, @NotNull Vec3 pos) {
-        return from.rotationYaw +
-                MathHelper.wrapAngleTo180_float(
-                        (float) Math.toDegrees(Math.atan2(pos.zCoord - from.posZ, pos.xCoord - from.posX)) - 100f - from.rotationYaw
-                );
-    }
+	private void applyPitch(float resultVertical) {
+	    if (vertical.getValue()) {
+	        float pitchChange = random.nextBoolean() ? -MathUtil.nextRandom(0F, verticalRandomization.getValue().floatValue()).floatValue() : MathUtil.nextRandom(0F, verticalRandomization.getValue().floatValue()).floatValue();
+	        float pitchAdjustment = verticalRandom.getValue() ? pitchChange : resultVertical;
+	        float newPitch = mc.player.rotationPitch + pitchAdjustment;
 
+	        mc.player.rotationPitch += pitchAdjustment;
+	        mc.player.rotationPitch = normalizePitch(newPitch);
+	    }
+	}
 
-    private float getPitch(@NotNull AbstractClientPlayer from, @NotNull Vec3 pos) {
-        double diffX = pos.xCoord - from.posX;
-        double diffY = pos.yCoord - (from.posY + from.getEyeHeight());
-        double diffZ = pos.zCoord - from.posZ;
+	private float normalizePitch(float pitch) {
+	    return pitch >= 90f ? pitch - 360f : pitch <= -90f ? pitch + 360f : pitch;
+	}
 
-        double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
+	private float getSpeedRandomize(String mode, double fov, double offset, double speed, double complement) {
+	    double randomComplement;
+	    float result;
 
-        return from.rotationPitch + MathHelper.wrapAngleTo180_float((float) -Math.toDegrees(Math.atan2(diffY, diffXZ)) - from.rotationPitch);
-    }
+	    switch (mode) {
+	        case "Thread Local Random":
+	            randomComplement = MathUtil.nextRandom(complement - 1.47328, complement + 2.48293).doubleValue() / 100;
+	            result = calculateResult(fov, offset, speed, MathUtil.nextRandom(speed - 4.723847, speed).doubleValue());
+	            break;
 
-    private float rotMove(double target, double current, double diff) {
-        return rotMove(target, current, diff, 0.8F);
-    }
+	        case "Random Secure":
+	            randomComplement = MathUtil.nextSecure(complement - 1.47328, complement + 2.48293).doubleValue() / 100;
+	            result = calculateResult(fov, offset, speed, MathUtil.nextSecure(speed - 4.723847, speed).doubleValue());
+	            break;
 
-    private float rotMove(double target, double current, double diff, Float gcd) {
-        float delta;
-        if ((float) target > (float) current) {
-            float dist1 = (float) target - (float) current;
-            float dist2 = (float) current + 360 - (float) target;
-            if (dist1 > dist2) {
-                delta = -(float) current - 360 + (float) target;
-            } else {
-                delta = dist1;
-            }
-        } else if ((float) target < (float) current) {
-            float dist1 = (float) current - (float) target;
-            float dist2 = (float) target + 360 - (float) current;
-            if (dist1 > dist2) {
-                delta = (float) current + 360 + (float) target;
-            } else {
-                delta = -dist1;
-            }
-        } else {
-            return (float) current;
-        }
+	        case "Gaussian":
+	            randomComplement = (complement + new Random().nextGaussian() * 0.5) / 100;
+	            result = calculateResult(fov, offset, speed, speed + new Random().nextGaussian() * 0.3);
+	            break;
 
-        delta = normalize(delta, -180, 180);
-        if (gcd != null)
-            delta = (float) (Math.round(delta / gcd) * gcd);
+	        default:
+	            throw new IllegalArgumentException("Unknown mode: " + mode);
+	    }
 
-        if (Math.abs(delta) < 0.1 * Math.random() + 0.1) {
-            return (float) current;
-        } else if (Math.abs(delta) <= (float) diff) {
-            return (float) current + delta;
-        } else {
-            if (delta < 0) {
-                return (float) current - (float) diff;
-            } else if (delta > 0) {
-                return (float) current + (float) diff;
-            } else {
-                return (float) current;
-            }
-        }
-    }
+	    return (float) (randomComplement + result);
+	}
 
-    private float normalize(float yaw, float min, float max) {
-        yaw %= 360.0F;
-        if (yaw >= max) {
-            yaw -= 360.0F;
-        }
-        if (yaw < min) {
-            yaw += 360.0F;
-        }
-
-        return yaw;
-    }
-    
-    @Contract("_, _ -> new")
-    private @NotNull Doble<Float, Float> sortYaw(final float yaw1, final float yaw2) {
-        final float fixedYaw1 = fixYaw(yaw1);
-        final float fixedYaw2 = fixYaw(yaw2);
-
-        if (fixedYaw1 < fixedYaw2) {
-            return new Doble<>(yaw1, yaw2);
-        } else {
-            return new Doble<>(yaw2, yaw1);
-        }
-    }
-
-    private float fixYaw(float yaw) {
-        while (yaw < 0) {
-            yaw += 360;
-        }
-        while (yaw > 360) {
-            yaw -= 360;
-        }
-        return yaw;
-    }
+	private float calculateResult(double fov, double offset, double speed, double randomizedSpeed) {
+	    return (float) (-(fov * offset + fov / (101.0 - randomizedSpeed)));
+	}
+	
+	private boolean isYawFov(double fov) {
+		return fov > 1.0D || fov < -1.0D;
+	}
 }

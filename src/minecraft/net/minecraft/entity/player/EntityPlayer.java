@@ -126,8 +126,14 @@ public abstract class EntityPlayer extends EntityLivingBase implements Accessor 
 	private final GameProfile gameProfile;
 	private boolean hasReducedDebug = false;
 	public EntityFishHook fishEntity;
+	public boolean swingItem = false;
 
 	public StopWatch hideSneakHeight = new StopWatch();
+	
+	StopWatch apsTimer = new StopWatch();
+	public int aps = 0;
+	public int preAps = 0;
+	private int tempAps = 0;
 
 	public EntityPlayer(World worldIn, GameProfile gameProfileIn) {
 		super(worldIn);
@@ -192,8 +198,21 @@ public abstract class EntityPlayer extends EntityLivingBase implements Accessor 
 	public boolean isBlocking() {
 		return this.isUsingItem() && this.itemInUse.getItem().getItemUseAction(this.itemInUse) == EnumAction.BLOCK;
 	}
+	
+	@Override
+	public void swingItem() {
+		swingItem = true;
+		tempAps += 1;
+		super.swingItem();
+	}
 
-	public void onUpdate() {		
+	public void onUpdate() {
+		if (apsTimer.elapse(1000, true)) {
+			preAps = aps;
+			aps = tempAps;
+			tempAps = 0;
+		}
+		
 		this.noClip = this.isSpectator();
 
 		if (this.isSpectator()) {

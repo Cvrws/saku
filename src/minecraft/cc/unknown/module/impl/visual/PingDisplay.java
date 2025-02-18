@@ -21,7 +21,7 @@ public final class PingDisplay extends Module {
 
     private final DragValue position = new DragValue("Position", this, new Vector2d(200, 200));
 
-    private final Vector2f scale = new Vector2f(RenderUtil.GENERIC_SCALE, RenderUtil.GENERIC_SCALE);
+    private final Vector2f scale = new Vector2f(22, 22);
     private int lastPing;
 
     @EventLink

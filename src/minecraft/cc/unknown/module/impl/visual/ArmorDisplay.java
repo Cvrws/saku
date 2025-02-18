@@ -45,9 +45,8 @@ public final class ArmorDisplay extends Module {
 			}
 		}
 
-		final ScaledResolution scaledResolution = /*mc.scaledResolution*/ new ScaledResolution(mc);;
-		final int xPosition = scaledResolution.getScaledWidth() / 2 + 10 + 16 * 4;
-		final int yPosition = scaledResolution.getScaledHeight() - yOffset;
+		final int xPosition = event.getScaledResolution().getScaledWidth() / 2 + 10 + 16 * 4;
+		final int yPosition = event.getScaledResolution().getScaledHeight() - yOffset;
 		for (int i = 0; i <= 4; ++i) {
 			ItemStack item;
 			if (i == 0) {

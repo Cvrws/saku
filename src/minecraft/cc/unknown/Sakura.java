@@ -50,17 +50,10 @@ public class Sakura {
     public static final List<Object> registered = new ArrayList<>();
     private final ScheduledExecutorService ex = Executors.newScheduledThreadPool(4);
     private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-
-    private final File dir;
-    private final File firstInitFile;
+    
     private static final String EXPECTED_CONTENT = "[Sakura] Init Sound | DONT DELETE THIS";
     
     private final Minecraft mc = Minecraft.getInstance();
-
-    public Sakura() {
-        this.dir = new File(mc.mcDataDir, "Sakura" + File.separator + "sound");
-        this.firstInitFile = new File(dir, "sound.txt");
-    }
 
     public void init() {
         Display.setTitle(NAME + " " + VERSION);
@@ -71,8 +64,9 @@ public class Sakura {
         initHandler();
         initVia();
 
-        checkFirstStart();
-
+        if (Platform.isWindows()) checkFirstStart();
+        else firstStart = false;
+        
         mc.displayGuiScreen(new SakuMenu());
 
         LOGGER.info("Initialized successfully.");
@@ -132,14 +126,16 @@ public class Sakura {
     }
     
     private void initAutoOptimization() {
-    	mc.gameSettings.ofFastRender = Config.isShaders() ? false : !Platform.isLinux();
-		mc.gameSettings.ofChunkUpdatesDynamic = !Platform.isLinux();
-		mc.gameSettings.ofSmartAnimations = !Platform.isLinux();
-        mc.gameSettings.ofShowGlErrors = false;
-        mc.gameSettings.ofRenderRegions = !Platform.isLinux();
-        mc.gameSettings.ofSmoothFps = false;
-        mc.gameSettings.ofFastMath = true;
-        mc.gameSettings.useVbo = true;
+    	if (Platform.isWindows()) {
+	    	mc.gameSettings.ofFastRender = Config.isShaders() ? false : true;
+			mc.gameSettings.ofChunkUpdatesDynamic = true;
+			mc.gameSettings.ofSmartAnimations = true;
+	        mc.gameSettings.ofShowGlErrors = false;
+	        mc.gameSettings.ofRenderRegions = true;
+	        mc.gameSettings.ofSmoothFps = false;
+	        mc.gameSettings.ofFastMath = true;
+	        mc.gameSettings.useVbo = true;
+    	}
         mc.gameSettings.guiScale = 2;
     }
 
@@ -156,22 +152,25 @@ public class Sakura {
 	}
 	
 	private void initTempFile() {
+	    final File dir = new File(mc.mcDataDir, "Sakura" + File.separator + "sound");
+	    final File firstInitFile = new File(dir, "sound.txt");
+		
         if (firstInitFile.exists()) {
             try {
                 String content = new String(Files.readAllBytes(firstInitFile.toPath())).trim();
                 if (!EXPECTED_CONTENT.equals(content)) {
                     if (firstInitFile.delete()) {
-                        LOGGER.info("Archivo sound.txt eliminado por contenido incorrecto.");
+                        LOGGER.info("Delete sound.txt, invalid content.");
                         firstStart = true;
                     } else {
-                        LOGGER.error("No se pudo eliminar el archivo sound.txt.");
+                        LOGGER.error("Failed.");
                         return;
                     }
                 } else {
                     return;
                 }
             } catch (IOException e) {
-                LOGGER.error("Error leyendo el archivo sound.txt", e);
+                LOGGER.error("Failed to read", e);
                 return;
             }
         } else {
@@ -179,19 +178,22 @@ public class Sakura {
         }
 
         if (!dir.exists() && !dir.mkdirs()) {
-            LOGGER.error("No se pudo crear el directorio de sonido.");
+            LOGGER.error("Failed dir.");
             return;
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(firstInitFile))) {
             writer.write(EXPECTED_CONTENT);
-            LOGGER.info("Archivo sound.txt creado correctamente.");
+            LOGGER.info("Created sound.txt.");
         } catch (IOException e) {
-            LOGGER.error("Error creando el archivo sound.txt", e);
+            LOGGER.error("Failed created", e);
         }
 	}
 
 	private void checkFirstStart() {
+	    final File dir = new File(mc.mcDataDir, "Sakura" + File.separator + "sound");
+	    final File firstInitFile = new File(dir, "sound.txt");
+		
         if (firstInitFile.exists()) {
             try {
                 String content = new String(Files.readAllBytes(firstInitFile.toPath())).trim();

@@ -90,7 +90,7 @@ public class AutoPot extends Module {
 
                 final double minRotationSpeed = this.rotationSpeed.getValue().doubleValue();
                 final double maxRotationSpeed = this.rotationSpeed.getSecondValue().doubleValue();
-                final float rotationSpeed = (float) MathUtil.getRandom(minRotationSpeed, maxRotationSpeed);
+                final float rotationSpeed = MathUtil.nextRandom(minRotationSpeed, maxRotationSpeed).floatValue();
                 RotationHandler.setRotations(new Vector2f((float) (mc.player.rotationYaw + (Math.random() - 0.5) * 3), (float) (87 + Math.random() * 3)), rotationSpeed, MoveFix.SILENT);
                 
     	        mc.player.inventory.currentItem = i;
@@ -99,7 +99,7 @@ public class AutoPot extends Module {
                     mc.playerController.syncCurrentPlayItem();
                     PacketUtil.send(new C08PacketPlayerBlockPlacement(PlayerUtil.getItemStack()));
 
-                    this.nextThrow = Math.round(MathUtil.getRandom(delay.getValue().longValue(), delay.getSecondValue().longValue()));
+                    this.nextThrow = Math.round(MathUtil.nextRandom(delay.getValue().longValue(), delay.getSecondValue().longValue()).floatValue());
                     stopWatch.reset();
                     break;
                 }

@@ -25,7 +25,7 @@ public class FastBow extends Module {
 		
 		if (mc.player.isUsingItem()) {
 			for (int i = 0; i <= speed.getValue().intValue(); i++) {
-				PacketUtil.send(new C03PacketPlayer.C06PacketPlayerPosLook(mc.player.posX, mc.player.posY, mc.player.posZ, mc.player.rotationYaw, mc.player.rotationPitch, mc.player.onGround));
+				PacketUtil.send(new C03PacketPlayer.C06PacketPlayerPosLook(event.getPosX(), event.getPosY(), event.getPosZ(), event.getYaw(), event.getPitch(), event.isOnGround()));
 			}
 
 			if (item.getItem() instanceof ItemBow) {

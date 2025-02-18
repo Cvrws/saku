@@ -295,7 +295,7 @@ public class Scaffold extends Module {
 
 		// Timer
 		if (timer.getValue().floatValue() != 1 && timer.getSecondValue().floatValue() != 1)
-			mc.timer.timerSpeed = (float) MathUtil.getRandom(timer.getValue().floatValue(), timer.getSecondValue().floatValue());
+			mc.timer.timerSpeed = MathUtil.nextRandom(timer.getValue().floatValue(), timer.getSecondValue().floatValue()).floatValue();
 	};
 
 	@EventLink
@@ -349,7 +349,7 @@ public class Scaffold extends Module {
 				ticksOnAir = 0;
 			}
 
-			canPlace = ticksOnAir > MathUtil.getRandom(placeDelay.getValue().intValue(), placeDelay.getSecondValue().intValue());
+			canPlace = ticksOnAir > MathUtil.nextRandom(placeDelay.getValue().intValue(), placeDelay.getSecondValue().intValue()).floatValue();
 
 			if (recursion == 0)
 				this.calculateSneaking();
@@ -477,7 +477,7 @@ public class Scaffold extends Module {
 		/* Smoothing rotations */
 		final double minRotationSpeed = this.rotationSpeed.getValue().doubleValue();
 		final double maxRotationSpeed = this.rotationSpeed.getSecondValue().doubleValue();
-		float rotationSpeed = (float) MathUtil.getRandom(minRotationSpeed, maxRotationSpeed);
+		float rotationSpeed = MathUtil.nextRandom(minRotationSpeed, maxRotationSpeed).floatValue();
 
 		MoveFix movementFix = this.movementCorrection.getValue() ? MoveFix.SILENT : MoveFix.OFF;
 

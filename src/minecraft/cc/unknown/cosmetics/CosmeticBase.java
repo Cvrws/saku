@@ -1,11 +1,12 @@
 package cc.unknown.cosmetics;
 
+import cc.unknown.util.Accessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 
-public abstract class CosmeticBase implements LayerRenderer<AbstractClientPlayer> {
+public abstract class CosmeticBase implements LayerRenderer<AbstractClientPlayer>, Accessor {
 
 	protected final RenderPlayer playerRenderer;
 

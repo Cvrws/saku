@@ -98,7 +98,7 @@ public final class NameTags extends Module {
 	};
 	
 	private void renderNewTag(RenderLabelEvent event, EntityPlayer player, String name) {
-        if (name.contains("CLICK DERECHO") || name.contains("MEJORAS") || name.contains("[NPC]") || name.contains("[SHOP]") || name.contains("CLIQUE PARA ABRIR")) {
+        if (PlayerUtil.unusedNames(player) && player.getName().contains("AstralMC-CTM")) {
         	return;
         }
         
@@ -106,7 +106,7 @@ public final class NameTags extends Module {
         float compactWidth = nameWidth + 12;
         float compactHeight = font.height() + 2;
 	    double scaleRatio;
-	    float scale = 0.02666667F;        
+	    float scale = 0.02666667F;
 	    
 	    if (player == mc.player) {
 	        scaleRatio = 1.0D;

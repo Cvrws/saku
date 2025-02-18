@@ -65,4 +65,24 @@ public class NumberValue extends Value<Number> {
     public int getValueToInt() {
     	return getValue().intValue();
     }
+    
+    public long getValueToLong() {
+    	return getValue().longValue();
+    }
+    
+    public float getValueToFloat() {
+    	return getValue().floatValue();
+    }
+    
+    public double getValueToDouble() {
+    	return getValue().doubleValue();
+    }
+    
+    public short getValueToShort() {
+    	return getValue().shortValue();
+    }
+    
+    public byte getValueToByte() {
+    	return getValue().byteValue();
+    }
 }

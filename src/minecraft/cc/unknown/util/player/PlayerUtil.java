@@ -172,23 +172,23 @@ public class PlayerUtil implements Accessor {
 		return getFov(mc.player.rotationYaw, posX, posZ);
 	}
 	
-	public double fovFromTarget(Entity tg) {
-	    return ((mc.player.rotationYaw - fovToTarget(tg)) % 360.0 + 540.0) % 360.0 - 180.0;
+	public double fovFromTarget(Entity entity, float yaw) {
+	    return ((yaw - fovToTarget(entity)) % 360.0 + 540.0) % 360.0 - 180.0;
 	}
 
-	private float fovToTarget(Entity tg) {
-		double diffX = tg.posX - mc.player.posX;
-		double diffZ = tg.posZ - mc.player.posZ;
+	private float fovToTarget(Entity entity) {
+		double diffX = entity.posX - mc.player.posX;
+		double diffZ = entity.posZ - mc.player.posZ;
 		return (float) Math.toDegrees(Math.atan2(diffZ, diffX)) - 90.0F;
 	}
 	
-    public double pitchFromTarget(Entity en, float f) {
-        return (double) (mc.player.rotationPitch - pitchToEntity(en, f));
+    public double pitchFromTarget(Entity en, float offset, float pitch) {
+        return (double) (pitch - pitchToEntity(en, offset));
     }
 
-    public float pitchToEntity(Entity ent, float f) {
+    public float pitchToEntity(Entity ent, float offset) {
         double x = mc.player.getDistanceToEntity(ent);
-        double y = mc.player.posY - (ent.posY + f);
+        double y = mc.player.posY - (ent.posY + offset);
         double pitch = (((Math.atan2(x, y) * 180.0D) / Math.PI));
         return (float) (90 - pitch);
     }
@@ -897,7 +897,8 @@ public class PlayerUtil implements Accessor {
     }
     
     public boolean unusedNames(EntityPlayer player) {
-    	return player.getName().contains("[NPC]") || player.getName().contains("MEJORAS") || player.getName().contains("CLICK DERECHO");
+    	String name = player.getName();
+    	return name.contains("CLICK DERECHO") || name.contains("MEJORAS") || name.contains("[NPC]") || name.contains("[SHOP]") || name.contains("CLIQUE PARA ABRIR");
     }
     
     public boolean canTarget(Entity entity, boolean idk) {

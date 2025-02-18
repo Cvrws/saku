@@ -38,11 +38,10 @@ public final class AppleSkin extends Module {
 
 	@EventLink
 	public final Listener<RenderHungerEvent> onHunger = event -> {
-		final ScaledResolution scaledResolution = event.getScaledResolution();
 		final FoodStats stats = mc.player.getFoodStats();
 
-		final int right = scaledResolution.getScaledWidth() / 2 + 91;
-		final int top = scaledResolution.getScaledHeight() - 39;
+		final int right = event.getScaledResolution().getScaledWidth() / 2 + 91;
+		final int top = event.getScaledResolution().getScaledHeight() - 39;
 
 		this.generateHungerBarOffsets(right, 0, mc.ingameGUI.updateCounter);
 

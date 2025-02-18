@@ -38,24 +38,19 @@ public class MathUtil {
             throw new IllegalArgumentException("Unsupported number types for secure random: " + origin.getClass() + " and " + bound.getClass());
         }
     }
-
-	public double lerp(final double a, final double b, final double c) {
-		return a + c * (b - a);
-	}
-
-	public float lerp(final float a, final float b, final float c) {
-		return a + c * (b - a);
-	}
-
-	public double getRandom(double min, double max) {
-		if (min == max) {
-			return min;
-		} else if (min > max) {
-			final double d = min;
-			min = max;
-			max = d;
-		}
-		return nextRandom(min, max).doubleValue();
+	
+	public Number lerp(final Number a, final Number b, final Number c) {
+		if (a instanceof Integer && b instanceof Integer && c instanceof Integer) {
+			return a.intValue() + c.intValue() * (b.intValue() - a.intValue());
+		} else if (a instanceof Double && b instanceof Double && c instanceof Double) {
+			return a.doubleValue() + c.doubleValue() * (b.doubleValue() - a.doubleValue());
+		} else if (a instanceof Float && b instanceof Float && c instanceof Float) {
+			return a.floatValue() + c.floatValue() * (b.floatValue() - a.floatValue());
+		} else if (a instanceof Long && b instanceof Long && c instanceof Long) {
+			return a.longValue() + c.longValue() * (b.longValue() - a.longValue());
+		} else {
+            throw new IllegalArgumentException("Unsupported number types for: " + a.getClass() + ", " + b.getClass() + " and " + c.getClass());
+        }
 	}
 
 	public double roundWithSteps(final double value, final double steps) {
@@ -84,24 +79,6 @@ public class MathUtil {
 	public double getRandomFactor(double chanceValue) {
 		return Math.abs(Math.sin(System.nanoTime() * Double.doubleToLongBits(chanceValue))) * 100.0;
 	}
-	
-    public float fastInvSqrt(float f) {
-        float g = 0.5F * f;
-        int i = Float.floatToIntBits(f);
-        i = 1597463007 - (i >> 1);
-        f = Float.intBitsToFloat(i);
-        f *= 1.5F - g * f * f;
-        return f;
-    }
-
-    public float fastInvCubeRoot(float f) {
-        int i = Float.floatToIntBits(f);
-        i = 1419967116 - i / 3;
-        float g = Float.intBitsToFloat(i);
-        g = 0.6666667F * g + 1.0F / 3.0F * g * g * f;
-        g = 0.6666667F * g + 1.0F / 3.0F * g * g * f;
-        return g;
-    }
     
 	public boolean shouldPerformAction(double chanceValue, double randomFactor) {
 		return chanceValue >= 100.0D || ThreadLocalRandom.current().nextDouble(100.0D + randomFactor) < chanceValue;

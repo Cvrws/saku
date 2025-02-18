@@ -5,7 +5,7 @@ import java.util.Map;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.render.PostRenderTickEvent;
+import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
@@ -49,12 +49,12 @@ public class BridgeAssist extends Module {
 	}
 
 	@EventLink
-	public final Listener<PostRenderTickEvent> onPreMotion = event -> {
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
 		if (!isInGame()) {
 			return;
 		}
 
-		if (!(PlayerUtil.isOverAir() && mc.player.onGround)) {
+		if (!(PlayerUtil.isOverAir() && event.isOnGround())) {
 			return;
 		}
 
@@ -65,8 +65,8 @@ public class BridgeAssist extends Module {
 		}
 
 		if (gliding) {
-		    float actualYaw = mc.player.rotationYaw;
-		    float actualPitch = mc.player.rotationPitch;
+		    float actualYaw = event.getYaw();
+		    float actualPitch = event.getPitch();
 
 		    float modifiedYaw = actualYaw % 360;
 		    float modifiedPitch = actualPitch % 360;

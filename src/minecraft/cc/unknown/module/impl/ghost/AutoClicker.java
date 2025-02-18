@@ -7,8 +7,8 @@ import org.lwjgl.input.Mouse;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
+import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.AttackEvent;
-import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
@@ -18,6 +18,7 @@ import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.DescValue;
 import cc.unknown.value.impl.ModeValue;
+import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MovingObjectPosition;
@@ -35,7 +36,7 @@ public class AutoClicker extends Module {
 		}
 	};
 
-	private final BoundsNumberValue cps = new BoundsNumberValue("CPS", this, 8, 14, 1, 20, 1, () -> mode.is("Smart"));
+	private final NumberValue cps = new NumberValue("CPS", this, 8, 1, 20, 1, () -> mode.is("Smart"));
 	
 	private final BooleanValue onAir = new BooleanValue("On Air", this, true, () -> !mode.is("Smart"));
 	private final BoundsNumberValue cpsAir = new BoundsNumberValue("CPS [Air]", this, 5, 10, 1, 20, 1, () -> !mode.is("Smart") || !onAir.getValue());	
@@ -66,6 +67,7 @@ public class AutoClicker extends Module {
 
 	private final DescValue separator3 = new DescValue(" ", this, () -> !mode.is("Smart"));
 	
+	private final BooleanValue cpsMultiplicator = new BooleanValue("CPS Multiplicator", this, false);
 	private final BooleanValue breakBlocks = new BooleanValue("Break Blocks", this, true);
 	private final BooleanValue rightClick = new BooleanValue("Right Click", this, false);
 
@@ -79,8 +81,8 @@ public class AutoClicker extends Module {
 	private long baseCPS;
 
 	@EventLink
-	public final Listener<Render2DEvent> onTick = event -> {	    
-	    double randomization = 1.5;
+	public final Listener<TickEvent> onTick = event -> {	    
+	    double multiplier = 1.5;
 	    attackTicks++;
 	    HitSelect hitSelect = getModule(HitSelect.class);
 	    String mode = this.mode.getValue().getName();
@@ -92,7 +94,11 @@ public class AutoClicker extends Module {
 		        ticksDown = 0;
 		    }
 		    
-		    clicks = (long) (this.cps.getRandomBetween().longValue() * randomization);
+		    if (cpsMultiplicator.getValue()) {
+		    	clicks = (long) (this.cps.getValue().intValue() * multiplier);	
+		    } else {
+		    	clicks = this.cps.getValue().longValue();
+		    }
 		    
 		    switch (mode) {
 		        case "Normal":
@@ -106,7 +112,7 @@ public class AutoClicker extends Module {
 		        case "Drag":
 		            double fluctuation = Math.random() * 10 - 5;
 		            boolean pause = Math.random() < 0.05;
-		            nextSwing = (long) (pause ? (15 + 50 + fluctuation) : (15 + fluctuation));
+		            nextSwing = pause ? (1000 / (long) (15 + 50 + fluctuation)) : (1000 / (long) (clicks + fluctuation));
 		            break;
 	
 		        case "Smart":

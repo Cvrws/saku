@@ -22,7 +22,7 @@ public final class Target extends Command {
 	            	success(getTargetList());
 	                break;
 	            case "clear":
-	            	EnemyUtil.removeEnemy();
+	            	EnemyUtil.clearEnemies();
 	            	break;
 	        }
 	        return;
@@ -53,18 +53,18 @@ public final class Target extends Command {
         if (args.length == 1) {
             return Arrays.asList("add", "remove", "list", "clear");
         } else if (args.length == 2 && (args[1].equalsIgnoreCase("remove"))) {
-            return EnemyUtil.getEnemy();
+            return (List<String>) EnemyUtil.getEnemies();
         }
         return Collections.emptyList();
     }
     
 	private String getTargetList() {
-	    if (EnemyUtil.getEnemy().isEmpty()) {
+	    if (EnemyUtil.getEnemies().isEmpty()) {
 	        return "Your target list is empty.";
 	    }
 
 	    StringBuilder message = new StringBuilder("Target list:\n");
-	    for (String enemy : EnemyUtil.getEnemy()) {
+	    for (String enemy : EnemyUtil.getEnemies()) {
 	        message.append("- ").append(enemy).append("\n");
 	    }
 	    return message.toString();

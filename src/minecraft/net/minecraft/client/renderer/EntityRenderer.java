@@ -1,6 +1,5 @@
 package net.minecraft.client.renderer;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Calendar;
@@ -27,8 +26,8 @@ import cc.unknown.event.impl.other.RotationEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
 import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
-import cc.unknown.module.impl.visual.Ambience;
 import cc.unknown.module.impl.visual.NoCameraClip;
+import cc.unknown.module.impl.visual.NoHurtCamera;
 import cc.unknown.ui.menu.saku.SakuMenu;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.render.FreeLookUtil;
@@ -563,6 +562,10 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 	}
 
 	private void hurtCameraEffect(float partialTicks) {
+		if(getModule(NoHurtCamera.class).isEnabled()) {
+			return;
+		}
+		
 		if (this.mc.getRenderViewEntity() instanceof EntityLivingBase) {
 			EntityLivingBase entitylivingbase = (EntityLivingBase) this.mc.getRenderViewEntity();
 			float f = (float) entitylivingbase.hurtTime - partialTicks;
@@ -1073,18 +1076,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
 					int k = (int) (f8 * 255.0F);
 					int l = (int) (f9 * 255.0F);
 					int i1 = (int) (f10 * 255.0F);
-					
-                    Ambience ambience = Sakura.instance.getModuleManager().get(Ambience.class);
-                    
-                    int red = ambience.worldColorRed.getValue().intValue();
-                    int green = ambience.worldColorGreen.getValue().intValue();
-                    int blue = ambience.worldColorBlue.getValue().intValue();
-                    
-                    int rgb = new Color(red, green, blue).getRGB();
-                    
-                    this.lightmapColors[i] = ambience.isEnabled() && ambience.worldColor.getValue() ? rgb : j << 24 | k << 16 | l << 8 | i1;
-					
-					//this.lightmapColors[i] = j << 24 | k << 16 | l << 8 | i1;
+					this.lightmapColors[i] = j << 24 | k << 16 | l << 8 | i1;
 				}
 
 				this.lightmapTexture.updateDynamicTexture();
@@ -2261,10 +2253,7 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
             }
             else
             {
-            	Ambience ambience = Sakura.instance.getModuleManager().get(Ambience.class);
-                boolean isWorldFogEnabled = ambience.isEnabled() && ambience.worldFog.getValue();
-                float fogStartDistance = isWorldFogEnabled ? ambience.worldFogDistance.getValue().floatValue() : Config.getFogStart();
-                GlStateManager.setFogStart(f3 * fogStartDistance);
+                GlStateManager.setFogStart(f3 * Config.getFogStart());
                 GlStateManager.setFogEnd(f3);
             }
 
@@ -2291,13 +2280,6 @@ public class EntityRenderer implements IResourceManagerReloadListener, Accessor 
             {
                 Reflector.callVoid(Reflector.ForgeHooksClient_onFogRender, this, entity, block, partialTicks, startCoords, f3);
             }
-        }
-
-        Ambience ambience = Sakura.instance.getModuleManager().get(Ambience.class);
-        if(ambience.isEnabled() && ambience.worldFog.getValue()) {
-            fogColorRed = ambience.worldFogRed.getValue().intValue() / 255;
-            fogColorGreen = ambience.worldFogGreen.getValue().intValue() / 255;
-            fogColorBlue = ambience.worldFogBlue.getValue().intValue() / 255;
         }
 
         GlStateManager.enableColorMaterial();

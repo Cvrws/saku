@@ -15,7 +15,14 @@ public final class MotionBlur extends Module {
 	private final NumberValue amount = new NumberValue("Amount", this, 1, 1, 10, 1);
 	
 	@Override
+	public void onEnable() {
+		mc.gameSettings.ofFastRender = false;
+	}
+	
+	@Override
 	public void onDisable() {
+		mc.gameSettings.ofFastRender = true;
+		
         if (mc.entityRenderer.isShaderActive())
             mc.entityRenderer.stopUseShader();
 	}
@@ -25,7 +32,7 @@ public final class MotionBlur extends Module {
         if (mc.world != null) {
         	if ((mc.entityRenderer.getShaderGroup() == null))
         		mc.entityRenderer.loadShader(new ResourceLocation("minecraft", "shaders/post/motion_blur.json"));
-        	float uniform = 1F - Math.min(amount.getValue().intValue() / 10F, 0.9f);
+        	float uniform = 1F - Math.min(amount.getValueToInt() / 10F, 0.9f);
         	if (mc.entityRenderer.getShaderGroup() != null) {
         		mc.entityRenderer.getShaderGroup().listShaders.get(0).getShaderManager().getShaderUniform("Phosphor").set(uniform, 0F, 0F);
         	}
