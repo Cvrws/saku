@@ -9,7 +9,6 @@ import cc.unknown.module.impl.player.Clutch;
 import cc.unknown.module.impl.world.LegitScaffold;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.player.MoveUtil;
-import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.Mode;
 
 public class LegitSpeed extends Mode<Speed> {
@@ -42,7 +41,7 @@ public class LegitSpeed extends Mode<Speed> {
         }
         
         if(getParent().legitStrafe.getValue() && !mc.player.onGround && (event.getStrafe() != 0 || event.getForward() != 0)) {
-            event.setYaw(PlayerUtil.getStrafeYaw(event.getForward(), event.getStrafe()));
+            event.setYaw(MoveUtil.getStrafeYaw(event.getForward(), event.getStrafe()));
             event.setForward(1);
             event.setStrafe(0);
         }

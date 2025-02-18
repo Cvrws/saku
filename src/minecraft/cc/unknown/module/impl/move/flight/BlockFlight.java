@@ -5,11 +5,10 @@ import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.impl.move.Flight;
-import cc.unknown.util.client.ChatUtil;
 import cc.unknown.util.netty.PacketUtil;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.player.SlotUtil;
 import cc.unknown.value.Mode;
 import net.minecraft.block.BlockAir;
 import net.minecraft.item.ItemBlock;
@@ -26,7 +25,7 @@ public class BlockFlight extends Mode<Flight> {
 
 	@EventLink
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
-		mc.player.inventory.currentItem = SlotUtil.findBlock();
+		mc.player.inventory.currentItem = InventoryUtil.findBlock();
 	};
 
 	@EventLink

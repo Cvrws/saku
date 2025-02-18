@@ -47,10 +47,12 @@ import net.minecraft.block.BlockTorch;
 import net.minecraft.block.BlockTripWire;
 import net.minecraft.block.BlockTripWireHook;
 import net.minecraft.block.BlockWeb;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
@@ -70,38 +72,34 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.C0DPacketCloseWindow;
 import net.minecraft.network.play.client.C16PacketClientStatus;
+import net.minecraft.util.BlockPos;
 
 @UtilityClass
 public class InventoryUtil implements Accessor {
-	public List<Block> invalidBlocks;
 
-	{
-		invalidBlocks = Arrays.asList(Blocks.enchanting_table, Blocks.carpet, Blocks.glass_pane, Blocks.ladder,
-				Blocks.web, Blocks.stained_glass_pane, Blocks.iron_bars, Blocks.air, Blocks.water, Blocks.flowing_water,
-				Blocks.lava, Blocks.ladder, Blocks.soul_sand, Blocks.ice, Blocks.packed_ice, Blocks.sand,
-				Blocks.flowing_lava, Blocks.snow_layer, Blocks.chest, Blocks.ender_chest, Blocks.torch, Blocks.anvil,
-				Blocks.trapped_chest, Blocks.noteblock, Blocks.jukebox, Blocks.wooden_pressure_plate,
-				Blocks.stone_pressure_plate, Blocks.light_weighted_pressure_plate, Blocks.heavy_weighted_pressure_plate,
-				Blocks.stone_button, Blocks.tnt, Blocks.wooden_button, Blocks.lever, Blocks.crafting_table,
-				Blocks.furnace, Blocks.stone_slab, Blocks.wooden_slab, Blocks.stone_slab2, Blocks.brown_mushroom,
-				Blocks.red_mushroom, Blocks.gold_block, Blocks.red_flower, Blocks.yellow_flower, Blocks.flower_pot);
-		
-	}
+	public final List<Block> blacklist = Arrays.asList(Blocks.stone_slab, Blocks.wooden_slab, Blocks.stone_slab2,
+			Blocks.brown_mushroom, Blocks.red_mushroom, Blocks.red_flower, Blocks.yellow_flower, Blocks.flower_pot,
+			Blocks.stone_button, Blocks.wooden_button, Blocks.lever, Blocks.light_weighted_pressure_plate,
+			Blocks.heavy_weighted_pressure_plate, Blocks.jukebox, Blocks.air, Blocks.iron_bars,
+			Blocks.stained_glass_pane, Blocks.ladder, Blocks.glass_pane, Blocks.carpet, Blocks.enchanting_table,
+			Blocks.chest, Blocks.ender_chest, Blocks.trapped_chest, Blocks.anvil, Blocks.sand, Blocks.web, Blocks.torch,
+			Blocks.crafting_table, Blocks.furnace, Blocks.waterlily, Blocks.dispenser, Blocks.stone_pressure_plate,
+			Blocks.wooden_pressure_plate, Blocks.noteblock, Blocks.iron_door, Blocks.dropper, Blocks.tnt,
+			Blocks.standing_banner, Blocks.wall_banner, Blocks.redstone_torch, Blocks.oak_door);
 
 	public int getBlockSlot(boolean hypixel) {
 		int item = -1;
 		int stacksize = 0;
 		if (!hypixel && mc.player.getHeldItem() != null && mc.player.getHeldItem().getItem() != null
 				&& mc.player.getHeldItem().getItem() instanceof ItemBlock
-				&& !invalidBlocks.contains(((ItemBlock) mc.player.getHeldItem().getItem()).getBlock())) {
+				&& !blacklist.contains(((ItemBlock) mc.player.getHeldItem().getItem()).getBlock())) {
 			return mc.player.inventory.currentItem;
 		} else {
 			for (int i = 36; i < 45; ++i) {
 				if (mc.player.inventoryContainer.getSlot(i).getStack() != null
 						&& mc.player.inventoryContainer.getSlot(i).getStack().getItem() instanceof ItemBlock
-						&& !invalidBlocks
-								.contains(((ItemBlock) mc.player.inventoryContainer.getSlot(i).getStack().getItem())
-										.getBlock())
+						&& !blacklist.contains(
+								((ItemBlock) mc.player.inventoryContainer.getSlot(i).getStack().getItem()).getBlock())
 						&& mc.player.inventoryContainer.getSlot(i).getStack().stackSize >= stacksize) {
 					item = i - 36;
 					stacksize = mc.player.inventoryContainer.getSlot(i).getStack().stackSize;
@@ -113,71 +111,70 @@ public class InventoryUtil implements Accessor {
 	}
 
 	public ItemStack getBlockSlotInventory() {
-	    ItemStack item = null;
-	    int stacksize = 0;
+		ItemStack item = null;
+		int stacksize = 0;
 
-	    if (mc.player != null && mc.player.getHeldItem() != null) {
-	        ItemStack heldItem = mc.player.getHeldItem();
-	        if (heldItem.getItem() instanceof ItemBlock) {
-	            ItemBlock itemBlock = (ItemBlock) heldItem.getItem();
-	            Block block = itemBlock.getBlock();
-	            if (block != null && invalidBlocks != null && !invalidBlocks.contains(block)) {
-	                return heldItem;
-	            }
-	        }
-	    }
+		if (mc.player != null && mc.player.getHeldItem() != null) {
+			ItemStack heldItem = mc.player.getHeldItem();
+			if (heldItem.getItem() instanceof ItemBlock) {
+				ItemBlock itemBlock = (ItemBlock) heldItem.getItem();
+				Block block = itemBlock.getBlock();
+				if (block != null && blacklist != null && !blacklist.contains(block)) {
+					return heldItem;
+				}
+			}
+		}
 
-	    if (mc.player != null && mc.player.inventoryContainer != null) {
-	        for (int i = 9; i < 45; ++i) {
-	            Slot slot = mc.player.inventoryContainer.getSlot(i);
-	            if (slot != null) {
-	                ItemStack stack = slot.getStack();
-	                if (stack != null && stack.getItem() instanceof ItemBlock) {
-	                    ItemBlock itemBlock = (ItemBlock) stack.getItem();
-	                    Block block = itemBlock.getBlock();
-	                    if (block != null && invalidBlocks != null && !invalidBlocks.contains(block)) {
-	                        if (stack.stackSize > stacksize) {
-	                            item = stack;
-	                            stacksize = stack.stackSize;
-	                        }
-	                    }
-	                }
-	            }
-	        }
-	    }
+		if (mc.player != null && mc.player.inventoryContainer != null) {
+			for (int i = 9; i < 45; ++i) {
+				Slot slot = mc.player.inventoryContainer.getSlot(i);
+				if (slot != null) {
+					ItemStack stack = slot.getStack();
+					if (stack != null && stack.getItem() instanceof ItemBlock) {
+						ItemBlock itemBlock = (ItemBlock) stack.getItem();
+						Block block = itemBlock.getBlock();
+						if (block != null && blacklist != null && !blacklist.contains(block)) {
+							if (stack.stackSize > stacksize) {
+								item = stack;
+								stacksize = stack.stackSize;
+							}
+						}
+					}
+				}
+			}
+		}
 
-	    return item;
+		return item;
 	}
-	
+
 	public ItemStack getGoldenAppleSlotInventory() {
-	    ItemStack item = null;
-	    int stacksize = 0;
+		ItemStack item = null;
+		int stacksize = 0;
 
-	    if (mc.player != null && mc.player.getHeldItem() != null) {
-	        ItemStack heldItem = mc.player.getHeldItem();
-	        if (heldItem.getItem() instanceof ItemAppleGold) {
-	            return heldItem;
-	        }
-	    }
+		if (mc.player != null && mc.player.getHeldItem() != null) {
+			ItemStack heldItem = mc.player.getHeldItem();
+			if (heldItem.getItem() instanceof ItemAppleGold) {
+				return heldItem;
+			}
+		}
 
-	    if (mc.player != null && mc.player.inventoryContainer != null) {
-	        for (int i = 9; i < 45; ++i) {
-	            Slot slot = mc.player.inventoryContainer.getSlot(i);
-	            if (slot != null) {
-	                ItemStack stack = slot.getStack();
-	                if (stack != null && stack.getItem() instanceof ItemAppleGold) {
-	                    if (stack.stackSize > stacksize) {
-	                        item = stack;
-	                        stacksize = stack.stackSize;
-	                    }
-	                }
-	            }
-	        }
-	    }
+		if (mc.player != null && mc.player.inventoryContainer != null) {
+			for (int i = 9; i < 45; ++i) {
+				Slot slot = mc.player.inventoryContainer.getSlot(i);
+				if (slot != null) {
+					ItemStack stack = slot.getStack();
+					if (stack != null && stack.getItem() instanceof ItemAppleGold) {
+						if (stack.stackSize > stacksize) {
+							item = stack;
+							stacksize = stack.stackSize;
+						}
+					}
+				}
+			}
+		}
 
-	    return item;
+		return item;
 	}
-
 
 	public float getProtection(ItemStack stack) {
 		float prot = 0.0F;
@@ -232,14 +229,6 @@ public class InventoryUtil implements Accessor {
 		}
 	}
 
-	public void drop(int slot) {
-		mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 1, 4, mc.player);
-	}
-
-	public void shiftClick(int slot) {
-		mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, 1, mc.player);
-	}
-
 	public boolean isBadStack(ItemStack is, boolean preferSword, boolean keepTools) {
 		for (int type = 1; type < 5; ++type) {
 			String strType = "";
@@ -260,8 +249,7 @@ public class InventoryUtil implements Accessor {
 
 			if (mc.player.inventoryContainer.getSlot(4 + type).getHasStack()
 					&& isBestArmor(mc.player.inventoryContainer.getSlot(4 + type).getStack(), type)
-					&& mc.player.inventoryContainer.getSlot(4 + type).getStack().getUnlocalizedName()
-							.contains(strType)
+					&& mc.player.inventoryContainer.getSlot(4 + type).getStack().getUnlocalizedName().contains(strType)
 					&& is.getUnlocalizedName().contains(strType)) {
 				return true;
 			}
@@ -316,8 +304,7 @@ public class InventoryUtil implements Accessor {
 
 			if (mc.player.inventoryContainer.getSlot(4 + type).getHasStack()
 					&& isBestArmor(mc.player.inventoryContainer.getSlot(4 + type).getStack(), type)
-					&& mc.player.inventoryContainer.getSlot(4 + type).getStack().getUnlocalizedName()
-							.contains(strType)
+					&& mc.player.inventoryContainer.getSlot(4 + type).getStack().getUnlocalizedName().contains(strType)
 					&& is.getUnlocalizedName().contains(strType)) {
 				return true;
 			}
@@ -556,7 +543,6 @@ public class InventoryUtil implements Accessor {
 		return bestTool;
 	}
 
-
 	public float getToolRating(ItemStack itemStack) {
 		float damage = getToolMaterialRating(itemStack, false);
 		damage += (float) EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack) * 2.0F;
@@ -591,53 +577,184 @@ public class InventoryUtil implements Accessor {
 	}
 
 	public float getToolMaterialRating(ItemStack itemStack, boolean checkForDamage) {
-	    if (itemStack == null || itemStack.getItem() == null) {
-	        return 0.0F;
-	    }
+		if (itemStack == null || itemStack.getItem() == null) {
+			return 0.0F;
+		}
 
-	    Item item = itemStack.getItem();
-	    String materialName = null;
+		Item item = itemStack.getItem();
+		String materialName = null;
 
-	    if (item instanceof ItemTool) {
-	        materialName = ((ItemTool) item).getToolMaterialName();
-	    } else if (item instanceof ItemSword) {
-	        materialName = ((ItemSword) item).getToolMaterialName();
-	    }
+		if (item instanceof ItemTool) {
+			materialName = ((ItemTool) item).getToolMaterialName();
+		} else if (item instanceof ItemSword) {
+			materialName = ((ItemSword) item).getToolMaterialName();
+		}
 
-	    if (materialName == null) {
-	        return 0.0F;
-	    }
+		if (materialName == null) {
+			return 0.0F;
+		}
 
-	    Map<String, Float> materialRatings = new HashMap<>();
-	    materialRatings.put("WOOD", 2.0F);
-	    materialRatings.put("STONE", 3.0F);
-	    materialRatings.put("IRON", 4.0F);
-	    materialRatings.put("GOLD", 2.0F);
-	    materialRatings.put("EMERALD", 5.0F);
+		Map<String, Float> materialRatings = new HashMap<>();
+		materialRatings.put("WOOD", 2.0F);
+		materialRatings.put("STONE", 3.0F);
+		materialRatings.put("IRON", 4.0F);
+		materialRatings.put("GOLD", 2.0F);
+		materialRatings.put("EMERALD", 5.0F);
 
-	    float baseRating = materialRatings.getOrDefault(materialName, 0.0F);
+		float baseRating = materialRatings.getOrDefault(materialName, 0.0F);
 
-	    if (item instanceof ItemSword) {
-	        baseRating += 2.0F;
-	    } else if (item instanceof ItemPickaxe || item instanceof ItemSpade) {
-	        baseRating = checkForDamage ? baseRating : baseRating * 10;
-	    } else if (item instanceof ItemAxe) {
-	        baseRating += 1.0F;
-	    }
+		if (item instanceof ItemSword) {
+			baseRating += 2.0F;
+		} else if (item instanceof ItemPickaxe || item instanceof ItemSpade) {
+			baseRating = checkForDamage ? baseRating : baseRating * 10;
+		} else if (item instanceof ItemAxe) {
+			baseRating += 1.0F;
+		}
 
-	    return baseRating;
+		return baseRating;
 	}
-	
-    public boolean canBePlaced(ItemBlock itemBlock) {
-        Block block = itemBlock.getBlock();
-        if (block == null) {
-            return false;
-        }
-        return !isInteractable(block) && !(block instanceof BlockTNT) && !(block instanceof BlockSlab) && !(block instanceof BlockWeb) && !(block instanceof BlockLever) && !(block instanceof BlockButton) && !(block instanceof BlockSkull) && !(block instanceof BlockLiquid) && !(block instanceof BlockCactus) && !(block instanceof BlockCarpet) && !(block instanceof BlockTripWire) && !(block instanceof BlockTripWireHook) && !(block instanceof BlockTallGrass) && !(block instanceof BlockFlower) && !(block instanceof BlockFlowerPot) && !(block instanceof BlockSign) && !(block instanceof BlockLadder) && !(block instanceof BlockTorch) && !(block instanceof BlockRedstoneTorch) && !(block instanceof BlockFence) && !(block instanceof BlockPane) && !(block instanceof BlockStainedGlassPane) && !(block instanceof BlockGravel) && !(block instanceof BlockClay) && !(block instanceof BlockSand) && !(block instanceof BlockSoulSand);
-    }
-    
-    private boolean isInteractable(Block block) {
-        return block instanceof BlockFurnace || block instanceof BlockFenceGate || block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockEnchantmentTable || block instanceof BlockBrewingStand || block instanceof BlockBed || block instanceof BlockDropper || block instanceof BlockDispenser || block instanceof BlockHopper || block instanceof BlockAnvil || block == Blocks.crafting_table;
-    }
+
+	public int findTool(final BlockPos blockPos) {
+		float bestSpeed = 1;
+		int bestSlot = -1;
+
+		final IBlockState blockState = mc.world.getBlockState(blockPos);
+
+		for (int i = 0; i < 9; i++) {
+			final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
+
+			if (itemStack == null) {
+				continue;
+			}
+
+			final float speed = itemStack.getStrVsBlock(blockState.getBlock());
+
+			if (speed > bestSpeed) {
+				bestSpeed = speed;
+				bestSlot = i;
+			}
+		}
+
+		return bestSlot;
+	}
+
+	public int findItem(final Item item) {
+		for (int i = 0; i < 9; i++) {
+			final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
+
+			if (itemStack == null) {
+				if (item == null) {
+					return i;
+				}
+				continue;
+			}
+
+			if (itemStack.getItem() == item) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	public int findBlock(final Block block) {
+		for (int i = 0; i < 9; i++) {
+			final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
+
+			if (itemStack == null) {
+				if (block == null) {
+					return i;
+				}
+				continue;
+			}
+
+			if (itemStack.getItem() instanceof ItemBlock && ((ItemBlock) itemStack.getItem()).getBlock() == block) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	public int findBlock() {
+		int slot = -1;
+		int highestStack = -1;
+		for (int i = 0; i < 9; ++i) {
+			final ItemStack itemStack = mc.player.inventory.mainInventory[i];
+			if (itemStack != null && itemStack.getItem() instanceof ItemBlock
+					&& blacklist.stream().noneMatch(block -> block.equals(((ItemBlock) itemStack.getItem()).getBlock()))
+					&& itemStack.stackSize > 0) {
+				if (mc.player.inventory.mainInventory[i].stackSize > highestStack) {
+					highestStack = mc.player.inventory.mainInventory[i].stackSize;
+					slot = i;
+				}
+			}
+		}
+		return slot;
+	}
+
+	public int getMaxDamageSlot() {
+		int index = -1;
+		double damage = -1;
+
+		for (int slot = 0; slot <= 8; slot++) {
+			ItemStack itemInSlot = mc.player.inventory.getStackInSlot(slot);
+			if (itemInSlot == null)
+				continue;
+			for (AttributeModifier mooommHelp : itemInSlot.getAttributeModifiers().values()) {
+				if (mooommHelp.getAmount() > damage) {
+					damage = mooommHelp.getAmount();
+					index = slot;
+				}
+			}
+
+		}
+		return index;
+	}
+
+	public double getSlotDamage(int slot) {
+		ItemStack itemInSlot = mc.player.inventory.getStackInSlot(slot);
+		if (itemInSlot == null)
+			return -1;
+		for (AttributeModifier mooommHelp : itemInSlot.getAttributeModifiers().values()) {
+			return mooommHelp.getAmount();
+		}
+		return -1;
+	}
+
+	public boolean isSword() {
+		if (mc.player.getCurrentEquippedItem() == null) {
+			return false;
+		} else {
+			Item item = mc.player.getCurrentEquippedItem().getItem();
+			return item instanceof ItemSword;
+		}
+	}
+
+	public boolean canBePlaced(ItemBlock itemBlock) {
+		Block block = itemBlock.getBlock();
+		if (block == null) {
+			return false;
+		}
+		return !isInteractable(block) && !(block instanceof BlockTNT) && !(block instanceof BlockSlab)
+				&& !(block instanceof BlockWeb) && !(block instanceof BlockLever) && !(block instanceof BlockButton)
+				&& !(block instanceof BlockSkull) && !(block instanceof BlockLiquid) && !(block instanceof BlockCactus)
+				&& !(block instanceof BlockCarpet) && !(block instanceof BlockTripWire)
+				&& !(block instanceof BlockTripWireHook) && !(block instanceof BlockTallGrass)
+				&& !(block instanceof BlockFlower) && !(block instanceof BlockFlowerPot)
+				&& !(block instanceof BlockSign) && !(block instanceof BlockLadder) && !(block instanceof BlockTorch)
+				&& !(block instanceof BlockRedstoneTorch) && !(block instanceof BlockFence)
+				&& !(block instanceof BlockPane) && !(block instanceof BlockStainedGlassPane)
+				&& !(block instanceof BlockGravel) && !(block instanceof BlockClay) && !(block instanceof BlockSand)
+				&& !(block instanceof BlockSoulSand);
+	}
+
+	private boolean isInteractable(Block block) {
+		return block instanceof BlockFurnace || block instanceof BlockFenceGate || block instanceof BlockChest
+				|| block instanceof BlockEnderChest || block instanceof BlockEnchantmentTable
+				|| block instanceof BlockBrewingStand || block instanceof BlockBed || block instanceof BlockDropper
+				|| block instanceof BlockDispenser || block instanceof BlockHopper || block instanceof BlockAnvil
+				|| block == Blocks.crafting_table;
+	}
 
 }

@@ -7,7 +7,7 @@ import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.util.MovingObjectPosition;
 
@@ -31,14 +31,14 @@ public class AutoTool extends Module {
     
 	@EventLink
 	public final Listener<TickEvent> onTick = event -> {
-        if (mc.gameSettings.keyBindAttack.isKeyDown() && mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && PlayerUtil.findTool(mc.objectMouseOver.getBlockPos()) != -1) {
+        if (mc.gameSettings.keyBindAttack.isKeyDown() && mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && InventoryUtil.findTool(mc.objectMouseOver.getBlockPos()) != -1) {
             if (!wasDigging) {
                 oldSlot = mc.player.inventory.currentItem;
                 if (spoof.getValue()) {
                 	SpoofHandler.startSpoofing(oldSlot);
                 }
             }
-            mc.player.inventory.currentItem = PlayerUtil.findTool(mc.objectMouseOver.getBlockPos());
+            mc.player.inventory.currentItem = InventoryUtil.findTool(mc.objectMouseOver.getBlockPos());
             wasDigging = true;
         } else if (wasDigging && (switchBack.getValue() || spoof.getValue())) {
             mc.player.inventory.currentItem = oldSlot;

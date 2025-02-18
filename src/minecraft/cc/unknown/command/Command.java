@@ -12,7 +12,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import cc.unknown.util.Accessor;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.client.ChatUtil;
 import lombok.Getter;
 
 @Getter
@@ -46,14 +46,14 @@ public abstract class Command implements Accessor {
     }
 	
 	public void error(String error) {
-		PlayerUtil.displayInClient(yellow + "[" + red + "%" + yellow + "] " + reset + error); 
+		ChatUtil.display(yellow + "[" + red + "%" + yellow + "] " + reset + error); 
 	}
 	
 	public void warning(String warn) {
-		PlayerUtil.displayInClient(yellow + "[" + red + "!" + yellow + "] " + reset + warn);
+		ChatUtil.display(yellow + "[" + red + "!" + yellow + "] " + reset + warn);
 	}
 	
 	public void success(String success) {
-		PlayerUtil.displayInClient(yellow + "[" + green + "*" + yellow + "] " + reset + success);
+		ChatUtil.display(yellow + "[" + green + "*" + yellow + "] " + reset + success);
 	}
 }

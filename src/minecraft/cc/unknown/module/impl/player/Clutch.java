@@ -12,9 +12,9 @@ import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.util.player.EnumFacingOffset;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
-import cc.unknown.util.player.SlotUtil;
 import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.util.player.rotation.RotationUtil;
 import cc.unknown.util.structure.geometry.Vector2f;
@@ -80,7 +80,7 @@ public class Clutch extends Module {
 		if (isEnabled(Scaffold.class, LegitScaffold.class) || (!mc.gameSettings.keyBindSneak.isKeyDown()))
 			return;
 
-		final int slot = SlotUtil.findBlock();
+		final int slot = InventoryUtil.findBlock();
 
 		if (slot == -1) {
 			return;

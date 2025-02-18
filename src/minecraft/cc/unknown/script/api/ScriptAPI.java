@@ -17,9 +17,9 @@ import cc.unknown.script.api.wrapper.impl.ScriptModule;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector2f;
 import cc.unknown.script.api.wrapper.impl.vector.ScriptVector3d;
 import cc.unknown.script.util.ScriptModuleInfo;
+import cc.unknown.util.client.ChatUtil;
 import cc.unknown.util.player.EnemyUtil;
 import cc.unknown.util.player.FriendUtil;
-import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.util.player.rotation.RotationUtil;
 import cc.unknown.util.structure.geometry.Vector2f;
@@ -142,7 +142,7 @@ public class ScriptAPI {
     }
 
     public void displayChat(final String message) {
-    	PlayerUtil.displayInClient(message);
+    	ChatUtil.display(message);
     }
 
     public long getSystemMillis() {
@@ -170,7 +170,7 @@ public class ScriptAPI {
     }
 
     public ScriptBlockPos newBlockPos(int x, int y, int z) {
-    	PlayerUtil.displayInClient("Please use world.newBlockPos(), instead of sakura.newBlockPos().");
+    	ChatUtil.display("Please use world.newBlockPos(), instead of sakura.newBlockPos().");
         return null;
     }
 

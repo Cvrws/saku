@@ -2,16 +2,13 @@ package cc.unknown.module.impl.other;
 
 import org.lwjgl.input.Mouse;
 
-import com.ibm.icu.impl.duration.impl.Utils;
-
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.player.ItemUtil;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.entity.Entity;
 
@@ -50,9 +47,9 @@ public final class AutoSword extends Module {
 	        prevSlot = mc.player.inventory.currentItem;
 	        onWeapon = true;
 
-	        int dmgSlot = ItemUtil.getMaxDamageSlot();
+	        int dmgSlot = InventoryUtil.getMaxDamageSlot();
 	        if (dmgSlot >= 0 && 
-	            ItemUtil.getSlotDamage(dmgSlot) > ItemUtil.getSlotDamage(mc.player.inventory.currentItem)) {
+	        		InventoryUtil.getSlotDamage(dmgSlot) > InventoryUtil.getSlotDamage(mc.player.inventory.currentItem)) {
 	            mc.player.inventory.currentItem = dmgSlot;
 	        }
 	    }

@@ -11,7 +11,7 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.client.ChatUtil;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S32PacketConfirmTransaction;
 
@@ -30,7 +30,7 @@ public class TransactionHandler implements Accessor {
         
         if (packet instanceof S32PacketConfirmTransaction) {
             final S32PacketConfirmTransaction wrapper = (S32PacketConfirmTransaction) packet;
-            PlayerUtil.displayInClient(yellow + "[" + green + "*" + yellow + "] " + reset + String.format(red + "Transaction " + reset + " (ID: %s) (WindowID: %s)", wrapper.actionNumber, wrapper.windowId));
+            ChatUtil.display(yellow + "[" + green + "*" + yellow + "] " + reset + String.format(red + "Transaction " + reset + " (ID: %s) (WindowID: %s)", wrapper.actionNumber, wrapper.windowId));
         }
     };
 }

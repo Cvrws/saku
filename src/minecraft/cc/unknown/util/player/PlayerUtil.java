@@ -14,10 +14,8 @@ import org.lwjgl.input.Mouse;
 import cc.unknown.Sakura;
 import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.impl.ghost.AutoClicker;
-import cc.unknown.module.impl.move.Sprint;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.client.MathUtil;
-import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.util.player.rotation.RotationUtil;
 import cc.unknown.util.structure.geometry.Vector2f;
 import lombok.experimental.UtilityClass;
@@ -25,7 +23,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.settings.KeyBinding;
@@ -38,19 +35,14 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityEgg;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
-import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.network.play.client.C01PacketChatMessage;
-import net.minecraft.potion.Potion;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -71,9 +63,6 @@ public class PlayerUtil implements Accessor {
 			put(5, 7); // Strength
 			put(1, 8); // Speed
 			put(12, 9); // Fire Resistance
-			put(14, 10); // Invisibility
-			put(3, 11); // Haste
-			put(13, 12); // Water Breathing
 		}
 	};
 
@@ -137,28 +126,6 @@ public class PlayerUtil implements Accessor {
 				|| Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())
 				|| Keyboard.isKeyDown(mc.gameSettings.keyBindLeft.getKeyCode())
 				|| Keyboard.isKeyDown(mc.gameSettings.keyBindRight.getKeyCode());
-	}
-
-	public float[] getDirectionToBlock(final double x, final double y, final double z, final EnumFacing enumfacing) {
-		final EntityEgg var4 = new EntityEgg(mc.world);
-		var4.posX = x + 0.5D;
-		var4.posY = y + 0.5D;
-		var4.posZ = z + 0.5D;
-		var4.posX += (double) enumfacing.getDirectionVec().getX() * 0.5D;
-		var4.posY += (double) enumfacing.getDirectionVec().getY() * 0.5D;
-		var4.posZ += (double) enumfacing.getDirectionVec().getZ() * 0.5D;
-		return getRotations(var4.posX, var4.posY, var4.posZ);
-	}
-
-	public float[] getRotations(final double posX, final double posY, final double posZ) {
-		final EntityPlayerSP player = mc.player;
-		final double x = posX - player.posX;
-		final double y = posY - (player.posY + (double) player.getEyeHeight());
-		final double z = posZ - player.posZ;
-		final double dist = MathHelper.sqrt_double(x * x + z * z);
-		final float yaw = (float) (Math.atan2(z, x) * 180.0D / Math.PI) - 90.0F;
-		final float pitch = (float) (-(Math.atan2(y, dist) * 180.0D / Math.PI));
-		return new float[] { yaw, pitch };
 	}
 
 	public double distance(final BlockPos pos1, final BlockPos pos2) {
@@ -271,19 +238,6 @@ public class PlayerUtil implements Accessor {
 
 	public boolean isBlockUnder() {
 		return isBlockUnder(10);
-	}
-
-	public double distanceToBlockUnder() {
-		double distance = 0;
-
-		for (int i = 0; i < 256; i++) {
-			if (blockRelativeToPlayer(0, -i, 0).isFullBlock()) {
-				distance = i;
-				break;
-			}
-		}
-
-		return distance;
 	}
 
 	public boolean goodPotion(final int id) {
@@ -495,10 +449,6 @@ public class PlayerUtil implements Accessor {
 
 	    return possibilities.get(0);
 	}
-	
-	public boolean jumpDown() {
-		return Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode());
-	}
 
 	public double calculatePerfectRangeToEntity(Entity entity) {
 		double range = 1000;
@@ -510,15 +460,6 @@ public class PlayerUtil implements Accessor {
 						rotationVector.zCoord * range));
 
 		return movingObjectPosition.hitVec.distanceTo(eyes);
-	}
-
-	public boolean isHoldingWeapon() {
-		if (mc.player.getCurrentEquippedItem() == null) {
-			return false;
-		} else {
-			Item item = mc.player.getCurrentEquippedItem().getItem();
-			return item instanceof ItemSword;
-		}
 	}
 	
 	public boolean isTeam(EntityPlayer player) {
@@ -582,199 +523,6 @@ public class PlayerUtil implements Accessor {
 		double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 		return distance < m;
 	}
-	
-    public void displayInClient(final Object message, final Object... objects) {
-        if (mc.player != null) {
-            final String format = String.format(message.toString(), objects);
-            mc.player.addChatMessage(new ChatComponentText(format));
-        }
-    }
-
-    public void sendInChat(final Object message) {
-        if (mc.player != null) {
-            PacketUtil.send(new C01PacketChatMessage(message.toString()));
-        }
-    }
-    
-    public double[] getPredictedPos(float forward, float strafe, double motionX, double motionY, double motionZ, double posX, double posY, double posZ, boolean isJumping) {
-       strafe *= 0.98F;
-       forward *= 0.98F;
-       float f4 = 0.91F;
-       boolean isSprinting = mc.player.isSprinting();
-       if (isJumping && mc.player.onGround && mc.player.jumpTicks == 0) {
-          motionY = mc.player.getJumpUpwardsMotion();
-          if (mc.player.isPotionActive(Potion.jump)) {
-             motionY += (float)(mc.player.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F;
-          }
-
-          if (isSprinting) {
-             float f = mc.player.rotationYaw * (float) (Math.PI / 180.0);
-             motionX -= MathHelper.sin(f) * 0.2F;
-             motionZ += MathHelper.cos(f) * 0.2F;
-          }
-       }
-
-       if (mc.player.onGround) {
-          f4 = mc.player.worldObj.getBlockState(new BlockPos(MathHelper.floor_double(posX), MathHelper.floor_double(posY) - 1, MathHelper.floor_double(posZ))).getBlock().slipperiness * 0.91F;
-       }
-
-       float f3 = 0.16277136F / (f4 * f4 * f4);
-       float friction;
-       if (mc.player.onGround) {
-          friction = mc.player.getAIMoveSpeed() * f3;
-          if (mc.player == mc.player && Sakura.instance.getModuleManager().get(Sprint.class).isEnabled() && !Sakura.instance.getModuleManager().get(Sprint.class).legit.getValue()) {
-             friction = 0.12999998F;
-          }
-       } else {
-          friction = mc.player.jumpMovementFactor;
-       }
-
-       float f = strafe * strafe + forward * forward;
-       if (f >= 1.0E-4F) {
-          f = MathHelper.sqrt_float(f);
-          if (f < 1.0F) {
-             f = 1.0F;
-          }
-
-          f = friction / f;
-          strafe *= f;
-          forward *= f;
-          float f1 = MathHelper.sin(mc.player.rotationYaw * (float) Math.PI / 180.0F);
-          float f2 = MathHelper.cos(mc.player.rotationYaw * (float) Math.PI / 180.0F);
-          motionX += strafe * f2 - forward * f1;
-          motionZ += forward * f2 + strafe * f1;
-       }
-
-       posX += motionX;
-       posY += motionY;
-       posZ += motionZ;
-       f4 = 0.91F;
-       if (mc.player.onGround) {
-          f4 = mc.player.worldObj.getBlockState(new BlockPos(MathHelper.floor_double(posX), MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1, MathHelper.floor_double(posZ))).getBlock().slipperiness * 0.91F;
-       }
-
-       if (mc.player.worldObj.isRemote && (!mc.player.worldObj.isBlockLoaded(new BlockPos((int)posX, 0, (int)posZ)) || !mc.player.worldObj.getChunkFromBlockCoords(new BlockPos((int)posX, 0, (int)posZ)).isLoaded())) {
-          if (posY > 0.0) {
-             motionY = -0.1;
-          } else {
-             motionY = 0.0;
-          }
-       } else {
-          motionY -= 0.08;
-       }
-
-       motionY *= 0.98F;
-       motionX *= f4;
-       motionZ *= f4;
-       return new double[]{posX, posY, posZ, motionX, motionY, motionZ};
-    }
-    
-    public Vec3 getPredictedPos(float forward, float strafe) {
-        strafe *= 0.98F;
-        forward *= 0.98F;
-        float f4 = 0.91F;
-        double motionX = mc.player.motionX;
-        double motionZ = mc.player.motionZ;
-        double motionY = mc.player.motionY;
-        boolean isSprinting = mc.player.isSprinting();
-
-        if (mc.player.isJumping && mc.player.onGround) {
-            motionY = mc.player.getJumpUpwardsMotion();
-            if (mc.player.isPotionActive(Potion.jump)) {
-                motionY += (float)(mc.player.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F;
-            }
-
-            if (isSprinting) {
-                float f = mc.player.rotationYaw * (float) (Math.PI / 180.0);
-                motionX -= MathHelper.sin(f) * 0.2F;
-                motionZ += MathHelper.cos(f) * 0.2F;
-            }
-        }
-
-        if (mc.player.onGround) {
-            f4 = mc.player
-                    .worldObj
-                    .getBlockState(
-                            new BlockPos(
-                                    MathHelper.floor_double(mc.player.posX),
-                                    MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1,
-                                    MathHelper.floor_double(mc.player.posZ)
-                            )
-                    )
-                    .getBlock()
-                    .slipperiness
-                    * 0.91F;
-        }
-
-        float f3 = 0.16277136F / (f4 * f4 * f4);
-        float friction;
-        if (mc.player.onGround) {
-            friction = mc.player.getAIMoveSpeed() * f3;
-            if (mc.player == mc.player
-                    && mc.player.isSprinting()) {
-                friction = 0.12999998F;
-            }
-        } else {
-            friction = mc.player.jumpMovementFactor;
-        }
-
-        float f = strafe * strafe + forward * forward;
-        if (f >= 1.0E-4F) {
-            f = MathHelper.sqrt_float(f);
-            if (f < 1.0F) {
-                f = 1.0F;
-            }
-
-            f = friction / f;
-            strafe *= f;
-            forward *= f;
-            float f1 = MathHelper.sin(mc.player.rotationYaw * (float) Math.PI / 180.0F);
-            float f2 = MathHelper.cos(mc.player.rotationYaw * (float) Math.PI / 180.0F);
-            motionX += strafe * f2 - forward * f1;
-            motionZ += forward * f2 + strafe * f1;
-        }
-
-        f4 = 0.91F;
-        if (mc.player.onGround) {
-            f4 = mc.player
-                    .worldObj
-                    .getBlockState(
-                            new BlockPos(
-                                    MathHelper.floor_double(mc.player.posX),
-                                    MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1,
-                                    MathHelper.floor_double(mc.player.posZ)
-                            )
-                    )
-                    .getBlock()
-                    .slipperiness
-                    * 0.91F;
-        }
-
-        motionY *= 0.98F;
-        motionX *= f4;
-        motionZ *= f4;
-        return new Vec3(motionX, motionY, motionZ);
-    }
-    
-    public float getStrafeYaw(float forward, float strafe) {
-        float yaw = mc.player.rotationYaw;
-
-        if((forward == 0) && (strafe == 0))
-            return yaw;
-
-        boolean reversed = forward < 0.0f;
-        float strafingYaw = 90.0f *
-                (forward > 0.0f ? 0.5f : reversed ? -0.5f : 1.0f);
-
-        if (reversed)
-            yaw += 180.0f;
-        if (strafe > 0.0f)
-            yaw -= strafingYaw;
-        else if (strafe < 0.0f)
-            yaw += strafingYaw;
-
-        return yaw;
-    }
     
     public Item getItem() {
         ItemStack stack = getItemStack();
@@ -785,99 +533,14 @@ public class PlayerUtil implements Accessor {
         return (mc.player == null || mc.player.inventoryContainer == null ? null : mc.player.inventoryContainer.getSlot(mc.player.inventory.currentItem + 36).getStack());
     }
     
-    public int findTool(final BlockPos blockPos) {
-        float bestSpeed = 1;
-        int bestSlot = -1;
+	public void drop(int slot) {
+		mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 1, 4, mc.player);
+	}
 
-        final IBlockState blockState = mc.world.getBlockState(blockPos);
-
-        for (int i = 0; i < 9; i++) {
-            final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
-
-            if (itemStack == null) {
-                continue;
-            }
-
-            final float speed = itemStack.getStrVsBlock(blockState.getBlock());
-
-            if (speed > bestSpeed) {
-                bestSpeed = speed;
-                bestSlot = i;
-            }
-        }
-
-        return bestSlot;
-    }
+	public void shiftClick(int slot) {
+		mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, 1, mc.player);
+	}
     
-	public ItemStack getBestSword() {
-		int size = mc.player.inventoryContainer.getInventory().size();
-		ItemStack lastSword = null;
-		for (int i = 0; i < size; i++) {
-			ItemStack stack = mc.player.inventoryContainer.getInventory().get(i);
-			if (stack != null && stack.getItem() instanceof ItemSword)
-				if (lastSword == null) {
-					lastSword = stack;
-				} else if (isBetterSword(stack, lastSword)) {
-					lastSword = stack;
-				}
-		}
-		return lastSword;
-	}
-
-	public ItemStack getBestAxe() {
-		int size = mc.player.inventoryContainer.getInventory().size();
-		ItemStack lastAxe = null;
-		for (int i = 0; i < size; i++) {
-			ItemStack stack = mc.player.inventoryContainer.getInventory().get(i);
-			if (stack != null && stack.getItem() instanceof ItemAxe)
-				if (lastAxe == null) {
-					lastAxe = stack;
-				} else if (isBetterTool(stack, lastAxe, Blocks.planks)) {
-					lastAxe = stack;
-				}
-		}
-		return lastAxe;
-	}
-
-	public ItemStack getBestPickaxe() {
-		int size = mc.player.inventoryContainer.getInventory().size();
-		ItemStack lastPickaxe = null;
-		for (int i = 0; i < size; i++) {
-			ItemStack stack = mc.player.inventoryContainer.getInventory().get(i);
-			if (stack != null && stack.getItem() instanceof ItemPickaxe)
-				if (lastPickaxe == null) {
-					lastPickaxe = stack;
-				} else if (isBetterTool(stack, lastPickaxe, Blocks.stone)) {
-					lastPickaxe = stack;
-				}
-		}
-		return lastPickaxe;
-	}
-
-	public boolean isBetterTool(ItemStack better, ItemStack than, Block versus) {
-		return (getToolDigEfficiency(better, versus) > getToolDigEfficiency(than, versus));
-	}
-
-	public boolean isBetterSword(ItemStack better, ItemStack than) {
-		return (getSwordDamage((ItemSword) better.getItem(), better) > getSwordDamage((ItemSword) than.getItem(),
-				than));
-	}
-
-	public float getSwordDamage(ItemSword sword, ItemStack stack) {
-		float base = sword.getMaxDamage();
-		return base + EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, stack) * 1.25F;
-	}
-
-	public float getToolDigEfficiency(ItemStack stack, Block block) {
-		float f = stack.getStrVsBlock(block);
-		if (f > 1.0F) {
-			int i = EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, stack);
-			if (i > 0)
-				f += (i * i + 1);
-		}
-		return f;
-	}
-	
     public boolean overVoid(double posX, double posY, double posZ) {
         for (int i = (int) posY; i > -1; i--) {
             if (!(mc.world.getBlockState(new BlockPos(posX, i, posZ)).getBlock() instanceof BlockAir)) {
@@ -929,21 +592,8 @@ public class PlayerUtil implements Accessor {
     }
     
     private String getColorForHealth(double n, double n2) {
-        double health = rnd(n2, 1);
-        return ((n < 0.3) ? "§c" : ((n < 0.5) ? "§6" : ((n < 0.7) ? "§e" : "§a"))) + (isWholeNumber(health) ? (int) health + "" : health);
-    }
-    
-    private boolean isWholeNumber(double num) {
-        return num == Math.floor(num);
-    }
-    
-    private double rnd(double n, int d) {
-        if (d == 0) {
-            return (double) Math.round(n);
-        } else {
-            double p = Math.pow(10.0D, (double) d);
-            return (double) Math.round(n * p) / p;
-        }
+        double health = MathUtil.round(n2, 1);
+        return ((n < 0.3) ? "§c" : ((n < 0.5) ? "§6" : ((n < 0.7) ? "§e" : "§a"))) + (MathUtil.isWholeNumber(health) ? (int) health + "" : health);
     }
     
     public String getHitsToKill(final EntityPlayer entityPlayer, final ItemStack itemStack) {
@@ -970,7 +620,7 @@ public class PlayerUtil implements Accessor {
                 }
             }
         }
-        return rnd((double) getCompleteHealth(entityPlayer) / (n * (1.0 - (n2 + 0.04 * Math.min(Math.ceil(Math.min(n3, 25.0) * 0.75), 20.0) * (1.0 - n2)))), 1);
+        return MathUtil.round((double) getCompleteHealth(entityPlayer) / (n * (1.0 - (n2 + 0.04 * Math.min(Math.ceil(Math.min(n3, 25.0) * 0.75), 20.0) * (1.0 - n2)))), 1);
     }
     
     public double getDamage(final ItemStack itemStack) {

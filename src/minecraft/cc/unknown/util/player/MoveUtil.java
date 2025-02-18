@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 
 @UtilityClass
 public class MoveUtil implements Accessor {
@@ -687,6 +688,113 @@ public class MoveUtil implements Accessor {
         final double increase = mc.player.onGround ? groundIncrease : airIncrease;
 
         moveFlying(increase);
+    }
+    
+    public float getStrafeYaw(float forward, float strafe) {
+        float yaw = mc.player.rotationYaw;
+
+        if((forward == 0) && (strafe == 0))
+            return yaw;
+
+        boolean reversed = forward < 0.0f;
+        float strafingYaw = 90.0f *
+                (forward > 0.0f ? 0.5f : reversed ? -0.5f : 1.0f);
+
+        if (reversed)
+            yaw += 180.0f;
+        if (strafe > 0.0f)
+            yaw -= strafingYaw;
+        else if (strafe < 0.0f)
+            yaw += strafingYaw;
+
+        return yaw;
+    }
+    
+    public Vec3 getPredictedPos(float forward, float strafe) {
+        strafe *= 0.98F;
+        forward *= 0.98F;
+        float f4 = 0.91F;
+        double motionX = mc.player.motionX;
+        double motionZ = mc.player.motionZ;
+        double motionY = mc.player.motionY;
+        boolean isSprinting = mc.player.isSprinting();
+
+        if (mc.player.isJumping && mc.player.onGround) {
+            motionY = mc.player.getJumpUpwardsMotion();
+            if (mc.player.isPotionActive(Potion.jump)) {
+                motionY += (float)(mc.player.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F;
+            }
+
+            if (isSprinting) {
+                float f = mc.player.rotationYaw * (float) (Math.PI / 180.0);
+                motionX -= MathHelper.sin(f) * 0.2F;
+                motionZ += MathHelper.cos(f) * 0.2F;
+            }
+        }
+
+        if (mc.player.onGround) {
+            f4 = mc.player
+                    .worldObj
+                    .getBlockState(
+                            new BlockPos(
+                                    MathHelper.floor_double(mc.player.posX),
+                                    MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1,
+                                    MathHelper.floor_double(mc.player.posZ)
+                            )
+                    )
+                    .getBlock()
+                    .slipperiness
+                    * 0.91F;
+        }
+
+        float f3 = 0.16277136F / (f4 * f4 * f4);
+        float friction;
+        if (mc.player.onGround) {
+            friction = mc.player.getAIMoveSpeed() * f3;
+            if (mc.player == mc.player
+                    && mc.player.isSprinting()) {
+                friction = 0.12999998F;
+            }
+        } else {
+            friction = mc.player.jumpMovementFactor;
+        }
+
+        float f = strafe * strafe + forward * forward;
+        if (f >= 1.0E-4F) {
+            f = MathHelper.sqrt_float(f);
+            if (f < 1.0F) {
+                f = 1.0F;
+            }
+
+            f = friction / f;
+            strafe *= f;
+            forward *= f;
+            float f1 = MathHelper.sin(mc.player.rotationYaw * (float) Math.PI / 180.0F);
+            float f2 = MathHelper.cos(mc.player.rotationYaw * (float) Math.PI / 180.0F);
+            motionX += strafe * f2 - forward * f1;
+            motionZ += forward * f2 + strafe * f1;
+        }
+
+        f4 = 0.91F;
+        if (mc.player.onGround) {
+            f4 = mc.player
+                    .worldObj
+                    .getBlockState(
+                            new BlockPos(
+                                    MathHelper.floor_double(mc.player.posX),
+                                    MathHelper.floor_double(mc.player.getEntityBoundingBox().minY) - 1,
+                                    MathHelper.floor_double(mc.player.posZ)
+                            )
+                    )
+                    .getBlock()
+                    .slipperiness
+                    * 0.91F;
+        }
+
+        motionY *= 0.98F;
+        motionX *= f4;
+        motionZ *= f4;
+        return new Vec3(motionX, motionY, motionZ);
     }
 
     public void moveFlying(double increase) {

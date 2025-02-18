@@ -14,8 +14,8 @@ import cc.unknown.event.impl.input.MouseEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.ChatUtil;
 import cc.unknown.util.player.FriendUtil;
-import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,10 +62,10 @@ public final class MidClick extends Module {
 				EntityPlayer playerHit = (EntityPlayer) mc.objectMouseOver.entityHit;
 				if (!FriendUtil.isFriend(playerHit)) {
 					FriendUtil.addFriend(playerHit);
-					PlayerUtil.displayInClient(ChatFormatting.GRAY + playerHit.getName() + " was added to your friends.");
+					ChatUtil.display(ChatFormatting.GRAY + playerHit.getName() + " was added to your friends.");
 				} else {
 					FriendUtil.removeFriend(playerHit);
-					PlayerUtil.displayInClient(ChatFormatting.GRAY + playerHit.getName() + " was removed from your friends.");
+					ChatUtil.display(ChatFormatting.GRAY + playerHit.getName() + " was removed from your friends.");
 				}
 			}
 

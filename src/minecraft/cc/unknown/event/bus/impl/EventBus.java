@@ -20,9 +20,8 @@ import cc.unknown.event.impl.other.GameEvent;
 import cc.unknown.event.impl.other.ServerJoinEvent;
 import cc.unknown.event.impl.other.ServerKickEvent;
 import cc.unknown.event.impl.other.WorldChangeEvent;
-import cc.unknown.module.impl.move.Sprint;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.client.ChatUtil;
 
 public final class EventBus<Event> implements Bus<Event>, Accessor {
     private final Map<Type, List<CallSite<Event>>> callSiteMap;
@@ -65,7 +64,7 @@ public final class EventBus<Event> implements Bus<Event>, Accessor {
                             this.callSiteMap.put(eventType, callSites);
                         }
                     } catch (Throwable exception) {
-                    	PlayerUtil.displayInClient("Exception in console");
+                    	ChatUtil.display("Exception in console");
                         exception.printStackTrace();
                     }
                 }
@@ -124,7 +123,7 @@ public final class EventBus<Event> implements Bus<Event>, Accessor {
 
         } catch (Exception exception) {
         	exception.printStackTrace();
-        	PlayerUtil.displayInClient("Exception in console");
+        	ChatUtil.display("Exception in console");
         }
     }
 

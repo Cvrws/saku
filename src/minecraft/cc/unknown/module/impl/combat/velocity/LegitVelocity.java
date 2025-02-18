@@ -10,7 +10,7 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.MoveInputEvent;
 import cc.unknown.module.impl.combat.Velocity;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.MoveUtil;
 import cc.unknown.value.Mode;
 import net.minecraft.util.Vec3;
 
@@ -26,7 +26,7 @@ public class LegitVelocity extends Mode<Velocity> {
 		}
 
 		Vec3 playerPos = new Vec3(mc.player.posX, mc.player.posY, mc.player.posZ);
-		List<Vec3> vec3s = Arrays.asList(PlayerUtil.getPredictedPos(1.0F, 0.0F).add(playerPos), PlayerUtil.getPredictedPos(1.0F, 1.0F).add(playerPos), PlayerUtil.getPredictedPos(1.0F, -1.0F).add(playerPos));
+		List<Vec3> vec3s = Arrays.asList(MoveUtil.getPredictedPos(1.0F, 0.0F).add(playerPos), MoveUtil.getPredictedPos(1.0F, 1.0F).add(playerPos), MoveUtil.getPredictedPos(1.0F, -1.0F).add(playerPos));
 
 		Map<Vec3, Integer> map = new HashMap<>();
 		map.put(vec3s.get(0), 0);

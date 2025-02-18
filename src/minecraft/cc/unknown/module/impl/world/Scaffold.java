@@ -327,16 +327,16 @@ public class Scaffold extends Module {
 
 			sameY = ((!this.sameYValue.is("Off") || this.getModule(Speed.class).isEnabled()) && !mc.gameSettings.keyBindJump.isKeyDown()) && MoveUtil.isMoving();
 
-	        int slot = SlotUtil.findBlock();
+	        int slot = InventoryUtil.findBlock();
 	        
 	        if (slot == -1) {
 	            return;
 	        }
 	        	        
 	        if (useBiggestStack.getValue()) {
-	        	slot = SlotUtil.findBlock();
+	        	slot = InventoryUtil.findBlock();
 	        } else if (PlayerUtil.getItemStack() == null || !(PlayerUtil.getItemStack().getItem() instanceof ItemBlock) || !InventoryUtil.canBePlaced((ItemBlock) PlayerUtil.getItemStack().getItem())) {
-	        	slot = SlotUtil.findBlock();
+	        	slot = InventoryUtil.findBlock();
 	        }
 	        
 	        mc.player.inventory.currentItem = slot;

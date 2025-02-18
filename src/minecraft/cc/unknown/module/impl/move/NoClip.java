@@ -17,13 +17,12 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.module.impl.combat.KillAura;
 import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.netty.PacketUtil;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.PlayerUtil;
-import cc.unknown.util.player.SlotUtil;
 import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.util.structure.geometry.Vector2f;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.block.BlockAir;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
@@ -80,7 +79,7 @@ public class NoClip extends Module {
 		if (isEnabled(Scaffold.class) || getModule(KillAura.class).target != null)
 			return;
 
-		final int slot = SlotUtil.findBlock();
+		final int slot = InventoryUtil.findBlock();
 
 		if (slot == -1 || PlayerUtil.insideBlock()) {
 			return;

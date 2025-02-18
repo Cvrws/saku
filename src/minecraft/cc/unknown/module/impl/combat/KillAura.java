@@ -11,11 +11,9 @@ import cc.unknown.event.impl.input.RightClickEvent;
 import cc.unknown.event.impl.other.WorldChangeEvent;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.player.HitSlowDownEvent;
-import cc.unknown.event.impl.player.PostMotionEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.event.impl.render.MouseOverEvent;
-import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
@@ -24,6 +22,7 @@ import cc.unknown.module.impl.world.Scaffold;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.util.player.EnemyUtil;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.util.player.TargetUtil;
@@ -51,7 +50,6 @@ import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
-import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
@@ -460,7 +458,7 @@ public final class KillAura extends Module {
 		case "Post":
 			boolean furry = false;
 			
-			if (PlayerUtil.isHoldingWeapon()) {
+			if (InventoryUtil.isSword()) {
 				block(false);
 				
 			}

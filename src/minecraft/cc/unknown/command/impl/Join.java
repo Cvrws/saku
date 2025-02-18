@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import cc.unknown.command.Command;
 import cc.unknown.handlers.AutoJoinHandler;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.client.ChatUtil;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.ChatFormatting;
@@ -25,7 +25,7 @@ public class Join extends Command {
 	@Override
 	public void execute(String[] args) {
 	    if (args.length == 2 && args[0].equalsIgnoreCase("game") && args[1].equalsIgnoreCase("list")) {
-	    	PlayerUtil.displayInClient(getList());
+	    	ChatUtil.display(getList());
 	        return;
 	    }
 

@@ -14,6 +14,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.player.EnemyUtil;
 import cc.unknown.util.player.FriendUtil;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
@@ -167,7 +168,7 @@ public final class AimAssist extends Module {
 	        return true;
 	    }
 
-	    if (weaponOnly.getValue() && !PlayerUtil.isHoldingWeapon()) {
+	    if (weaponOnly.getValue() && !InventoryUtil.isSword()) {
 	        return true;
 	    }
 

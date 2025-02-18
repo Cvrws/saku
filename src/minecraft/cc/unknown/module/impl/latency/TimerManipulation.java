@@ -18,7 +18,7 @@ import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.TargetUtil;
 import cc.unknown.util.player.prediction.PredictProcess;
-import cc.unknown.util.player.prediction.SimulatedPlayer;
+import cc.unknown.util.player.prediction.PredictEngine;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.NumberValue;
@@ -63,7 +63,7 @@ public class TimerManipulation extends Module {
 	public final Listener<MoveEvent> onMove = event -> {
         predictProcesses.clear();
 
-        SimulatedPlayer simulatedPlayer = SimulatedPlayer.fromClientPlayer(mc.player.movementInput);
+        PredictEngine simulatedPlayer = PredictEngine.fromClientPlayer(mc.player.movementInput);
 
         simulatedPlayer.rotationYaw = RotationHandler.lastRotations != null ? RotationHandler.rotations.x : mc.player.rotationYaw;
 

@@ -11,7 +11,7 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.player.SlotUtil;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.NumberValue;
@@ -20,7 +20,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemEgg;
 import net.minecraft.item.ItemExpBottle;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemSnowball;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
@@ -115,7 +114,7 @@ public class FastPlace extends Module {
         	lastSlot = mc.player.inventory.currentItem;
         }
 	
-        final int slot = SlotUtil.findBlock();
+        final int slot = InventoryUtil.findBlock();
         if (slot == -1) return;
 	
         if (mc.player.rotationPitch < pitchRange.getValue().floatValue() || mc.player.rotationPitch > pitchRange.getSecondValue().floatValue()) {

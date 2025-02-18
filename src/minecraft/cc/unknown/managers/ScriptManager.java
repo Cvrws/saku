@@ -32,7 +32,7 @@ import cc.unknown.script.api.ScriptAPI;
 import cc.unknown.script.api.WorldAPI;
 import cc.unknown.script.util.ScriptClassFilter;
 import cc.unknown.util.Accessor;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.client.ChatUtil;
 import jdk.nashorn.api.scripting.ClassFilter;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import lombok.Getter;
@@ -83,9 +83,9 @@ public final class ScriptManager implements Accessor {
             } catch (final ScriptException ex) {
                 ex.printStackTrace();
 
-                PlayerUtil.displayInClient("Syntax error!");
+                ChatUtil.display("Syntax error!");
 
-                PlayerUtil.displayInClient(ex.getMessage());
+                ChatUtil.display(ex.getMessage());
                 return true;
             }
         });
@@ -120,9 +120,9 @@ public final class ScriptManager implements Accessor {
                 return false;
             } catch (final ScriptException ex) {
                 ex.printStackTrace();
-                PlayerUtil.displayInClient("Syntax error!");
+                ChatUtil.display("Syntax error!");
 
-                PlayerUtil.displayInClient(ex.getMessage());
+                ChatUtil.display(ex.getMessage());
                 return true;
             }
         });
@@ -135,7 +135,7 @@ public final class ScriptManager implements Accessor {
             } catch (final ScriptException ex) {
                 ex.printStackTrace();
 
-                PlayerUtil.displayInClient("Script \"" + script.getName() + "\" unloaded incorrectly");
+                ChatUtil.display("Script \"" + script.getName() + "\" unloaded incorrectly");
             }
         });
 

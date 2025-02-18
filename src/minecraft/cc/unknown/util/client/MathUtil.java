@@ -87,4 +87,17 @@ public class MathUtil {
 	public boolean inBetween(double min, double max, double value) {
 		return value >= min && value <= max;
 	}
+	
+    public double round(double n, int d) {
+        if (d == 0) {
+            return (double) Math.round(n);
+        } else {
+            double p = Math.pow(10.0D, (double) d);
+            return (double) Math.round(n * p) / p;
+        }
+    }
+    
+    public boolean isWholeNumber(double num) {
+        return num == Math.floor(num);
+    }
 }

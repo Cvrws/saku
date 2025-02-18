@@ -10,6 +10,7 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.TargetUtil;
@@ -78,7 +79,7 @@ public class WTap extends Module {
 		if (ignoreTeammates.getValue() && PlayerUtil.isTeam(player, true, true)) return;
 		if (checkLiquids.getValue() && shouldJump()) return;
 		if (PlayerUtil.unusedNames(player)) return;
-		if (onlyWeapons.getValue() && !PlayerUtil.isHoldingWeapon()) return;
+		if (onlyWeapons.getValue() && !InventoryUtil.isSword()) return;
 		if (onlyMove.getValue() && !MoveUtil.isMoving()) return;
 		if (onlyMoveForward.getValue() && mc.player.movementInput.moveStrafe != 0f) return;
 		if (onlyGround.getValue() && !mc.player.onGround) return;

@@ -8,11 +8,9 @@ import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.InventoryUtil;
-import cc.unknown.value.impl.ModeValue;
+import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.NumberValue;
-import cc.unknown.value.impl.SubMode;
 import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
 
 @ModuleInfo(aliases = "Auto Armor", description = "Te coloca automaticamente la armadura", category = Category.PLAYER)
@@ -43,7 +41,7 @@ public class AutoArmor extends Module {
 					if (mc.player.inventoryContainer.getSlot(4 + type).getHasStack()) {
 						ItemStack is = mc.player.inventoryContainer.getSlot(4 + type).getStack();
 						if (!InventoryUtil.isBestArmor(is, type)) {
-							InventoryUtil.drop(4 + type);
+							PlayerUtil.drop(4 + type);
 
 							stopWatch.reset();
 							if (speed.getValue().doubleValue() != 0) {
@@ -60,7 +58,7 @@ public class AutoArmor extends Module {
 						if (mc.player.inventoryContainer.getSlot(i).getHasStack()) {
 							ItemStack is = mc.player.inventoryContainer.getSlot(i).getStack();
 							if (isValidArmor(is, type)) {
-								InventoryUtil.shiftClick(i);
+								PlayerUtil.shiftClick(i);
 
 								stopWatch.reset();
 								if (speed.getValue().doubleValue() != 0) {

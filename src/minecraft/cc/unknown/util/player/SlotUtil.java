@@ -31,30 +31,6 @@ import net.minecraft.world.World;
 
 @UtilityClass
 public class SlotUtil implements Accessor {
-
-	public final List<Block> blacklist = Arrays.asList(Blocks.enchanting_table, Blocks.chest, Blocks.ender_chest,
-			Blocks.trapped_chest, Blocks.anvil, Blocks.sand, Blocks.web, Blocks.torch, Blocks.crafting_table,
-			Blocks.furnace, Blocks.waterlily, Blocks.dispenser, Blocks.stone_pressure_plate,
-			Blocks.wooden_pressure_plate, Blocks.noteblock, Blocks.iron_door, Blocks.dropper, Blocks.tnt,
-			Blocks.standing_banner, Blocks.wall_banner, Blocks.redstone_torch, Blocks.oak_door);
-
-	public int findBlock() {
-		int slot = -1;
-		int highestStack = -1;
-		for (int i = 0; i < 9; ++i) {
-			final ItemStack itemStack = mc.player.inventory.mainInventory[i];
-			if (itemStack != null && itemStack.getItem() instanceof ItemBlock
-					&& blacklist.stream().noneMatch(block -> block.equals(((ItemBlock) itemStack.getItem()).getBlock()))
-					&& itemStack.stackSize > 0) {
-				if (mc.player.inventory.mainInventory[i].stackSize > highestStack) {
-					highestStack = mc.player.inventory.mainInventory[i].stackSize;
-					slot = i;
-				}
-			}
-		}
-		return slot;
-	}
-
 	private boolean holdWaterBucket() {
 		if (containsItem(mc.player.getHeldItem(), Items.water_bucket)) {
 			return true;
@@ -71,68 +47,6 @@ public class SlotUtil implements Accessor {
 
 	private boolean containsItem(ItemStack itemStack, Item item) {
 		return itemStack != null && itemStack.getItem() == item;
-	}
-
-	public int findItem(final Item item) {
-		for (int i = 0; i < 9; i++) {
-			final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
-
-			if (itemStack == null) {
-				if (item == null) {
-					return i;
-				}
-				continue;
-			}
-
-			if (itemStack.getItem() == item) {
-				return i;
-			}
-		}
-
-		return -1;
-	}
-
-	public int findBlock(final Block block) {
-		for (int i = 0; i < 9; i++) {
-			final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
-
-			if (itemStack == null) {
-				if (block == null) {
-					return i;
-				}
-				continue;
-			}
-
-			if (itemStack.getItem() instanceof ItemBlock && ((ItemBlock) itemStack.getItem()).getBlock() == block) {
-				return i;
-			}
-		}
-
-		return -1;
-	}
-
-	public int findTool(final BlockPos blockPos) {
-		float bestSpeed = 1;
-		int bestSlot = -1;
-
-		final IBlockState blockState = mc.world.getBlockState(blockPos);
-
-		for (int i = 0; i < 9; i++) {
-			final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
-
-			if (itemStack == null) {
-				continue;
-			}
-
-			final float speed = itemStack.getStrVsBlock(blockState.getBlock());
-
-			if (speed > bestSpeed) {
-				bestSpeed = speed;
-				bestSlot = i;
-			}
-		}
-
-		return bestSlot;
 	}
 
 	public ItemStack getCurrentItemInSlot(final int slot) {

@@ -47,7 +47,7 @@ import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 
-public class SimulatedPlayer implements Accessor {
+public class PredictEngine implements Accessor {
 	private final EntityPlayerSP player;
 	public AxisAlignedBB box;
 	public final MovementInput movementInput;
@@ -89,7 +89,7 @@ public class SimulatedPlayer implements Accessor {
 	private boolean isSprinting;
 	private final FoodStats foodStats;
 
-	public SimulatedPlayer(EntityPlayerSP player, AxisAlignedBB box, MovementInput movementInput, int jumpTicks,
+	public PredictEngine(EntityPlayerSP player, AxisAlignedBB box, MovementInput movementInput, int jumpTicks,
 			double motionZ, double motionY, double motionX, boolean inWater, boolean onGround, boolean isAirBorne,
 			float rotationYaw, double posX, double posY, double posZ, PlayerCapabilities capabilities,
 			Entity ridingEntity, float jumpMovementFactor, World worldObj, boolean isCollidedHorizontally,
@@ -152,7 +152,7 @@ public class SimulatedPlayer implements Accessor {
 
 	private static final float SPEED_IN_AIR = 0.02F;
 
-	public static SimulatedPlayer fromClientPlayer(MovementInput input) {
+	public static PredictEngine fromClientPlayer(MovementInput input) {
 		EntityPlayerSP player = mc.player;
 
 		PlayerCapabilities capabilities = createCapabilitiesCopy(player);
@@ -164,7 +164,7 @@ public class SimulatedPlayer implements Accessor {
 		movementInput.moveStrafe = input.moveStrafe;
 		movementInput.sneak = input.sneak;
 
-		return new SimulatedPlayer(player, player.getEntityBoundingBox(), movementInput, player.jumpTicks,
+		return new PredictEngine(player, player.getEntityBoundingBox(), movementInput, player.jumpTicks,
 				player.motionZ, player.motionY, player.motionX, player.isInWater(), player.onGround, player.isAirBorne,
 				player.rotationYaw, player.posX, player.posY, player.posZ, capabilities, player.ridingEntity,
 				player.jumpMovementFactor, player.worldObj, player.isCollidedHorizontally, player.isCollidedVertically,
@@ -1179,7 +1179,7 @@ public class SimulatedPlayer implements Accessor {
 		return !capabilities.isFlying;
 	}
 
-	public Pair<Double, Double> checkForCollision(SimulatedPlayer simPlayer, double velocityX, double velocityZ) {
+	public Pair<Double, Double> checkForCollision(PredictEngine simPlayer, double velocityX, double velocityZ) {
 		EntityPlayerSP player = mc.player;
 		World worldObj = player.worldObj;
 
@@ -1236,9 +1236,9 @@ public class SimulatedPlayer implements Accessor {
 	}
 	
     @Override
-    public SimulatedPlayer clone() {
+    public PredictEngine clone() {
         try {
-            return (SimulatedPlayer) super.clone();
+            return (PredictEngine) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }

@@ -4,7 +4,6 @@ import org.lwjgl.input.Keyboard;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
-import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.handlers.SpoofHandler;
@@ -12,11 +11,9 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
-import cc.unknown.util.player.SlotUtil;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.BoundsNumberValue;
-import cc.unknown.value.impl.ModeValue;
-import cc.unknown.value.impl.SubMode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.client.settings.KeyBinding;
@@ -72,7 +69,7 @@ public class LegitScaffold extends Module {
         	lastSlot = mc.player.inventory.currentItem;
         }
         
-		final int slot = SlotUtil.findBlock();
+		final int slot = InventoryUtil.findBlock();
 		
         if (slot == -1) {
             return;

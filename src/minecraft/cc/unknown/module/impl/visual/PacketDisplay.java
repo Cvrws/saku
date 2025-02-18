@@ -12,7 +12,7 @@ import cc.unknown.event.impl.render.Render2DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.client.ChatUtil;
 import cc.unknown.util.render.font.api.Fonts;
 import cc.unknown.util.render.font.api.Weight;
 import net.minecraft.network.INetHandler;
@@ -76,7 +76,7 @@ public class PacketDisplay extends Module {
                     validFieldsCount++;
                 }
             } catch (IllegalAccessException e) {
-            	PlayerUtil.displayInClient("Error accessing field: " + field.getName() + " - " + e.getMessage());
+            	ChatUtil.display("Error accessing field: " + field.getName() + " - " + e.getMessage());
             }
         }
 

@@ -19,6 +19,7 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.netty.PacketUtil;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.SlotUtil;
 import cc.unknown.util.player.rotation.MoveFix;
@@ -199,7 +200,7 @@ public class Breaker extends Module {
                     rotate(blockToBreak);
                 }
 
-                int slot = SlotUtil.findTool(blockToBreak);
+                int slot = InventoryUtil.findTool(blockToBreak);
                 if (slot != -1) PacketUtil.send(new C09PacketHeldItemChange(slot));
                 if (slot != -1) hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, slot);
                 else hardness = SlotUtil.getPlayerRelativeBlockHardness(player, mc.world, blockToBreak, mc.player.inventory.currentItem);

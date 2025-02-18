@@ -8,8 +8,8 @@ import cc.unknown.event.impl.netty.PacketReceiveEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.ChatUtil;
 import cc.unknown.util.render.ColorUtil;
-import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.network.Packet;
@@ -45,8 +45,8 @@ public final class AutoPlay extends Module {
 	            String command = getCommandForMode();
 	            
 	            if (!command.isEmpty()) {
-	                PlayerUtil.sendInChat(command);
-	                PlayerUtil.displayInClient(ColorUtil.red +  "[S] " + ColorUtil.pink + "Joined a new game");
+	                ChatUtil.chat(command);
+	                ChatUtil.display(ColorUtil.red +  "[S] " + ColorUtil.pink + "Joined a new game");
 	            }
 	        }
 	    }

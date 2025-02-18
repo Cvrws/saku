@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import cc.unknown.command.Command;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.client.ChatUtil;
 import net.minecraft.client.gui.GuiScreen;
 
 public final class Name extends Command {
@@ -18,7 +18,7 @@ public final class Name extends Command {
         final String name = mc.player.getName();
 
         GuiScreen.setClipboardString(name);
-        PlayerUtil.displayInClient("Copied your username to clipboard. (%s)", name);
+        ChatUtil.display("Copied your username to clipboard. (%s)", name);
     }
     
     @Override

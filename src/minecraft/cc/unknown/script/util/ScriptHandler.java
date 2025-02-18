@@ -3,7 +3,7 @@ package cc.unknown.script.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.client.ChatUtil;
 import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.internal.runtime.ECMAException;
 
@@ -26,10 +26,10 @@ public class ScriptHandler {
         try {
             function.call(this, parameters);
         } catch (final ECMAException ex) {
-            PlayerUtil.displayInClient(ex.toString());
+            ChatUtil.display(ex.toString());
         } catch (final Exception ex) {
             ex.printStackTrace();
-            PlayerUtil.displayInClient("A script threw an exception, stacktrace printed.");
+            ChatUtil.display("A script threw an exception, stacktrace printed.");
         }
     }
 }

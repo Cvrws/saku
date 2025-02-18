@@ -14,13 +14,12 @@ import cc.unknown.event.impl.other.TickEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
-import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.client.ChatUtil;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.sound.RadioPlayer;
 import cc.unknown.value.impl.ModeValue;
-import cc.unknown.value.impl.NumberValue;
-import cc.unknown.value.impl.TextValue;
 import cc.unknown.value.impl.SubMode;
+import cc.unknown.value.impl.TextValue;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackEvent;
 import javazoom.jl.player.advanced.PlaybackListener;
@@ -193,6 +192,6 @@ public class MusicPlayer extends Module {
     }
     
     private void setMessage(String message) {
-    	PlayerUtil.displayInClient(ColorUtil.pink + "[S]" + " " + ColorUtil.red + message);
+    	ChatUtil.display(ColorUtil.pink + "[S]" + " " + ColorUtil.red + message);
     }
 }

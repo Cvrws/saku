@@ -86,7 +86,7 @@ public class InventoryManager extends Module {
 	                    ItemStack blockStack = mc.player.inventoryContainer.getSlot(35 + blockSlot.getValue().intValue()).getStack();
 	                    if (blockStack == null || 
 	                        !(blockStack.getItem() instanceof ItemBlock) || 
-	                        InventoryUtil.invalidBlocks.contains(((ItemBlock) blockStack.getItem()).getBlock())) {
+	                        InventoryUtil.blacklist.contains(((ItemBlock) blockStack.getItem()).getBlock())) {
 	                        onClick(i, blockSlot.getValue().intValue());
 	                        stopWatch.reset();
 	                        if (speed.getValue().doubleValue() != 0) break;

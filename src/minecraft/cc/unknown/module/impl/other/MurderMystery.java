@@ -11,11 +11,11 @@ import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.ChatUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.render.RenderUtil;
 import cc.unknown.value.impl.BooleanValue;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -93,7 +93,7 @@ public final class MurderMystery extends Module {
 	}
 
 	private void sendNotification(String message, ChatFormatting color, String symbol) {
-		PlayerUtil.displayInClient(ChatFormatting.YELLOW + "[" + color + symbol + ChatFormatting.YELLOW + "] " + color + message + ChatFormatting.RESET);
+		ChatUtil.display(ChatFormatting.YELLOW + "[" + color + symbol + ChatFormatting.YELLOW + "] " + color + message + ChatFormatting.RESET);
 	}
 
 	private boolean isMurder(String itemName) {

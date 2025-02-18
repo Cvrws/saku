@@ -20,7 +20,6 @@ public final class PacketUtil implements Accessor {
 
 	public void queue(final Packet packet) {
 		if (packet == null) {
-			System.out.println("Packet is null");
 			return;
 		}
 

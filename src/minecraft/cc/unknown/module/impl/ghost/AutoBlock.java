@@ -9,6 +9,7 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
+import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.value.impl.BoundsNumberValue;
 import cc.unknown.value.impl.NumberValue;
@@ -30,7 +31,7 @@ public class AutoBlock extends Module {
 
 		if (mc.currentScreen != null) return;
 
-		if (PlayerUtil.isHoldingWeapon()) {
+		if (InventoryUtil.isSword()) {
 			if (block) {
 				if ((stopWatch.hasFinished() || !Mouse.isButtonDown(0)) && duration.getValue().intValue() <= stopWatch.getElapsedTime()) {
 					block = false;
