@@ -26,7 +26,6 @@ public class PolarSpider extends Mode<Spider> {
 		
 		if (mc.player.isCollidedHorizontally && !isInsideBlock) {
 			double yaw = MoveUtil.direction();
-			mc.player.setPosition(mc.player.posX + -MathHelper.sin((float) yaw) * 0.05, mc.player.posY, mc.player.posZ + MathHelper.cos((float) yaw) * 0.05);
 			MoveUtil.stop();
 			MoveUtil.keybindStop();
 		}

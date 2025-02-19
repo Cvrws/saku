@@ -14,6 +14,7 @@ import cc.unknown.handlers.RotationHandler;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.value.impl.BooleanValue;
@@ -42,13 +43,10 @@ public class Reach extends Module {
 		}
 	};
 
-    @EventLink
-    public final Listener<RightClickEvent> onRightClick = event -> mc.objectMouseOver = RayCastUtil.rayCast(RotationHandler.rotations, 4.5);
-
 	private boolean callReach() {
 		if (!isInGame()) {
 			return false;
-		} else if (!(chance.getValue().intValue() == 100 || Math.random() <= chance.getValue().intValue() / 100)) {
+		} else if (!MathUtil.isChance(chance)) {
 			return false;
 		} else {
 			if (!throughWalls.getValue() && mc.objectMouseOver != null) {

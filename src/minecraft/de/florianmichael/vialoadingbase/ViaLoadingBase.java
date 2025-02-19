@@ -1,21 +1,3 @@
-/*
- * This file is part of ViaLoadingBase - https://github.com/FlorianMichael/ViaLoadingBase
- * Copyright (C) 2020-2024 FlorianMichael/EnZaXD <florian.michael07@gmail.com> and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package de.florianmichael.vialoadingbase;
 
 import com.viaversion.viaversion.ViaManagerImpl;
@@ -25,7 +7,6 @@ import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import com.viaversion.viaversion.libs.gson.JsonObject;
 import com.viaversion.viaversion.protocol.ProtocolManagerImpl;
 import de.florianmichael.vialoadingbase.model.Platform;
-import de.florianmichael.vialoadingbase.model.ComparableProtocolVersion;
 import de.florianmichael.vialoadingbase.platform.ViaBackwardsPlatformImpl;
 import de.florianmichael.vialoadingbase.platform.ViaRewindPlatformImpl;
 import de.florianmichael.vialoadingbase.platform.viaversion.VLBViaCommandHandler;
@@ -52,7 +33,7 @@ public class ViaLoadingBase {
     public final static Platform PLATFORM_VIA_BACKWARDS = new Platform("ViaBackwards", () -> inClassPath("com.viaversion.viabackwards.api.ViaBackwardsPlatform"), () -> new ViaBackwardsPlatformImpl(Via.getManager().getPlatform().getDataFolder()));
     public final static Platform PLATFORM_VIA_REWIND = new Platform("ViaRewind", () -> inClassPath("com.viaversion.viarewind.api.ViaRewindPlatform"), () -> new ViaRewindPlatformImpl(Via.getManager().getPlatform().getDataFolder()));
 
-    public final static Map<ProtocolVersion, ComparableProtocolVersion> PROTOCOLS = new LinkedHashMap<>();
+    public final static List<ProtocolVersion> PROTOCOLS = new ArrayList<>();
 
     private static ViaLoadingBase instance;
 
@@ -63,12 +44,12 @@ public class ViaLoadingBase {
     private final Supplier<JsonObject> dumpSupplier;
     private final Consumer<ViaProviders> providers;
     private final Consumer<ViaManagerImpl.ViaManagerBuilder> managerBuilderConsumer;
-    private final Consumer<ComparableProtocolVersion> onProtocolReload;
+    private final Consumer<ProtocolVersion> onProtocolReload;
 
-    private ComparableProtocolVersion nativeProtocolVersion;
-    private ComparableProtocolVersion targetProtocolVersion;
+    private ProtocolVersion nativeProtocolVersion;
+    private ProtocolVersion targetProtocolVersion;
 
-    public ViaLoadingBase(LinkedList<Platform> platforms, File runDirectory, int nativeVersion, BooleanSupplier forceNativeVersionCondition, Supplier<JsonObject> dumpSupplier, Consumer<ViaProviders> providers, Consumer<ViaManagerImpl.ViaManagerBuilder> managerBuilderConsumer, Consumer<ComparableProtocolVersion> onProtocolReload) {
+    public ViaLoadingBase(LinkedList<Platform> platforms, File runDirectory, int nativeVersion, BooleanSupplier forceNativeVersionCondition, Supplier<JsonObject> dumpSupplier, Consumer<ViaProviders> providers, Consumer<ViaManagerImpl.ViaManagerBuilder> managerBuilderConsumer, Consumer<ProtocolVersion> onProtocolReload) {
         this.platforms = platforms;
 
         this.runDirectory = new File(runDirectory, "ViaLoadingBase");
@@ -83,17 +64,13 @@ public class ViaLoadingBase {
         initPlatform();
     }
 
-    public ComparableProtocolVersion getTargetVersion() {
+    public ProtocolVersion getTargetVersion() {
         if (forceNativeVersionCondition != null && forceNativeVersionCondition.getAsBoolean()) return nativeProtocolVersion;
 
         return targetProtocolVersion;
     }
 
     public void reload(final ProtocolVersion protocolVersion) {
-        reload(fromProtocolVersion(protocolVersion));
-    }
-
-    public void reload(final ComparableProtocolVersion protocolVersion) {
         this.targetProtocolVersion = protocolVersion;
 
         if (this.onProtocolReload != null) this.onProtocolReload.accept(targetProtocolVersion);
@@ -101,9 +78,8 @@ public class ViaLoadingBase {
 
     public void initPlatform() {
         for (Platform platform : platforms) platform.createProtocolPath();
-        for (ProtocolVersion preProtocol : Platform.TEMP_INPUT_PROTOCOLS) PROTOCOLS.put(preProtocol, new ComparableProtocolVersion(preProtocol.getVersion(), preProtocol.getName(), Platform.TEMP_INPUT_PROTOCOLS.indexOf(preProtocol)));
 
-        this.nativeProtocolVersion = fromProtocolVersion(ProtocolVersion.getProtocol(this.nativeVersion));
+        this.nativeProtocolVersion = ProtocolVersion.getProtocol(this.nativeVersion);
         this.targetProtocolVersion = this.nativeProtocolVersion;
 
         final ViaVersionPlatformImpl viaVersionPlatform = new ViaVersionPlatformImpl(ViaLoadingBase.LOGGER);
@@ -165,16 +141,9 @@ public class ViaLoadingBase {
         }
     }
 
-    public static ComparableProtocolVersion fromProtocolVersion(final ProtocolVersion protocolVersion) {
-        return PROTOCOLS.get(protocolVersion);
-    }
-
-    public static ComparableProtocolVersion fromProtocolId(final int protocolId) {
-        return PROTOCOLS.values().stream().filter(protocol -> protocol.getVersion() == protocolId).findFirst().orElse(null);
-    }
-
+    @Deprecated
     public static List<ProtocolVersion> getProtocols() {
-        return new LinkedList<>(PROTOCOLS.keySet());
+        return PROTOCOLS;
     }
 
     public static class ViaLoadingBaseBuilder {
@@ -186,7 +155,7 @@ public class ViaLoadingBase {
         private Supplier<JsonObject> dumpSupplier;
         private Consumer<ViaProviders> providers;
         private Consumer<ViaManagerImpl.ViaManagerBuilder> managerBuilderConsumer;
-        private Consumer<ComparableProtocolVersion> onProtocolReload;
+        private Consumer<ProtocolVersion> onProtocolReload;
 
         public ViaLoadingBaseBuilder() {
             platforms.add(PSEUDO_VIA_VERSION);
@@ -239,7 +208,7 @@ public class ViaLoadingBase {
             return this;
         }
 
-        public ViaLoadingBaseBuilder onProtocolReload(final Consumer<ComparableProtocolVersion> onProtocolReload) {
+        public ViaLoadingBaseBuilder onProtocolReload(final Consumer<ProtocolVersion> onProtocolReload) {
             this.onProtocolReload = onProtocolReload;
             return this;
         }

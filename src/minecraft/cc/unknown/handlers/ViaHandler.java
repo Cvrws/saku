@@ -1,11 +1,10 @@
 package cc.unknown.handlers;
 
-import com.viaversion.viarewind.protocol.protocol1_8to1_9.Protocol1_8To1_9;
-import com.viaversion.viarewind.utils.PacketUtil;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
-import com.viaversion.viaversion.api.type.Type;
+import com.viaversion.viaversion.api.type.Types;
+import com.viaversion.viaversion.protocols.v1_8to1_9.Protocol1_8To1_9;
 
 import cc.unknown.event.Listener;
 import cc.unknown.event.Priority;
@@ -39,11 +38,11 @@ public class ViaHandler implements Accessor {
 	 */
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
-		if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
+		if (ViaLoadingBase.getInstance().getTargetVersion().newerThan(ProtocolVersion.v1_8)) {
 			if (PlayerUtil.getItemStack() != null && PlayerUtil.getItemStack().getItem() instanceof ItemSword && (mc.gameSettings.keyBindUseItem.isPressed() || getModule(KillAura.class).blocking || getModule(AutoBlock.class).block)) {
                 PacketWrapper useItem = PacketWrapper.create(29, null, Via.getManager().getConnectionManager().getConnections().iterator().next());
-                useItem.write(Type.VAR_INT, 1);
-                PacketUtil.sendToServer(useItem, Protocol1_8To1_9.class, true, true);
+                useItem.write(Types.VAR_INT, 1);
+                useItem.sendToServer(Protocol1_8To1_9.class);
 			}
 		}
 	};
@@ -53,7 +52,7 @@ public class ViaHandler implements Accessor {
 	 */
     @EventLink(value = Priority.VERY_LOW)
     public final Listener<PacketSendEvent> onSend = event -> {
-        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_11)) {
+        if (ViaLoadingBase.getInstance().getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_11)) {
             final Packet<?> packet = event.getPacket();
             if (packet instanceof C08PacketPlayerBlockPlacement) {
                 ((C08PacketPlayerBlockPlacement) packet).facingX = 0.5F;
@@ -68,7 +67,7 @@ public class ViaHandler implements Accessor {
      */
     @EventLink
     public final Listener<BlockAABBEvent> onBlockAABB = event -> {
-        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
+        if (ViaLoadingBase.getInstance().getTargetVersion().newerThan(ProtocolVersion.v1_8)) {
             final Block block = event.getBlock();
 
             if (block instanceof BlockLadder) {
@@ -109,7 +108,7 @@ public class ViaHandler implements Accessor {
      */
     @EventLink(value = Priority.LOW)
     public final Listener<PreStrafeEvent> onStrafe = event -> {
-        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThanOrEqualTo(ProtocolVersion.v1_17)) {
+        if (ViaLoadingBase.getInstance().getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_17)) {
             if (!mc.player.isPotionActive(Potion.moveSpeed)) return;
 
             float[][] friction = {new float[]{0.11999998f, 0.15599997f}, new float[]{0.13999997f, 0.18199998f}};
@@ -127,7 +126,7 @@ public class ViaHandler implements Accessor {
      */
     @EventLink
     public final Listener<MinimumMotionEvent> onMinimumMotion = event -> {
-        if (ViaLoadingBase.getInstance().getTargetVersion().isNewerThan(ProtocolVersion.v1_8)) {
+        if (ViaLoadingBase.getInstance().getTargetVersion().newerThan(ProtocolVersion.v1_8)) {
             event.setMinimumMotion(0.003D);
         }
     };

@@ -4,6 +4,7 @@ import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.module.impl.combat.Criticals;
+import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.value.Mode;
@@ -19,9 +20,7 @@ public class PacketCriticals extends Mode<Criticals> {
 
     @EventLink
     public final Listener<AttackEvent> onAttack = event -> {
-        if (getParent().chance.getValueToDouble() != 100.0 && Math.random() >= getParent().chance.getValueToDouble() / 100.0) {
-            return;
-        }
+		if (!MathUtil.isChance(getParent().chance)) return;
         
         if (stopwatch.finished(getParent().delay.getValueToLong()) && mc.player.onGroundTicks > 2) {
             for (double offset : offsets) {

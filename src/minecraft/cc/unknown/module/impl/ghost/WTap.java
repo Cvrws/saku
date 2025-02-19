@@ -66,9 +66,7 @@ public class WTap extends Module {
 	
 	@EventLink
 	public final Listener<AttackEvent> onAttack = event -> {
-		double chanceValue = chance.getValue().doubleValue();
-		double randomFactor = MathUtil.getRandomFactor(chanceValue);
-		if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return;
+		if (!MathUtil.isChance(chance)) return;
 		if (event.getTarget() instanceof IMob || event.getTarget() instanceof INpc) return;
 		EntityPlayer player = (EntityPlayer) event.getTarget();
 		

@@ -6,6 +6,7 @@ import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
 import cc.unknown.module.impl.combat.Criticals;
 import cc.unknown.module.impl.combat.KillAura;
+import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.netty.PacketUtil;
 import cc.unknown.value.Mode;
 import net.minecraft.network.play.client.C03PacketPlayer;
@@ -31,9 +32,7 @@ public class BalanceCriticals extends Mode<Criticals> {
 
     @EventLink
     public final Listener<AttackEvent> onAttack = event -> {
-        if (getParent().chance.getValueToDouble() != 100.0 && Math.random() >= getParent().chance.getValueToDouble() / 100.0) {
-            return;
-        }
+		if (!MathUtil.isChance(getParent().chance)) return;
  
         attacked = true;
     };

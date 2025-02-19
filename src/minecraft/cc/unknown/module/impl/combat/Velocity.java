@@ -54,22 +54,4 @@ public final class Velocity extends Module {
 	public void onDisable() {
 		counter = 0;
 	}
-	
-    public boolean checks() {
-        return Stream.<Supplier<Boolean>>of(mc.player::isInLava, mc.player::isBurning, mc.player::isInWater, () -> mc.player.isInWeb).map(Supplier::get).anyMatch(Boolean.TRUE::equals);
-    }
-    
-    public boolean noAction() {
-        return mc.player.getActivePotionEffects().parallelStream().anyMatch(effect -> notWhileSpeed.getValue() && effect.getPotionID() == Potion.moveSpeed.getId() || notWhileJumpBoost.getValue() && effect.getPotionID() == Potion.jump.getId());
-    }
-    
-    public boolean isChance() {
-		double chanceValue = chance.getValueToDouble();
-		double randomFactor = MathUtil.getRandomFactor(chanceValue);
-
-		if (noAction() || checks()) return false;
-		if (!MathUtil.shouldPerformAction(chanceValue, randomFactor)) return false;
-		
-		return true;
-	}
 }

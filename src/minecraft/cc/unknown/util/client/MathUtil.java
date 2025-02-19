@@ -1,14 +1,21 @@
 package cc.unknown.util.client;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import org.lwjgl.input.Keyboard;
+
+import cc.unknown.util.Accessor;
+import cc.unknown.value.impl.BooleanValue;
+import cc.unknown.value.impl.NumberValue;
 import lombok.experimental.UtilityClass;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.Potion;
 
 @UtilityClass
-public class MathUtil {
+public class MathUtil implements Accessor {
 
     public Number nextRandom(Number origin, Number bound) {
         if (origin.equals(bound)) return origin;
@@ -99,5 +106,40 @@ public class MathUtil {
     
     public boolean isWholeNumber(double num) {
         return num == Math.floor(num);
+    }
+    
+    public boolean isChance(NumberValue chance, BooleanValue speed, BooleanValue jumpBoost) {
+		int chanceValue = chance.getValueToInt();
+		double randomFactor = MathUtil.getRandomFactor(chanceValue);
+
+		if (noAction(speed.getValue(), jumpBoost.getValue()) || checks()) return false;
+		if (!shouldPerformAction(chanceValue, randomFactor)) return false;
+		
+		return true;
+	}
+    
+    public boolean isChance(NumberValue chance) {
+		int chanceValue = chance.getValueToInt();
+		double randomFactor = MathUtil.getRandomFactor(chanceValue);
+
+		if (checks()) return false;
+		if (!shouldPerformAction(chanceValue, randomFactor)) return false;
+    	return true;
+    }
+    
+    public boolean shouldPerformAction(BooleanValue onlyClick, BooleanValue onlyTarget, BooleanValue disablePressS, EntityPlayer target) {
+        return !(onlyClick.getValue() && !mc.player.isSwingInProgress)
+                && !(onlyTarget.getValue() && target != null)
+                && !(disablePressS.getValue() && Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode()));
+    }
+    
+    public boolean checks() {
+        return Stream.<Supplier<Boolean>>of(mc.player::isInLava, mc.player::isBurning, mc.player::isInWater, () -> mc.player.isInWeb).map(Supplier::get).anyMatch(Boolean.TRUE::equals);
+    }
+    
+    private boolean noAction(boolean speed, boolean jumpBoost) {
+        return mc.player.getActivePotionEffects().stream().anyMatch(effect ->
+            (speed && effect.getPotionID() == Potion.moveSpeed.getId()) ||
+            (jumpBoost && effect.getPotionID() == Potion.jump.getId()));
     }
 }

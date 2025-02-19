@@ -8,6 +8,7 @@ import cc.unknown.event.impl.player.PreUpdateEvent;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.player.MoveUtil;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
@@ -36,7 +37,7 @@ public class HitSelect extends Module {
 	@EventLink(value = Priority.VERY_HIGH)
 	public final Listener<PreUpdateEvent> onPreUpdate = event -> {
 		currentShouldAttack = false;
-        if (Math.random() > chance.getValue().intValue()) {
+        if (!MathUtil.isChance(chance)) {
             currentShouldAttack = true;
         } else if (!currentShouldAttack) {
                 currentShouldAttack = System.currentTimeMillis() - attackTime >= delay.getValue().intValue();

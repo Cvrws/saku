@@ -43,7 +43,7 @@ public final class AimAssist extends Module {
 			.add(new SubMode("Gaussian"))
 			.setDefault("Thread Local Random");
 	
-	private final NumberValue maxAngle = new NumberValue("Max Angle", this, 180, 1, 180, 1);
+	private final NumberValue maxAngle = new NumberValue("Angle", this, 180, 1, 180, 1);
 	private final NumberValue distance = new NumberValue("Distance", this, 4, 1, 8, 0.1);
 	private final BooleanValue clickAim = new BooleanValue("Require Clicking", this, true);
 	private final BooleanValue lockTarget = new BooleanValue("Lock Target", this, false);
@@ -56,6 +56,7 @@ public final class AimAssist extends Module {
 	private final BooleanValue mouseOverEntity = new BooleanValue("Mouse Over Entity", this, false, () -> !visibilityCheck.getValue());
 	private final BooleanValue checkBlockBreak = new BooleanValue("Check Block Break", this, false);
 	private final BooleanValue weaponOnly = new BooleanValue("Weapons Only", this, false);
+	
 	private final Set<EntityPlayer> lockedTargets = new HashSet<>();
 	public EntityPlayer target;
 	private Random random = new Random();
@@ -95,7 +96,7 @@ public final class AimAssist extends Module {
 	    double verticalRandomOffset = MathUtil.nextRandom(verticalCompl.getValue().doubleValue() - 1.47328, verticalCompl.getValue().doubleValue() + 2.48293).doubleValue() / 100;
 	    float resultVertical = (float) (-(pitchEntity * verticalRandomOffset + pitchEntity / (101.0D - MathUtil.nextRandom(verticalSpeed.getValue().doubleValue() - 4.723847, verticalSpeed.getValue().doubleValue()).doubleValue())));
 
-	    if (onTarget(target)) {
+	    if (onTarget()) {
 	        applyYaw(yawFov, yawAdjustment);
 	        applyPitch(resultVertical);
 	    } else {
@@ -186,12 +187,6 @@ public final class AimAssist extends Module {
 	    }
 
 	    return false;
-	}
-
-	private boolean onTarget(EntityPlayer target) {
-		return mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectType.ENTITY
-				&& mc.objectMouseOver.typeOfHit != MovingObjectType.BLOCK
-				&& mc.objectMouseOver.entityHit == target;
 	}
 	
     private boolean onTarget() {
