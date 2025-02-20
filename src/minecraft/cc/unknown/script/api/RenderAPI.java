@@ -7,7 +7,7 @@ import java.util.Arrays;
 import javax.script.ScriptException;
 
 import jdk.nashorn.api.scripting.JSObject;
-
+import net.minecraft.client.gui.Gui;
 import cc.unknown.Sakura;
 import cc.unknown.script.api.wrapper.impl.ScriptItemStack;
 import cc.unknown.script.api.wrapper.impl.ScriptMCFontRenderer;
@@ -26,6 +26,10 @@ public class RenderAPI extends API implements Accessor {
     public static Color intArrayToColor(int[] color) {
         int[] clamped = Arrays.stream(color).map(x -> Math.min(x, 255)).toArray();
         return new Color(clamped[0], clamped[1], clamped[2], clamped.length >= 4 ? clamped[3] : 255);
+    }
+    
+    public void rectangle(final double x, final double y, final double width, final double height, final int[] color) {
+        Gui.drawRect((int) x, (int) y, (int) (x + width), (int) (y + height), intArrayToColor(color).getRGB());
     }
 
     public void roundedRectangle(final double x, final double y, final double width, final double height, final double radius, final int[] color) {

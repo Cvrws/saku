@@ -43,13 +43,30 @@ public final class Script extends Command {
                 case "reload":
                     getInstance().getScriptManager().reloadScripts();
                     getInstance().getClickGui().moduleList = new ConcurrentLinkedQueue<>();
+                    success(
+                            "Successfully " + action + "ed "
+                                    + (script == null ? "all scripts" : "\"" + script.getName() + "\"")
+                                    + "."
+                    );
                     break;
 
                 case "unload":
                     if (script == null) scriptManager.unloadScripts();
                     else script.unload();
                     break;
-
+                    
+                case "list":
+                    File scriptDir = new File(String.valueOf(ScriptManager.SCRIPT_DIRECTORY));
+                    File[] scriptFiles = scriptDir.listFiles((dir, name) -> name.endsWith(".js"));
+                    if (scriptFiles == null || scriptFiles.length == 0) {
+                        error("No scripts found in the directory.");
+                    } else {
+                        success("Available scripts:");
+                        for (File scriptFile : scriptFiles) {
+                            success(scriptFile.getName());
+                        }
+                    }
+                    break;
                 case "open":
                 case "folder":
                     try {
@@ -61,12 +78,6 @@ public final class Script extends Command {
                     }
                     break;
             }
-
-            success(
-                    "Successfully " + action + "ed "
-                            + (script == null ? "all scripts" : "\"" + script.getName() + "\"")
-                            + "."
-            );
         } catch (final Exception ex) {
             ex.printStackTrace();
             error("Failed to " + action + " a script. Stacktrace printed.");

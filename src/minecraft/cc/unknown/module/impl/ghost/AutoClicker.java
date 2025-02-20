@@ -82,7 +82,6 @@ public class AutoClicker extends Module {
 
 	@EventLink
 	public final Listener<TickEvent> onTick = event -> {	    
-	    double multiplier = 1.5;
 	    attackTicks++;
 	    HitSelect hitSelect = getModule(HitSelect.class);
 	    String mode = this.mode.getValue().getName();
@@ -95,7 +94,7 @@ public class AutoClicker extends Module {
 		    }
 		    
 		    if (cpsMultiplicator.getValue()) {
-		    	clicks = (long) (this.cps.getValue().intValue() * multiplier);	
+		    	clicks = (long) (this.cps.getValue().intValue() * 1.5);	
 		    } else {
 		    	clicks = this.cps.getValue().longValue();
 		    }

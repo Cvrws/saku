@@ -7,5 +7,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public final class ThemeManager {
-    private Themes theme = Themes.HYPER;
+    private Themes theme = Themes.SLINKY;
 }

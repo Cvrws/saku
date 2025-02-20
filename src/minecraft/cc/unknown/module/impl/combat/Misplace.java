@@ -40,26 +40,6 @@ public class Misplace extends Module {
     };
 
     @EventLink
-    public final Listener<PacketSendEvent> onPacketSend = event -> {
-        final Packet<?> packet = event.getPacket();
-
-        if (packet instanceof C0APacketAnimation && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.MISS) {
-            for (final Vector2f rotation : previousRotations) {
-                final Reach reach = this.getModule(Reach.class);
-                final MovingObjectPosition movingObjectPosition = RayCastUtil.rayCast(rotation, reach.isEnabled() ? 3.0D + reach.range.getValue().doubleValue() : 3.0D);
-
-                if (movingObjectPosition.entityHit != null && !attacked && movingObjectPosition.entityHit instanceof EntityLivingBase) {
-                    final AttackEvent e = new AttackEvent((EntityLivingBase) movingObjectPosition.entityHit);
-                    Sakura.instance.getEventBus().handle(e);
-
-                    if (e.isCancelled()) return;
-                    mc.playerController.attackEntity(mc.player, movingObjectPosition.entityHit);
-                }
-            }
-        }
-    };
-
-    @EventLink
     public final Listener<AttackEvent> onAttack = event -> {
         if (attacked) {
             event.setCancelled();

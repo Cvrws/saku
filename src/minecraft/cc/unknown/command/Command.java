@@ -1,9 +1,6 @@
 package cc.unknown.command;
 
-import static cc.unknown.util.render.ColorUtil.green;
-import static cc.unknown.util.render.ColorUtil.red;
-import static cc.unknown.util.render.ColorUtil.reset;
-import static cc.unknown.util.render.ColorUtil.yellow;
+import static cc.unknown.util.render.ColorUtil.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,16 +38,15 @@ public abstract class Command implements Accessor {
     public List<String> getNameAndAliases() {
         List<String> l = new ArrayList<>();
         l.addAll(Arrays.asList(expressions));
-
         return l;
     }
 	
 	public void error(String error) {
-		ChatUtil.display(yellow + "[" + red + "%" + yellow + "] " + reset + error); 
+		ChatUtil.display(yellow + "[" + red + "*" + yellow + "] " + reset + error); 
 	}
 	
 	public void warning(String warn) {
-		ChatUtil.display(yellow + "[" + red + "!" + yellow + "] " + reset + warn);
+		ChatUtil.display(yellow + "[" + gold + "*" + yellow + "] " + reset + warn);
 	}
 	
 	public void success(String success) {

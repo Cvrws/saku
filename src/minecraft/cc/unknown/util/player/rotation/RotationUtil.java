@@ -1,6 +1,7 @@
 package cc.unknown.util.player.rotation;
 
 import cc.unknown.handlers.RotationHandler;
+import cc.unknown.module.impl.combat.KillAura;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.player.RayCastUtil;
 import cc.unknown.util.structure.geometry.Vector2f;
@@ -8,6 +9,8 @@ import cc.unknown.util.structure.geometry.Vector3d;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -346,5 +349,27 @@ public class RotationUtil implements Accessor {
     
     public float getAngleDifference(float a, float b) {
         return MathHelper.wrapAngleTo180_float(a - b);
+    }
+    
+    public double isBestTarget(final Entity entity) {
+        if (entity instanceof EntityLivingBase) {
+            final double distance = mc.player.getDistanceToEntity(entity);
+            final double health = ((EntityLivingBase)entity).getHealth();
+            double hurtTime = 10.0;
+            if (entity instanceof EntityPlayer) {
+                hurtTime = ((EntityPlayer)entity).hurtTime;
+            }
+            return distance * 2.0 + health + hurtTime * 4.0;
+        }
+        return 1000.0;
+    }
+    
+    public double isUltimate(final Entity entity) {
+        if (entity instanceof EntityLivingBase) {
+            final double distance = mc.player.getDistanceToEntity(entity);
+            final double hurtTime = ((EntityLivingBase)entity).hurtTime * 6;
+            return hurtTime + distance;
+        }
+        return 1000.0;
     }
 }

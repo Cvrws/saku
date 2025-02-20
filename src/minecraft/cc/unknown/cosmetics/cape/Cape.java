@@ -22,7 +22,7 @@ public class Cape implements LayerRenderer<AbstractClientPlayer>, Accessor {
 	public void doRenderLayer(AbstractClientPlayer entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 		Cosmetics cosmetics = getModule(Cosmetics.class);
 		
-		if (entitylivingbaseIn.hasPlayerInfo() && !entitylivingbaseIn.isInvisible() && entitylivingbaseIn.isWearing(EnumPlayerModelParts.CAPE) && entitylivingbaseIn == mc.player) {
+		if (cosmetics.isEnabled() && cosmetics != null && entitylivingbaseIn.hasPlayerInfo() && !entitylivingbaseIn.isInvisible() && entitylivingbaseIn.isWearing(EnumPlayerModelParts.CAPE) && entitylivingbaseIn == mc.player) {
 	        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 	        
 	        CapeType capeType = cosmetics.capeType.getValue();

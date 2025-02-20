@@ -96,7 +96,7 @@ public final class AimAssist extends Module {
 	    double verticalRandomOffset = MathUtil.nextRandom(verticalCompl.getValue().doubleValue() - 1.47328, verticalCompl.getValue().doubleValue() + 2.48293).doubleValue() / 100;
 	    float resultVertical = (float) (-(pitchEntity * verticalRandomOffset + pitchEntity / (101.0D - MathUtil.nextRandom(verticalSpeed.getValue().doubleValue() - 4.723847, verticalSpeed.getValue().doubleValue()).doubleValue())));
 
-	    if (onTarget()) {
+	    if (onTarget(target)) {
 	        applyYaw(yawFov, yawAdjustment);
 	        applyPitch(resultVertical);
 	    } else {
@@ -193,6 +193,12 @@ public final class AimAssist extends Module {
         return mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY
                 && mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK
                 && mc.objectMouseOver.entityHit == target;
+    }
+    
+    private boolean onTarget(EntityPlayer target) {
+    	return mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY
+    			&& mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK
+    			&& mc.objectMouseOver.entityHit == target;
     }
 	
 	private void applyYaw(double yawFov, float yawAdjustment) {

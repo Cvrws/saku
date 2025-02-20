@@ -7,6 +7,7 @@ import cc.unknown.managers.ModuleManager;
 import cc.unknown.module.Module;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.theme.Themes;
+import cc.unknown.util.client.CustomLogger;
 import net.minecraft.client.Minecraft;
 
 public interface Accessor {
@@ -26,6 +27,10 @@ public interface Accessor {
     
     default ModuleManager getModuleManager() {
     	return getInstance().getModuleManager();
+    }
+    
+    default CustomLogger getLogger() {
+    	return Sakura.instance.getLogger();
     }
 
     default Themes getTheme() {

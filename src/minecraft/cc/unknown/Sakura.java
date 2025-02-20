@@ -1,6 +1,9 @@
 package cc.unknown;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +35,8 @@ public class Sakura {
     public static final String VERSION = "5.9";
 
     public static final Sakura instance = new Sakura();
-    public static final CustomLogger LOGGER = new CustomLogger(Sakura.class);
     
+    private final CustomLogger logger = new CustomLogger(Sakura.class);
     private final EventBus<Event> eventBus = new EventBus<>();
     private ModuleManager moduleManager;
     private CommandManager commandManager;
@@ -69,7 +72,7 @@ public class Sakura {
         
         mc.displayGuiScreen(new SakuMenu());
 
-        LOGGER.info("Initialized successfully.");
+        logger.info("Initialized successfully.");
     }
 
     public void terminate() {    	
@@ -78,13 +81,13 @@ public class Sakura {
         }
     	
     	discordHandler.stop();
-    	LOGGER.info("Discord RPC Terminated.");
+    	logger.info("Discord RPC Terminated.");
         System.gc();
-        LOGGER.info("Client Terminated.");
+        logger.info("Client Terminated.");
     }
     
     private void initHandler() {
-    	LOGGER.info("Handlers initialized.");
+    	logger.info("Handlers initialized.");
     	register(
     			new ViaHandler(),
     			new SpoofHandler(),
@@ -96,13 +99,13 @@ public class Sakura {
     			new RotationHandler(),
     			new FixHandler(),
     			new TransactionHandler());
-    	LOGGER.info("Handlers registered.");
+    	logger.info("Handlers registered.");
     }
     
     private void initVia() {
         ViaMCP.INSTANCE.initAsyncSlider();
         ViaMCP.INSTANCE.getAsyncVersionSlider().setVersion(ViaMCP.NATIVE_VERSION);
-    	LOGGER.info("ViaMCP initialized.");
+    	logger.info("ViaMCP initialized.");
     }
     
     private void initManagers() {
@@ -122,7 +125,7 @@ public class Sakura {
         clickGui = new RiceGui();
         clickGui.initGui();
         
-        LOGGER.info("Managers initialized.");
+        logger.info("Managers initialized.");
     }
     
     private void initAutoOptimization() {
@@ -144,9 +147,9 @@ public class Sakura {
 	        try {
 	            registered.add(handler);
 	            eventBus.register(handler);
-	            LOGGER.info(handler.getClass().getSimpleName() + " registered.");
+	            logger.info(handler.getClass().getSimpleName() + " registered.");
 	        } catch (Exception e) {
-	            LOGGER.error("Failed to register handler: " + handler.getClass().getSimpleName(), e);
+	        	logger.error("Failed to register handler: " + handler.getClass().getSimpleName(), e);
 	        }
 	    }
 	}
@@ -160,17 +163,17 @@ public class Sakura {
                 String content = new String(Files.readAllBytes(firstInitFile.toPath())).trim();
                 if (!EXPECTED_CONTENT.equals(content)) {
                     if (firstInitFile.delete()) {
-                        LOGGER.info("Delete sound.txt, invalid content.");
+                        logger.info("Delete sound.txt, invalid content.");
                         firstStart = true;
                     } else {
-                        LOGGER.error("Failed.");
+                        logger.error("Failed.");
                         return;
                     }
                 } else {
                     return;
                 }
             } catch (IOException e) {
-                LOGGER.error("Failed to read", e);
+                logger.error("Failed to read", e);
                 return;
             }
         } else {
@@ -178,15 +181,15 @@ public class Sakura {
         }
 
         if (!dir.exists() && !dir.mkdirs()) {
-            LOGGER.error("Failed dir.");
+            logger.error("Failed dir.");
             return;
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(firstInitFile))) {
             writer.write(EXPECTED_CONTENT);
-            LOGGER.info("Created sound.txt.");
+            logger.info("Created sound.txt.");
         } catch (IOException e) {
-            LOGGER.error("Failed created", e);
+            logger.error("Failed created", e);
         }
 	}
 
@@ -199,18 +202,18 @@ public class Sakura {
                 String content = new String(Files.readAllBytes(firstInitFile.toPath())).trim();
                 if (EXPECTED_CONTENT.equals(content)) {
                     firstStart = false;
-                    LOGGER.info("Start detected, canceling sound...");
+                    logger.info("Start detected, canceling sound...");
                 } else {
                     firstStart = true;
-                    LOGGER.info("Contenido incorrecto, activando sonido...");
+                    logger.info("Contenido incorrecto, activando sonido...");
                     initTempFile();
                 }
             } catch (IOException e) {
-                LOGGER.error("Error leyendo el archivo sound.txt", e);
+                logger.error("Error leyendo el archivo sound.txt", e);
             }
         } else {
             firstStart = true;
-            LOGGER.info("No sound.txt found, initializing sound...");
+            logger.info("No sound.txt found, initializing sound...");
             initTempFile();
         }
 	}

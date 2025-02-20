@@ -8,8 +8,7 @@ import net.minecraft.client.resources.data.IMetadataSection;
 import net.minecraft.client.resources.data.IMetadataSerializer;
 import net.minecraft.util.ResourceLocation;
 
-public interface IResourcePack
-{
+public interface IResourcePack {
     InputStream getInputStream(ResourceLocation location) throws IOException;
 
     boolean resourceExists(ResourceLocation location);

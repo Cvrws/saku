@@ -11,16 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import cc.unknown.Sakura;
 import cc.unknown.command.Command;
-import cc.unknown.command.impl.Bind;
-import cc.unknown.command.impl.Config;
-import cc.unknown.command.impl.Friend;
-import cc.unknown.command.impl.Help;
-import cc.unknown.command.impl.Join;
-import cc.unknown.command.impl.Name;
-import cc.unknown.command.impl.Script;
-import cc.unknown.command.impl.Target;
-import cc.unknown.command.impl.Toggle;
-import cc.unknown.command.impl.Transaction;
+import cc.unknown.command.impl.*;
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.input.ChatInputEvent;
@@ -38,6 +29,7 @@ public final class CommandManager {
         this.add(new Help());
         this.add(new Name());
         this.add(new Join());
+        this.add(new MemoryLeak());
         this.add(new Script());
         this.add(new Toggle());
         this.add(new Target());

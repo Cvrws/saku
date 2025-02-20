@@ -25,6 +25,8 @@ import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.MathUtil;
+import cc.unknown.util.player.EnemyUtil;
+import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.PlayerUtil;
 import cc.unknown.util.render.ColorUtil;
 import cc.unknown.util.render.RenderUtil;
@@ -44,8 +46,7 @@ public final class ESP extends Module {
 			.setDefault("Box");
 
     public final BooleanValue colorWhite = new BooleanValue("White Color", this, false);
-	private final BooleanValue colorTeams = new BooleanValue("Color based in team color", this, false, () -> colorWhite.getValue());
-	private final BooleanValue colorName = new BooleanValue("Color based in name color", this, false, () -> colorTeams.getValue() || colorWhite.getValue());
+	private final BooleanValue colorName = new BooleanValue("Color based in name color", this, false, () -> colorWhite.getValue());
 	private final BooleanValue checkInvis = new BooleanValue("Show Invisibles", this, false);
 	private final BooleanValue redDamage = new BooleanValue("Red on Damage", this, false);
 	private final BooleanValue renderSelf = new BooleanValue("Render Self", this, false);
@@ -70,13 +71,15 @@ public final class ESP extends Module {
 			
 			int color = 0;
 			
-			if (colorTeams.getValue()) {
-				color = ColorUtil.getTeamColor(player);
-			} else if (colorName.getValue()) {
+			if (colorName.getValue()) {
 	        	color = ColorUtil.getColorFromTags(player.getDisplayName().getFormattedText());
 			} else if (colorWhite.getValue()) {
 				color = new Color(255, 255, 255).getRGB();
-	        } else {
+	        } else if (FriendUtil.isFriend(name)) {
+				color = new Color(0, 255, 0).getRGB();
+			} else if (EnemyUtil.isEnemy(name)) {
+				color = new Color(255, 0, 0).getRGB();
+			} else {
 				color = getTheme().getFirstColor().getRGB();
 			}
 			

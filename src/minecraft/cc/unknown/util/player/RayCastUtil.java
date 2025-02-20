@@ -1,6 +1,5 @@
 package cc.unknown.util.player;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Predicates;
@@ -11,11 +10,14 @@ import cc.unknown.util.player.rotation.RotationUtil;
 import cc.unknown.util.structure.geometry.Vector2f;
 import lombok.experimental.UtilityClass;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.optifine.reflect.Reflector;

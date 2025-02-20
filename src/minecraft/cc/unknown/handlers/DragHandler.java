@@ -124,7 +124,6 @@ public class DragHandler implements Accessor {
                                     closest = distance;
                                     selectedValue.targetPosition.y = snap.position + y;
                                     selected = snap;
-                                    //RenderUtil.rectangle(0, selected.position, scaledResolution.getScaledWidth(), 0.5, color);
                                 }
                             }
                             break;
@@ -142,7 +141,6 @@ public class DragHandler implements Accessor {
                                     closest = distance;
                                     selectedValue.targetPosition.x = snap.position + x;
                                     selected = snap;
-                                    //RenderUtil.rectangle(selected.position, 0, 0.5, scaledResolution.getScaledHeight(), color);
                                 }
                             }
                             break;
@@ -152,9 +150,7 @@ public class DragHandler implements Accessor {
 
             // Validating position
             for (Module module : modules) {
-                // Getting Position Value
-                Optional<Value<?>> positionValues = module.getValues().stream().filter(value ->
-                        value instanceof DragValue).findFirst();
+                Optional<Value<?>> positionValues = module.getValues().stream().filter(value -> value instanceof DragValue).findFirst();
                 DragValue positionValue = ((DragValue) positionValues.get());
 
                 float offset = Sakura.instance.getThemeManager().getTheme().getPadding();
@@ -207,7 +203,5 @@ public class DragHandler implements Accessor {
     };
 
     @EventLink
-    public final Listener<GuiMouseReleaseEvent> onGuiMouseRelease = event -> {
-        selectedValue = null;
-    };
+    public final Listener<GuiMouseReleaseEvent> onGuiMouseRelease = event -> selectedValue = null;
 }

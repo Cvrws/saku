@@ -87,6 +87,7 @@ public final class ModuleManager {
         this.put(FPSBoost.class, new FPSBoost());
         this.put(ClientSpoofer.class, new ClientSpoofer());
         this.put(DiscordRPC.class, new DiscordRPC());
+        this.put(WeedHack.class, new WeedHack());
         this.put(AutoSword.class, new AutoSword());
         this.put(MidClick.class, new MidClick());
         this.put(Insults.class, new Insults());
@@ -123,6 +124,7 @@ public final class ModuleManager {
         // Render
         this.put(Ambience.class, new Ambience());
         this.put(Animations.class, new Animations());
+        this.put(StickersAnimation.class, new StickersAnimation());
         this.put(ChestESP.class, new ChestESP());
         this.put(ClickGUI.class, new ClickGUI());
         this.put(CPSDisplay.class, new CPSDisplay());

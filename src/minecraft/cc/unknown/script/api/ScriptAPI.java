@@ -102,7 +102,6 @@ public class ScriptAPI {
     }
 
     public ScriptCommand registerCommand(final String name, final String description) {
-        // Sometimes my genius is almost frightening
         final AtomicReference<ScriptCommand> scriptCommandReference = new AtomicReference<>(null);
 
         final Command command = new Command(description, name) {
@@ -149,11 +148,11 @@ public class ScriptAPI {
         return System.currentTimeMillis();
     }
 
-    public ScriptVector2f newVec2(float x, float y) {
+    public ScriptVector2f vector2F(float x, float y) {
         return new ScriptVector2f(x, y);
     }
 
-    public ScriptVector3d newVec3(double x, double y, double z) {
+    public ScriptVector3d vector3D(double x, double y, double z) {
         return new ScriptVector3d(x, y, z);
     }
 

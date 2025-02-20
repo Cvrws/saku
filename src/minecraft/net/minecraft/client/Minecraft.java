@@ -71,6 +71,7 @@ import cc.unknown.event.impl.render.PostRenderTickEvent;
 import cc.unknown.event.impl.render.PreRenderTickEvent;
 import cc.unknown.module.impl.latency.TimerManipulation;
 import cc.unknown.module.impl.other.FPSBoost;
+import cc.unknown.module.impl.other.WeedHack;
 import cc.unknown.module.impl.player.NoClickDelay;
 import cc.unknown.module.impl.visual.FreeLook;
 import cc.unknown.ui.menu.saku.SakuMenu;
@@ -549,28 +550,23 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 	}
 
-	private void setWindowIcon() {
-		final Util.EnumOS util$enumos = Util.getOSType();
-
-		if (util$enumos != Util.EnumOS.OSX) {
-			InputStream inputstream = null;
-			InputStream inputstream1 = null;
-
-			try {
-				inputstream = this.mcDefaultResourcePack.getInputStream(new ResourceLocation("sakura/icon/icon16.png"));
-				inputstream1 = this.mcDefaultResourcePack
-						.getInputStream(new ResourceLocation("sakura/icon/icon32.png"));
-
-				if (inputstream != null && inputstream1 != null) {
-					Display.setIcon(new ByteBuffer[] { this.readImageToBuffer(inputstream),
-							this.readImageToBuffer(inputstream1) });
-				}
-			} catch (IOException ioexception) {
-				logger.error("Couldn't set icon", ioexception);
-			} finally {
-				IOUtils.closeQuietly(inputstream);
-				IOUtils.closeQuietly(inputstream1);
+	public void setWindowIcon() {
+	    setWindowIcon("sakura/icon/icon16.png", "sakura/icon/icon32.png");
+	}
+	
+	public void setWindowIcon(String icon16, String icon32) {
+		if (Util.getOSType() == Util.EnumOS.OSX) {
+			return;
+		}
+		
+		try (InputStream input16 = mcDefaultResourcePack.getInputStream(new ResourceLocation(icon16));
+				InputStream input32 = mcDefaultResourcePack.getInputStream(new ResourceLocation(icon32))) {
+			
+			if (input16 != null && input32 != null) {
+				Display.setIcon(new ByteBuffer[] { readImageToBuffer(input16), readImageToBuffer(input32) } );
 			}
+		} catch (IOException e) {
+			logger.error("Couldn't set icon", e);
 		}
 	}
 
@@ -672,7 +668,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 		}
 	}
 
-	private ByteBuffer readImageToBuffer(InputStream imageStream) throws IOException {
+	public ByteBuffer readImageToBuffer(InputStream imageStream) throws IOException {
 		BufferedImage bufferedimage = ImageIO.read(imageStream);
 		int[] aint = bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), (int[]) null, 0,
 				bufferedimage.getWidth());

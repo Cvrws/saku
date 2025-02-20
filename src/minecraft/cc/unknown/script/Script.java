@@ -15,7 +15,7 @@ import lombok.Data;
 @Data
 public final class Script {
 
-    private final String name, author, version, description;
+    private final String name;
 
     private String code;
 
@@ -27,22 +27,16 @@ public final class Script {
 
     private boolean loaded;
 
-    public Script(final String name, final String author, final String version, final String description,
-                  final String code) {
-        this(name, author, version, description, code, null);
+    public Script(final String name, final String code) {
+        this(name, code, null);
     }
 
-    public Script(final String name, final String author, final String version, final String description,
-                  final File sourceFile) {
-        this(name, author, version, description, null, sourceFile);
+    public Script(final String name, final File sourceFile) {
+        this(name, null, sourceFile);
     }
 
-    public Script(final String name, final String author, final String version, final String description,
-                  final String code, final File sourceFile) {
+    public Script(final String name, final String code, final File sourceFile) {
         this.name = name;
-        this.author = author;
-        this.version = version;
-        this.description = description;
         this.code = code;
         this.sourceFile = sourceFile;
     }

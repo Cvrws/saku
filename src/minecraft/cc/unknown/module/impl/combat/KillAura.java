@@ -82,7 +82,9 @@ public final class KillAura extends Module {
 			.add(new SubMode("Hurt Time"))
 			.add(new SubMode("Armor"))
 			.add(new SubMode("Fov"))
-			.setDefault("Distance");
+			.add(new SubMode("Best"))
+			.add(new SubMode("Ultimate"))
+			.setDefault("Best");
 
     private final ModeValue clickMode = new ModeValue("Click Delay", this)
             .add(new SubMode("None"))
@@ -93,7 +95,7 @@ public final class KillAura extends Module {
     public final NumberValue preRange = new NumberValue("Pre Range", this, 4.5, 3, 6, 0.1);
 	public final NumberValue range = new NumberValue("Range", this, 3, 3, 6, 0.1);
 	private final NumberValue cps = new NumberValue("CPS", this, 10, 1, 20, 1);
-	private final NumberValue randomization = new NumberValue("Randomization", this, 1.5, 0, 2, 0.1);
+	private final BooleanValue cpsMultiplicator = new BooleanValue("CPS Multiplicator", this, false);
 
 	private final NumberValue rotationSpeed = new NumberValue("Rotation speed", this, 5, 0, 10, 1);
 	private final ListValue<MoveFix> movementCorrection = new ListValue<>("Move Fix", this);
@@ -137,6 +139,7 @@ public final class KillAura extends Module {
 
 	private int attack;
 	private int blockTicks;
+	private long clicks;
 	private int hitTicks;
 	private int switchTicks;
 	private boolean resetting;
@@ -181,47 +184,59 @@ public final class KillAura extends Module {
 	};
 
 	public void getTargets() {
-		double range = this.preRange.getValueToDouble();
+	    double range = preRange.getValueToDouble();
 
-		targets = TargetUtil.getTargets(range);
+	    List<EntityLivingBase> newTargets = TargetUtil.getTargets(range);
 
-		if (attackMode.is("Switch")) {
-			targets.removeAll(pastTargets);
+	    if (attackMode.is("Switch")) {
+	        newTargets.removeAll(pastTargets);
 
-			switchTicks++;
-			if (switchTicks >= switchDelay.getValueToInt()) {
-				pastTargets.add(target);
-				switchTicks = 0;
-			}
-		}
+	        if (++switchTicks >= switchDelay.getValueToInt()) {
+	            pastTargets.add(target);
+	            switchTicks = 0;
+	        }
+	    }
 
-		if (targets.isEmpty()) {
-			pastTargets.clear();
-			targets = TargetUtil.getTargets(range);
-		}
+	    if (newTargets.isEmpty()) {
+	        pastTargets.clear();
+	        newTargets = TargetUtil.getTargets(range);
+	    }
 
-		switch (sorting.getValue().getName()) {
-		case "Health":
-			targets.sort(Comparator.comparingDouble(EntityLivingBase::getHealth));
-			sortByTargets();
-			break;
-		case "Distance":
-			targets.sort(Comparator.comparingDouble(mc.player::getDistanceToEntity));
-			sortByTargets();
-			break;
-		case "Hurt Time":
-            targets.sort(Comparator.comparingInt(entity -> entity.hurtTime));
-			sortByTargets();
-			break;
-        case "Armor":
-            targets.sort(Comparator.comparingInt(EntityLivingBase::getTotalArmorValue));
-            sortByTargets();
-            break;
-        case "FOV":
-            targets.sort(Comparator.comparingDouble(RotationUtil::distanceFromYaw));
-            sortByTargets();
-            break;
-		}
+	    targets = newTargets;
+
+	    sortTargets();
+	}
+
+	private void sortTargets() {
+	    Comparator<EntityLivingBase> comparator = null;
+
+	    switch (sorting.getValue().getName()) {
+	        case "Health":
+	            comparator = Comparator.comparingDouble(EntityLivingBase::getHealth);
+	            break;
+	        case "Distance":
+	            comparator = Comparator.comparingDouble(mc.player::getDistanceToEntity);
+	            break;
+	        case "Hurt Time":
+	            comparator = Comparator.comparingInt(entity -> entity.hurtTime);
+	            break;
+	        case "Armor":
+	            comparator = Comparator.comparingInt(EntityLivingBase::getTotalArmorValue);
+	            break;
+	        case "Fov":
+	            comparator = Comparator.comparingDouble(RotationUtil::distanceFromYaw);
+	            break;
+	        case "Best":
+	            comparator = Comparator.comparingDouble(RotationUtil::isBestTarget);
+	            break;
+	        case "Ultimate":
+	            comparator = Comparator.comparingDouble(RotationUtil::isUltimate);
+	            break;
+	    }
+
+	    if (comparator != null) {
+	        targets.sort(comparator);
+	    }
 	}
 
 	private void sortByTargets() {
@@ -366,7 +381,12 @@ public final class KillAura extends Module {
         final boolean flag = tuple.getFirst();
 
         if (attackStopWatch.finished(this.nextSwing) && target != null && (clickStopWatch.finished((long) (delay * 50)) || flag)) {
-            final long clicks = (long) (cps.getValueToLong() * 1.5);
+		    if (cpsMultiplicator.getValue()) {
+		    	clicks = (long) (this.cps.getValueToInt() * 1.5);	
+		    } else {
+		    	clicks = this.cps.getValueToInt();
+		    }
+		    
             this.nextSwing = 1000 / clicks;
 
             if (Math.sin(nextSwing) + 1 > Math.random() || attackStopWatch.finished(this.nextSwing + 500) || Math.random() > 0.5) {
@@ -510,8 +530,7 @@ public final class KillAura extends Module {
         	if (keyBind) {
         		mc.gameSettings.keyBindUseItem.pressed = false;
         	} else {
-        		PacketUtil.send(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM,
-        				BlockPos.ORIGIN, EnumFacing.DOWN));
+        		mc.playerController.onStoppedUsingItem(mc.player);
         	}
 
         	blocking = false;
@@ -520,15 +539,15 @@ public final class KillAura extends Module {
 
     public void block(boolean interact) {
         if (!blocking) {
-            MovingObjectPosition mouse = RayCastUtil.rayCast(RotationHandler.lastRotations, 3);
-
-            if (interact && mouse.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
-                if (!mc.playerController.isPlayerRightClickingOnEntity(mc.player, mouse.entityHit, mouse)) {
-                    mc.playerController.interactWithEntitySendPacket(mc.player, mouse.entityHit);
-                }
+            if (interact) {
+            	mc.rightClickMouse();
             }
 
-            mc.playerController.sendUseItem(mc.player, mc.world, PlayerUtil.getItemStack());
+            //mc.playerController.sendUseItem(mc.player, mc.world, PlayerUtil.getItemStack());
+            
+            if (mc.player != null && mc.player.inventory != null && mc.player.inventory.getCurrentItem() != null && mc.player.inventory.getCurrentItem().getItem() != null && mc.player.inventory.getCurrentItem().getItem() instanceof ItemSword) {
+                mc.playerController.sendUseItem(mc.player, mc.world, mc.player.inventory.getCurrentItem());
+            }
             
             blocking = true;
         }

@@ -13,6 +13,7 @@ import cc.unknown.Sakura;
 import cc.unknown.event.impl.player.AttackEvent;
 import cc.unknown.util.Accessor;
 import cc.unknown.util.interfaces.Shaders;
+import cc.unknown.value.impl.BooleanValue;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -28,7 +29,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.src.Config;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
@@ -279,7 +279,7 @@ public final class RenderUtil implements Accessor {
 		GL11.glPopMatrix();
 	}
 
-	public void drawChestBox(final TileEntity tileEntity, final Color color) {
+	/*public void drawChestBox(final TileEntity tileEntity, final Color color) {
 		BlockPos position = tileEntity.getPos();
 
 		GL11.glPushMatrix();
@@ -306,6 +306,10 @@ public final class RenderUtil implements Accessor {
 		lineNoGl(50, -95, 50, 0, c);
 
 		GL11.glPopMatrix();
+	}*/
+	
+	public void renderBlock(BlockPos blockPos, int color, BooleanValue outline, BooleanValue shade) {
+		renderBox(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1, 1, 1, color, outline.getValue(), shade.getValue());
 	}
 
 	public void drawSimpleLine(EntityPlayer player, float partialTicks, Color color) {

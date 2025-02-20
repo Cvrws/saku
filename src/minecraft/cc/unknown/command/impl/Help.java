@@ -18,8 +18,7 @@ public final class Help extends Command {
     
     @Override
     public void execute(final String[] args) {
-        getInstance().getCommandManager().commandList
-                .forEach(command -> success(StringUtils.capitalize(command.getExpressions()[0]) + " " + Arrays.toString(command.getExpressions()) + ": " + gray + command.getDescription()));
+        getInstance().getCommandManager().commandList.forEach(command -> success(StringUtils.capitalize(command.getExpressions()[0]) + " " + Arrays.toString(command.getExpressions()) + ": " + gray + command.getDescription()));
     }
     
     @Override

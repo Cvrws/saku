@@ -54,8 +54,6 @@ public final class ScriptManager implements Accessor {
     private final List<Script> scripts = new ArrayList<>();
     
     public void init() {
-        //this.unloadScripts();
-
         this.engineFactory = new NashornScriptEngineFactory();
 
         this.loadBindings();
@@ -94,7 +92,7 @@ public final class ScriptManager implements Accessor {
     public void loadBindings() {
         this.globalBindings = new SimpleBindings() {{
             this.put("mc", new MinecraftAPI());
-            this.put("sakura", new ScriptAPI());
+            this.put("saku", new ScriptAPI());
             this.put("player", new PlayerAPI());
             this.put("world", new WorldAPI());
             this.put("network", new NetworkAPI());
@@ -105,7 +103,6 @@ public final class ScriptManager implements Accessor {
     }
 
     public void reloadScripts() {
-        System.out.println("Reloaded Scripts");
         this.unloadScripts();
 
         try {
@@ -161,47 +158,12 @@ public final class ScriptManager implements Accessor {
     public ScriptEngine createEngine() {
         final ScriptEngine engine = this.engineFactory.getScriptEngine();
         assert engine != null;
-
         engine.setBindings(this.globalBindings, ScriptContext.GLOBAL_SCOPE);
-
         return engine;
     }
 
     public Script parseScript(final String code, final File file) {
-        String author = "Unknown author";
-        String version = "Unknown version";
-        String description = "No description provided";
-
-        for (String line : code.split("\n")) {
-            line = line.trim();
-
-            if (line.startsWith("//@")) {
-                final String unprefixedLine = line.substring(3).trim();
-
-                final String key = unprefixedLine.toLowerCase(Locale.ENGLISH).split(" ")[0];
-                final String value = unprefixedLine.substring(key.length()).trim();
-
-                switch (key) {
-                    case "author": {
-                        author = value;
-                        break;
-                    }
-
-                    case "version": {
-                        version = value;
-                        break;
-                    }
-
-                    case "description": {
-                        description = value;
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Create a new script out of the data we've gotten
-        return new Script(this.getName(file), author, version, description, code, file);
+        return new Script(this.getName(file), code, file);
     }
 
     private String getName(final File file) {
