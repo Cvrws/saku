@@ -16,17 +16,22 @@ import cc.unknown.util.player.EnemyUtil;
 import cc.unknown.util.player.FriendUtil;
 import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.util.player.PlayerUtil;
+import cc.unknown.util.player.rotation.RotationUtil;
 import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 
 @ModuleInfo(aliases = "Aim Assist", description = "Te ayuda a apuntar", category = Category.GHOST)
 public final class AimAssist extends Module {
+	
+	private final ModeValue mode = new ModeValue("Mode", this)
+			.add(new SubMode("Single"))
+			.add(new SubMode("Switch"))
+			.setDefault("Single");
 
 	private final NumberValue horizontalSpeed = new NumberValue("Horizontal Speed", this, 45.0, 5.0, 100.0, 1.0);
 	private final NumberValue horizontalCompl = new NumberValue("Horizontal Complement", this, 35.0, 2.0, 97.0, 1.0);
@@ -37,13 +42,13 @@ public final class AimAssist extends Module {
 	private BooleanValue verticalRandom = new BooleanValue("Vertical Random", this, false, () -> !vertical.getValue());
 	private NumberValue verticalRandomization = new NumberValue("Vertical Randomization", this, 1.2, 0.1, 5, 0.1, () -> !verticalRandom.getValue());
 
-	private final ModeValue randomMode = new ModeValue("Speed Type", this)
+	private final ModeValue speedMode = new ModeValue("Speed Type", this)
 			.add(new SubMode("Thread Local Random"))
 			.add(new SubMode("Random Secure"))
 			.add(new SubMode("Gaussian"))
 			.setDefault("Thread Local Random");
 	
-	private final NumberValue maxAngle = new NumberValue("Angle", this, 180, 1, 180, 1);
+	private final NumberValue angle = new NumberValue("Angle", this, 180, 1, 180, 1);
 	private final NumberValue distance = new NumberValue("Distance", this, 4, 1, 8, 0.1);
 	private final BooleanValue clickAim = new BooleanValue("Require Clicking", this, true);
 	private final BooleanValue lockTarget = new BooleanValue("Lock Target", this, false);
@@ -85,16 +90,16 @@ public final class AimAssist extends Module {
 	    if (target == null) {
 	        return;
 	    }
-	    
-	    double yawSpeed = horizontalSpeed.getValue().doubleValue();
-	    double yawCompl = horizontalCompl.getValue().doubleValue();
+
+	    double yawSpeed = horizontalSpeed.getValueToDouble();
+	    double yawCompl = horizontalCompl.getValueToDouble();
 	    double yawOffset = MathUtil.nextSecure(yawSpeed, yawCompl).doubleValue() / 180;
 	    double yawFov = PlayerUtil.fovFromTarget(target, event.getYaw());
 	    double pitchEntity = PlayerUtil.pitchFromTarget(target, 0, event.getPitch());
-	    float yawAdjustment = getSpeedRandomize(randomMode.getValue().getName(), yawFov, yawOffset, yawSpeed, yawCompl);
+	    float yawAdjustment = getSpeedRandomize(speedMode.getValue().getName(), yawFov, yawOffset, yawSpeed, yawCompl);
 
-	    double verticalRandomOffset = MathUtil.nextRandom(verticalCompl.getValue().doubleValue() - 1.47328, verticalCompl.getValue().doubleValue() + 2.48293).doubleValue() / 100;
-	    float resultVertical = (float) (-(pitchEntity * verticalRandomOffset + pitchEntity / (101.0D - MathUtil.nextRandom(verticalSpeed.getValue().doubleValue() - 4.723847, verticalSpeed.getValue().doubleValue()).doubleValue())));
+	    double verticalRandomOffset = MathUtil.nextRandom(verticalCompl.getValueToDouble() - 1.47328, verticalCompl.getValueToDouble() + 2.48293).doubleValue() / 100;
+	    float resultVertical = (float) (-(pitchEntity * verticalRandomOffset + pitchEntity / (101.0D - MathUtil.nextRandom(verticalSpeed.getValueToDouble() - 4.723847, verticalSpeed.getValueToDouble()).doubleValue())));
 
 	    if (onTarget(target)) {
 	        applyYaw(yawFov, yawAdjustment);
@@ -110,28 +115,34 @@ public final class AimAssist extends Module {
 		target = null;
 	}
 
-	private EntityPlayer getEnemy() {
-	    int fov = maxAngle.getValue().intValue();
-	    Vec3 playerPos = new Vec3(mc.player);
+    private EntityPlayer getEnemy() {
+        int fov = angle.getValueToInt();
+        Vec3 playerPos = new Vec3(mc.player);
         EntityPlayer bestTarget = null;
-        double closestDistance = distance.getValue().doubleValue();
-
-	    for (EntityPlayer player : mc.world.playerEntities) {
-	        if (lockedTargets.contains(player) && !isValidTarget(player, playerPos, fov)) {
-	            continue;
-	        }
-
-            if (isValidTarget(player, playerPos, fov)) {
-                double dist = playerPos.distanceTo(player.getPositionVector());
-                if (dist < closestDistance) {
-                    bestTarget = player;
-                    closestDistance = dist;
-                }
+        double bestScore = Double.MAX_VALUE;
+        
+        for (EntityPlayer player : mc.world.playerEntities) {
+            if (lockedTargets.contains(player) && !isValidTarget(player, playerPos, fov)) {
+                continue;
+            }
+            if (!isValidTarget(player, playerPos, fov)) {
+                continue;
+            }
+            
+            double score;
+            if (mode.is("Switch")) {
+                score = RotationUtil.nearestRotation(player.getEntityBoundingBox());
+            } else {
+                score = playerPos.distanceTo(player.getPositionVector());
+            }
+            if (score < bestScore) {
+                bestTarget = player;
+                bestScore = score;
             }
         }
-	    
+        
         return bestTarget;
-	}
+    }
 	
 	private boolean isValidTarget(EntityPlayer player, Vec3 playerPos, int fov) {
 	    if (player == mc.player || !player.isEntityAlive() || player.deathTime > 0) {
@@ -153,7 +164,7 @@ public final class AimAssist extends Module {
 	        return false;
 	    }
 
-	    if (playerPos.distanceTo(player) > distance.getValue().doubleValue()) {
+	    if (mc.player.getDistanceToEntity(player) > distance.getValueToDouble()) {
 	        return false;
 	    }
 
@@ -209,7 +220,7 @@ public final class AimAssist extends Module {
 
 	private void applyPitch(float resultVertical) {
 	    if (vertical.getValue()) {
-	        float pitchChange = random.nextBoolean() ? -MathUtil.nextRandom(0F, verticalRandomization.getValue().floatValue()).floatValue() : MathUtil.nextRandom(0F, verticalRandomization.getValue().floatValue()).floatValue();
+	        float pitchChange = random.nextBoolean() ? -MathUtil.nextRandom(0F, verticalRandomization.getValueToFloat()).floatValue() : MathUtil.nextRandom(0F, verticalRandomization.getValueToFloat()).floatValue();
 	        float pitchAdjustment = verticalRandom.getValue() ? pitchChange : resultVertical;
 	        float newPitch = mc.player.rotationPitch + pitchAdjustment;
 

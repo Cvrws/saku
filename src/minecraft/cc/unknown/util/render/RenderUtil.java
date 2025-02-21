@@ -278,38 +278,57 @@ public final class RenderUtil implements Accessor {
 
 		GL11.glPopMatrix();
 	}
-
-	/*public void drawChestBox(final TileEntity tileEntity, final Color color) {
-		BlockPos position = tileEntity.getPos();
-
-		GL11.glPushMatrix();
-
-		final RenderManager renderManager = mc.getRenderManager();
-
-		double x = (position.getX() + 0.5) - renderManager.renderPosX;
-		double y = position.getY() - renderManager.renderPosY;
-		double z = (position.getZ() + 0.5) - renderManager.renderPosZ;
-
-		GL11.glTranslated(x, y, z);
-
-		GL11.glRotated(-renderManager.playerViewY, 0.0D, 1.0D, 0.0D);
-		GL11.glRotated(renderManager.playerViewX, mc.gameSettings.thirdPersonView == 2 ? -1.0D : 1.0D, 0.0D, 0.0D);
-
-		final float scale = 1f / 100f;
-		GL11.glScalef(-scale, -scale, scale);
-
-		final Color c = color;
-
-		lineNoGl(-50, 0, 50, 0, c);
-		lineNoGl(-50, -95, -50, 0, c);
-		lineNoGl(-50, -95, 50, -95, c);
-		lineNoGl(50, -95, 50, 0, c);
-
-		GL11.glPopMatrix();
-	}*/
 	
 	public void renderBlock(BlockPos blockPos, int color, BooleanValue outline, BooleanValue shade) {
 		renderBox(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1, 1, 1, color, outline.getValue(), shade.getValue());
+	}
+	
+	public void renderBlock(BlockPos blockPos, int color) {
+		renderBox(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1, 1, 1, color, true, false);
+	}
+	
+	public void renderBox(int x, int y, int z, double x2, double y2, double z2, int color, boolean outline, boolean shade) {
+		double xPos = x - mc.getRenderManager().viewerPosX;
+		double yPos = y - mc.getRenderManager().viewerPosY;
+		double zPos = z - mc.getRenderManager().viewerPosZ;
+		AxisAlignedBB axisAlignedBB = new AxisAlignedBB(xPos, yPos, zPos, xPos + x2, yPos + y2, zPos + z2);
+		drawAxisAlignedBB(axisAlignedBB, shade, outline, color);
+	}
+	
+	public void drawAxisAlignedBB(AxisAlignedBB axisAlignedBB, boolean outline, int color) {
+		drawAxisAlignedBB(axisAlignedBB, outline, true, color);
+	}
+
+	public void drawAxisAlignedBB(AxisAlignedBB axisAlignedBB, boolean filled, boolean outline, int color) {
+		drawSelectionBoundingBox(axisAlignedBB, outline, filled, color);
+	}
+
+	public void drawSelectionBoundingBox(final AxisAlignedBB bb, final boolean outline, final boolean filled, int color) {
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(770, 771);
+		GL11.glLineWidth(2.0F);
+		GlStateManager.disableTexture2D();
+		GL11.glDisable(2929);
+		GlStateManager.depthMask(false);
+		GlStateManager.pushMatrix();
+
+		if (outline) {
+			drawOutlineBoundingBox(bb, new Color(color, true));
+		}
+
+		if (filled) {
+			drawFilledBoundingBox(bb, new Color(color, true));
+		}
+
+		GlStateManager.popMatrix();
+		GlStateManager.depthMask(true);
+		GL11.glEnable(2929);
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableBlend();
+	}
+
+	public void drawOutlineBoundingBox(final AxisAlignedBB bb, Color color) {
+		RenderGlobal.drawOutlinedBoundingBox(bb, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}
 
 	public void drawSimpleLine(EntityPlayer player, float partialTicks, Color color) {
@@ -591,52 +610,6 @@ public final class RenderUtil implements Accessor {
 		worldrenderer.pos(bb.maxX, bb.minY, bb.maxZ)
 				.color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 		tessellator.draw();
-	}
-
-	public void renderBox(int x, int y, int z, double x2, double y2, double z2, int color, boolean outline,
-			boolean shade) {
-		double xPos = x - mc.getRenderManager().viewerPosX;
-		double yPos = y - mc.getRenderManager().viewerPosY;
-		double zPos = z - mc.getRenderManager().viewerPosZ;
-		AxisAlignedBB axisAlignedBB = new AxisAlignedBB(xPos, yPos, zPos, xPos + x2, yPos + y2, zPos + z2);
-		drawAxisAlignedBB(axisAlignedBB, shade, outline, color);
-	}
-
-	public void drawAxisAlignedBB(AxisAlignedBB axisAlignedBB, boolean outline, int color) {
-		drawAxisAlignedBB(axisAlignedBB, outline, true, color);
-	}
-
-	public void drawAxisAlignedBB(AxisAlignedBB axisAlignedBB, boolean filled, boolean outline, int color) {
-		drawSelectionBoundingBox(axisAlignedBB, outline, filled, color);
-	}
-
-	public void drawSelectionBoundingBox(final AxisAlignedBB bb, final boolean outline, final boolean filled,
-			int color) {
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(770, 771);
-		GL11.glLineWidth(2.0F);
-		GlStateManager.disableTexture2D();
-		GL11.glDisable(2929);
-		GlStateManager.depthMask(false);
-		GlStateManager.pushMatrix();
-
-		if (outline) {
-			drawOutlineBoundingBox(bb, new Color(color, true));
-		}
-
-		if (filled) {
-			drawFilledBoundingBox(bb, new Color(color, true));
-		}
-
-		GlStateManager.popMatrix();
-		GlStateManager.depthMask(true);
-		GL11.glEnable(2929);
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableBlend();
-	}
-
-	public void drawOutlineBoundingBox(final AxisAlignedBB bb, Color color) {
-		RenderGlobal.drawOutlinedBoundingBox(bb, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}
 	
     public void drawTriangle(float cx, float cy, float r, float n, Color color){

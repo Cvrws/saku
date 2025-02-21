@@ -26,7 +26,15 @@ public class NumberValueComponent extends ValueComponent implements Accessor {
     private double renderPercentage;
     private boolean mouseOver;
     private float hoverTime;
-    public final TextBox valueDisplay = new TextBox(new Vector2d(0, 0), Fonts.MAISON.get(16, Weight.NONE), Colors.SECONDARY_TEXT.get(), TextAlign.LEFT, ((NumberValue) value).getDefaultValue().toString().replace(".0", ""), 45, "1234567890.");
+    public final TextBox valueDisplay = new TextBox(
+    	    new Vector2d(0, 0),
+    	    Fonts.MAISON.get(16, Weight.NONE),
+    	    Colors.SECONDARY_TEXT.get(),
+    	    TextAlign.LEFT,
+    	    String.format("%.2f", ((NumberValue) value).getDefaultValue().floatValue()),
+    	    45,
+    	    "1234567890."
+    	);
 
     public NumberValueComponent(final Value<?> value) {
         super(value);

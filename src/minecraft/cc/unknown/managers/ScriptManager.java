@@ -38,7 +38,6 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
-@Getter
 public final class ScriptManager implements Accessor {
 
     public static final File SCRIPT_DIRECTORY = new File(FileManager.DIRECTORY, "scripts");
@@ -49,7 +48,7 @@ public final class ScriptManager implements Accessor {
 
     private NashornScriptEngineFactory engineFactory;
 
-    private Bindings globalBindings;
+	private Bindings globalBindings;
 
     private final List<Script> scripts = new ArrayList<>();
     
@@ -169,4 +168,32 @@ public final class ScriptManager implements Accessor {
     private String getName(final File file) {
         return file.getName().replace(".js", "");
     }
+    
+    public static File getScriptDirectory() {
+		return SCRIPT_DIRECTORY;
+	}
+
+	public static FilenameFilter getScriptFileFilter() {
+		return SCRIPT_FILE_FILTER;
+	}
+
+	public static ClassFilter getScriptClassFilter() {
+		return SCRIPT_CLASS_FILTER;
+	}
+
+	public NashornScriptEngineFactory getEngineFactory() {
+		return engineFactory;
+	}
+
+	public Bindings getGlobalBindings() {
+		return globalBindings;
+	}
+
+	public List<Script> getScripts() {
+		return scripts;
+	}
+
+	public Listener<WorldChangeEvent> getOnWorldChange() {
+		return onWorldChange;
+	}
 }

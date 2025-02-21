@@ -22,19 +22,19 @@ public final class ItemESP extends Module {
 
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {        
-	    Map<Item, Color> itemColors = new HashMap<>();
-	    itemColors.put(Items.gold_ingot, Color.YELLOW);
-	    itemColors.put(Items.iron_ingot, Color.WHITE);
-	    itemColors.put(Items.emerald, Color.GREEN);
-	    itemColors.put(Items.redstone, Color.RED);
-	    itemColors.put(Items.diamond, Color.CYAN);
+	    Map<Item, Color> colors = new HashMap<>();
+	    colors.put(Items.gold_ingot, Color.YELLOW);
+	    colors.put(Items.iron_ingot, Color.WHITE);
+	    colors.put(Items.emerald, Color.GREEN);
+	    colors.put(Items.redstone, Color.RED);
+	    colors.put(Items.diamond, Color.CYAN);
 
 	    for (Entity entity : mc.world.loadedEntityList) {
 	        if (entity instanceof EntityItem) {
 	            EntityItem item = (EntityItem) entity;
 	            ItemStack stack = item.getEntityItem();
 
-	            Color color = itemColors.getOrDefault(stack.getItem(), getTheme().getAccentColor());
+	            Color color = colors.getOrDefault(stack.getItem(), getTheme().getAccentColor());
 	            
 	            RenderUtil.drawSimpleItemBox(item, color);
 	        }

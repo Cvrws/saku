@@ -18,8 +18,8 @@ import net.minecraft.tileentity.TileEntityEnderChest;
 @ModuleInfo(aliases = "Chest ESP", description = "Renderiza todos tipo de cofre", category = Category.VISUALS)
 public final class ChestESP extends Module {
 		
-	public final BooleanValue outline = new BooleanValue("Outline", this, false);
-	public final BooleanValue filled = new BooleanValue("Filled", this, true);
+	public final BooleanValue outline = new BooleanValue("Outline", this, true);
+	public final BooleanValue filled = new BooleanValue("Filled", this, false);
 	private int color = 0;
 
 	@EventLink

@@ -1,22 +1,20 @@
 package cc.unknown.module.impl.world;
 
-import org.lwjgl.input.Keyboard;
-
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
 import cc.unknown.event.impl.render.Render3DEvent;
-import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.Module;
 import cc.unknown.module.api.Category;
 import cc.unknown.module.api.ModuleInfo;
+import cc.unknown.util.client.MathUtil;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.value.impl.BooleanValue;
-import cc.unknown.value.impl.BoundsNumberValue;
+import cc.unknown.value.impl.NumberValue;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
-import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -26,50 +24,100 @@ import net.minecraft.world.WorldSettings;
 @ModuleInfo(aliases = "Legit Scaffold", description = "Shiftea al borde de cada bloque", category = Category.WORLD)
 public class LegitScaffold extends Module {
 	
-	private final BoundsNumberValue delay = new BoundsNumberValue("Delay", this, 100, 200, 0, 500, 1);
-	private final BooleanValue pitchCheck = new BooleanValue("Pitch Check", this, true);
-	private final BoundsNumberValue pitchRange = new BoundsNumberValue("Pitch Range", this, 70, 85, 0, 90, 1, () -> !pitchCheck.getValue());
+	private final NumberValue delay = new NumberValue("Delay", this, 1, 0, 5, 1);
+	private final NumberValue angle = new NumberValue("Angle", this, 50, 45, 75, 1);
+	private final NumberValue edgeOffset = new NumberValue("Edge Offset", this, 15, 0, 30, 1);
+	private final BooleanValue randomize = new BooleanValue("Randomize", this, false);
 	private final BooleanValue legit = new BooleanValue("Legitimize", this, true);
 	private final BooleanValue holdShift = new BooleanValue("Hold Shift", this, false);
 	private final BooleanValue slotSwap = new BooleanValue("Block Switching", this, true);
 	private final BooleanValue blocksOnly = new BooleanValue("Blocks Only", this, true);
 	private final BooleanValue backwards = new BooleanValue("Backwards Movement Only", this, true);
-	private final BooleanValue spoof = new BooleanValue("Spoof Slot", this, true);
 	private final BooleanValue hideSneak = new BooleanValue("Hide Sneak Animation", this, false);
 
-	private boolean shouldBridge, isShifting = false;
-	private int lastSlot;
+	private int slot;
 	private StopWatch stopWatch = new StopWatch();
-
-	@Override
-	public void onEnable() {
-		lastSlot = -1;		
-	}
 	
 	@Override
 	public void onDisable() {
-		setSneak(false);
+		releaseKey();
 		if (overAir()) {
-			setSneak(false);
+			releaseKey();
 		}
 
-		mc.player.inventory.currentItem = lastSlot;
-		if (spoof.getValue()) SpoofHandler.stopSpoofing();
-		shouldBridge = false;
+		mc.player.inventory.currentItem = slot;
 	}
 
 	@EventLink
-	public final Listener<PreMotionEvent> onPreMotion = event -> move(event.getPitch(), event.isOnGround());
+	public final Listener<PreMotionEvent> onPreMotion = event -> {
+	    if (!(mc.currentScreen == null) || !isInGame()) return;
+	    if (mc.playerController.getCurrentGameType() == WorldSettings.GameType.SPECTATOR) return;
+
+	    if (hideSneak.getValue()) {
+	        mc.player.hideSneakHeight.reset();
+	    }
+
+	    if (blocksOnly.getValue()) {
+	        ItemStack i = mc.player.getHeldItem();
+	        if (i == null || !(i.getItem() instanceof ItemBlock)) {
+	        	releaseKey();
+	            return;
+	        }
+	    }
+	    
+        if (Math.abs(event.getPitch()) < angle.getValueToFloat()) {
+        	return;
+        }
+
+	    if (backwards.getValue()) {
+	        if ((mc.player.movementInput.moveForward > 0 && mc.player.movementInput.moveStrafe == 0) || mc.player.movementInput.moveForward >= 0) {
+	        	releaseKey();
+	            return;
+	        }
+	    }
+
+	    double edgeOffset = this.edgeOffset.getValueToDouble() / 100.0;
+	    int delayTicks = delay.getValueToInt();
+	    //ChatUtil.display("Edge Offset: " + edgeOffset);
+	    
+	    if (randomize.getValue()) {
+	    	edgeOffset += (MathUtil.nextRandom(0.7, 1.3).doubleValue() * MathUtil.nextRandom(-0.01, 0.01).doubleValue());
+	    	delayTicks = (int) MathUtil.getSafeRandom(delayTicks - 1, delayTicks + 1);
+	    }
+	    
+	    boolean isOnEdge = mc.world.getBlockState(new BlockPos(mc.player).down()).getBlock() instanceof BlockAir && (legit.getValue() || event.isOnGround());
+	    
+	    if (!isOnEdge) {
+	        double posX = mc.player.posX;
+	        double posZ = mc.player.posZ;
+	        double blockX = Math.floor(posX) + 0.5;
+	        double blockZ = Math.floor(posZ) + 0.5;
+	        
+	        double distanceX = Math.abs(posX - blockX);
+	        double distanceZ = Math.abs(posZ - blockZ);
+	        
+	        if (distanceX > 0.5 - edgeOffset || distanceZ > 0.5 - edgeOffset) {
+	            isOnEdge = true;
+	        }
+	    }
+	    
+	    if (delayTicks > 0 && !stopWatch.hasReach(delayTicks * 50)) {
+	        return;
+	    }
+
+	    mc.gameSettings.keyBindSneak.setPressed(isOnEdge || GameSettings.isKeyDown(mc.gameSettings.keyBindSneak));
+
+	    if (isOnEdge) {
+	        stopWatch.reset();
+	    }
+	};
+
 	
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
 		if (!isInGame()) return;
-		
-        if (lastSlot == -1) {
-        	lastSlot = mc.player.inventory.currentItem;
-        }
         
-		final int slot = InventoryUtil.findBlock();
+		slot = InventoryUtil.findBlock();
 		
         if (slot == -1) {
             return;
@@ -79,99 +127,9 @@ public class LegitScaffold extends Module {
         	mc.player.inventory.currentItem = slot;
         }
         
-        if (spoof.getValue()) SpoofHandler.startSpoofing(lastSlot);
-
 		if (mc.currentScreen == null || mc.player.getHeldItem() == null) return;
 
 	};
-	
-	private void move(float pitch, boolean ground) {
-		if (!(mc.currentScreen == null) || !isInGame()) return;
-		if (mc.playerController.getCurrentGameType() == WorldSettings.GameType.SPECTATOR) return;
-
-		
-		if (hideSneak.getValue()) {
-			mc.player.hideSneakHeight.reset();
-		}
-		
-		boolean shift = delay.getSecondValue().intValue() > 0;
-
-		if (pitch < pitchRange.getValue().floatValue() || pitch > pitchRange.getSecondValue().floatValue()) {
-			shouldBridge = false;
-			if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
-				setSneak(true);
-			}
-			return;
-		}
-
-		if (holdShift.getValue()) {
-			if (!Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
-				shouldBridge = false;
-				return;
-			}
-		}		
-
-		if (blocksOnly.getValue()) {
-			ItemStack i = mc.player.getHeldItem();
-			if (i == null || !(i.getItem() instanceof ItemBlock)) {
-				if (isShifting) {
-					isShifting = false;
-					setSneak(false);
-				}
-				return;
-			}
-		}
-
-		if (backwards.getValue()) {
-			if ((mc.player.movementInput.moveForward > 0) && (mc.player.movementInput.moveStrafe == 0)
-					|| mc.player.movementInput.moveForward >= 0) {
-				shouldBridge = false;
-				return;
-			}
-		}
-
-		if (ground) {
-			if (overAir()) {
-				if (shift) {
-					stopWatch.setMillis(MathHelper.randomInt(delay.getValue().intValue(),
-							(int) (delay.getSecondValue().intValue() + 0.1)));
-					stopWatch.reset();
-				}
-
-				isShifting = true;
-				setSneak(true);
-				shouldBridge = true;
-			} else if (mc.player.isSneaking() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())
-					&& holdShift.getValue()) {
-				isShifting = false;
-				shouldBridge = false;
-				setSneak(false);
-			} else if (holdShift.getValue() && !Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
-				isShifting = false;
-				shouldBridge = false;
-				setSneak(false);
-			} else if (mc.player.isSneaking()
-					&& (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) && holdShift.getValue())
-					&& (!shift || stopWatch.hasFinished())) {
-				isShifting = false;
-				setSneak(false);
-				shouldBridge = true;
-			} else if (mc.player.isSneaking() && !holdShift.getValue() && (!shift || stopWatch.hasFinished())) {
-				isShifting = false;
-				setSneak(false);
-				shouldBridge = true;
-			}
-		} else if (shouldBridge && mc.player.capabilities.isFlying) {
-			setSneak(false);
-			shouldBridge = false;
-		} else if (shouldBridge && overAir() && legit.getValue()) {
-			isShifting = true;
-			setSneak(true);
-		} else {
-			isShifting = false;
-			setSneak(false);
-		}
-	}
 
 	private void swapToBlock() {
 		for (int slot = 0; slot <= 8; slot++) {
@@ -194,18 +152,17 @@ public class LegitScaffold extends Module {
 		return heldItem == null || !(heldItem.getItem() instanceof ItemBlock);
 	}
 	
-	private void setSneak(boolean sneak) {
-		KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), sneak);		
-	}
-	
 	private boolean overAir() {
 		return blockRelativeToPlayer(0, -1, 0) instanceof BlockAir;
 	}
-	
 
 	private Block getBlock(final double x, final double y, final double z) {
         return mc.world.getBlockState(new BlockPos(x, y, z)).getBlock();
     }
+	
+	private void releaseKey() {
+		mc.gameSettings.keyBindSneak.pressed = GameSettings.isKeyDown(mc.gameSettings.keyBindSneak);
+	}
 
 	private Block blockRelativeToPlayer(final double offsetX, final double offsetY, final double offsetZ) {
         return getBlock(mc.player.posX + offsetX, mc.player.posY + offsetY, mc.player.posZ + offsetZ);

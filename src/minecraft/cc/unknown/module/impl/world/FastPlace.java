@@ -13,7 +13,7 @@ import cc.unknown.module.api.ModuleInfo;
 import cc.unknown.util.client.StopWatch;
 import cc.unknown.util.player.InventoryUtil;
 import cc.unknown.value.impl.BooleanValue;
-import cc.unknown.value.impl.BoundsNumberValue;
+import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.NumberValue;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
@@ -29,27 +29,27 @@ import net.minecraft.network.play.client.C02PacketUseEntity;
 public class FastPlace extends Module {
 
 	private final BooleanValue block = new BooleanValue("Block", this, true);
-	private final BoundsNumberValue cpsBlock = new BoundsNumberValue("CPS [Block]", this, 18, 19, 1, 40, 1, () -> !block.getValue());
-	private final BoundsNumberValue dCpsBlock = new BoundsNumberValue("DCPS [Block]", this, 2, 4, 1, 40, 1, () -> !block.getValue());
+	private final NumberValue cpsBlock = new NumberValue("CPS [Block]", this, 19, 1, 40, 1, () -> !block.getValue());
+	private final NumberValue dCpsBlock = new NumberValue("Delta CPS [Block]", this, 4, 1, 40, 1, () -> !block.getValue());
 	private final NumberValue blockMultiplier = new NumberValue("Multiplier [Block]", this, 10, 1, 20, 1, () -> !block.getValue());
 	
 	private final BooleanValue snowBall = new BooleanValue("SnowBall", this, true);
-	private final BoundsNumberValue cpsSnow = new BoundsNumberValue("CPS [SnowBall]", this, 18, 19, 1, 40, 1, () -> !snowBall.getValue());
-	private final BoundsNumberValue dCpsSnow = new BoundsNumberValue("DCPS [SnowBall]", this, 2, 4, 1, 40, 1, () -> !snowBall.getValue());
+	private final NumberValue cpsSnow = new NumberValue("CPS [SnowBall]", this, 19, 1, 40, 1, () -> !snowBall.getValue());
+	private final NumberValue dCpsSnow = new NumberValue("Delta CPS [SnowBall]", this, 4, 1, 40, 1, () -> !snowBall.getValue());
 	private final NumberValue snowMultiplier = new NumberValue("Multiplier [SnowBall]", this, 10, 1, 20, 1, () -> !snowBall.getValue());
 
 	private final BooleanValue egg = new BooleanValue("Egg", this, true);
-	private final BoundsNumberValue cpsEgg = new BoundsNumberValue("CPS [Egg]", this, 18, 19, 1, 40, 1, () -> !egg.getValue());
-	private final BoundsNumberValue dCpsEgg = new BoundsNumberValue("DCPS [Egg]", this, 2, 4, 1, 40, 1, () -> !egg.getValue());
+	private final NumberValue cpsEgg = new NumberValue("CPS [Egg]", this, 19, 1, 40, 1, () -> !egg.getValue());
+	private final NumberValue dCpsEgg = new NumberValue("Delta CPS [Egg]", this, 4, 1, 40, 1, () -> !egg.getValue());
 	private final NumberValue eggMultiplier = new NumberValue("Multiplier [Egg]", this, 10, 1, 20, 1, () -> !egg.getValue());
 
 	private final BooleanValue xpBottle = new BooleanValue("Bottle XP", this, true);
-	private final BoundsNumberValue cpsBottle = new BoundsNumberValue("CPS [BottleXP]", this, 18, 19, 1, 40, 1, () -> !xpBottle.getValue());
-	private final BoundsNumberValue dCpsBottle = new BoundsNumberValue("DCPS [BottleXP]", this, 2, 4, 1, 40, 1, () -> !xpBottle.getValue());
+	private final NumberValue cpsBottle = new NumberValue("CPS [BottleXP]", this, 19, 1, 40, 1, () -> !xpBottle.getValue());
+	private final NumberValue dCpsBottle = new NumberValue("Delta CPS [BottleXP]", this, 4, 1, 40, 1, () -> !xpBottle.getValue());
 	private final NumberValue xpMultiplier = new NumberValue("Multiplier [BottleXP]", this, 10, 1, 20, 1, () -> !xpBottle.getValue());
 
 	private final BooleanValue autoSwap = new BooleanValue("Auto Swap", this, true);
-	private final BoundsNumberValue pitchRange = new BoundsNumberValue("Pitch Range", this, 70, 85, 0, 90, 1, () -> !autoSwap.getValue());
+	private final NumberValue pitchRange = new NumberValue("Pitch Range", this, 75, 0, 90, 1, () -> !autoSwap.getValue());
 
 	private StopWatch stopWatch = new StopWatch();
     private boolean attack = false;
@@ -117,7 +117,7 @@ public class FastPlace extends Module {
         final int slot = InventoryUtil.findBlock();
         if (slot == -1) return;
 	
-        if (mc.player.rotationPitch < pitchRange.getValue().floatValue() || mc.player.rotationPitch > pitchRange.getSecondValue().floatValue()) {
+        if (mc.player.rotationPitch < pitchRange.getValueToFloat()) {
         	return;
         }
 	
@@ -147,9 +147,9 @@ public class FastPlace extends Module {
 		return heldItem == null || !(heldItem.getItem() instanceof ItemBlock);
 	}
     
-    private long getDeltaClick(BoundsNumberValue cps, BoundsNumberValue dCps, int multiplier) {
-        double baseCPS = cps.getRandomBetween().longValue();
-        double delta = dCps.getRandomBetween().longValue();
+    private long getDeltaClick(NumberValue cps, NumberValue dCps, int multiplier) {
+        double baseCPS = cps.getValueToLong();
+        double delta = dCps.getValueToLong();
         double randomizedCPS = baseCPS + delta + Math.random() * multiplier;
         return (long) (1000 / randomizedCPS);
     }
