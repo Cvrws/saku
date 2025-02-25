@@ -16,31 +16,26 @@ import cc.unknown.util.player.MoveUtil;
 import cc.unknown.util.player.rotation.MoveFix;
 import cc.unknown.util.player.rotation.RotationUtil;
 import cc.unknown.util.structure.geometry.Vector2f;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 
 public final class RotationHandler implements Accessor {
+	@Setter @Getter
 	private static boolean active, smoothed;
 	public static Vector2f rotations, lastRotations = new Vector2f(0, 0), targetRotations, lastServerRotations;
 	private static double rotationSpeed;
+	@Setter
 	private static MoveFix correctMovement;
 	private static Function<Vector2f, Boolean> raycast;
 	private static float randomAngle;
 	private static final Vector2f offset = new Vector2f(0, 0);
 
-	/*
-	 * This method must be called on Pre Update Event to work correctly
-	 */
 	public static void setRotations(final Vector2f rotations, final double rotationSpeed,
 			final MoveFix correctMovement) {
 		setRotations(rotations, rotationSpeed, correctMovement, null);
 	}
-	/*
-	 * This method must be called on Pre Update Event to work correctly
-	 */
+
 	public static void setRotations(final Vector2f rotations, final double rotationSpeed,
 			final MoveFix correctMovement, final Function<Vector2f, Boolean> raycast) {
 		RotationHandler.targetRotations = rotations;
@@ -68,9 +63,6 @@ public final class RotationHandler implements Accessor {
 	@EventLink(value = Priority.LOW)
 	public final Listener<MoveInputEvent> onMove = event -> {
 		if (active && correctMovement == MoveFix.SILENT && rotations != null) {
-			/*
-			 * Calculating movement fix
-			 */
 			final float yaw = rotations.x;
 			MoveUtil.fixMovement(event, yaw);
 		}
@@ -131,8 +123,7 @@ public final class RotationHandler implements Accessor {
 
 	private void correctDisabledRotations() {
 		final Vector2f rotations = new Vector2f(mc.player.rotationYaw, mc.player.rotationPitch);
-		final Vector2f fixedRotations = RotationUtil
-				.resetRotation(RotationUtil.applySensitivityPatch(rotations, lastRotations));
+		final Vector2f fixedRotations = RotationUtil.resetRotation(RotationUtil.applySensitivityPatch(rotations, lastRotations));
 
 		mc.player.rotationYaw = fixedRotations.x;
 		mc.player.rotationPitch = fixedRotations.y;
@@ -189,94 +180,6 @@ public final class RotationHandler implements Accessor {
         }
 
         smoothed = true;
-
-        /*
-         * Updating MouseOver
-         */
         mc.entityRenderer.getMouseOver(1);
     }
-
-	public static boolean isActive() {
-		return active;
-	}
-
-	public static boolean isSmoothed() {
-		return smoothed;
-	}
-
-	public static Vector2f getRotations() {
-		return rotations;
-	}
-
-	public static Vector2f getLastRotations() {
-		return lastRotations;
-	}
-
-	public static Vector2f getTargetRotations() {
-		return targetRotations;
-	}
-
-	public static Vector2f getLastServerRotations() {
-		return lastServerRotations;
-	}
-
-	public static double getRotationSpeed() {
-		return rotationSpeed;
-	}
-
-	public static MoveFix getCorrectMovement() {
-		return correctMovement;
-	}
-
-	public static Function<Vector2f, Boolean> getRaycast() {
-		return raycast;
-	}
-
-	public static float getRandomAngle() {
-		return randomAngle;
-	}
-
-	public static Vector2f getOffset() {
-		return offset;
-	}
-
-	public static void setActive(boolean active) {
-		RotationHandler.active = active;
-	}
-
-	public static void setSmoothed(boolean smoothed) {
-		RotationHandler.smoothed = smoothed;
-	}
-
-	public static void setRotations(Vector2f rotations) {
-		RotationHandler.rotations = rotations;
-	}
-
-	public static void setLastRotations(Vector2f lastRotations) {
-		RotationHandler.lastRotations = lastRotations;
-	}
-
-	public static void setTargetRotations(Vector2f targetRotations) {
-		RotationHandler.targetRotations = targetRotations;
-	}
-
-	public static void setLastServerRotations(Vector2f lastServerRotations) {
-		RotationHandler.lastServerRotations = lastServerRotations;
-	}
-
-	public static void setRotationSpeed(double rotationSpeed) {
-		RotationHandler.rotationSpeed = rotationSpeed;
-	}
-
-	public static void setCorrectMovement(MoveFix correctMovement) {
-		RotationHandler.correctMovement = correctMovement;
-	}
-
-	public static void setRaycast(Function<Vector2f, Boolean> raycast) {
-		RotationHandler.raycast = raycast;
-	}
-
-	public static void setRandomAngle(float randomAngle) {
-		RotationHandler.randomAngle = randomAngle;
-	}
 }

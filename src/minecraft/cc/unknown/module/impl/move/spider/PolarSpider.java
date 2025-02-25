@@ -31,6 +31,8 @@ public class PolarSpider extends Mode<Spider> {
 			MoveUtil.keybindStop();
 		}
 
+		Mouse.poll();
+		
 		if (Mouse.isButtonDown(getParent().mouseButton.getValue().intValue()) && isInsideBlock) {
 			if (getParent().fast.getValue()) {
 				if (mc.player.onGround) {

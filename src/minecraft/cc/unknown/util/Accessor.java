@@ -8,6 +8,7 @@ import cc.unknown.module.Module;
 import cc.unknown.ui.click.RiceGui;
 import cc.unknown.ui.theme.Themes;
 import cc.unknown.util.client.CustomLogger;
+import cc.unknown.util.client.StopWatch;
 import net.minecraft.client.Minecraft;
 
 public interface Accessor {
@@ -19,6 +20,10 @@ public interface Accessor {
     
     default boolean isInGame() {
         return mc != null || mc.player != null || mc.world != null;
+    }
+    
+    default StopWatch getStopWatch() {
+    	return new StopWatch();
     }
     
     default RiceGui getClickGUI() {

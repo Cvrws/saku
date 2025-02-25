@@ -11,7 +11,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.util.MathHelper;
 
-@ModuleInfo(aliases = "No Hurt Camera", description = "Remueve la animación de la cámara al recibir daño", category = Category.VISUALS)
-public final class NoHurtCamera extends Module {
+@ModuleInfo(aliases = "No Scoreboard", description = "Remueve la scoreboard", category = Category.VISUALS)
+public final class NoScoreboard extends Module {
 
 }

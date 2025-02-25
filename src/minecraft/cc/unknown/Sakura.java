@@ -32,6 +32,7 @@ import net.minecraft.src.Config;
 public class Sakura {
 
     public static final String NAME = "Sakura";
+    public static final String BUILD = "Pre Release 3";
     public static final String VERSION = "5.9";
 
     public static final Sakura instance = new Sakura();
@@ -59,7 +60,7 @@ public class Sakura {
     private final Minecraft mc = Minecraft.getInstance();
 
     public void init() {
-        Display.setTitle(NAME + " " + VERSION);
+        Display.setTitle(NAME + " " + VERSION + " " + BUILD);
         Runtime.getRuntime().addShutdownHook(new Thread(ex::shutdown));
 
         initAutoOptimization();

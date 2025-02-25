@@ -15,19 +15,18 @@ public class VerusCriticals extends Mode<Criticals> {
 		super(name, parent);
 	}
 	
-    private final StopWatch stopwatch = new StopWatch();
     private final double[] offsets = new double[]{0.0625, 0};
 
     @EventLink
     public final Listener<AttackEvent> onAttack = event -> {
 		if (!MathUtil.isChance(getParent().chance)) return;
         
-        if (stopwatch.finished(getParent().delay.getValueToLong()) && mc.player.onGroundTicks > 2 && mc.player.hurtTime != 0) {
+        if (getStopWatch().finished(getParent().delay.getValueToLong()) && mc.player.onGroundTicks > 2 && mc.player.hurtTime != 0) {
             for (double offset : offsets) {
                 PacketUtil.send(new C03PacketPlayer.C04PacketPlayerPosition(mc.player.posX, mc.player.posY + offset, mc.player.posZ, false));
             }
             mc.player.onCriticalHit(event.getTarget());
-            stopwatch.reset();
+            getStopWatch().reset();
         }
     };
 }

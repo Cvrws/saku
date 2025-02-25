@@ -155,7 +155,7 @@ public class Ping extends Module {
     }
     
     private void clearPacket(int time) {
-        if (time == -1) {
+        if (time == 0) {
             time = delay.getValue().intValue();
         }
         
@@ -163,9 +163,9 @@ public class Ping extends Module {
         while (iterator.hasNext()) {
         	TimedPacket packet = iterator.next();
             
-        	if (time == 0 || System.currentTimeMillis() > packet.getStopWatch().getMillis() + time) {
+        	if (System.currentTimeMillis() > packet.getStopWatch().getMillis() + time) {
             	Packet p = packet.getPacket();
-            	p.processPacket(mc.getNetHandler());
+            	p.processPacket(mc.getNetHandler().getNetworkManager().packetListener);
                 iterator.remove();
             }
         }

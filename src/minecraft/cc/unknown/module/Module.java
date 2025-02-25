@@ -106,7 +106,6 @@ public abstract class Module implements Accessor, Toggleable, Bindable {
     
     public final void superEnable() {
         Sakura.instance.getEventBus().register(this);
-        mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 
         this.values.stream()
                 .filter(value -> value instanceof ModeValue)
@@ -126,7 +125,6 @@ public abstract class Module implements Accessor, Toggleable, Bindable {
 
     public final void superDisable() {
         Sakura.instance.getEventBus().unregister(this);
-        mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 
         this.values.stream()
                 .filter(value -> value instanceof ModeValue)

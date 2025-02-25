@@ -25,7 +25,8 @@ import net.minecraft.world.WorldSettings;
 public class LegitScaffold extends Module {
 	
 	private final NumberValue delay = new NumberValue("Delay", this, 1, 0, 5, 1);
-	private final NumberValue angle = new NumberValue("Angle", this, 50, 45, 75, 1);
+	private final BooleanValue checkAngle = new BooleanValue("Check Angle", this, false);
+	private final NumberValue angle = new NumberValue("Angle", this, 50, 45, 75, 1, () -> !checkAngle.getValue());
 	private final NumberValue edgeOffset = new NumberValue("Edge Offset", this, 15, 0, 30, 1);
 	private final BooleanValue randomize = new BooleanValue("Randomize", this, false);
 	private final BooleanValue legit = new BooleanValue("Legitimize", this, true);
@@ -64,15 +65,18 @@ public class LegitScaffold extends Module {
 	            return;
 	        }
 	    }
-	    
-        if (Math.abs(event.getPitch()) < angle.getValueToFloat()) {
-        	return;
-        }
 
 	    if (backwards.getValue()) {
 	        if ((mc.player.movementInput.moveForward > 0 && mc.player.movementInput.moveStrafe == 0) || mc.player.movementInput.moveForward >= 0) {
 	        	releaseKey();
 	            return;
+	        }
+	    }
+	    
+	    if (checkAngle.getValue()) {
+	        if (MathHelper.wrapDegrees(event.getPitch()) < angle.getValueToFloat()) {
+	        	this.releaseKey();
+	        	return;
 	        }
 	    }
 
@@ -101,7 +105,7 @@ public class LegitScaffold extends Module {
 	        }
 	    }
 	    
-	    if (delayTicks > 0 && !stopWatch.hasReach(delayTicks * 50)) {
+	    if (delayTicks > 0 && !stopWatch.reached(delayTicks * 50)) {
 	        return;
 	    }
 

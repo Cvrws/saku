@@ -15,14 +15,13 @@ public class PacketCriticals extends Mode<Criticals> {
 		super(name, parent);
 	}
 	
-    private final StopWatch stopwatch = new StopWatch();
     private final double[] offsets = new double[]{0.0625, 0};
 
     @EventLink
     public final Listener<AttackEvent> onAttack = event -> {
 		if (!MathUtil.isChance(getParent().chance)) return;
         
-        if (stopwatch.finished(getParent().delay.getValueToLong()) && mc.player.onGroundTicks > 2) {
+        if (getStopWatch().finished(getParent().delay.getValueToLong()) && mc.player.onGroundTicks > 2) {
             for (double offset : offsets) {
                 for (int i = 0; i < getParent().packets.getValueToInt(); i++) {
                     PacketUtil.send(new C03PacketPlayer.C04PacketPlayerPosition(mc.player.posX, mc.player.posY + offset, mc.player.posZ, true));
@@ -30,7 +29,7 @@ public class PacketCriticals extends Mode<Criticals> {
 				}
             }
             mc.player.onCriticalHit(event.getTarget());
-            stopwatch.reset();
+            getStopWatch().reset();
         }
     };
 }

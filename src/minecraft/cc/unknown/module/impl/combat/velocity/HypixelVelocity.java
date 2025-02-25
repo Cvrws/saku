@@ -24,7 +24,7 @@ public class HypixelVelocity extends Mode<Velocity> {
 	@EventLink(value = Priority.VERY_LOW)
 	public final Listener<PacketReceiveEvent> onPacketReceive = event -> {
 		if (event.isCancelled()) return;
-		if (!MathUtil.isChance(getParent().chance)) return;
+		if (!MathUtil.isChance(getParent().chance, getParent().notWhileSpeed, getParent().notWhileJumpBoost)) return;
 
 		final Packet<?> packet = event.getPacket();
 
@@ -76,7 +76,7 @@ public class HypixelVelocity extends Mode<Velocity> {
 
 	@EventLink
 	public final Listener<PreMotionEvent> onPreMotion = event -> {
-		if (!MathUtil.isChance(getParent().chance)) return;
+		if (!MathUtil.isChance(getParent().chance, getParent().notWhileSpeed, getParent().notWhileJumpBoost)) return;
 
 		if (getParent().delay.getValue()) {
 			ticks++;
@@ -102,6 +102,5 @@ public class HypixelVelocity extends Mode<Velocity> {
 				mc.player.motionZ *= horizontal / 100;
 			}
 		}
-
 	};
 }

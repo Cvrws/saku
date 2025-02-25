@@ -29,5 +29,5 @@ public final class Criticals extends Module {
     
     public final NumberValue timer = new NumberValue("Timer", this, 0.5, 0, 1, 0.1, () -> !mode.is("balance"));
     public final NumberValue timerTime = new NumberValue("Balance Delay", this, 2000, 100, 3000, 100, () -> !mode.is("balance"));
-    public final NumberValue chance = new NumberValue("Chance", this, 90, 0, 100, 1, () -> !mode.is("balance"));
+    public final NumberValue chance = new NumberValue("Chance", this, 90, 0, 100, 1);
 }

@@ -20,6 +20,8 @@ public class CosmeticController {
 
     private static boolean shouldRenderCosmetic(CosmeticType type) {
         Cosmetics cosmetics = getCosmetics();
+        if (cosmetics == null) return false;
+        
         if (!cosmetics.isEnabled()) {
             return false;
         }

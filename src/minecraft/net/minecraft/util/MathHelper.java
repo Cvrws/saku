@@ -299,6 +299,17 @@ public class MathHelper
         i = (i << 8) + p_180181_2_;
         return i;
     }
+    
+    public static float wrapDegrees(float value) {
+        value = value % 360F;
+        if (value < 45F) {
+            return 45F;
+        }
+        if (value > 75F) {
+            return 75F;
+        }
+        return value;
+    }
 
     public static int func_180188_d(int p_180188_0_, int p_180188_1_)
     {

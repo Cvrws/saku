@@ -63,6 +63,7 @@ public final class ModuleManager {
         this.put(Sprint.class, new Sprint());
         this.put(Strafe.class, new Strafe());
         this.put(Clipper.class, new Clipper());
+        this.put(Phase.class, new Phase());
         this.put(Parkour.class, new Parkour());
         this.put(Stuck.class, new Stuck());
         this.put(Spider.class, new Spider());

@@ -36,7 +36,7 @@ public class StopWatch {
 		return System.currentTimeMillis() >= millis;
 	}
 
-	public boolean hasReach(float millis) {
+	public boolean reached(float millis) {
 		return getElapsedTime() >= (millis);
 	}
 

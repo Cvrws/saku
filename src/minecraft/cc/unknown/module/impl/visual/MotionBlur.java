@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 @ModuleInfo(aliases = "Motion Blur", description = "blur", category = Category.VISUALS)
 public final class MotionBlur extends Module {
 	
-	private final NumberValue amount = new NumberValue("Amount", this, 1, 1, 10, 1);
+	private final NumberValue amount = new NumberValue("Amount", this, 10, 1, 20, 1);
 	
 	@Override
 	public void onEnable() {
@@ -30,9 +30,12 @@ public final class MotionBlur extends Module {
     @EventLink
     public final Listener<TickEvent> onTick = event -> {
         if (mc.world != null) {
-        	if ((mc.entityRenderer.getShaderGroup() == null))
+        	if ((mc.entityRenderer.getShaderGroup() == null)) {
         		mc.entityRenderer.loadShader(new ResourceLocation("minecraft", "shaders/post/motion_blur.json"));
+        	}
+        	
         	float uniform = 1F - Math.min(amount.getValueToInt() / 10F, 0.9f);
+        	
         	if (mc.entityRenderer.getShaderGroup() != null) {
         		mc.entityRenderer.getShaderGroup().listShaders.get(0).getShaderManager().getShaderUniform("Phosphor").set(uniform, 0F, 0F);
         	}

@@ -12,6 +12,7 @@ import cc.unknown.Sakura;
 import cc.unknown.event.impl.render.RenderHungerEvent;
 import cc.unknown.handlers.SpoofHandler;
 import cc.unknown.module.impl.other.FPSBoost;
+import cc.unknown.module.impl.visual.NoScoreboard;
 import cc.unknown.util.render.font.impl.mc.FontRenderer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -504,8 +505,8 @@ public class GuiIngame extends Gui
 
     private void renderScoreboard(ScoreObjective objective, ScaledResolution scaledRes)
     {
-    	FPSBoost fpsBoost = Sakura.instance.getModuleManager().get(FPSBoost.class);
-    	if (fpsBoost.isEnabled() && fpsBoost.noScoreboard.getValue()) return;
+    	NoScoreboard noScoreBoard = Sakura.instance.getModuleManager().get(NoScoreboard.class);
+    	if (Sakura.instance != null && Sakura.instance.getModuleManager() != null && noScoreBoard != null && noScoreBoard.isEnabled()) return;
     	
         Scoreboard scoreboard = objective.getScoreboard();
         Collection<Score> collection = scoreboard.getSortedScores(objective);

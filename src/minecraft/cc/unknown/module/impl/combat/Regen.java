@@ -21,8 +21,6 @@ public class Regen extends Module {
 	private final BooleanValue onGround = new BooleanValue("On Ground", this, false);
 	private final BooleanValue stopPacketifHealthComplete = new BooleanValue("Stop Packets If Ur Health Is Full", this, true);
 
-	private final StopWatch stopWatch = new StopWatch();
-
     @EventLink
     public final Listener<PreMotionEvent> onPreMotion = event -> {
         if (mc.player.getHealth() >= mc.player.getMaxHealth()) {
@@ -34,10 +32,10 @@ public class Regen extends Module {
         if (onGround.getValue() && !mc.player.onGround) return;
 
         for (int i = 0; i < packets.getValueToInt(); i++) {
-            if (stopWatch.finished(delay.getValueToLong())) {
+            if (getStopWatch().finished(delay.getValueToLong())) {
 				PacketUtil.send(new C03PacketPlayer.C06PacketPlayerPosLook(event.getPosX(), event.getPosY(), event.getPosZ(), event.getYaw(), event.getPitch(), event.isOnGround()));
-                stopWatch.reset();
-            }       
+				getStopWatch().reset();
+            }
         }
     };
 }

@@ -25,8 +25,6 @@ import net.minecraft.util.MathHelper;
 @ModuleInfo(aliases = { "Spider", "wallclimb" }, description = "Permite trepar por las paredes como una araña.", category = Category.MOVEMENT)
 public class Spider extends Module {
 
-	private float direction = 0.0F;
-
 	private final ModeValue mode = new ModeValue("Mode", this)
 			.add(new VulcanSpider("Vulcan", this))
 			.add(new PolarSpider("Polar", this))
@@ -34,6 +32,6 @@ public class Spider extends Module {
 
 	public final BooleanValue fast = new BooleanValue("Fast", this, true, () -> !mode.is("Polar"));
 	public final DescValue help = new DescValue("0 -> Left | 1 -> Right | 2 -> Middle", this, () -> !mode.is("Polar"));
-	public final NumberValue mouseButton = new NumberValue("Mouse button to go up faster", this, 1, 0, 2, 1, () -> !mode.is("Polar"));
+	public final NumberValue mouseButton = new NumberValue("Mouse button to go up faster", this, 1, 0, 5, 1, () -> !mode.is("Polar"));
 
 }

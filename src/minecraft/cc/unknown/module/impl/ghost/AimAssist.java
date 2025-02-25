@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import com.ibm.icu.impl.duration.impl.Utils;
+
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.AttackEvent;
@@ -21,7 +23,10 @@ import cc.unknown.value.impl.BooleanValue;
 import cc.unknown.value.impl.ModeValue;
 import cc.unknown.value.impl.NumberValue;
 import cc.unknown.value.impl.SubMode;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 
@@ -50,6 +55,7 @@ public final class AimAssist extends Module {
 	
 	private final NumberValue angle = new NumberValue("Angle", this, 180, 1, 180, 1);
 	private final NumberValue distance = new NumberValue("Distance", this, 4, 1, 8, 0.1);
+	private final BooleanValue multiPoint = new BooleanValue("Multi Point", this, false);
 	private final BooleanValue clickAim = new BooleanValue("Require Clicking", this, true);
 	private final BooleanValue lockTarget = new BooleanValue("Lock Target", this, false);
 	private final BooleanValue ignoreFriend = new BooleanValue("Ignore Friends", this, false);
@@ -100,7 +106,7 @@ public final class AimAssist extends Module {
 
 	    double verticalRandomOffset = MathUtil.nextRandom(verticalCompl.getValueToDouble() - 1.47328, verticalCompl.getValueToDouble() + 2.48293).doubleValue() / 100;
 	    float resultVertical = (float) (-(pitchEntity * verticalRandomOffset + pitchEntity / (101.0D - MathUtil.nextRandom(verticalSpeed.getValueToDouble() - 4.723847, verticalSpeed.getValueToDouble()).doubleValue())));
-
+	    
 	    if (onTarget(target)) {
 	        applyYaw(yawFov, yawAdjustment);
 	        applyPitch(resultVertical);
@@ -145,56 +151,31 @@ public final class AimAssist extends Module {
     }
 	
 	private boolean isValidTarget(EntityPlayer player, Vec3 playerPos, int fov) {
-	    if (player == mc.player || !player.isEntityAlive() || player.deathTime > 0) {
-	        return false;
-	    }
-	    
+	    if (player == mc.player || !player.isEntityAlive() || player.deathTime > 0) return false;
 	    if (EnemyUtil.isEnemy(player)) return false;
 	    if (PlayerUtil.unusedNames(player)) return false;
-
-	    if (!ignoreInvisibles.getValue() && player.isInvisible()) {
-	        return false;
-	    }
-
-	    if (FriendUtil.isFriend(player) && ignoreFriend.getValue()) {
-	        return false;
-	    }
-
-	    if (ignoreTeams.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) {
-	        return false;
-	    }
-
-	    if (mc.player.getDistanceToEntity(player) > distance.getValueToDouble()) {
-	        return false;
-	    }
-
-	    if (visibilityCheck.getValue() && !mc.player.canEntityBeSeen(player)) {
-	        return false;
-	    }
-
+	    if (multiPoint.getValue() && mc.pointedEntity == target) return false;
+	    if (!ignoreInvisibles.getValue() && player.isInvisible()) return false;
+	    if (FriendUtil.isFriend(player) && ignoreFriend.getValue()) return false;
+	    if (ignoreTeams.getValue() && PlayerUtil.isTeam(player, scoreboardCheckTeam.getValue(), checkArmorColor.getValue())) return false;
+	    if (mc.player.getDistanceToEntity(player) > distance.getValueToDouble()) return false;
+	    if (visibilityCheck.getValue() && !mc.player.canEntityBeSeen(player)) return false;
 	    return fov == 180 || PlayerUtil.fov(fov, player);
 	}
 
 	private boolean noAim() {
-	    if (mc.currentScreen != null || !mc.inGameHasFocus) {
-	        return true;
-	    }
-
-	    if (weaponOnly.getValue() && !InventoryUtil.isSword()) {
-	        return true;
-	    }
-
-	    if (clickAim.getValue() && !PlayerUtil.isClicking()) {
-	        return true;
-	    }
-
-	    if (mouseOverEntity.getValue() 
-	        && (mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY)) {
-	        return true;
-	    }
+	    if (mc.currentScreen != null || !mc.inGameHasFocus) return true;
+	    if (weaponOnly.getValue() && !InventoryUtil.isSword()) return true;
+	    if (clickAim.getValue() && !PlayerUtil.isClicking()) return true;
+	    if (mouseOverEntity.getValue() && (mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY)) return true;
 	    
-	    if (checkBlockBreak.getValue() && mc.playerController.isHittingBlock) {
-	    	return true;
+	    if (checkBlockBreak.getValue()) {
+	    	BlockPos blockPos = this.mc.objectMouseOver.getBlockPos();
+	    	if (blockPos != null) {
+	    		Block block = mc.world.getBlockState(new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ())).getBlock();
+	    		if (block != Blocks.air && block != Blocks.lava && block != Blocks.water && block != Blocks.flowing_lava && block != Blocks.flowing_water)
+	    			return true;
+	    	}
 	    }
 
 	    return false;
