@@ -79,7 +79,7 @@ public final class AntiStaff extends Module {
     private List<String> getDefaultStaffList(String mode) {
         switch (mode) {
             case "universocraft":
-                return Arrays.asList("ocedq", "denila", "_JuPo_", "reginat", "Mygxl", "nywcol", "Fxrchus");
+                return Arrays.asList("ocedq", "denila", "_JuPo_", "reginat", "Mygxl", "nywcol", "Fxrchus", "4WYA", "Cvvrlss");
             default:
                 return Collections.emptyList();
         }

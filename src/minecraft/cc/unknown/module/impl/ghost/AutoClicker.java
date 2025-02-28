@@ -176,13 +176,12 @@ public class AutoClicker extends Module {
 
 		    }
 			
-            if (ticksDown > 1 && !Mouse.isButtonDown(1) && (!breakBlocks.getValue() || mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)) {
+            if (ticksDown > 1 && Mouse.isButtonDown(0) && !Mouse.isButtonDown(1) && (!breakBlocks.getValue() || mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)) {
             	mc.clickMouse();
             } else if (!breakBlocks.getValue()) {
                 mc.playerController.curBlockDamageMP = 0;
             }
 			
-
             if (rightClick.getValue() && Mouse.isButtonDown(1) && !Mouse.isButtonDown(0)) {
             	mc.rightClickMouse();
 

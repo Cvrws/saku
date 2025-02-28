@@ -1,5 +1,7 @@
 package cc.unknown.module.impl.world;
 
+import org.lwjgl.input.Keyboard;
+
 import cc.unknown.event.Listener;
 import cc.unknown.event.annotations.EventLink;
 import cc.unknown.event.impl.player.PreMotionEvent;
@@ -28,9 +30,10 @@ public class LegitScaffold extends Module {
 	private final BooleanValue checkAngle = new BooleanValue("Check Angle", this, false);
 	private final NumberValue angle = new NumberValue("Angle", this, 50, 45, 75, 1, () -> !checkAngle.getValue());
 	private final NumberValue edgeOffset = new NumberValue("Edge Offset", this, 15, 0, 30, 1);
+	private final NumberValue blockDist = new NumberValue("Block Distance", this, 0.5, 0.1, 2, 0.1);
 	private final BooleanValue randomize = new BooleanValue("Randomize", this, false);
 	private final BooleanValue legit = new BooleanValue("Legitimize", this, true);
-	private final BooleanValue holdShift = new BooleanValue("Hold Shift", this, false);
+	private final BooleanValue holdShift = new BooleanValue("Require Sneak", this, false);
 	private final BooleanValue slotSwap = new BooleanValue("Block Switching", this, true);
 	private final BooleanValue blocksOnly = new BooleanValue("Blocks Only", this, true);
 	private final BooleanValue backwards = new BooleanValue("Backwards Movement Only", this, true);
@@ -38,6 +41,11 @@ public class LegitScaffold extends Module {
 
 	private int slot;
 	private StopWatch stopWatch = new StopWatch();
+	
+	@Override
+	public void onEnable() {
+		slot = -1;
+	}
 	
 	@Override
 	public void onDisable() {
@@ -100,7 +108,7 @@ public class LegitScaffold extends Module {
 	        double distanceX = Math.abs(posX - blockX);
 	        double distanceZ = Math.abs(posZ - blockZ);
 	        
-	        if (distanceX > 0.5 - edgeOffset || distanceZ > 0.5 - edgeOffset) {
+	        if (distanceX > blockDist.getValueToDouble() - edgeOffset || distanceZ > blockDist.getValueToDouble() - edgeOffset) {
 	            isOnEdge = true;
 	        }
 	    }
@@ -109,23 +117,28 @@ public class LegitScaffold extends Module {
 	        return;
 	    }
 
-	    mc.gameSettings.keyBindSneak.setPressed(isOnEdge || GameSettings.isKeyDown(mc.gameSettings.keyBindSneak));
+	    if (holdShift.getValue()) {
+	        mc.gameSettings.keyBindSneak.setPressed(isOnEdge && Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()));
+	    } else {
+	        mc.gameSettings.keyBindSneak.setPressed(isOnEdge || GameSettings.isKeyDown(mc.gameSettings.keyBindSneak));
+	    }
 
 	    if (isOnEdge) {
 	        stopWatch.reset();
 	    }
 	};
-
 	
 	@EventLink
 	public final Listener<Render3DEvent> onRender3D = event -> {
 		if (!isInGame()) return;
         
-		slot = InventoryUtil.findBlock();
+		if (slot == -1) {
+			slot = mc.player.inventory.currentItem;
+		}
 		
-        if (slot == -1) {
-            return;
-        }
+		int slot = InventoryUtil.findBlock();
+		
+		if (slot == -1) return;
         
         if (slotSwap.getValue() && shouldSkipBlockCheck()) {
         	mc.player.inventory.currentItem = slot;
